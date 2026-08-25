@@ -1,80 +1,59 @@
-# Публикация PolyGrind на itch.io при каждом пуше в main.
-# Версия 2: каждый шаг говорит, что делает, и падает с внятной причиной.
+# Публикация PolyGrind на GitHub Pages при каждом пуше в main.
+# Никаких внешних хостов: все три действия — первой стороны от GitHub,
+# поэтому история с недоступным зеркалом butler здесь невозможна в принципе.
+#
+# Разовая настройка (один раз, руками):
+#   Settings -> Pages -> Source: выбрать "GitHub Actions"
+# После этого игра живёт по адресу https://shuwarez.github.io/polygrind/
 name: deploy
 
 on:
   push:
     branches: [main]
-  workflow_dispatch:
+  workflow_dispatch:          # кнопка ручного запуска на вкладке Actions
+
+# Права нужны, чтобы задача могла публиковать на Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Одновременно идёт только одна публикация; лишние в очереди отменяются
+concurrency:
+  group: pages
+  cancel-in-progress: true
 
 env:
-  ITCH_TARGET: suwarez/polygrind
-  ITCH_CHANNEL: html
   GAME_FILE: PolyGrind.html
 
 jobs:
   publish:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v5
-
-      - name: Проверить, что всё на месте
-        env:
-          BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
-        run: |
-          set -e
-          echo "--- содержимое репозитория ---"
-          ls -la
-          if [ ! -f "$GAME_FILE" ]; then
-            echo "ОШИБКА: не нашёл $GAME_FILE в корне репозитория."
-            echo "Имя файла чувствительно к регистру. Вот что есть:"
-            ls -1
-            exit 1
-          fi
-          if [ -z "$BUTLER_API_KEY" ]; then
-            echo "ОШИБКА: секрет BUTLER_API_KEY пуст или не создан."
-            echo "Settings -> Secrets and variables -> Actions -> New repository secret"
-            exit 1
-          fi
-          echo "файл найден, ключ на месте (длина ${#BUTLER_API_KEY} символов)"
 
       - name: Собрать сборку и проставить версию
         run: |
           set -e
+          if [ ! -f "$GAME_FILE" ]; then
+            echo "ОШИБКА: не нашёл $GAME_FILE. Имя чувствительно к регистру. Есть:"; ls -1; exit 1
+          fi
           BUILD="${GITHUB_SHA::7} · $(date -u +%Y-%m-%d)"
           mkdir -p build
+          # Pages отдаёт index.html как главную страницу — переименовываем
           cp "$GAME_FILE" build/index.html
           sed -i "s/__BUILD__/${BUILD}/" build/index.html
-          if grep -q "__BUILD__" build/index.html; then
-            echo "ПРЕДУПРЕЖДЕНИЕ: метка __BUILD__ не найдена в файле, версия не проставлена."
-            echo "Это не смертельно — публикуем как есть."
-          fi
-          grep -q "</script>" build/index.html || { echo "ОШИБКА: скрипт в файле оборван"; exit 1; }
+          grep -q "</script>" build/index.html || { echo "ОШИБКА: скрипт оборван"; exit 1; }
           echo "собрано: ${BUILD}, размер $(du -h build/index.html | cut -f1)"
 
-      - name: Скачать butler
-        run: |
-          set -e
-          URL="https://broth.itch.ovh/butler/linux-amd64/LATEST/archive/default"
-          echo "качаю $URL"
-          curl -fL --retry 3 --retry-delay 2 -o butler.zip "$URL" || {
-            echo "ОШИБКА: не смог скачать butler (сеть или адрес)."; exit 1; }
-          echo "скачано байт: $(stat -c%s butler.zip)"
-          unzip -o -q butler.zip || { echo "ОШИБКА: архив butler битый"; exit 1; }
-          chmod +x butler
-          ./butler -V
+      - uses: actions/configure-pages@v5
 
-      - name: Залить на itch.io
-        env:
-          BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
-        run: |
-          set -e
-          echo "цель: ${ITCH_TARGET}:${ITCH_CHANNEL}"
-          ./butler push build "${ITCH_TARGET}:${ITCH_CHANNEL}" --userversion "${GITHUB_SHA::7}" || {
-            echo ""
-            echo "butler отказался заливать. Частые причины:"
-            echo "  * логин или адрес проекта не совпадают с itch (нужен ник с itch.io, не с GitHub)"
-            echo "  * проект на itch.io ещё не создан"
-            echo "  * ключ API недействителен или скопирован не целиком"
-            exit 1; }
-          echo "готово: https://$(echo $ITCH_TARGET | tr '/' '.' | sed 's/\./.itch.io\//')"
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: build
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
