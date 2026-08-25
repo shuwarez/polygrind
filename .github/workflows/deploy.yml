@@ -1,52 +1,80 @@
 # Публикация PolyGrind на itch.io при каждом пуше в main.
-# Разовая настройка (делается один раз, руками):
-#   1. Создать на itch.io проект, тип «HTML», запомнить его адрес.
-#   2. Взять ключ API: https://itch.io/user/settings/api-keys
-#   3. В репозитории: Settings -> Secrets and variables -> Actions -> New secret
-#      имя BUTLER_API_KEY, значение — этот ключ.
-#   4. Ниже подставить свой логин и название проекта в ITCH_TARGET.
+# Версия 2: каждый шаг говорит, что делает, и падает с внятной причиной.
 name: deploy
 
 on:
   push:
     branches: [main]
-  workflow_dispatch:        # кнопка ручного запуска на вкладке Actions
+  workflow_dispatch:
 
 env:
   ITCH_TARGET: suwarez/polygrind
   ITCH_CHANNEL: html
+  GAME_FILE: PolyGrind.html
 
 jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      # Клеймо сборки: короткий хеш коммита и дата подставляются прямо в файл,
-      # чтобы по скриншоту от игрока можно было понять, какая это версия.
-      - name: Проставить версию
+      - name: Проверить, что всё на месте
+        env:
+          BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
         run: |
+          set -e
+          echo "--- содержимое репозитория ---"
+          ls -la
+          if [ ! -f "$GAME_FILE" ]; then
+            echo "ОШИБКА: не нашёл $GAME_FILE в корне репозитория."
+            echo "Имя файла чувствительно к регистру. Вот что есть:"
+            ls -1
+            exit 1
+          fi
+          if [ -z "$BUTLER_API_KEY" ]; then
+            echo "ОШИБКА: секрет BUTLER_API_KEY пуст или не создан."
+            echo "Settings -> Secrets and variables -> Actions -> New repository secret"
+            exit 1
+          fi
+          echo "файл найден, ключ на месте (длина ${#BUTLER_API_KEY} символов)"
+
+      - name: Собрать сборку и проставить версию
+        run: |
+          set -e
           BUILD="${GITHUB_SHA::7} · $(date -u +%Y-%m-%d)"
           mkdir -p build
-          cp PolyGrind.html build/index.html
+          cp "$GAME_FILE" build/index.html
           sed -i "s/__BUILD__/${BUILD}/" build/index.html
-          echo "Собрано: ${BUILD}"
-
-      # Проверка, что файл вообще живой: нет обрыва скрипта и версия проставлена
-      - name: Быстрая проверка
-        run: |
-          grep -q "</script>" build/index.html || { echo "нет закрывающего script"; exit 1; }
-          grep -q "__BUILD__" build/index.html && { echo "версия не подставилась"; exit 1; }
-          echo "размер: $(du -h build/index.html | cut -f1)"
+          if grep -q "__BUILD__" build/index.html; then
+            echo "ПРЕДУПРЕЖДЕНИЕ: метка __BUILD__ не найдена в файле, версия не проставлена."
+            echo "Это не смертельно — публикуем как есть."
+          fi
+          grep -q "</script>" build/index.html || { echo "ОШИБКА: скрипт в файле оборван"; exit 1; }
+          echo "собрано: ${BUILD}, размер $(du -h build/index.html | cut -f1)"
 
       - name: Скачать butler
         run: |
-          curl -sL -o butler.zip https://broth.itch.ovh/butler/linux-amd64/LATEST/archive/default
-          unzip -q butler.zip
+          set -e
+          URL="https://broth.itch.ovh/butler/linux-amd64/LATEST/archive/default"
+          echo "качаю $URL"
+          curl -fL --retry 3 --retry-delay 2 -o butler.zip "$URL" || {
+            echo "ОШИБКА: не смог скачать butler (сеть или адрес)."; exit 1; }
+          echo "скачано байт: $(stat -c%s butler.zip)"
+          unzip -o -q butler.zip || { echo "ОШИБКА: архив butler битый"; exit 1; }
           chmod +x butler
           ./butler -V
 
       - name: Залить на itch.io
         env:
           BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
-        run: ./butler push build "${ITCH_TARGET}:${ITCH_CHANNEL}" --userversion "${GITHUB_SHA::7}"
+        run: |
+          set -e
+          echo "цель: ${ITCH_TARGET}:${ITCH_CHANNEL}"
+          ./butler push build "${ITCH_TARGET}:${ITCH_CHANNEL}" --userversion "${GITHUB_SHA::7}" || {
+            echo ""
+            echo "butler отказался заливать. Частые причины:"
+            echo "  * логин или адрес проекта не совпадают с itch (нужен ник с itch.io, не с GitHub)"
+            echo "  * проект на itch.io ещё не создан"
+            echo "  * ключ API недействителен или скопирован не целиком"
+            exit 1; }
+          echo "готово: https://$(echo $ITCH_TARGET | tr '/' '.' | sed 's/\./.itch.io\//')"
