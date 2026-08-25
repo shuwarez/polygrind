@@ -1,0 +1,52 @@
+# Публикация PolyGrind на itch.io при каждом пуше в main.
+# Разовая настройка (делается один раз, руками):
+#   1. Создать на itch.io проект, тип «HTML», запомнить его адрес.
+#   2. Взять ключ API: https://itch.io/user/settings/api-keys
+#   3. В репозитории: Settings -> Secrets and variables -> Actions -> New secret
+#      имя BUTLER_API_KEY, значение — этот ключ.
+#   4. Ниже подставить свой логин и название проекта в ITCH_TARGET.
+name: deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:        # кнопка ручного запуска на вкладке Actions
+
+env:
+  ITCH_TARGET: suwarez/polygrind
+  ITCH_CHANNEL: html
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Клеймо сборки: короткий хеш коммита и дата подставляются прямо в файл,
+      # чтобы по скриншоту от игрока можно было понять, какая это версия.
+      - name: Проставить версию
+        run: |
+          BUILD="${GITHUB_SHA::7} · $(date -u +%Y-%m-%d)"
+          mkdir -p build
+          cp PolyGrind.html build/index.html
+          sed -i "s/__BUILD__/${BUILD}/" build/index.html
+          echo "Собрано: ${BUILD}"
+
+      # Проверка, что файл вообще живой: нет обрыва скрипта и версия проставлена
+      - name: Быстрая проверка
+        run: |
+          grep -q "</script>" build/index.html || { echo "нет закрывающего script"; exit 1; }
+          grep -q "__BUILD__" build/index.html && { echo "версия не подставилась"; exit 1; }
+          echo "размер: $(du -h build/index.html | cut -f1)"
+
+      - name: Скачать butler
+        run: |
+          curl -sL -o butler.zip https://broth.itch.ovh/butler/linux-amd64/LATEST/archive/default
+          unzip -q butler.zip
+          chmod +x butler
+          ./butler -V
+
+      - name: Залить на itch.io
+        env:
+          BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
+        run: ./butler push build "${ITCH_TARGET}:${ITCH_CHANNEL}" --userversion "${GITHUB_SHA::7}"
