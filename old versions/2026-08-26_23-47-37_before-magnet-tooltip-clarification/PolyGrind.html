@@ -151,26 +151,22 @@ button:disabled{opacity:.35;cursor:default}
 /* Оверлей тоже прокручиваемый — страховка на случай, если что-то ещё разрастётся */
 .overlay{overflow-y:auto}
 
-/* Скрытая тестовая панель: отдельные классы, чтобы не менять боевые карточки. */
-#testpanel{width:min(940px,94vw);max-height:72vh;display:flex;flex-direction:column;gap:10px}
-#testsearch{font:inherit;font-size:17px;padding:11px 13px;color:var(--ink);background:#0b0f14;border:1px solid #526b8f;border-radius:3px;outline:none}
-#testsearch:focus{border-color:#88aefa;box-shadow:0 0 0 2px #6f9cff22}
-#testresults{display:grid;grid-template-columns:repeat(auto-fill,minmax(245px,1fr));gap:7px;overflow-y:auto;padding-right:5px}
-.testskill{display:flex;align-items:center;gap:8px;background:#11161c;border:1px solid #2e3b49;padding:9px 10px;text-align:left}
-.testskill:hover{border-color:#6b88b8}.testskill .tsbody{min-width:0;flex:1}.testskill .tsname{font-size:14px;color:#e7edf5}.testskill .tsmeta{font-size:11px;color:#8998aa;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.testskill button{padding:6px 8px;font-size:11px;white-space:nowrap}
-
 /* --- Магазин --- */
-#shop{width:min(1080px,94vw);max-height:63vh;overflow-y:auto;padding:2px 7px 4px;display:flex;flex-direction:column;gap:18px}
-.shopcat{border-top:1px solid #29333e;padding-top:10px}.shopcat:first-child{border-top:0;padding-top:0}
-.shopcat-head{display:flex;align-items:baseline;gap:11px;margin:0 0 8px}.shopcat-head b{color:#f0c040;letter-spacing:2px;font-size:14px}.shopcat-head span{color:#748294;font-size:12px}
-.shopgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(238px,1fr));gap:8px}
-.srow{position:relative;min-height:112px;background:linear-gradient(145deg,#171d24,#10151b);border:1px solid #334151;border-radius:4px;padding:10px 11px;display:flex;flex-direction:column;gap:7px;cursor:help;transition:.14s}
-.srow:hover{border-color:#d59d32;box-shadow:0 0 17px #d59d261f;transform:translateY(-1px)}.srow.done{border-color:#3f7650;background:linear-gradient(145deg,#142018,#0f1712)}
-.srow .sinfo{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;min-width:0}.srow .snm{font-size:14px;letter-spacing:1px;color:#e5edf5;line-height:1.25}.srow .snm i{display:block;font-style:normal;color:#8292a4;font-size:10.5px;letter-spacing:.7px;margin-top:4px}
-.srow .snt{display:none}.srow .sval{font-size:20px;line-height:1;color:#ffc95d;font-weight:800;text-align:right;white-space:nowrap}.srow.done .sval{color:#83d89c}
-.srow .sbuy{margin-top:auto;display:flex;gap:5px;flex-wrap:wrap}.srow .sbuy button{flex:1;min-width:62px;padding:6px 5px;border-color:#7b5724;background:linear-gradient(180deg,#4b3210,#201609);font-size:11px;letter-spacing:.2px;box-shadow:inset 0 1px #ffdc7044,0 0 8px #d7902118}.srow .sbuy button:hover:not(:disabled){border-color:#ffe18a;background:linear-gradient(180deg,#69451a,#2a1a08);box-shadow:inset 0 1px #fff0a588,0 0 13px #e7ad3f55}.srow .sbuy button b{display:block;color:#ffd567;font-size:11px;margin-top:2px}.srow .sbuy button:disabled{box-shadow:none}
-#bank{font-size:18.8px;color:#f0c040;letter-spacing:1px;background:#15130e;border:1px solid #514022;padding:8px 14px;border-radius:3px}#bank span{color:#7d8b9a;font-size:12px;letter-spacing:0}
+#shop{display:flex;flex-direction:column;gap:9px;width:min(980px,94vw);
+  max-height:56vh;overflow-y:auto;padding-right:6px}
+.srow{display:flex;align-items:center;gap:14px;background:var(--panel);
+  border:1px solid var(--line);border-radius:4px;padding:11px 14px}
+.srow.done{border-color:#3c6b45;background:#101a13}
+.srow .sinfo{flex:1;min-width:0}
+.srow .snm{font-size:16.2px;letter-spacing:1px}
+.srow .snm i{font-style:normal;color:var(--dim);font-size:12.5px;letter-spacing:.5px;margin-left:8px}
+.srow .snt{font-size:12.8px;color:var(--dim);line-height:1.45;margin-top:3px}
+.srow .sval{font-size:22px;color:var(--amber);font-weight:700;min-width:104px;text-align:right}
+.srow .sbuy{display:flex;gap:6px}
+.srow .sbuy button{padding:7px 11px;font-size:13.2px;letter-spacing:0;min-width:96px}
+.srow .sbuy button b{color:#f0c040;font-weight:700}
+#bank{font-size:18.8px;color:#f0c040;letter-spacing:1px}
+#bank span{color:#7d8b9a;font-size:13.8px;letter-spacing:0}
 #hint{position:absolute;bottom:10px;left:14px;font-size:13.8px;color:var(--dim);line-height:1.6;pointer-events:none;text-shadow:0 1px 3px #000}
 #toast{position:absolute;top:70px;left:50%;transform:translateX(-50%);font-size:16.2px;
   color:var(--amber);letter-spacing:2px;pointer-events:none;opacity:0;transition:opacity .3s}
@@ -345,10 +341,7 @@ const MODS = [
 {id:'key.dread_vampire',cat:'Кейстоун',nm:'УЖАСАЮЩИЙ ВАМПИР',           kind:'flag', stat:'kDread',     r:[1,1], rar:3, nt:'единственный источник восстановления: 0.3% нанесённого урона. Всё остальное лечение и вампиризм — с карточек, книг, амулетов, зачистки этажа — перестаёт работать'},
 {id:'life.leech_instant',cat:'Здоровье',nm:'МГНОВЕННЫЙ ВАМПИРИЗМ',      kind:'flag', stat:'leechInstant',r:[1,1], rar:2, w:45, unlock:true,
  nt:'вытягивание перестаёт течь во времени и лечит целиком в момент удара', show:()=>D.leechBase>=25},
-{id:'def.normal_reduction',cat:'Защита',nm:'Снижение урона от обычных монстров',kind:'inc',stat:'normalDr',r:[5,15],
- nt:'Случайно −5…−15% входящего урона от обычных врагов за выбор; суммируется до −25%.', hide:()=>D.normalDr>=25},
-{id:'def.major_reduction',cat:'Защита',nm:'Снижение урона от элиты и боссов',kind:'inc',stat:'majorDr',r:[5,15],
- nt:'Случайно −5…−15% входящего урона от элитных врагов и боссов за выбор; суммируется до −25%.', hide:()=>D.majorDr>=25},
+{id:'life.degen_reduction',cat:'Здоровье',nm:'Снижение урона со временем по себе',kind:'inc',stat:'degenRed',r:[20,40], rar:1},
 
 // --- Урон, общие ---
 {id:'dmg.flat_all',    cat:'Урон', nm:'+N ко всему урону',              kind:'flat', stat:'dmg',        r:[3,7]},
@@ -390,10 +383,10 @@ const MODS = [
 {id:'shape.proj_size', cat:'Геометрия', nm:'Размер снарядов',           kind:'inc',  stat:'projSize',   r:[20,35], wep:['proj','orb'], noMin:true},
 {id:'shape.aoe_radius',cat:'Геометрия', nm:'Радиус области действия',   kind:'inc',  stat:'aoeR',       r:[15,28]},
 {id:'shape.cleave_arc',cat:'Геометрия', nm:'Дуга рассекающего удара',   kind:'inc',  stat:'arc',        r:[20,40], wep:['melee'], noMin:true},
-{id:'shape.explode_on_kill',cat:'Геометрия',nm:'Шанс чумного взрыва трупа',kind:'chance',stat:'explode', r:[15,30], rar:1, nt:'заражает ближайшую толпу чумой',
+{id:'shape.explode_on_kill',cat:'Геометрия',nm:'Шанс взрыва трупа',     kind:'chance',stat:'explode',   r:[15,30], rar:1, nt:'цепная чистка толпы',
  hide:()=> D.explode >= 100},                                        // на 100% карточка уходит из пула
-{id:'shape.explode_mega',cat:'Геометрия', nm:'Шанс МЕГА-чумного взрыва',kind:'chance',stat:'explodeMega',r:[15,25], rar:2,
- nt:'вдвое больший радиус чумы; заражает всю задетую толпу',
+{id:'shape.explode_mega',cat:'Геометрия', nm:'Шанс МЕГА-взрыва трупа', kind:'chance',stat:'explodeMega',r:[15,25], rar:2,
+ nt:'вдвое больший радиус, вдвое сильнее и поджигает всех задетых',
  show:()=> D.explode >= 100,                                        // открывается только после 100% обычного
  unlock:true, w:45},                                                // первый раз выпадает гарантированно
 {id:'shape.double_hit',cat:'Геометрия', nm:'Шанс двойного попадания',   kind:'chance',stat:'dblHit',    r:[12,22], rar:1, hide:()=>D.dblHit>=100},
@@ -425,7 +418,7 @@ const MODS = [
  nt:'охлаждение вмораживает цель в пол: полная остановка на 1.4 сек', show:()=>D.chillCh>=100},
 {id:'dt.lightning.flat',cat:'Молния',nm:'+N к урону: Молния',           kind:'flat', stat:'dLit',       r:[2,12], nt:'широкий разброс'},
 {id:'dt.lightning.inc',cat:'Молния', nm:'+% к урону: Молния',           kind:'inc',  stat:'iLit',       r:[20,35]},
-{id:'ail.shock.chance',cat:'Молния', nm:'Шанс разряда молнии',          kind:'chance',stat:'shockCh',   r:[15,28], nt:'разряд бьёт по ближайшим врагам, а цель получает Шок: +30% входящего урона'},
+{id:'ail.shock.chance',cat:'Молния', nm:'Шанс наложить: Шок',           kind:'chance',stat:'shockCh',   r:[15,28], nt:'+30% получаемого урона целью'},
 {id:'dt.poison.flat',  cat:'Яд',     nm:'+N к урону: Яд',               kind:'flat', stat:'dPoi',       r:[3,8]},
 {id:'dt.poison.inc',   cat:'Яд',     nm:'+% к урону: Яд',               kind:'inc',  stat:'iPoi',       r:[20,35]},
 {id:'ail.poison.chance',cat:'Яд',    nm:'Шанс наложить: Отравление',    kind:'chance',stat:'poiCh',     r:[20,40], nt:'стакается, не тратит время боя', hide:()=>D.poiCh>=100},
@@ -543,7 +536,7 @@ const MODS = [
 {id:'key.slow_strong', cat:'Кейстоун', nm:'Тяжёлый удар',               kind:'flag', stat:'kHeavy',  r:[1,1], rar:3, nt:'вдвое медленнее, но вчетверо сильнее'},
 {id:'key.fast_weak',   cat:'Кейстоун', nm:'Шквал',                      kind:'flag', stat:'kFlurry', r:[1,1], rar:3, nt:'вдвое быстрее, но вдвое слабее'},
 {id:'key.no_block_dodge',cat:'Кейстоун',nm:'Акробатика',                kind:'flag', stat:'kAcro',   r:[1,1], rar:3, nt:'блок обнуляется, уклонение удвоено, +15% скорости'},
-{id:'key.explode_but_hurt',cat:'Кейстоун',nm:'Чумная смерть',           kind:'flag', stat:'kVolat',  r:[1,1], rar:3, nt:'каждый труп гарантированно даёт чумный взрыв, но радиус чумы уменьшается на 35%'},
+{id:'key.explode_but_hurt',cat:'Кейстоун',nm:'Взрывная смерть',         kind:'flag', stat:'kVolat',  r:[1,1], rar:3, nt:'все трупы взрываются, но взрыв задевает и вас'},
 {id:'key.no_defense_speed',cat:'Кейстоун',nm:'Налегке',                 kind:'flag', stat:'kUnburd', r:[1,1], rar:3, nt:'броня обнуляется, но +35% скорости и +25% скорости атаки'},
 ];
 
@@ -868,31 +861,30 @@ const SHOP = [
   {id:'drFlat', cat:'defense', nm:'ПАНЦИРЬ ОТ РОЯ', max:40, base:2000, grow:1.08, fmt:l => '+' + l + ' с удара', nt:'Вычитает 1 урона из каждого попадания за уровень.'},
   {id:'block',  cat:'defense', nm:'БЛОК', max:60, base:2500, grow:1.07, unit:'%', nt:'+1% шанса блока за уровень.'},
   {id:'dodge',  cat:'defense', nm:'УВОРОТ', max:70, base:3500, grow:1.08, unit:'%', nt:'+1% шанса уворота за уровень, потолок 70%.'},
+  {id:'iframe', cat:'defense', nm:'НЕУЯЗВИМОСТЬ РЫВКА', max:100, base:2500, grow:1.07, unit:'%', nt:'+1% к длительности неуязвимости рывка за уровень.'},
   {id:'dashN',  cat:'defense', nm:'ЗАРЯДЫ РЫВКА', max:2, base:20000, grow:2.2, fmt:l => '+' + l, nt:'Дополнительный заряд рывка. Базовый один, максимум три.'},
-  {id:'vacuum', cat:'qol', nm:'БЫСТРЫЙ СБОР', max:10, base:3000, grow:1.55,
+  {id:'dashCd', cat:'defense', nm:'ОТКАТ РЫВКА', max:60, base:2200, grow:1.07, unit:'%', nt:'−1% отката рывка за уровень.'},
+  {id:'vacuum', nm:'БЫСТРЫЙ СБОР',      max:10,   base:3000, grow:1.55,
    nt:'+20% к радиусу и скорости притяжения опыта и золота за ранг. На 10-м ранге они летят к вам с тройной скоростью из втрое большей дальности.',
    fmt:l => l ? '+' + (l*20) + '% к сбору' : '—'},
-  {id:'itemDrop', cat:'qol', nm:'ИСКАТЕЛЬ РЕЛИКВИЙ', max:10, base:25000, grow:1.8, unit:'%',
-   nt:'+1 процентный пункт к шансу выпадения предмета за ранг. Максимум +10 п.п.: обычный враг 0,4% → 10,4%, элита 2% → 12%, босс 16% → 26%. Дорогая QoL-ветка, не добавляет силу напрямую.',
-   fmt:l => l ? '+' + l + ' п.п. к шансу предмета' : '—'},
-  {id:'startSkill', cat:'qol', nm:'ПЕРВЫЙ ШАГ', max:5, base:24000, grow:2.4,
+  {id:'startSkill', nm:'ПЕРВЫЙ ШАГ',       max:5,    base:24000, grow:2.4,
    nt:'В начале каждой новой партии даёт одно дополнительное повышение уровня за ранг. На максимуме выбираете пять модификаторов до первого боя.',
    fmt:l => l ? '+' + l + ' к стартовым навыкам' : '—'},
-  {id:'card4',  cat:'qol', nm:'ЧЕТВЁРТАЯ КАРТА', max:1, base:5000, grow:1,
+  {id:'card4',  nm:'ЧЕТВЁРТАЯ КАРТА', max:1,    base:5000, grow:1,
    nt:'При повышении уровня показывать четыре модификатора вместо трёх. Действует всю партию, на каждом уровне.',
    fmt:l => l ? 'открыта' : '—'},
   {id:'dmg',    nm:'ВЕСЬ УРОН',       max:500,  base:2500, grow:1.014, unit:'%',
    nt:'+1% ко всему урону: оружие, стихии, свита, поджог, яд, кровотечение. Складывается в общий процент вместе с карточками.'},
   {id:'aspd',   nm:'СКОРОСТЬ АТАКИ',  max:100,  base:2500, grow:1.065, unit:'%',
    nt:'+1% к скорости атаки. Тот же процент, что и на карточках, — суммируется с ними в один множитель.'},
-  {id:'hpFlat', cat:'health', nm:'ЗДОРОВЬЕ ПЛЮСОМ', max:1000, base:100,  grow:1.007,
+  {id:'hpFlat', nm:'ЗДОРОВЬЕ ПЛЮСОМ', max:1000, base:100,  grow:1.007,
    nt:'+1 к максимальному здоровью. Прибавляется ДО процентов, поэтому каждый процент здоровья делает его дороже по эффекту.',
    fmt:l => '+' + l},
-  {id:'hpPct', cat:'health', nm:'ЗДОРОВЬЕ В ПРОЦЕНТАХ', max:1000, base:5000, grow:1.012, unit:'%',
+  {id:'hpPct',  nm:'ЗДОРОВЬЕ В ПРОЦЕНТАХ', max:1000, base:5000, grow:1.012, unit:'%',
    nt:'+1% к максимальному здоровью. Дорогая ветка: процент усиливает и базовое здоровье, и все постоянные прибавки здоровья.'},
-  {id:'mspd', cat:'qol', nm:'СКОРОСТЬ БЕГА', max:50, base:1000, grow:1.11, unit:'%',
+  {id:'mspd',   nm:'СКОРОСТЬ БЕГА',   max:50,   base:1000, grow:1.11,  unit:'%',
    nt:'+1% к скорости передвижения. Самый дорогой процент в магазине: бег — это уклонение, а уклонение не имеет потолка.'},
-  {id:'sarmor', cat:'defense', nm:'БРОНЯ', max:70, base:3000, grow:1.075, unit:'%',
+  {id:'sarmor', nm:'БРОНЯ',           max:70,   base:3000, grow:1.075, unit:'%',
    nt:'+1% к снижению получаемого урона. Считается ОТДЕЛЬНЫМ множителем после защиты из карточек, поэтому даже 70% плюс 60% с билда не дают неуязвимости — только 88% суммарно.'},
   {id:'sxp',    nm:'ОПЫТ',            max:500,  base:500,  grow:1.012, unit:'%',
    nt:'+1% к получаемому опыту. Быстрее уровни — больше карточек за партию, то есть покупка не силы, а скорости сборки билда.'},
@@ -932,7 +924,9 @@ function shopApply(bag){
   if (shopLvl('drFlat')) bag.add('drFlat', 'flat', shopLvl('drFlat'));
   if (shopLvl('block'))  bag.add('block', 'flat', shopLvl('block'));
   if (shopLvl('dodge'))  bag.add('dodge', 'flat', shopLvl('dodge'));
+  if (shopLvl('iframe')) bag.add('iframe', 'inc', shopLvl('iframe'));
   if (shopLvl('dashN'))  bag.add('dashN', 'flat', shopLvl('dashN'));
+  if (shopLvl('dashCd')) bag.add('dashCd', 'inc', shopLvl('dashCd'));
   // Опыт и золото — обычные статы сумки, кладём туда же, где карточки и книги
   if (shopLvl('sxp'))    bag.add('xpGain',   'inc', shopLvl('sxp'));
   if (shopLvl('sgold'))  bag.add('goldFind', 'inc', shopLvl('sgold'));
@@ -980,7 +974,7 @@ function newGame(weaponKey, control, subclassKey){
     boils:[],                                // лужи «Кипящей крови»
     acidPools:[],                            // кислота веномансера от павших приспешников
     packs:[],                                // живые пачки элиты на этаже
-    time:0, orbitA:0, paused:false, over:false, testOpen:false, target:null, keys:{},
+    time:0, orbitA:0, paused:false, over:false, target:null, keys:{},
     bloodT:0,                                // остаток ярости КРОВНЫХ УЗ, секунды
   };
   shopApply(G.bag);        // покупки магазина входят в сумку до первого пересчёта
@@ -1009,10 +1003,6 @@ function recalc(){
   D.regen  = b.calc('regen', 0) + D.life * b.flat('regenPct')/100;
   D.armor  = unburd ? 0 : b.calc('armor', 0) + (amu('golem') ? 50 : 0) + (dancer ? Math.min(60, G.lvl) : 0);
   D.dr     = clamp(b.flat('dr'), 0, 60);
-  // Две отдельные ветки защиты от рангов врагов. Это множители после общей
-  // защиты: −25% означает, что от соответствующего врага проходит 75% урона.
-  D.normalDr = clamp(b.sum('normalDr'), 0, 25);
-  D.majorDr  = clamp(b.sum('majorDr'), 0, 25);
   // Магазинная броня — ОТДЕЛЬНЫЙ множитель, а не слагаемое к D.dr. Сложение
   // упёрлось бы в 130% при полной прокачке, то есть в неуязвимость и деление
   // на ноль в балансе. Перемножение даёт 0.40 * 0.30 = 0.12, то есть 88%
@@ -1112,7 +1102,6 @@ function recalc(){
   D.orbitN      = clamp(Math.round(b.flat('orbit')), 0, 10);   // круговые орбы, потолок 10
   D.explode     = clamp(b.flat('explode') + (b.has('kVolat') ? 100 : 0), 0, 100);
   D.explodeMega = clamp(b.flat('explodeMega'), 0, 100);
-  D.plagueRadius= b.has('kVolat') ? 0.65 : 1;
   D.dblHit  = clamp(b.flat('dblHit'), 0, 100);
   D.triHit  = clamp(b.flat('triHit'), 0, 100);
   D.shotgun = b.has('shotgun'); D.chainKeep = b.has('chainKeep'); D.pierceBonus = b.has('pierceBonus');
@@ -1355,7 +1344,7 @@ const BOSS_AFFIXES = [
       const fy0 = (tgt === G.player) ? (G.player.moving ? G.player.faceY : 0) : 0;
       const px = clamp(tgt.x + fx0*lead, -ARENA+40, ARENA-40);
       const py = clamp(tgt.y + fy0*lead, -ARENA+40, ARENA-40);
-      G.pools.push({x:px, y:py, r:46, life:3.0, max:3.0, arm:0.55, dmg:edmg*0.40, sourceKind:e.kind});
+      G.pools.push({x:px, y:py, r:46, life:3.0, max:3.0, arm:0.55, dmg:edmg*0.40});
       G.fx.push({t:'ring', x:px, y:py, r:6, max:46, life:0.4, col:'#c08a3a'});
       return false;
     } },
@@ -1717,7 +1706,6 @@ function packClone(src, {hp, r, dmg}){
   c.ail = {chill:0, shock:0, stun:0, freeze:0, dizzy:0};
   c.dots = {fire:{dps:0,n:0,dur:3}, poison:{dps:0,n:0,dur:4}, bleed:{dps:0,n:0,dur:6}};
   c.dotAcc = {fire:0, poison:0, bleed:0};
-  c.plague = null;
   c.kb = {x:0, y:0}; c.roles = []; c.aff = [];
   c.dead = false; c.jumpTo = null; c.noBreed = true; c.didSplit = true;
   c.maxHp = Math.max(1, Math.round(src.maxHp*hp)); c.hp = c.maxHp;
@@ -1846,15 +1834,14 @@ function spawnEnemy(kind){
     ail:{chill:0, shock:0, stun:0, freeze:0, dizzy:0}, armor:0, infT:0,
     dots:{fire:{dps:0,n:0,dur:3}, poison:{dps:0,n:0,dur:4}, bleed:{dps:0,n:0,dur:6}},
     dotAcc:{fire:0, poison:0, bleed:0}, dotT:0, orbCd:0,
-    plague:null,                              // отдельный процентный DoT от чумного взрыва
     aff:[], affT:{}, affNm:'', ward:null, wardCol:null, bulwark:0,   // аффиксы мини-босса
     pack:null, roles:[], dead:false, rage:0, noDmgT:0, r0:0,         // пачка
     jumpTo:null, jumpT:0, didSplit:false, noBreed:false, madT:0, madA:0,
   };
   const mul = boss ? 14 : elite ? 3.2 : 1;
   e.maxHp = e.hp = Math.round(t.hp * mul * hpScale(f));
-  // Базовый темп всех врагов ещё на 5% выше прежнего: кайт дороже для всех типов.
-  e.spd = t.spd * 1.265 * 1.155 * (1 + G.bossKills*0.02) * (boss?1.15:elite?0.9:1);
+  // Прежние 1.265 дополнительно ускорены на 10%: кайт дороже для всех типов.
+  e.spd = t.spd * 1.265 * 1.10 * (1 + G.bossKills*0.02) * (boss?1.15:elite?0.9:1);
   e.dmg = t.dmg * (boss?1.9:elite?1.3:1) * dmgScale(f);
   e.xp  = Math.round(t.xp * (boss?18:elite?4:1) * (1 + f*0.12));
   e.armor = elite||boss ? 8 + f*1.5 : 0;
@@ -2095,10 +2082,7 @@ function applyDamage(e, amount, crit, silent){
    ролла: иначе два независимых шанса разъезжались бы при любой правке дропа. */
 function tryDropBook(e){
   const mult = e.kind === 'boss' ? 40 : e.kind === 'elite' ? 5 : 1;
-  // «Искатель реликвий» добавляет процентные пункты к уже рассчитанному шансу:
-  // +10 п.п. = 0,4% → 10,4% у обычного, 2% → 12% у элиты, 16% → 26% у босса.
-  const chance = Math.min(100, 0.4 * mult + shopLvl('itemDrop'));
-  if (Math.random()*100 >= chance) return;
+  if (Math.random()*100 >= 0.4 * mult) return;
   dropItem(e);
 }
 
@@ -2369,17 +2353,19 @@ function killEnemy(e, i){
   p.killT = 3;
   if (b.has('novaKill')) nova(e.x, e.y, 110*D.aoeR, avgHit()*0.6, '#ffb340');
   if (Math.random()*100 < D.explode){
-    // Мега-чума — отдельный ролл поверх сработавшего обычного взрыва: меняет
-    // только охват, не силу и не длительность болезни.
+    // Мега-взрыв — отдельный ролл поверх сработавшего обычного
     const mega = D.explodeMega > 0 && Math.random()*100 < D.explodeMega;
-    const rad  = PLAGUE_RADIUS * D.aoeR * D.plagueRadius * (mega ? 2 : 1);
-    plagueBurst(e.x, e.y, rad);
+    const dmgV = avgHit() * (mega ? 1.6 : 0.8);
+    const rad  = 105 * D.aoeR * (mega ? 2 : 1);
+    nova(e.x, e.y, rad, dmgV, mega ? '#ff7a2f' : '#e0743c',
+         mega ? {ignite: dmgV*0.35*D.ailEff} : null);
     if (mega){                                                  // отдельная подача: гуще и ярче
       G.fx.push({t:'ring', x:e.x, y:e.y, r:8, max:rad*0.6, life:0.4, col:'#ffd24a'});
-      burst(e.x, e.y, 30, '#9dca4a', 340, 5, 0.9);
+      burst(e.x, e.y, 30, '#ff7a2f', 340, 5, 0.9);
       burst(e.x, e.y, 12, '#ffd24a', 260, 4, 0.7);
       G.fx.push({t:'shake', life:0.12});
     }
+    if (b.has('kVolat') && dist(p,{x:e.x,y:e.y}) < rad) hurt(dmgV*0.35, true, true); // цена кейстоуна, но свиту не задевает
   }
   G.fx.push({t:'ring', x:e.x, y:e.y, r:e.r, max:e.r*2.4, life:0.3, col:e.t.col});
   // Смерть: тем крупнее враг — тем гуще брызги
@@ -2498,25 +2484,6 @@ function addDot(e, type, dps, dur){
 }
 /* Совместимость: кровотечение теперь просто один из типов DoT */
 function addBleed(e, dps){ addDot(e, 'bleed', dps, 6 * D.ailDur); }
-
-/* Чумной взрыв не наносит мгновенный урон. Он заражает всех выживших в малом
-   радиусе; чума всегда делает три тика: на 1-й, 2-й и 3-й секунде. Каждый тик
-   берёт 15% от ТЕКУЩЕГО, а не максимального HP цели, поэтому не может убить
-   одним срабатыванием и естественно слабеет на раненых врагах. */
-const PLAGUE_RADIUS = 82, PLAGUE_LIFE = 3, PLAGUE_PCT = 0.15;
-function infectWithPlague(e){
-  e.plague = {life:PLAGUE_LIFE, tick:1, hits:0};  // обновляет чуму, а не складывает бесконечно
-  statusText(e, 'ЧУМА', '#b6df55');
-  G.fx.push({t:'ring', x:e.x, y:e.y, r:e.r+3, max:e.r+15, life:0.22, col:'#b6df55'});
-}
-function plagueBurst(x, y, radius){
-  G.fx.push({t:'ring', x, y, r:8, max:radius, life:0.34, col:'#9dca4a'});
-  burst(x, y, 18, '#9dca4a', 240, 4, 0.65);
-  for (const e of G.enemies){
-    if (e.dead || dist(e, {x,y}) >= radius + e.r) continue;
-    infectWithPlague(e);
-  }
-}
 
 /* Виды приспешников. mode задаёт поведение, остальное — внешний вид. */
 const MKIND = {
@@ -2760,12 +2727,8 @@ function enemyCause(e, attack){
   const rank = e.kind === 'boss' ? 'БОСС' : e.kind === 'elite' ? 'ЭЛИТА' : 'ВРАГ';
   return rank + ' · ' + e.t.nm + (e.affNm ? ' · ' + e.affNm : '') + ' · ' + attack;
 }
-function hurt(v, ignoreDefense, selfBlast, cause, sourceKind){
+function hurt(v, ignoreDefense, selfBlast, cause){
   const p = G.player, b = G.bag;
-  // Старые вызовы передают только подпись причины, поэтому ранг берём и из неё.
-  // Новые опасности (лужи) передают sourceKind явно, не теряя владельца эффекта.
-  const enemyRank = sourceKind || (cause && cause.startsWith('ВРАГ') ? 'norm' :
-    cause && (cause.startsWith('ЭЛИТА') || cause.startsWith('БОСС') || cause.includes('БОСС')) ? 'elite' : '');
   if (p.inv > 0) return;                                          // i-frames рывка
   // СЕРДЦЕ ГОЛЕМА: заряд копится сам, тратится на первый же удар после готовности
   if (amu('golem') && G.amuT.golem <= 0 && !selfBlast){
@@ -2781,8 +2744,6 @@ function hurt(v, ignoreDefense, selfBlast, cause, sourceKind){
     v = Math.max(1, v - D.drFlat);
     v *= 1 - D.dr/100;
     if (D.drShop) v *= 1 - D.drShop/100;      // магазинная броня поверх, отдельным множителем
-    if (enemyRank === 'norm') v *= 1 - D.normalDr/100;
-    if (enemyRank === 'elite' || enemyRank === 'boss') v *= 1 - D.majorDr/100;
   }
   // ПАНЦИРЬ ЦЕЛОГО и ПОСЛЕДНЯЯ БРОНЯ: два взаимоисключающих порога
   if (amu('fullplate') && p.hp >= D.life) v *= 0.65;
@@ -3085,20 +3046,6 @@ function update(dt){
 
     // Тики негативных эффектов
     for (const key in e.ail) if (e.ail[key] > 0) e.ail[key] -= dt;
-    // ЧУМА: три дискретных тика через 1, 2 и 3 секунды. Урон вычисляется из
-    // текущего HP непосредственно перед каждым тиком, а не из запаса на момент
-    // заражения: 1000 → 850 → 722,5 → 614,1 при трёх успешных тиках.
-    if (e.plague){
-      const pl = e.plague;
-      pl.life -= dt; pl.tick -= dt;
-      while (pl.tick <= 0 && pl.hits < 3){
-        pl.tick += 1; pl.hits++;
-        const pv = e.hp * PLAGUE_PCT;
-        applyDamage(e, pv, false, true);
-        G.fx.push({t:'num', x:e.x, y:e.y-e.r-16, v:Math.round(pv), life:0.7, col:'#b6df55'});
-      }
-      if (pl.hits >= 3 || pl.life <= 0) e.plague = null;
-    }
     // Все три типа урона со временем тикают и утекают по одной формуле
     for (const type in e.dots){
       const d = e.dots[type];
@@ -3443,15 +3390,15 @@ function update(dt){
   /* --- Лужи смолы --- */
   // Урон тикает раз в полсекунды общим таймером, а не каждый кадр и не на каждую
   // лужу: иначе hurt() съедал бы шанс уворота шестьдесят раз в секунду.
-  let poolDmg = 0, poolKind = '';
+  let poolDmg = 0;
   for (let i = G.pools.length-1; i >= 0; i--){
     const pl = G.pools[i]; pl.life -= dt;
     if (pl.life <= 0){ G.pools.splice(i,1); continue; }
     if (pl.arm > 0){ pl.arm -= dt; continue; }                   // лужа ещё растекается
-    if (dist(pl, p) < pl.r + p.r && pl.dmg >= poolDmg){ poolDmg = pl.dmg; poolKind = pl.sourceKind || ''; }
+    if (dist(pl, p) < pl.r + p.r) poolDmg = Math.max(poolDmg, pl.dmg);
   }
   p.poolCd = Math.max(0, (p.poolCd||0) - dt);
-  if (poolDmg > 0 && p.poolCd <= 0){ p.poolCd = 0.5; hurt(poolDmg*0.5, false, false, 'ЛУЖА СМОЛЫ', poolKind); }
+  if (poolDmg > 0 && p.poolCd <= 0){ p.poolCd = 0.5; hurt(poolDmg*0.5, false, false, 'ЛУЖА СМОЛЫ'); }
 
   /* --- Эффекты --- */
   for (let i = G.fx.length-1; i >= 0; i--){
@@ -3864,7 +3811,6 @@ function render(){
 
     // Индикаторы состояний
     if (e.dots.fire.dps > 0){ ctx.strokeStyle = '#ff7a2f'; drawShape(e.t.shape,e.x,e.y,e.r+4,-e.rot); ctx.stroke(); }
-    if (e.plague){ ctx.strokeStyle = '#b6df55'; ctx.lineWidth = 2; drawShape(e.t.shape,e.x,e.y,e.r+9,e.rot); ctx.stroke(); }
     if (e.ail.chill  > 0){
       ctx.strokeStyle = '#7fd6ff'; drawShape(e.t.shape,e.x,e.y,e.r+7,e.rot*0.5); ctx.stroke();
       // Радиус ауры виден, иначе игрок не поймёт, почему соседи вязнут
@@ -4266,8 +4212,7 @@ const SKILL_TIPS = {
   'life.on_crit':'<b>Когда срабатывает:</b> только когда ваше попадание становится критическим.<br><b>Эффект:</b> восстанавливает указанное число HP за крит. Чем выше шанс крита и скорость атаки, тем чаще работает.<br><b>Важно:</b> не является вампиризмом: лечение не зависит от величины нанесённого урона.',
   'key.dread_vampire':'<b>Цена кейстоуна:</b> здоровье больше не восстанавливается от убийств, попаданий, критов, книг, амулетов и зачистки этажа.<br><b>Взамен:</b> каждое нанесённое вами повреждение лечит на 0,3% от фактически нанесённого урона.<br><b>Пример:</b> удар на 1 000 урона вернёт 3 HP. Это единственный источник восстановления, пока кейстоун активен.',
   'life.leech_instant':'<b>Требование:</b> появляется после накопления 25% базового вампиризма.<br><b>Эффект:</b> вампиризм от удара приходит сразу, а не растягивается во времени.<br><b>Не добавляет:</b> ни процент вампиризма, ни урон — меняет только момент получения уже имеющегося лечения.',
-  'def.normal_reduction':'<b>Что защищает:</b> контакт, снаряды, таран и опасные лужи, созданные <b>обычными</b> врагами.<br><b>Формула:</b> каждый выбор случайно даёт −5…−15%; значения складываются, но итог ограничен −25%.<br><b>Не действует:</b> на элиту, боссов, собственные взрывы и урон от иных источников.',
-  'def.major_reduction':'<b>Что защищает:</b> контакт, снаряды, таран, лужи и особые атаки <b>элитных врагов и боссов</b>.<br><b>Формула:</b> каждый выбор случайно даёт −5…−15%; значения складываются, но итог ограничен −25%.<br><b>Не действует:</b> на обычных врагов, собственные взрывы и урон от иных источников.',
+  'life.degen_reduction':'<b>Защищает от:</b> периодического урона по самому герою — например, от собственных опасных эффектов.<br><b>Формула:</b> такой урон уменьшается на указанное число процентов.<br><b>Не защищает:</b> от обычного удара врага, контактного урона, снаряда или взрыва.',
   'dmg.thorns':'<b>Когда срабатывает:</b> враг наносит вам контактный урон.<br><b>Эффект:</b> этот враг немедленно получает указанное число урона в ответ, поверх других защитных механик.<br><b>Важно:</b> шипы не работают, если атака промахнулась из-за уклонения.',
   'dmg.reflect':'<b>Требование:</b> открывается при 40 шипах.<br><b>Когда срабатывает:</b> после полученного удара.<br><b>Эффект:</b> возвращает атакующему процент от урона, который вы получили; шипы при этом наносят свой фиксированный урон отдельно.',
   'dmg.pct_enemy_hp':'<b>Когда срабатывает:</b> при вашем попадании по врагу.<br><b>Эффект:</b> добавляет урон, равный указанному проценту от здоровья цели.<br><b>Практически:</b> особенно силён против врагов и боссов с большим запасом HP; по раненой цели добавка становится меньше.',
@@ -4292,8 +4237,8 @@ const SKILL_TIPS = {
   'shape.proj_size':'<b>Что меняет:</b> визуальный и фактический радиус снаряда.<br><b>Эффект:</b> крупным снарядом проще попасть по цели; у сфер увеличивается область попадания.<br><b>Не влияет:</b> на урон и радиус взрыва — для взрыва нужен «Радиус области действия».',
   'shape.aoe_radius':'<b>Что меняет:</b> радиус взрывов, волн, луж и других эффектов по площади.<br><b>Пример:</b> +25% превращает радиус 100 в 125, а площадь покрытия становится заметно больше.<br><b>Не увеличивает:</b> размер обычной стрелы и дальность её полёта.',
   'shape.cleave_arc':'<b>Что меняет:</b> угол дугового удара клинком.<br><b>Эффект:</b> за один взмах можно задеть больше врагов, стоящих перед героем.<br><b>Не увеличивает:</b> дальность удара и урон по одной цели.',
-  'shape.explode_on_kill':'<b>Когда срабатывает:</b> после смерти врага от вашей атаки или эффекта.<br><b>Эффект:</b> с указанным шансом труп даёт чумный взрыв малого радиуса и заражает всех задетых врагов.<br><b>Чума:</b> ровно 3 секунды; на 1-й, 2-й и 3-й секунде снимает 15% от <b>текущего</b> HP цели. Не наносит мгновенный прямой урон.<br><b>Предел:</b> при 100% каждый труп вызывает чуму.',
-  'shape.explode_mega':'<b>Требование:</b> открывается при 100% обычных чумных взрывов.<br><b>Когда срабатывает:</b> один из чумных взрывов становится мега-версией.<br><b>Эффект:</b> радиус заражения вдвое больше; сама чума остаётся прежней — 15% текущего HP в секунду в течение 3 секунд.',
+  'shape.explode_on_kill':'<b>Когда срабатывает:</b> после смерти врага от вашей атаки или эффекта.<br><b>Эффект:</b> с указанным шансом труп взрывается и ранит соседних врагов.<br><b>Предел:</b> при 100% каждый труп взрывается, после чего эта карточка больше не выпадает.',
+  'shape.explode_mega':'<b>Требование:</b> открывается при 100% обычных взрывов трупов.<br><b>Когда срабатывает:</b> один из взрывов трупов может стать мега-взрывом.<br><b>Эффект:</b> вдвое больше радиус и сила, а все задетые враги получают поджог.',
   'shape.double_hit':'<b>Когда срабатывает:</b> при вашем успешном попадании.<br><b>Эффект:</b> с указанным шансом создаётся второе попадание по той же цели.<br><b>Важно:</b> второй удар считается отдельно: может критовать и накладывать эффекты.',
   'shape.triple_hit':'<b>Требование:</b> открывается после развития двойного попадания.<br><b>Когда срабатывает:</b> после срабатывания двойного попадания.<br><b>Эффект:</b> с указанным шансом следует третий удар силой 40% от исходного.',
   'shape.shotgun':'<b>Требование:</b> не менее 5 дополнительных снарядов.<br><b>Эффект:</b> весь залп летит плотным пучком, а не широким веером.<br><b>Практически:</b> гораздо сильнее по одной крупной цели, но хуже покрывает толпу.',
@@ -4335,7 +4280,7 @@ function detailedSkillTip(m, card){
   if (/^dt\.(fire|cold|lightning|poison)\.inc$/.test(m.id)) return '<b>Что меняет:</b> усиливает весь урон соответствующей стихии на <b>' + shown + '</b>.<br><b>Влияет:</b> на прямой урон стихии и на её подходящие эффекты урона со временем.<br><b>Не влияет:</b> на шанс наложения статуса и его длительность.';
   if (m.id === 'ail.ignite.chance') return '<b>Когда проверяется:</b> при каждом вашем подходящем попадании.<br><b>Эффект:</b> с этим шансом цель получает поджог; горение наносит урон по площади вокруг неё.<br><b>Важно:</b> несколько проверок не гарантируют поджог, а при 100% он накладывается каждым попаданием.';
   if (m.id === 'ail.chill.chance') return '<b>Когда проверяется:</b> при каждом подходящем попадании.<br><b>Эффект:</b> цель замедляется на 35% и получает на 25% больше урона; соседние враги рядом с ней тоже замедляются.<br><b>Важно:</b> это шанс наложения, а не величина самого замедления.';
-  if (m.id === 'ail.shock.chance') return '<b>Когда проверяется:</b> при каждом подходящем попадании.<br><b>Эффект:</b> с указанным шансом из цели выходит разряд: цепная молния бьёт до 20 ближайших врагов в радиусе, нанося каждому 20% силы удара. Основная цель также получает Шок и начинает принимать на 30% больше урона.<br><b>Важно:</b> карточка повышает шанс разряда, но не сам урон цепной молнии и не множитель Шока.';
+  if (m.id === 'ail.shock.chance') return '<b>Когда проверяется:</b> при каждом подходящем попадании.<br><b>Эффект:</b> цель получает шок и начинает принимать на 30% больше урона.<br><b>Важно:</b> карточка повышает шанс наложить шок, но не сам множитель +30%.';
   if (m.id === 'ail.poison.chance') return '<b>Когда проверяется:</b> при каждом подходящем попадании.<br><b>Эффект:</b> с этим шансом накладывается один стак яда; стаки складываются и каждый наносит урон отдельно.<br><b>Важно:</b> яд не расходует время боя и не мешает накладывать новые стаки.';
   if (m.id === 'cc.knockback') return '<b>Когда проверяется:</b> при каждом вашем попадании.<br><b>Эффект:</b> с этим шансом враг отбрасывается от героя.<br><b>Важно:</b> при 100% каждое подходящее попадание отбрасывает; тогда открывается «ГОЛОВОКРУЖЕНИЕ».';
   if (m.id === 'cc.stun_chance') return '<b>Когда проверяется:</b> при каждом вашем попадании.<br><b>Эффект:</b> с этим шансом враг полностью перестаёт двигаться и атаковать на время оглушения.<br><b>Важно:</b> эта карточка повышает шанс, а длительность меняет «Длительность всех эффектов».';
@@ -4343,7 +4288,7 @@ function detailedSkillTip(m, card){
   if (m.id === 'prog.xp') return '<b>Что меняет:</b> увеличивает опыт, получаемый за убийство врагов.<br><b>Пример:</b> +25% превращает награду 10 опыта в 12,5 опыта.<br><b>Не влияет:</b> на уже набранный опыт и на размер наград золотом.';
   if (m.id === 'loot.gold') return '<b>Что меняет:</b> увеличивает количество золота, выпадающего в забеге.<br><b>Пример:</b> +40% превращает выпадение 10 золота в 14.<br><b>Важно:</b> не добавляет золото мгновенно — усиливает будущие выпадения.';
   if (m.id === 'loot.pickup_radius') return '<b>Что меняет:</b> увеличивает радиус, в котором герой автоматически подбирает опыт и золото.<br><b>Практически:</b> не нужно подходить вплотную к каждому кристаллу.<br><b>Не притягивает:</b> предметы из-за стен или на любом расстоянии; для этого нужна «Притягивание лута».';
-  if (m.id === 'loot.magnet') return '<b>Что меняет:</b> лут и без этого свойства постепенно подтягивается к герою, а эта карточка <b>значительно ускоряет</b> его притягивание.<br><b>Практически:</b> опыт и золото быстрее догоняют персонажа и не остаются далеко позади во время движения.<br><b>Сочетается:</b> с увеличением радиуса автоподбора — тот определяет, с какого расстояния лут начнёт двигаться к вам.';
+  if (m.id === 'loot.magnet') return '<b>Эффект:</b> опыт и золото начинают лететь к герою, когда попадают в радиус подбора.<br><b>Практически:</b> лут не остаётся лежать позади при постоянном движении.<br><b>Сочетается:</b> с увеличением радиуса автоподбора.';
   if (m.nt) return '<b>Как работает:</b> ' + m.nt + '<br><b>Длительность:</b> свойство остаётся активным до конца текущего забега.<br><b>Важно:</b> повторно эта уникальная карточка не усиливается.';
   if (m.kind === 'chance') return '<b>Что означает число:</b> это независимый шанс при каждом подходящем событии.<br><b>Пример:</b> ' + shown + ' означает, что примерно столько раз из 100 эффект сработает.<br><b>Важно:</b> шанс не гарантирует срабатывание по счёту и обычно ограничен 100%.';
   if (m.kind === 'flag') return '<b>Эффект:</b> открывает это постоянное свойство до конца забега.<br><b>Когда работает:</b> условия и детали указаны в названии и категории карточки.<br><b>Важно:</b> повторный выбор той же карточки не усиливает свойство.';
@@ -4544,21 +4489,19 @@ function renderSheet(){
       r('Снижение урона', D.dr + '%' + (D.drShop ?
         ' + ' + D.drShop + '% (магазин) = ' +
         Math.round((1 - (1-D.dr/100)*(1-D.drShop/100))*100) + '%' : '')) + r('Блок', D.block + '%') + r('Уворот', D.dodge + '%') +
-      (D.normalDr ? r('От обычных монстров', '−' + D.normalDr + '%') : '') +
-      (D.majorDr ? r('От элиты и боссов', '−' + D.majorDr + '%') : '') +
       r('Вампиризм', D.leech.toFixed(1) + '%') +
     '<h3>ГЕОМЕТРИЯ</h3>' +
       r('Снарядов', D.projN) + r('Пробитие', D.pierce) + r('Отскоки', D.chain) +
       r('Радиус AoE', '×' + D.aoeR.toFixed(2)) +
       // Радиусы показываем числами: множитель ×1.40 ничего не говорит о том,
       // достанет ли молния до соседней кучи
-      r('Радиус чумы / сфера', Math.round(PLAGUE_RADIUS*D.aoeR*D.plagueRadius) + ' / ' + Math.round((G.weapon.aoe||0)*D.aoeR)) +
+      r('Взрыв трупа / сфера', Math.round(105*D.aoeR) + ' / ' + Math.round((G.weapon.aoe||0)*D.aoeR)) +
       r('Разлёт молний', Math.round(D.shockR) + ' (до ' + SHOCK_TARGETS + ' целей)') +
       (D.inferno ? r('Перекидывание поджога', Math.round(D.infernoR)) : '') +
       (b.has('slowAura') ? r('Аура замедления', Math.round(D.slowAuraR)) : '') +
       (D.orbitN ? r('Круговые орбы', D.orbitN + ' / 10 · ' + Math.round(avgHit()*0.15) + ' за касание') : '') +
-      r('Чумный взрыв трупа', Math.round(D.explode) + '%') +
-      (D.explodeMega ? r('МЕГА-чума', Math.round(D.explodeMega) + '%  (радиус ×2)') : '') +
+      r('Взрыв трупа', Math.round(D.explode) + '%') +
+      (D.explodeMega ? r('МЕГА-взрыв', Math.round(D.explodeMega) + '%  (радиус ×2, поджог)') : '') +
     (D.hasMin ?
       '<h3>СВИТА</h3>' +
       r('Всего приспешников', G.minions.length + ' / ' + D.minMax) +
@@ -4684,76 +4627,6 @@ function toggleInventory(){
   last = performance.now();
 }
 
-/* Скрытая от обычного игрока панель для быстрой проверки баланса. Карточки
-   берутся из того же MODS, что и обычный level-up, и используют те же броски
-   значений. Поиск намеренно работает и по читаемому имени, и по id каталога. */
-function testValue(m){
-  const v = m.kind === 'flag' ? 1 : (m.r[0] === m.r[1] ? m.r[0] : rnd(m.r[0], m.r[1]));
-  const shown = m.kind === 'flag' ? 'свойство' : m.kind === 'more' ? '×' + (1+v/100).toFixed(2) :
-    m.kind === 'chance' ? Math.round(v) + '%' : m.kind === 'inc' ? '+' + Math.round(v) + '%' : '+' + (Math.round(v*10)/10);
-  return {v, shown};
-}
-function testPreview(m){
-  const rolls = G.testRolls || (G.testRolls = {});
-  return rolls[m.id] || (rolls[m.id] = testValue(m));
-}
-function testSkillMatches(m, q){
-  return !q || (m.nm + ' ' + m.id + ' ' + m.cat).toLowerCase().includes(q);
-}
-function renderTestPanel(){
-  const input = $('#testsearch'), q = input ? input.value.trim().toLowerCase() : '';
-  const compatible = m => (!m.wep || m.wep.includes(G.weapon.type)) && (!m.req || G.weapon.minions) && !(m.noMin && G.weapon.minions);
-  const list = MODS.filter(m => compatible(m) && testSkillMatches(m, q)).slice(0, 80);
-  $('#testresults').innerHTML = list.length ? list.map(m => {
-    const preview = testPreview(m);
-    const range = m.kind === 'flag' ? 'постоянное свойство' : m.r[0] === m.r[1] ? preview.shown :
-      (m.kind === 'inc' ? '+' : '') + m.r[0] + '…' + m.r[1] + (m.kind === 'more' ? '% множитель' : m.kind === 'flat' ? '' : '%');
-    const taken = m.kind === 'flag' && G.bag.has(m.stat);
-    return '<div class="testskill" data-test-tip="' + m.id + '"><div class="tsbody"><div class="tsname">' + m.nm + '</div><div class="tsmeta">' + m.cat + ' · ' + range + ' · ' + m.id + '</div></div>' +
-      '<button data-test-id="' + m.id + '"' + (taken ? ' disabled' : '') + '>' + (taken ? 'ВЗЯТО' : 'ВЫДАТЬ') + '</button></div>';
-  }).join('') : '<div class="k" style="padding:14px">Ничего не найдено.</div>';
-  document.querySelectorAll('[data-test-id]').forEach(el => el.onclick = () => grantTestSkill(el.dataset.testId));
-  document.querySelectorAll('[data-test-tip]').forEach(el => {
-    const m = MODS.find(x => x.id === el.dataset.testTip), preview = testPreview(m);
-    const card = {m, v:preview.v, val:preview.shown};
-    el.onmouseenter = ev => showSkillTip(ev, card);
-    el.onmousemove = moveSkillTip;
-    el.onmouseleave = hideSkillTip;
-  });
-}
-function grantTestSkill(id){
-  const m = MODS.find(x => x.id === id); if (!m) return;
-  if (m.kind === 'flag' && G.bag.has(m.stat)) return;
-  const t = testPreview(m);
-  delete G.testRolls[m.id];
-  G.bag.add(m.stat, m.kind, t.v);
-  G.picks.push({id:m.id, nm:m.nm, val:t.shown, cat:m.cat});
-  recalc();
-  // При тестировании свиты новые лимиты сразу заполняются, чтобы не ждать
-  // смерти следующего врага и видеть результат карточки моментально.
-  if (D.hasMin) while (G.minions.length < D.minMax) spawnMinion();
-  renderSheet(); renderTestPanel();
-  $('#testsearch').focus();
-}
-function closeTestPanel(){
-  if (!G || !G.testOpen) return;
-  G.testOpen = false; G.paused = false;
-  hideSkillTip();
-  $('#ov').style.display = 'none'; $('#ov').innerHTML = '';
-  last = performance.now();
-}
-function openTestPanel(){
-  if (!G || G.over || G.pending || G.inventoryOpen || $('#ov').style.display === 'flex') return;
-  G.testOpen = true; G.testRolls = {}; G.paused = true;
-  $('#pauseov').style.display = 'none';
-  $('#ov').style.display = 'flex'; $('#ov').classList.remove('menu');
-  $('#ov').innerHTML = '<div id="testpanel"><h1>ТЕСТОВАЯ ВЫДАЧА НАВЫКОВ</h1><div class="k">Поиск по названию, категории или ID · значения бросаются в обычном диапазоне</div>' +
-    '<input id="testsearch" autocomplete="off" placeholder="Например: чума, crit, скорость, min."><div id="testresults"></div><button id="testclose">ПРОДОЛЖИТЬ</button></div>';
-  $('#testsearch').oninput = renderTestPanel;
-  $('#testclose').onclick = closeTestPanel;
-  renderTestPanel(); $('#testsearch').focus();
-}
-
 function gameOver(endedEarly){
   G.over = true;
   G.paused = true;
@@ -4818,17 +4691,21 @@ function shopScreen(back){
   menuMode = false; $('#ov').classList.remove('menu');
   const money = n => Math.round(n).toLocaleString('ru-RU');
   const catOf = it => it.cat || (['dmg','aspd'].includes(it.id) ? 'attack' :
-    ['sxp','sgold','smon'].includes(it.id) ? 'farm' : 'qol');
+    ['sxp','sgold','smon'].includes(it.id) ? 'farm' :
+    ['vacuum','startSkill','card4','mspd'].includes(it.id) ? 'qol' : 'defense');
   const cats = [
-    ['attack','АТАКА', 'урон и темп'],
-    ['health','ЗДОРОВЬЕ', 'запас HP'],
-    ['defense','ЗАЩИТА', 'выживаемость'],
-    ['farm','ФАРМ', 'опыт, золото, плотность'],
-    ['qol','КАЧЕСТВО ЖИЗНИ', 'старт, движение и сбор'],
+    ['attack','АТАКУЮЩИЕ', 'урон и темп атак'],
+    ['defense','ЗАЩИТНЫЕ', 'живучесть, защита и рывок'],
+    ['farm','ФАРМОВЫЕ', 'опыт, золото и плотность врагов'],
+    ['qol','КАЧЕСТВО ЖИЗНИ', 'удобство и скорость сбора'],
   ];
 
   const row = it => {
     const lvl = shopLvl(it.id), maxed = lvl >= it.max;
+    const armorHint = it.id === 'armor'
+      ? '<div class="snt" style="color:#cfd8e3">Сейчас: ' + lvl + ' брони · гасит ' + armorReduction(lvl).toFixed(1) +
+        '% урона.' + (maxed ? ' Достигнут максимум магазина.' : ' Следующий уровень: ' + (lvl + 1) + ' → ' + armorReduction(lvl + 1).toFixed(1) + '%.') + '</div>'
+      : '';
     // Пачки: ×10 и ×100 показываем только там, где потолок их оправдывает,
     // иначе на «четвёртой карте» висели бы две мёртвые кнопки.
     const packs = [1, 10, 100].filter(n => n === 1 || it.max >= n * 2);
@@ -4838,45 +4715,32 @@ function shopScreen(back){
           const b = shopBatch(it, n);
           const can = b.cnt > 0 && Store.data.gold >= b.sum;
           return '<button data-id="' + it.id + '" data-n="' + n + '"' + (can ? '' : ' disabled') + '>' +
-            '+' + b.cnt + '<b>' + money(b.sum) + '</b></button>';
+            (n > 1 ? '+' + b.cnt + ' · ' : '') + '<b>' + money(b.sum) + '</b></button>';
         }).join('');
     const val = it.fmt ? it.fmt(lvl) : '+' + lvl + (it.unit || '');
-    return '<div class="srow' + (maxed ? ' done' : '') + '" data-shop-id="' + it.id + '">' +
+    return '<div class="srow' + (maxed ? ' done' : '') + '">' +
       '<div class="sinfo"><div class="snm">' + it.nm +
-        '<i>ур. ' + lvl + ' / ' + it.max + '</i></div></div>' +
+        '<i>ур. ' + lvl + ' / ' + it.max + '</i></div>' +
+        '<div class="snt">' + it.nt + '</div>' + armorHint + '</div>' +
       '<div class="sval">' + val + '</div>' +
       '<div class="sbuy">' + btns + '</div></div>';
   };
 
   $('#ov').innerHTML =
     '<h1>МАГАЗИН</h1>' +
-    '<h2>постоянные бонусы для всех будущих забегов · наведите на карточку для подробностей</h2>' +
+    '<h2>золото тратится навсегда и действует во всех будущих партиях</h2>' +
     '<div id="bank">В БАНКЕ: ' + money(Store.data.gold) + ' золота' +
       '<span> · потрачено за всё время: ' + money(Store.data.spent || 0) + '</span></div>' +
     '<div id="shop">' + cats.map(([id,nm,nt]) => {
       const rows = SHOP.filter(it => catOf(it) === id).map(row).join('');
-      return rows ? '<section class="shopcat"><div class="shopcat-head"><b>' + nm + '</b><span>' + nt + '</span></div><div class="shopgrid">' + rows + '</div></section>' : '';
+      return rows ? '<h2 style="margin:24px 0 8px;color:#f0c040;letter-spacing:3px">' + nm +
+        '<span style="display:block;margin-top:4px;color:#7d8b9a;font-size:12px;letter-spacing:0">' + nt + '</span></h2>' + rows : '';
     }).join('') + '</div>' +
     '<button id="shopback">НАЗАД</button>';
 
   document.querySelectorAll('#shop button').forEach(el => el.onclick = () => {
     const it = SHOP.find(x => x.id === el.dataset.id);
     if (it) shopBuy(it, +el.dataset.n, back);
-  });
-  document.querySelectorAll('[data-shop-id]').forEach(el => {
-    const it = SHOP.find(x => x.id === el.dataset.shopId);
-    el.onmouseenter = ev => {
-      const lvl = shopLvl(it.id), maxed = lvl >= it.max;
-      const cur = it.fmt ? it.fmt(lvl) : '+' + lvl + (it.unit || '');
-      const nextVal = it.fmt ? it.fmt(lvl+1) : '+' + (lvl+1) + (it.unit || '');
-      const next = maxed ? 'Достигнут максимум.' : 'Следующий ранг: <b>' + nextVal + '</b> · цена <b>' + money(shopCost(it, lvl)) + '</b> золота.';
-      const armor = it.id === 'armor' ? '<br><b>Броня:</b> гасит ' + armorReduction(lvl).toFixed(1) + '% урона' + (maxed ? '.' : '; на следующем ранге — ' + armorReduction(lvl+1).toFixed(1) + '%.') : '';
-      const tip = $('#skilltip');
-      tip.innerHTML = '<div class="tt-title">' + it.nm + '</div><b>Текущий эффект:</b> ' + cur + '<br>' + it.nt + armor + '<div class="tt-note">' + next + '</div>';
-      tip.style.display = 'block'; moveSkillTip(ev);
-    };
-    el.onmousemove = moveSkillTip;
-    el.onmouseleave = hideSkillTip;
   });
   $('#shopback').onclick = () => back();
 }
@@ -5078,13 +4942,6 @@ addEventListener('keydown', e => {
   if (!G) return;
   const k = e.key.toLowerCase();
   if (G.over) return;
-  // Тестовая панель полностью перехватывает клавиатуру, чтобы поиск не двигал
-  // героя и не тратил рывок. L либо Escape закрывают её и продолжают бой.
-  if (G.testOpen){
-    if (!e.repeat && (k === 'l' || k === 'escape')){ e.preventDefault(); closeTestPanel(); }
-    return;
-  }
-  if (k === 'l' && !e.repeat){ e.preventDefault(); openTestPanel(); return; }
   // Инвентарь — безопасная пауза: пока он открыт, действия персонажа не должны
   // тратить рывки, менять управление или срабатывать от случайных клавиш.
   if (G.inventoryOpen && !['tab','escape','p'].includes(k)) return;

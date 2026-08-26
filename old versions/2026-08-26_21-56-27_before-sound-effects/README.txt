@@ -1,0 +1,1 @@
+Saved: 2026-08-26 21:56:28 +03:00 Before changes: added synthesized Web Audio API sound effects for enemy deaths and level-ups. Source: Git revision 4b999c3 (the file state immediately before this uncommitted change).

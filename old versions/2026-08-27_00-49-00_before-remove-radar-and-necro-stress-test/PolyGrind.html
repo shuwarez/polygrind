@@ -3699,6 +3699,36 @@ function drawHero(p){
   ctx.restore();
 }
 
+/* Локальная миникарта: не вся арена, а круг опасности вокруг героя. Показывать
+   дальних врагов бессмысленно — важнее сразу читать, с какой стороны подходит
+   толпа. Рисуется после мира в экранных координатах, поэтому камера не влияет. */
+const RADAR_RANGE = 900, RADAR_RADIUS = 58;
+function drawEnemyRadar(){
+  const p = G.player, r = RADAR_RADIUS;
+  const x = W - r - 18;
+  const y = Math.min(H - r - 44, 116 + r);
+  ctx.save();
+  ctx.fillStyle = '#071018dc'; ctx.strokeStyle = '#49627a'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+  ctx.strokeStyle = '#314456'; ctx.setLineDash([3,3]);
+  ctx.beginPath(); ctx.arc(x, y, r*0.5, 0, Math.PI*2); ctx.stroke();
+  ctx.setLineDash([]); ctx.strokeStyle = '#263746';
+  ctx.beginPath(); ctx.moveTo(x-r+7,y); ctx.lineTo(x+r-7,y); ctx.moveTo(x,y-r+7); ctx.lineTo(x,y+r-7); ctx.stroke();
+  for (const e of G.enemies){
+    const dx = e.x-p.x, dy = e.y-p.y, d = Math.hypot(dx,dy);
+    if (d > RADAR_RANGE || d < 0.1) continue;
+    const k = d / RADAR_RANGE * (r-6);
+    const px = x + dx/d*k, py = y + dy/d*k;
+    const boss = e.kind === 'boss', elite = e.kind === 'elite';
+    ctx.fillStyle = boss ? '#ff4a4a' : elite ? '#ffb340' : '#d7e0e9';
+    ctx.beginPath(); ctx.arc(px, py, boss ? 3.5 : elite ? 2.6 : 1.45, 0, Math.PI*2); ctx.fill();
+  }
+  ctx.fillStyle = '#63d5ff'; ctx.beginPath(); ctx.arc(x,y,3.3,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#9db1c4'; ctx.font = '10px ui-monospace,monospace'; ctx.textAlign = 'center';
+  ctx.fillText('РАДАР', x, y-r-8);
+  ctx.restore();
+}
+
 function render(){
   const p = G.player;
   let sx = 0, sy = 0;
@@ -4100,6 +4130,7 @@ function render(){
   drawHero(p);
 
   ctx.restore();
+  drawEnemyRadar();
   updateHud();
 }
 
