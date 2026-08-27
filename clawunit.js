@@ -71,10 +71,15 @@ function foe(o, dx, dy){
      'первый ' + m1.hitN + ', второй ' + m2.hitN); }
 { const o = mk([['minClaws',1],['igniteCh',100]]);
   const e = foe(o); o.m.x = e.x; o.m.y = e.y;
-  for (let i=0;i<4;i++) o.c.minionHit(e, o.m);
-  e.dots.fire.dps = 0;
-  o.c.minionHit(e, o.m);
-  ok('добавочный удар несёт эффекты', e.dots.fire.dps > 0); }
+  let procs = 0;
+  for (let i=0;i<1200;i++){
+    o.m.hitN = 4; e.dots.fire.dps = 0; e.dots.fire.n = 0;
+    o.c.minionHit(e, o.m);
+    if (e.dots.fire.dps > 0) procs++;
+  }
+  const rate = procs/1200; // два независимых броска по 25%: 1 - 0.75² = 43.75%
+  ok('добавочный удар несёт эффекты', rate > 0.36 && rate < 0.51,
+     Math.round(rate*100) + '% при цели 43.8%'); }
 { const o = mk([]);
   const e = foe(o); o.m.x = e.x; o.m.y = e.y;
   for (let i=0;i<12;i++) o.c.minionHit(e, o.m);

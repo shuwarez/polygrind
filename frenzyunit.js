@@ -49,9 +49,15 @@ function foe(o, dx, dy){
 { const o = mk([['minDmg',50,'inc'],['minFrenzy',1],['igniteCh',100]]);
   const tgt = foe(o, 40, 0), near = foe(o, 40, 50);
   o.m.x = tgt.x; o.m.y = tgt.y;
-  o.c.minionHit(tgt, o.m);
-  ok('взрыв разносит эффекты игрока', near.dots.fire.dps > 0,
-     'сосед горит на ' + Math.round(near.dots.fire.dps) + '/сек'); }
+  let procs = 0;
+  for (let i=0;i<600;i++){
+    near.dots.fire.dps = 0; near.dots.fire.n = 0;
+    o.c.minionHit(tgt, o.m);
+    if (near.dots.fire.dps > 0) procs++;
+  }
+  const rate = procs/600;
+  ok('взрыв разносит эффекты с шансом свиты', rate > 0.17 && rate < 0.33,
+     Math.round(rate*100) + '%'); }
 
 { // урон взрыва равен удару
   const avg = (frenzy) => {

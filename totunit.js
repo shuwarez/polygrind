@@ -19,6 +19,24 @@ function foe(o){
   e.kind = 'norm'; e.armor = 0; e.ward = null; e.bulwark = 0;
   return e;
 }
+function dropSample(books, totems, n){
+  const c = loadGame('./PolyGrind.html'); c.newGame('bow','keys');
+  const G = c.__api.G;
+  G.items = {};
+  for (const k of books) G.items[k] = {tier:1, val:1};
+  G.totems = Object.assign({}, totems || {});
+  const seen = new Set();
+  let tot = 0, amu = 0, book = 0;
+  for (let i=0;i<n;i++){
+    G.orbs.length = 0; G.amu = {};
+    c.dropItem({x:0,y:0});
+    const o = G.orbs[0];
+    if (o.totem){ tot++; seen.add(o.totem); }
+    else if (o.amu) amu++;
+    else book++;
+  }
+  return {tot, amu, book, seen, n};
+}
 
 console.log('РАНГИ И ПРОЦЕНТЫ');
 { const o = mk({});
@@ -67,27 +85,25 @@ console.log('НА УДАРЕ');
      off.toFixed(1) + ' \u2192 ' + on.toFixed(1)); }
 
 console.log('ДРОП');
-{ const c = loadGame('./PolyGrind.html'); c.newGame('bow','keys');
-  const G = c.__api.G;
-  let tot = 0, amu = 0, book = 0;
-  for (let i=0;i<40000;i++){
-    G.orbs.length = 0; G.amu = {}; G.totems = {};
-    c.dropItem({x:0,y:0});
-    const o = G.orbs[0];
-    if (o.totem) tot++; else if (o.amu) amu++; else book++;
-  }
-  ok('доля тотемов среди находок ~25%', Math.abs(tot/40000 - 0.25) < 0.02,
-     'тотемы ' + (tot/400).toFixed(1) + '% · предметы ' + (amu/400).toFixed(1) + '% · книги ' + (book/400).toFixed(1) + '%'); }
-{ const c = loadGame('./PolyGrind.html'); c.newGame('bow','keys');
-  const G = c.__api.G;
-  G.totems = {fire:4, freeze:4, poison:4, blood:4};
-  let tot = 0;
-  for (let i=0;i<8000;i++){ G.orbs.length = 0; G.amu = {}; c.dropItem({x:0,y:0}); if (G.orbs[0].totem) tot++; }
-  ok('великие тотемы больше не выпадают', tot === 0); }
-{ const c = loadGame('./PolyGrind.html'); c.newGame('bow','keys');
-  const G = c.__api.G;
-  G.totems = {fire:4};
-  let seen = new Set();
-  for (let i=0;i<8000;i++){ G.orbs.length = 0; G.amu = {}; c.dropItem({x:0,y:0}); if (G.orbs[0].totem) seen.add(G.orbs[0].totem); }
-  ok('выпавший до предела тип выбывает из пула', !seen.has('fire') && seen.size === 3,
-     'в пуле: ' + [...seen].join(', ')); }
+{ const d = dropSample([], {}, 8000);
+  ok('без книг тотемы не выпадают', d.tot === 0); }
+{ const d = dropSample(['fire'], {}, 6000);
+  ok('книга огня открывает только тотем огня', d.seen.size === 1 && d.seen.has('fire'),
+     'в пуле: ' + [...d.seen].join(', ')); }
+{ const d = dropSample(['cold'], {}, 6000);
+  ok('книга холода открывает только тотем заморозки', d.seen.size === 1 && d.seen.has('freeze'),
+     'в пуле: ' + [...d.seen].join(', ')); }
+{ const d = dropSample(['poison'], {}, 6000);
+  ok('книга яда открывает только тотем отравления', d.seen.size === 1 && d.seen.has('poison'),
+     'в пуле: ' + [...d.seen].join(', ')); }
+{ const d = dropSample(['bleed'], {}, 6000);
+  ok('книга крови открывает только тотем крови', d.seen.size === 1 && d.seen.has('blood'),
+     'в пуле: ' + [...d.seen].join(', ')); }
+{ const d = dropSample(['fire','cold','poison','bleed'], {}, 40000);
+  ok('доля открытых тотемов среди находок ~25%', Math.abs(d.tot/d.n - 0.25) < 0.02,
+     'тотемы ' + (d.tot/d.n*100).toFixed(1) + '% · предметы ' + (d.amu/d.n*100).toFixed(1) + '% · книги ' + (d.book/d.n*100).toFixed(1) + '%'); }
+{ const d = dropSample(['fire','cold','poison','bleed'], {fire:4, freeze:4, poison:4, blood:4}, 8000);
+  ok('великие тотемы больше не выпадают', d.tot === 0); }
+{ const d = dropSample(['fire','cold','poison','bleed'], {fire:4}, 8000);
+  ok('выпавший до предела тип выбывает из пула', !d.seen.has('fire') && d.seen.size === 3,
+     'в пуле: ' + [...d.seen].join(', ')); }

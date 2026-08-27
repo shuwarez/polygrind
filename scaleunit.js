@@ -19,5 +19,5 @@ function enemy(floor){
 
 { const e = enemy(1);
   const kind = e.kind === 'boss' ? 1.15 : e.kind === 'elite' ? 0.9 : 1;
-  ok('все враги ускорены ещё на 10%', Math.abs(e.spd - e.t.spd * 1.265 * 1.10 * kind) < 0.0001,
+  ok('все враги ускорены ещё на 5%', Math.abs(e.spd - e.t.spd * 1.265 * 1.155 * kind) < 0.0001,
      e.t.spd.toFixed(0) + ' → ' + e.spd.toFixed(1)); }

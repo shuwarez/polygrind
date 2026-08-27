@@ -171,6 +171,44 @@ button:disabled{opacity:.35;cursor:default}
 .srow .snt{display:none}.srow .sval{font-size:20px;line-height:1;color:#ffc95d;font-weight:800;text-align:right;white-space:nowrap}.srow.done .sval{color:#83d89c}
 .srow .sbuy{margin-top:auto;display:flex;gap:5px;flex-wrap:wrap}.srow .sbuy button{flex:1;min-width:62px;padding:6px 5px;border-color:#7b5724;background:linear-gradient(180deg,#4b3210,#201609);font-size:11px;letter-spacing:.2px;box-shadow:inset 0 1px #ffdc7044,0 0 8px #d7902118}.srow .sbuy button:hover:not(:disabled){border-color:#ffe18a;background:linear-gradient(180deg,#69451a,#2a1a08);box-shadow:inset 0 1px #fff0a588,0 0 13px #e7ad3f55}.srow .sbuy button b{display:block;color:#ffd567;font-size:11px;margin-top:2px}.srow .sbuy button:disabled{box-shadow:none}
 #bank{font-size:18.8px;color:#f0c040;letter-spacing:1px;background:#15130e;border:1px solid #514022;padding:8px 14px;border-radius:3px}#bank span{color:#7d8b9a;font-size:12px;letter-spacing:0}
+
+/* --- Созвездия --- */
+.meta-actions{display:flex;gap:12px;align-items:stretch;justify-content:center;flex-wrap:wrap}
+.const-entry{min-width:280px;min-height:62px;display:flex;align-items:center;justify-content:center;gap:11px;
+  border:2px solid #7659b8;background:linear-gradient(180deg,#2a2148,#131020);color:#e9ddff;
+  font-size:17px;font-weight:800;letter-spacing:2px;box-shadow:inset 0 1px #d9c5ff33,0 0 18px #8c65da24}
+.const-entry:hover{border-color:#c9adff;box-shadow:inset 0 1px #efe5ff66,0 0 26px #9d74ef55;transform:translateY(-2px)}
+#constsigil{width:46px;height:46px;pointer-events:none}
+.const-entry-copy{display:flex;flex-direction:column;align-items:flex-start;gap:3px}.const-entry-copy small{font-size:9px;letter-spacing:1px;color:#9f8fc7}.const-entry-copy small.ready{color:#ffd76d;text-shadow:0 0 8px #ffcf4a88}
+#constellations{width:min(1140px,95vw);max-height:70vh;overflow-y:auto;padding:2px 8px 12px}
+.const-sky{position:relative;height:152px;margin-bottom:12px;border:1px solid #544376;border-radius:8px;overflow:hidden;
+  background:radial-gradient(ellipse at 50% 110%,#34255c 0%,#121329 52%,#080b16 100%);
+  box-shadow:inset 0 0 55px #05060bcc,0 0 28px #7a56c322}
+#constsky{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.const-sky-copy{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;text-shadow:0 2px 8px #000}
+.const-sky-copy b{font-size:23px;letter-spacing:7px;color:#eee5ff}.const-sky-copy span{margin-top:8px;color:#9e91bd;font-size:12px;letter-spacing:2px}
+.const-grid{display:grid;grid-template-columns:repeat(3,minmax(290px,1fr));gap:10px}
+.const-card{--cc:#a98cff;position:relative;min-height:236px;padding:13px 14px 12px;border:1px solid color-mix(in srgb,var(--cc) 48%,#28303a);
+  border-radius:7px;background:linear-gradient(145deg,color-mix(in srgb,var(--cc) 9%,#141925),#0c1018 72%);overflow:hidden;
+  box-shadow:inset 0 1px color-mix(in srgb,var(--cc) 22%,transparent);transition:.15s}
+.const-card::before{content:"";position:absolute;width:150px;height:150px;right:-65px;top:-72px;border-radius:50%;background:var(--cc);opacity:.08;filter:blur(14px)}
+.const-card:hover{border-color:color-mix(in srgb,var(--cc) 80%,#fff);transform:translateY(-2px);box-shadow:0 7px 22px #0008,0 0 18px color-mix(in srgb,var(--cc) 20%,transparent)}
+.const-head{position:relative;display:flex;align-items:center;gap:11px}.const-icon{width:54px;height:54px;flex:none;filter:drop-shadow(0 0 8px var(--cc))}
+.const-title{min-width:0;flex:1}.const-title b{display:block;color:var(--cc);font-size:17px;letter-spacing:2px}.const-title span{display:block;color:#7f8b9b;font-size:11px;margin-top:4px}
+.const-rank{font-size:22px;color:#f1eaff;text-align:right}.const-rank small{display:block;color:#778294;font-size:9px;letter-spacing:1px}
+.const-effect{position:relative;margin:9px 0 8px;color:#d8dfe8;font-size:12px;line-height:1.5}.const-effect b{color:var(--cc)}
+.const-nodes{position:relative;display:grid;grid-template-columns:repeat(10,1fr);gap:4px;margin:9px 1px 10px}
+.const-nodes::before{content:"";position:absolute;left:4%;right:4%;top:7px;height:1px;background:#313948}
+.const-node{position:relative;z-index:1;width:15px;height:15px;margin:auto;border-radius:50%;background:#111720;border:2px solid #404958;box-shadow:0 0 0 2px #0d1118}
+.const-node.done{background:var(--cc);border-color:#eee7ff;box-shadow:0 0 9px var(--cc),0 0 0 2px #15101f}.const-node.ready{border-color:var(--cc);animation:starReady 1.35s ease-in-out infinite}
+@keyframes starReady{50%{background:var(--cc);box-shadow:0 0 13px var(--cc),0 0 0 2px #15101f}}
+.const-progress-line{display:flex;justify-content:space-between;gap:8px;color:#8995a5;font-size:10px;margin-bottom:4px}.const-progress-line b{color:#dce4ed}
+.const-progress{height:7px;border:1px solid #313b49;background:#080c12;border-radius:4px;overflow:hidden}.const-progress i{display:block;height:100%;background:linear-gradient(90deg,color-mix(in srgb,var(--cc) 55%,#fff),var(--cc));box-shadow:0 0 8px var(--cc)}
+.const-unlock{width:100%;margin-top:10px;padding:8px 10px;border-color:var(--cc);color:#f1eaff;background:linear-gradient(180deg,color-mix(in srgb,var(--cc) 32%,#171421),#11131a);font-size:11px;letter-spacing:1.4px}
+.const-unlock:hover:not(:disabled){border-color:#fff;box-shadow:0 0 16px color-mix(in srgb,var(--cc) 55%,transparent)}
+.const-locked{margin-top:10px;text-align:center;color:#697687;font-size:10px;letter-spacing:1px}.const-max{color:var(--cc)}
+@media(max-width:900px){.const-grid{grid-template-columns:repeat(2,minmax(270px,1fr))}.const-sky{height:125px}}
+@media(max-width:620px){.const-grid{grid-template-columns:1fr}.const-entry,.shop-entry{min-width:min(280px,90vw)}#constellations{max-height:74vh}.const-sky-copy b{font-size:18px;letter-spacing:4px}}
 #hint{position:absolute;bottom:10px;left:14px;font-size:13.8px;color:var(--dim);line-height:1.6;pointer-events:none;text-shadow:0 1px 3px #000}
 #toast{position:absolute;top:70px;left:50%;transform:translateX(-50%);font-size:16.2px;
   color:var(--amber);letter-spacing:2px;pointer-events:none;opacity:0;transition:opacity .3s}
@@ -276,6 +314,12 @@ const clamp= (v,a,b)=> v<a?a:v>b?b:v;
 const dist = (a,b)=> Math.hypot(a.x-b.x, a.y-b.y);
 const armorReduction = armor => armor / (armor + 90) * 100;
 
+const DASH_COOLDOWN = 5;                            // один заряд возвращается за пять секунд
+const DASH_DURATION = 0.22;                         // было 0.14: рывок стал ощутимо длиннее
+const DASH_SPEED_MULT = 4.4;                        // было ×3.4: около 240 единиц вместо 120
+const MINION_DAMAGE_MULT = 0.50;                    // вся свита наносит половину прежнего урона
+const MINION_AILMENT_CHANCE_MULT = 0.25;            // её шансы негативных эффектов уменьшены на 75%
+
 const ARENA = 1500;                                // арена — квадрат ARENA×ARENA вокруг нуля
 const MOUSE_DEADZONE = 34;                         // радиус покоя вокруг игрока при управлении мышью
 
@@ -342,7 +386,7 @@ const MODS = [
 {id:'life.on_kill',    cat:'Здоровье', nm:'Здоровье за убийство',       kind:'flat', stat:'onKill',     r:[2,6]},
 {id:'life.on_hit',     cat:'Здоровье', nm:'Здоровье за попадание',      kind:'flat', stat:'onHit',      r:[0.4,1.2], rar:1, nt:'сильно с быстрыми атаками'},
 {id:'life.on_crit',    cat:'Здоровье', nm:'Здоровье за крит',           kind:'flat', stat:'onCrit',     r:[2,5], rar:1},
-{id:'key.dread_vampire',cat:'Кейстоун',nm:'УЖАСАЮЩИЙ ВАМПИР',           kind:'flag', stat:'kDread',     r:[1,1], rar:3, nt:'единственный источник восстановления: 0.3% нанесённого урона. Всё остальное лечение и вампиризм — с карточек, книг, амулетов, зачистки этажа — перестаёт работать'},
+{id:'key.dread_vampire',cat:'Кейстоун',nm:'УЖАСАЮЩИЙ ВАМПИР',           kind:'flag', stat:'kDread',     r:[1,1], rar:3, noMin:true, nt:'единственный источник восстановления: 0.3% нанесённого урона. Всё остальное лечение и вампиризм — с карточек, книг, амулетов, зачистки этажа — перестаёт работать'},
 {id:'life.leech_instant',cat:'Здоровье',nm:'МГНОВЕННЫЙ ВАМПИРИЗМ',      kind:'flag', stat:'leechInstant',r:[1,1], rar:2, w:45, unlock:true,
  nt:'вытягивание перестаёт течь во времени и лечит целиком в момент удара', show:()=>D.leechBase>=25},
 {id:'def.normal_reduction',cat:'Защита',nm:'Снижение урона от обычных монстров',kind:'inc',stat:'normalDr',r:[5,15],
@@ -461,7 +505,8 @@ const MODS = [
 {id:'death.cheat',     cat:'Смерть', nm:'Шанс избежать смертельного удара',kind:'chance',stat:'cheat',  r:[15,25], rar:2, nt:'откат 25 сек'},
 
 // --- Контроль ---
-{id:'cc.knockback',    cat:'Контроль', nm:'Шанс отбрасывания',          kind:'chance',stat:'knock',     r:[20,40], hide:()=>D.knock>=100},
+{id:'cc.knockback',    cat:'Контроль', nm:'Шанс отбрасывания',          kind:'chance',stat:'knock',     r:[20,40], hide:()=>D.knock>=100,
+ nt:'сила толчка: Бегуны −30% · элита −50% · боссы −90%'},
 {id:'cc.dizzy',        cat:'Контроль', nm:'ГОЛОВОКРУЖЕНИЕ',            kind:'flag', stat:'dizzy',      r:[1,1], rar:2, w:45, unlock:true,
  nt:'после отбрасывания враг ковыляет на 50% медленнее 2 секунды', show:()=>D.knock>=100},
 {id:'cc.stun_chance',  cat:'Контроль', nm:'Шанс оглушения',             kind:'chance',stat:'stun',      r:[10,20], rar:1},
@@ -527,7 +572,8 @@ const MODS = [
 {id:'min.crit',         cat:'Свита', nm:'Крит приспешников',             kind:'inc',  stat:'minCrit',  r:[10,20], req:'min'},
 {id:'min.explode',      cat:'Свита', nm:'Взрыв приспешника при смерти',  kind:'flag', stat:'minBoom',  r:[1,1], rar:1, req:'min'},
 {id:'min.taunt',        cat:'Свита', nm:'Приспешники стягивают агро',    kind:'flag', stat:'minTaunt', r:[1,1], rar:1, req:'min', nt:'враги бьют свиту, а не вас'},
-{id:'min.leech_to_owner',cat:'Свита',nm:'Вампиризм свиты лечит хозяина', kind:'flat', stat:'minLeech', r:[8,16], rar:1, req:'min'},
+{id:'key.death_lord',   cat:'Кейстоун',nm:'ЛОРД СМЕРТИ',                 kind:'flag', stat:'kDeathLord',r:[1,1], rar:3, req:'min',
+ nt:'0,1% всего фактически нанесённого свитой урона восстанавливает здоровье Некроманта'},
 {id:'min.bond',         cat:'Свита', nm:'Часть урона по вам идёт приспешнику', kind:'flat', stat:'minBond', r:[8,14], rar:1, req:'min',
  nt:'потолок ветки — 50%. На пятидесяти открываются КРОВНЫЕ УЗЫ', hide:()=>D.minBondRaw>=50},
 {id:'min.blood_ties',   cat:'Свита', nm:'КРОВНЫЕ УЗЫ',                     kind:'flag', stat:'bloodTies', r:[1,1], rar:4, w:45, req:'min', unlock:true,
@@ -571,7 +617,7 @@ const PLAYABLE_CLASSES = ['bow','wand','necro'];
    числа завязаны на G.lvl, поэтому бонусы растут сразу после повышения уровня. */
 const SUBCLASSES = {
   bow: [
-    {id:'thief',  nm:'ВОР',            ico:'◈', desc:'+1% уклонения (до 70%) и +1% скорости передвижения за уровень.'},
+    {id:'thief',  nm:'ВОР',            ico:'◈', desc:'+2% ко всему получаемому золоту за уровень отдельным множителем. Также +1% скорости передвижения за уровень. Бонуса к уклонению нет.'},
     {id:'hunter', nm:'ОХОТНИК',        ico:'⌁', desc:'+1% скорости атаки за уровень.'},
     {id:'dancer', nm:'БОЕВОЙ ТАНЦОР',  ico:'✦', desc:'+1 рывок (всего 2) и +1 брони за уровень; бонус брони до 60.'},
   ],
@@ -651,18 +697,19 @@ const BOOKS = {
 const SLOTS = {amu:'АМУЛЕТ', glove:'ПЕРЧАТКИ', boot:'БОТИНКИ', ring:'КОЛЬЦО', rel:'РЕЛИКВИЯ'};
 
 /* ---------- ТОТЕМЫ ----------
-   Третий тип находки. Ведут себя как книги: тот же тотем при повторной находке
-   растёт в ранге, а на четвёртом выпадать перестаёт. Дают процент урона по целям
+   Третий тип находки. Каждый тип входит в пул дропа только после того, как игрок
+   нашёл хотя бы одну соответствующую книгу. Ведут себя как книги: тот же тотем
+   при повторной находке растёт в ранге, а на четвёртом выпадать перестаёт. Дают процент урона по целям
    с нужным статусом — то есть работают только у того, кто этот статус вообще
    накладывает, и потому не являются «просто прибавкой к урону всем подряд».
    Проверка статуса живёт в conditionalInc, значит тотемы действуют и на свиту. */
 const TOTEM_RANKS = ['МАЛЫЙ', 'СРЕДНИЙ', 'БОЛЬШОЙ', 'ВЕЛИКИЙ'];
 const TOTEM_VALS  = [2, 4, 6, 10];
 const TOTEMS = {
-  fire:  {nm:'ТОТЕМ ОГНЯ',      col:'#ff7a2f', ico:'\u25B2', st:'горящим'},
-  freeze:{nm:'ТОТЕМ ЗАМОРОЗКИ', col:'#7fd6ff', ico:'\u2744', st:'замороженным'},
-  poison:{nm:'ТОТЕМ ОТРАВЛЕНИЯ',col:'#8be04e', ico:'\u2623', st:'отравленным'},
-  blood: {nm:'ТОТЕМ КРОВИ',     col:'#e0405a', ico:'\u2620', st:'кровоточащим'},
+  fire:  {nm:'ТОТЕМ ОГНЯ',      col:'#ff7a2f', ico:'\u25B2', st:'горящим',       book:'fire'},
+  freeze:{nm:'ТОТЕМ ЗАМОРОЗКИ', col:'#7fd6ff', ico:'\u2744', st:'замороженным',  book:'cold'},
+  poison:{nm:'ТОТЕМ ОТРАВЛЕНИЯ',col:'#8be04e', ico:'\u2623', st:'отравленным',   book:'poison'},
+  blood: {nm:'ТОТЕМ КРОВИ',     col:'#e0405a', ico:'\u2620', st:'кровоточащим', book:'bleed'},
 };
 const TOTEM_KEYS = Object.keys(TOTEMS);
 /* Ранг тотема: 0 — нет, 1..4 — от малого до великого */
@@ -825,30 +872,69 @@ const BOOK_KEYS = Object.keys(BOOKS);
    Среда исполнения заранее неизвестна, поэтому пробуем три уровня по очереди:
    storage-API артефактов → localStorage → память на время вкладки.
    Игра работает в любом случае, разница только в том, переживёт ли банк перезагрузку. */
+const CONST_NORMAL_REQ = [100,250,500,1000,2000,4000,8000,15000,30000,60000];
+const CONST_ELITE_REQ  = [25,60,125,250,500,1000,2000,4000,8000,15000];
+const CONST_BOSS_REQ   = [5,10,20,40,75,150,300,600,1200,2500];
+const CONSTELLATIONS = [
+  {id:'runner', nm:'БЕГУН',    sub:'треугольные охотники', shape:'triangle', col:'#8be04e', req:CONST_NORMAL_REQ},
+  {id:'blob',   nm:'ЯДРО',     sub:'круглые сгустки',      shape:'circle',   col:'#5ec2e0', req:CONST_NORMAL_REQ},
+  {id:'tank',   nm:'БАСТИОН',  sub:'квадратные тяжёлые',   shape:'square',   col:'#e0743c', req:CONST_NORMAL_REQ},
+  {id:'shooter',nm:'ПРИЗМА',   sub:'ромбовидные стрелки',  shape:'diamond',  col:'#d95ec2', req:CONST_NORMAL_REQ},
+  {id:'elite',  nm:'ЭЛИТА',    sub:'усиленные противники', shape:'elite',    col:'#ffd24a', req:CONST_ELITE_REQ},
+  {id:'boss',   nm:'БОСС',     sub:'хозяева пятого этажа', shape:'boss',     col:'#ff5a4e', req:CONST_BOSS_REQ},
+];
+const CONST_IDS = CONSTELLATIONS.map(x => x.id);
+
+/* Мягкая миграция: старые сохранения получают только пустые счётчики и ранги.
+   Золото, магазин и рекорды остаются как были. Заодно нормализуем повреждённые
+   значения, чтобы ручная правка localStorage не дала отрицательный ранг. */
+function normalizeConstellations(data){
+  const cs = data.constellations && typeof data.constellations === 'object'
+    ? data.constellations : (data.constellations = {});
+  const kills = cs.kills && typeof cs.kills === 'object' ? cs.kills : (cs.kills = {});
+  const ranks = cs.ranks && typeof cs.ranks === 'object' ? cs.ranks : (cs.ranks = {});
+  for (const id of CONST_IDS){
+    kills[id] = Math.max(0, Math.floor(Number(kills[id]) || 0));
+    ranks[id] = clamp(Math.floor(Number(ranks[id]) || 0), 0, 10);
+  }
+  return cs;
+}
+
 const STORE_KEY = 'grinder_meta_reset_2026'; // полный сброс: прежний банк и все покупки больше не читаются
 const Store = {
-  data: {gold:0, spent:0, best:0, unlocks:{}, shop:{}, economy:3},
+  data: {gold:0, spent:0, best:0, unlocks:{}, shop:{}, economy:3, constellations:{kills:{},ranks:{}}},
   mode: 'память',
   async load(){
     try{
       const r = await window.storage.get(STORE_KEY);
       if (r && r.value) this.data = Object.assign(this.data, JSON.parse(r.value));
       if (this.data.economy !== 3){ this.data.gold = 0; this.data.spent = 0; this.data.shop = {}; this.data.economy = 3; await this.save(); }
+      normalizeConstellations(this.data);
       this.mode = 'облако'; return;
     }catch(e){}
     try{
       const v = localStorage.getItem(STORE_KEY);
       if (v) this.data = Object.assign(this.data, JSON.parse(v));
       if (this.data.economy !== 3){ this.data.gold = 0; this.data.spent = 0; this.data.shop = {}; this.data.economy = 3; await this.save(); }
+      normalizeConstellations(this.data);
       this.mode = 'браузер'; return;
     }catch(e){}
+    normalizeConstellations(this.data);
   },
   async save(){
+    normalizeConstellations(this.data);
     const j = JSON.stringify(this.data);
     try{ await window.storage.set(STORE_KEY, j); return; }catch(e){}
     try{ localStorage.setItem(STORE_KEY, j); }catch(e){}
   },
 };
+
+const constellationState = () => normalizeConstellations(Store.data);
+const constellationRank = id => constellationState().ranks[id] || 0;
+const constellationKills = id => constellationState().kills[id] || 0;
+const constellationMultiplier = e => 1 + constellationRank(
+  e.kind === 'boss' ? 'boss' : e.kind === 'elite' ? 'elite' : e.typeKey
+) * 0.05;
 
 /* ---------- 3c. МАГАЗИН ----------
    Постоянная прокачка за золото из банка. Единственное место в игре, где золото
@@ -862,13 +948,13 @@ const Store = {
    в начале, а потолок ветки — тысячи партий. Растить цену медленнее нельзя:
    иначе ветка закрывается за неделю и золото снова некуда девать.  */
 const SHOP = [
-  {id:'regen',  cat:'defense', nm:'РЕГЕНЕРАЦИЯ', max:100, base:1500, grow:1.06, fmt:l => '+' + l + ' HP/сек', nt:'+1 здоровья в секунду за уровень.'},
+  {id:'regen',  cat:'defense', nm:'РЕГЕНЕРАЦИЯ', max:50, base:3000, grow:1.06, fmt:l => '+' + l + ' HP/сек', nt:'+1 здоровья в секунду за уровень, потолок +50 HP/сек.'},
   {id:'armor',  cat:'defense', nm:'БРОНЯ', max:200, base:1200, grow:1.04, fmt:l => '+' + l, nt:'+1 к броне за уровень.'},
   {id:'dr',     cat:'defense', nm:'СНИЖЕНИЕ УРОНА', max:60, base:3000, grow:1.075, unit:'%', nt:'+1% к снижению входящего урона, потолок 60%.'},
   {id:'drFlat', cat:'defense', nm:'ПАНЦИРЬ ОТ РОЯ', max:40, base:2000, grow:1.08, fmt:l => '+' + l + ' с удара', nt:'Вычитает 1 урона из каждого попадания за уровень.'},
   {id:'block',  cat:'defense', nm:'БЛОК', max:60, base:2500, grow:1.07, unit:'%', nt:'+1% шанса блока за уровень.'},
   {id:'dodge',  cat:'defense', nm:'УВОРОТ', max:70, base:3500, grow:1.08, unit:'%', nt:'+1% шанса уворота за уровень, потолок 70%.'},
-  {id:'dashN',  cat:'defense', nm:'ЗАРЯДЫ РЫВКА', max:2, base:20000, grow:2.2, fmt:l => '+' + l, nt:'Дополнительный заряд рывка. Базовый один, максимум три.'},
+  {id:'dashN',  cat:'defense', nm:'ЗАРЯДЫ РЫВКА', max:2, base:20000, grow:2.2, fmt:l => '+' + l, nt:'Дополнительный заряд рывка. Базовый один, максимум три; каждый заряд восстанавливается 5 секунд.'},
   {id:'vacuum', cat:'qol', nm:'БЫСТРЫЙ СБОР', max:10, base:3000, grow:1.55,
    nt:'+20% к радиусу и скорости притяжения опыта и золота за ранг. На 10-м ранге они летят к вам с тройной скоростью из втрое большей дальности.',
    fmt:l => l ? '+' + (l*20) + '% к сбору' : '—'},
@@ -902,7 +988,13 @@ const SHOP = [
    nt:'+1% врагов на этаже. Сделка, а не подарок: больше опыта, золота и находок, но и этаж дольше, и толпа плотнее.'},
 ];
 
-const shopLvl = id => (Store.data.shop && Store.data.shop[id]) || 0;
+/* Ограничение применяется и к старым сохранениям: если прежний потолок товара
+   был выше, сохранённые лишние ранги больше не проходят в характеристики. */
+const shopLvl = id => {
+  const raw = Math.max(0, Math.floor(Number(Store.data.shop && Store.data.shop[id]) || 0));
+  const it = SHOP.find(x => x.id === id);
+  return it ? Math.min(raw, it.max) : raw;
+};
 
 /* Цена следующего уровня. Округляем до трёх значащих цифр — «106 000» читается,
    «105 993» нет, а на баланс разница в четверть процента не влияет. */
@@ -986,6 +1078,7 @@ function newGame(weaponKey, control, subclassKey){
   shopApply(G.bag);        // покупки магазина входят в сумку до первого пересчёта
   recalc();
   G.player.hp = D.life;
+  G.player.dashN = D.dashMax;                       // забег начинается с полным запасом рывков
   if (D.hasMin){ spawnMinion(); spawnMinion(); }   // некромант выходит на этаж не в одиночку
   buildFloor();
 }
@@ -1020,7 +1113,7 @@ function recalc(){
   D.drShop = shopLvl('sarmor');
   D.drFlat = b.flat('drFlat');
   D.block  = acro ? 0 : clamp(b.flat('block'), 0, 60);
-  D.dodge  = clamp(b.flat('dodge') * (acro ? 2 : 1) + (thief ? G.lvl : 0), 0, 70);
+  D.dodge  = clamp(b.flat('dodge') * (acro ? 2 : 1), 0, 70);
   D.thorns = clamp(b.flat('thorns'), 0, 40);            // потолок шипов, дальше — отражение
   D.reflect= b.flat('reflect');
   // Клык вампира прибавляется ПОСЛЕ потолка: иначе амулет не делал бы ничего
@@ -1032,7 +1125,7 @@ function recalc(){
      и heal(). Гасить каждый источник лечения по отдельности (клык, чаша,
      пепел, зачистка этажа, регенерация, книги) означало бы пятнадцать
      проверок, из которых новый источник обязательно забыли бы добавить. */
-  D.dread       = b.has('kDread');
+  D.dread       = b.has('kDread') && !w.minions; // старый кейстоун недоступен и не действует у Некроманта
   if (D.dread) D.leech = 0.3;
   D.leechInstant= b.has('leechInstant');
   D.onKill = b.flat('onKill'); D.onHit = b.flat('onHit'); D.onCrit = b.flat('onCrit');
@@ -1124,6 +1217,9 @@ function recalc(){
   D.lootPull   = 340 * D.lootVacuum;
   D.xpGain  = 1 + b.sum('xpGain')/100;
   D.goldFind= 1 + b.sum('goldFind')/100;
+  // ВОР перемножает уже готовую награду, поэтому усиливает магазин, карточки,
+  // книги, предметы и созвездия, а не растворяется с ними в одном общем проценте.
+  D.goldGainMult = thief ? 1 + G.lvl*0.02 : 1;
   // Книга крови: N% от автоатаки в секунду. avgHit уже содержит все проценты,
   // поэтому отдельно домножать не нужно — иначе получится двойной скейл.
   D.bookBleedDps = 0;                                  // считается ниже, после avgHit
@@ -1134,7 +1230,7 @@ function recalc(){
   if (amu('candle')) D.xpGain += 0.15;
   D.dashMax = clamp(1 + Math.round(b.flat('dashN')) + (dancer ? 1 : 0), 1, 3);
   D.dashDmg = b.has('dashDmg'); D.phasing = b.has('phasing');
-  D.dashCd  = 1.4 * (1 - clamp(b.sum('dashCd'),0,60)/100);
+  D.dashCd  = DASH_COOLDOWN;
   D.iframe  = 0.22 * (1 + b.sum('iframe')/100);
   D.igniteCh = clamp(b.flat('igniteCh'), 0, 100);       // потолки статусов — иначе ветки не откроются
   D.chillCh  = clamp(b.flat('chillCh'),  0, 100);
@@ -1229,7 +1325,7 @@ function recalc(){
   D.minRevive = 0.25;
   D.minBoom   = b.has('minBoom');
   D.minTaunt  = b.has('minTaunt');
-  D.minLeech  = b.flat('minLeech');
+  D.deathLord = D.hasMin && b.has('kDeathLord');
   /* Ветка перехвата качается до 50% — своим потолком, отдельно от кейстоуна.
      Раньше был общий потолок 75 без своего: из-за диапазона 20-35 за карточку
      ветка закрывалась двумя-тремя взятиями и никакой прокачки не получалось.
@@ -1258,10 +1354,10 @@ function avgHit(){
 
 /* ---------- 5. ГЕНЕРАЦИЯ ЭТАЖА ---------- */
 const ETYPES = {
-  blob:  {shape:'circle',  nm:'Слизень',  hp:22,  spd:78,  dmg:9,  r:14, col:'#5ec2e0', xp:4},
+  blob:  {shape:'circle',  nm:'Ядро',     hp:22,  spd:78,  dmg:9,  r:14, col:'#5ec2e0', xp:4},
   runner:{shape:'triangle',nm:'Бегун',    hp:14,  spd:158, dmg:7,  r:12, col:'#8be04e', xp:5},
-  tank:  {shape:'square',  nm:'Глыба',    hp:70,  spd:48,  dmg:18, r:19, col:'#e0743c', xp:9},
-  shooter:{shape:'diamond',nm:'Стрелок',  hp:20,  spd:62,  dmg:11, r:14, col:'#d95ec2', xp:8, ranged:true},
+  tank:  {shape:'square',  nm:'Бастион',  hp:70,  spd:48,  dmg:18, r:19, col:'#e0743c', xp:9},
+  shooter:{shape:'diamond',nm:'Призма',   hp:20,  spd:62,  dmg:11, r:14, col:'#d95ec2', xp:8, ranged:true},
 };
 
 /* ---------- 5b. АФФИКСЫ МИНИ-БОССОВ ----------
@@ -1418,8 +1514,15 @@ const BOSS_AFFIXES = [
   },
 ];
 
-/* Сколько аффиксов вешать: один с пятого этажа, два с пятнадцатого, три с тридцатого */
-function affixCount(f){ return f >= 30 ? 3 : f >= 15 ? 2 : 1; }
+/* Боссовые этажи идут парами: сначала один босс, затем два с тем же числом
+   аффиксов. После пары число аффиксов растёт на один. На 80-м этаже оба босса
+   получают весь каталог; дальше это становится постоянным потолком. */
+function bossStage(f){ return Math.max(1, Math.floor(f / 5)); }
+function affixCount(f){ return Math.min(BOSS_AFFIXES.length, Math.ceil(bossStage(f) / 2)); }
+function bossCount(f){
+  const stage = bossStage(f);
+  return stage >= BOSS_AFFIXES.length * 2 ? 2 : (stage % 2 ? 1 : 2);
+}
 
 function applyAffixes(e, f){
   const pool = BOSS_AFFIXES.slice();
@@ -1437,10 +1540,10 @@ function applyAffixes(e, f){
 
 /* Общее снижение входящего урона у врага: обычная броня плюс панцирь.
    Вынесено отдельно, потому что путей урона два — игрок и свита. */
-function mitigate(e, total){
+function mitigate(e, total, minionShare=0){
   total *= 1 - e.armor/(e.armor + 60);
   if (e.bulwark) total *= total / (total + e.bulwark);
-  if (e.pack) total = packTaken(e, total);      // броня пачки, связь, кровная связь
+  if (e.pack) total = packTaken(e, total, minionShare); // броня пачки, связь, кровная связь
   return total;
 }
 
@@ -1564,11 +1667,11 @@ const PACK_AFFIXES = [
 
   { id:'bloodbond', nm:'кровная связь', col:'#e0405a',
     nt:'80% урона по одному растекается на остальных — общий урон тот же, но убить кого-то одного нельзя',
-    taken(e, t){
+    taken(e, t, minionShare){
       const others = e.pack.members.filter(m => m !== e && !m.dead && m.hp > 0);
       if (!others.length) return t;                            // последний в пачке получает всё сам
       const share = t*0.8/others.length;
-      for (const m of others) applyDamage(m, share, false, true);
+      for (const m of others) applyDamage(m, share, false, true, minionShare);
       return t*0.2;
     } },
 
@@ -1693,8 +1796,8 @@ function packTick(e, dt, tgt, edmg){
 
 /* Правка входящего урона. Зовётся из mitigate(), то есть покрывает и удары
    игрока, и удары свиты — оба пути урона идут через неё. */
-function packTaken(e, total){
-  for (const a of e.pack.aff) if (a.taken) total = a.taken(e, total);
+function packTaken(e, total, minionShare=0){
+  for (const a of e.pack.aff) if (a.taken) total = a.taken(e, total, minionShare);
   return total;
 }
 
@@ -1715,7 +1818,7 @@ function packRedirect(e){
 function packClone(src, {hp, r, dmg}){
   const c = Object.assign({}, src);
   c.ail = {chill:0, shock:0, stun:0, freeze:0, dizzy:0};
-  c.dots = {fire:{dps:0,n:0,dur:3}, poison:{dps:0,n:0,dur:4}, bleed:{dps:0,n:0,dur:6}};
+  c.dots = {fire:{dps:0,minionDps:0,n:0,dur:3}, poison:{dps:0,minionDps:0,n:0,dur:4}, bleed:{dps:0,minionDps:0,n:0,dur:6}};
   c.dotAcc = {fire:0, poison:0, bleed:0};
   c.plague = null;
   c.kb = {x:0, y:0}; c.roles = []; c.aff = [];
@@ -1770,9 +1873,11 @@ function buildFloor(){
   if (f % 5 === 0) G.spawnQueue += 4;                // на «боссовых» этажах гуще
   G.spawnT = 0;
   if (f % 5 === 0){
-    const b = spawnEnemy('boss');                    // босс появляется сразу
+    const n = bossCount(f), bosses = [];
+    for (let i = 0; i < n; i++) bosses.push(spawnEnemy('boss')); // все боссы появляются сразу
     // Игрок обязан узнать про аффиксы до того, как получит ими по лицу
-    toast('ЭТАЖ ' + f + '  ·  БОСС  ·  ' + b.affNm);
+    const aff = bosses.map((b,i) => (n > 1 ? (i+1) + ': ' : '') + b.affNm).join('  /  ');
+    toast('ЭТАЖ ' + f + '  ·  ' + (n > 1 ? 'ДВА БОССА' : 'БОСС') + '  ·  ' + aff);
   } else if (packAffixCount(f) > 0){
     // Пачка выходит на этажах без босса: два таких события в одной комнате
     // не читаются — игрок не поймёт, кто именно его убил.
@@ -1799,13 +1904,13 @@ const dmgScale = f => Math.pow(1.140, f-1);
 
 function spawnEnemy(kind){
   const f = G.floor;
-  let t, elite = false, boss = false;
+  let t, typeKey = 'tank', elite = false, boss = false;
   if (kind === 'boss'){ t = ETYPES.tank; boss = true; }
   else {
     const pool = ['blob','blob','runner'];
     if (f >= 2) pool.push('shooter');
     if (f >= 3) pool.push('tank','runner');
-    t = ETYPES[pick(pool)];
+    typeKey = pick(pool); t = ETYPES[typeKey];
     elite = kind === 'pack' || (f >= 3 && Math.random() < 0.10 + f*0.008);
   }
   const p = G.player;
@@ -1838,13 +1943,13 @@ function spawnEnemy(kind){
     by = clamp(p.y + Math.sin(a2)*760, -ARENA+40, ARENA-40);
   }
   const e = {
-    t, kind: boss?'boss':(elite?'elite':'norm'),
+    t, typeKey, kind: boss?'boss':(elite?'elite':'norm'),
     x: bx, y: by,
     r: t.r * (boss?2.6:elite?1.45:1),
     hp:0, maxHp:0, spd:0, dmg:0, xp:0,
     cd: rnd(0.5,2), rot: rnd(0,6.28), hit:0, kb:{x:0,y:0},
     ail:{chill:0, shock:0, stun:0, freeze:0, dizzy:0}, armor:0, infT:0,
-    dots:{fire:{dps:0,n:0,dur:3}, poison:{dps:0,n:0,dur:4}, bleed:{dps:0,n:0,dur:6}},
+    dots:{fire:{dps:0,minionDps:0,n:0,dur:3}, poison:{dps:0,minionDps:0,n:0,dur:4}, bleed:{dps:0,minionDps:0,n:0,dur:6}},
     dotAcc:{fire:0, poison:0, bleed:0}, dotT:0, orbCd:0,
     plague:null,                              // отдельный процентный DoT от чумного взрыва
     aff:[], affT:{}, affNm:'', ward:null, wardCol:null, bulwark:0,   // аффиксы мини-босса
@@ -1916,6 +2021,16 @@ function conditionalInc(e, src){
   return inc;
 }
 
+/* Сопротивление именно обычному отбрасыванию от навыка. Шанс срабатывания
+   не режется — уменьшается сила импульса. Более высокий класс врага важнее
+   геометрии: элитный Бегун получает элитные 50%, а не обычные 70%. */
+function knockbackScale(e){
+  if (e.kind === 'boss') return 0.10;
+  if (e.kind === 'elite') return 0.50;
+  if (e.typeKey === 'runner') return 0.70;
+  return 1;
+}
+
 function damage(e, src){
   const b = G.bag, p = G.player;
   e = packRedirect(e);            // авангард может принять удар на себя вместо своего
@@ -1930,6 +2045,7 @@ function damage(e, src){
     + el.fire * (e.ward==='fire'?wd:1) + el.cold * (e.ward==='cold'?wd:1)
     + el.lit  * (e.ward==='lit' ?wd:1) + el.poi  * (e.ward==='poi' ?wd:1));
   total *= (1 + (D.incAll + conditionalInc(e, src))/100) * D.moreAll;
+  if (src.minion) total *= MINION_DAMAGE_MULT;       // режет весь удар, включая унаследованные стихии
 
   // Крит: два ролла при crit.lucky, сверхкрит сверху.
   // У свиты свой шанс (D.minCrit), в который уже вложена доля наследования
@@ -1957,13 +2073,13 @@ function damage(e, src){
     total *= D.critMul/100;
     if (Math.random()*100 < D.superCh){                          // СВЕРХКРИТ
       total *= 2;
-      addBleed(e, total*0.03*D.ailEff);                          // 3% от удара в секунду, стакается
+      addBleed(e, total*0.03*D.ailEff, src.minion ? 1 : 0);      // 3% от удара в секунду, стакается
       burst(e.x, e.y, 8, '#e0405a', 200, 3, 0.5);
     }
-    if (b.has('critWave')) nova(e.x, e.y, 90*D.aoeR, total*0.5, '#ffb340');
+    if (b.has('critWave')) nova(e.x, e.y, 90*D.aoeR, total*0.5, '#ffb340', {minionShare:src.minion?1:0});
     if (D.onCrit) heal(D.onCrit);
     // КРИТИЧЕСКАЯ МАССА
-    if (amu('critmass')) nova(e.x, e.y, 55*D.aoeR, total*0.5, '#ff9a2f');
+    if (amu('critmass')) nova(e.x, e.y, 55*D.aoeR, total*0.5, '#ff9a2f', {minionShare:src.minion?1:0});
     if (amu('critchain')) p.critChain = Math.min(3, (p.critChain||0) + 1);
   } else if (amu('critchain')) p.critChain = 0;   // цепь рвётся на первом же некрите
   // Урон в размере % от максимального HP цели — против «жирных»
@@ -1988,7 +2104,7 @@ function damage(e, src){
     if (near === 1) total *= 1.75;
   }
   // Броня и панцирь: единый путь снижения для игрока и свиты
-  total = mitigate(e, total);
+  total = mitigate(e, total, src.minion ? 1 : 0);
   // КОЛЬЦО СМЕРТИ: заряд копится убийствами и тратится на первую же цель
   if (amu('reaper') && p.reaper){
     p.reaper = false;
@@ -1997,11 +2113,11 @@ function damage(e, src){
     total += e.hp;
   }
 
-  applyDamage(e, total, isCrit);
+  const dealt = applyDamage(e, total, isCrit, false, src.minion ? 1 : 0);
 
   // Вампиризм и здоровье за попадание
-  if (D.leech){                                                  // вампиризм: мгновенно или в пул
-    const lv = total * D.leech/100;
+  if (D.leech && !src.minion){                                   // обычный вампиризм — только от атак героя
+    const lv = dealt * D.leech/100;
     p.dreadLeech = true;                                         // единственный разрешённый канал
     if (D.leechInstant) heal(lv); else p.leechPool = (p.leechPool||0) + lv;
     p.dreadLeech = false;
@@ -2010,19 +2126,22 @@ function damage(e, src){
   // ВАМПИРЫ ХОЗЯИНА: приспешник лечит сам себя и только себя
   if (src.minion && D.minVamp){
     const mm = src.minion;
-    mm.hp = Math.min(mm.max, mm.hp + total*D.minVamp/100);
+    mm.hp = Math.min(mm.max, mm.hp + dealt*D.minVamp/100);
   }
-  if (src.minion && D.minLeech) heal(total * D.minLeech/100);   // min.leech_to_owner
 
-  applyBookAilments(e, total);                                   // книги действуют на каждом ударе
+  applyBookAilments(e, total,
+    src.minion ? MINION_AILMENT_CHANCE_MULT : 1,
+    src.minion ? MINION_DAMAGE_MULT : 1,
+    src.minion ? 1 : 0);
 
   // Наложение негативных эффектов
-  const roll = v => Math.random()*100 < v;
+  const ailmentChanceMul = src.minion ? MINION_AILMENT_CHANCE_MULT : 1;
+  const roll = v => Math.random()*100 < v * ailmentChanceMul;
   if (roll(D.igniteCh)){
-    addDot(e, 'fire', total*0.25*D.ailEff, 3*D.ailDur);
+    addDot(e, 'fire', total*0.25*D.ailEff, 3*D.ailDur, src.minion ? 1 : 0);
     // ПЕРЕГРУЗКА: огонь по шокированному замыкает разряд
     if (amu('overload') && e.ail.shock > 0){
-      shockBurst(e, total * SHOCK_SHARE * D.ailEff);
+      shockBurst(e, total * SHOCK_SHARE * D.ailEff, src.minion ? 1 : 0);
       G.fx.push({t:'ring', x:e.x, y:e.y, r:6, max:120*D.aoeR, life:0.3, col:'#ffe14a'});
     }
   }
@@ -2036,10 +2155,10 @@ function damage(e, src){
   }
   if (roll(b.flat('shockCh'))){
     e.ail.shock = Math.max(e.ail.shock, 3*D.ailDur);
-    shockBurst(e, total * SHOCK_SHARE * D.ailEff);        // разряд по округе
+    shockBurst(e, total * SHOCK_SHARE * D.ailEff, src.minion ? 1 : 0); // разряд по округе
   }
   if (roll(D.poiCh))                                                      // РАДИАЦИЯ: двойной стак
-    addDot(e, 'poison', total*0.15*D.ailEff*(D.radiation?2:1), 4*D.ailDur);
+    addDot(e, 'poison', total*0.15*D.ailEff*(D.radiation?2:1), 4*D.ailDur, src.minion ? 1 : 0);
   if (roll(b.flat('stun')))  e.ail.stun = 0.7 * D.ailDur;   // единственный статус, ходивший мимо длительности
   // ТАРАННАЯ ПЕРЧАТКА: свой толчок мимо шанса отбрасывания, каждый восьмой удар
   if (amu('shove') && p.hitN % 8 === 0){
@@ -2051,23 +2170,25 @@ function damage(e, src){
   if (roll(D.knock)){
     const from = src.minion || p;               // толкает тот, кто ударил
     const a = Math.atan2(e.y-from.y, e.x-from.x);
-    e.kb.x += Math.cos(a)*260*D.knockPow; e.kb.y += Math.sin(a)*260*D.knockPow;
+    const force = 260 * D.knockPow * knockbackScale(e);
+    e.kb.x += Math.cos(a)*force; e.kb.y += Math.sin(a)*force;
     if (D.dizzy){                                                         // ГОЛОВОКРУЖЕНИЕ
       if (e.ail.dizzy <= 0) statusText(e, 'SLOWED', '#ffe14a');
       e.ail.dizzy = 2*D.ailDur;
     }
   }
   // Добивание: мгновенная смерть под порогом
-  if (b.flat('execute') && e.kind==='norm' && e.hp/e.maxHp < b.flat('execute')/100) applyDamage(e, e.hp, false);
+  if (b.flat('execute') && e.kind==='norm' && e.hp/e.maxHp < b.flat('execute')/100)
+    applyDamage(e, e.hp, false, false, src.minion ? 1 : 0);
   // ПЕРЧАТКИ ГРОМА: свой период, но общий счётчик ударов
   if (amu('thunder') && p.hitN % 12 === 0){
     e.ail.shock = Math.max(e.ail.shock, 3*D.ailDur);
-    shockBurst(e, total * SHOCK_SHARE * D.ailEff);
+    shockBurst(e, total * SHOCK_SHARE * D.ailEff, src.minion ? 1 : 0);
     G.fx.push({t:'bolt', x:p.x, y:p.y, x2:e.x, y2:e.y, life:0.18, col:'#ffe14a'});
   }
   // КОЛЬЦО ИМПУЛЬСА
   if (amu('pulse') && p.hitN % 8 === 0)
-    nova(e.x, e.y, 130*D.aoeR, avgHit()*0.9, '#4fd1c5');
+    nova(e.x, e.y, 130*D.aoeR, avgHit()*0.9, '#4fd1c5', {minionShare:src.minion?1:0});
   // Двойное и тройное попадание
   if (!src.noDouble){
     // Метку приспешника обязательно тащим в добавочные удары: иначе двойной
@@ -2077,16 +2198,22 @@ function damage(e, src){
   }
 }
 
-function applyDamage(e, amount, crit, silent){
+function applyDamage(e, amount, crit, silent, minionShare=0){
+  /* Созвездие — отдельный множитель по типу цели. Так заявленные +5% остаются
+     настоящими пятью процентами даже у билда, уже собравшего сотни inc-процентов.
+     Точка общая для ударов, стихий, DoT и свиты, поэтому бонус ничего не обходит. */
+  amount *= constellationMultiplier(e);
   const dealt = Math.max(0, Math.min(amount, e.hp));
   G.stats.damage += dealt;
   G.stats.maxHit = Math.max(G.stats.maxHit, dealt);
   e.hp -= amount; if (!silent) e.hit = 0.12;
   e.noDmgT = 0;                   // регенераторы считают время с последнего попадания
+  if (minionShare > 0 && D.deathLord) heal(dealt * minionShare * 0.001);
   if (!silent){
     G.fx.push({t:'num', x:e.x, y:e.y-e.r-6, v:Math.round(amount), life:0.65, crit});
     burst(e.x, e.y, crit ? 9 : 3, crit ? '#ffd24a' : e.t.col, crit ? 220 : 110, 3, 0.35);
   }
+  return dealt;
 }
 
 /* Шанс книги: 0.4% с рядового, впятеро с элиты, в сорок раз с мини-босса.
@@ -2113,8 +2240,8 @@ function dropItem(e){
     const w = [16, 10, 5, 2][AMULETS[k].rar];    // обычный, редкий, эпический, легендарный
     for (let i = 0; i < w; i++) pool.push(k);
   }
-  // Тотемы, ещё не доросшие до великого
-  const tot = TOTEM_KEYS.filter(k => totemTier(k) < 4);
+  // Тотемы, открытые соответствующей книгой и ещё не доросшие до великого
+  const tot = TOTEM_KEYS.filter(k => totemTier(k) < 4 && G.items && G.items[TOTEMS[k].book]);
   const r = Math.random();
   if (pool.length && r < AMU_SHARE)
     G.orbs.push({x:e.x, y:e.y, r:9, amu:pick(pool)});
@@ -2291,10 +2418,15 @@ function killEnemy(e, i){
   if (e.kind === 'boss'){ G.bossKills++; G.stats.bosses++; }
   else if (e.kind === 'elite') G.stats.elites++;
   else G.stats.normals++;
+  // Элита и боссы имеют собственные созвездия и не продвигают созвездие формы.
+  const constId = e.kind === 'boss' ? 'boss' : e.kind === 'elite' ? 'elite' : e.typeKey;
+  const cs = constellationState();
+  if (CONST_IDS.includes(constId)) cs.kills[constId]++;
   if (e.pack) packDeath(e);        // до всего прочего: аффиксы пачки могут поднять новых врагов
   tryDropBook(e);
   // МЕШОК ОПЫТА: надбавка только за элиту и боссов
-  const xpv = e.xp * (amu('xpbag') && e.kind !== 'norm' ? 1.5 : 1);
+  const constMul = constellationMultiplier(e);
+  const xpv = e.xp * constMul * (amu('xpbag') && e.kind !== 'norm' ? 1.5 : 1);
   G.orbs.push({x:e.x, y:e.y, v:xpv, r:4});                        // сфера опыта
   // Золото: монеты падают отдельно от опыта, крупные враги роняют горстью
   /* Золото за врага. Коэффициент при этаже срезан с 0.9 до 0.3, база поднята
@@ -2304,7 +2436,7 @@ function killEnemy(e, i){
      Срезать один коэффициент было мало: он же кормит и ранние этажи, где
      игрок как раз и умирает. Поднятая база держит первые десять этажей почти
      на прежнем уровне (4 438 против 3 900), а глубина падает вдвое. */
-  const gv = (5 + G.floor*0.3) * (e.kind === 'boss' ? 22 : e.kind === 'elite' ? 4.5 : 1) * D.goldFind
+  const gv = (5 + G.floor*0.3) * (e.kind === 'boss' ? 22 : e.kind === 'elite' ? 4.5 : 1) * D.goldFind * D.goldGainMult * constMul
            * (amu('goldbag') && e.kind !== 'norm' ? 1.5 : 1);   // МЕШОК ЗОЛОТА: только крупные
   const coins = e.kind === 'boss' ? 6 : e.kind === 'elite' ? 2 : 1;
   for (let ci = 0; ci < coins; ci++)
@@ -2345,7 +2477,8 @@ function killEnemy(e, i){
     let best = null, bd = 260;
     for (const o of G.enemies){ if (o === e) continue; const d = dist(o,e); if (d < bd){ bd = d; best = o; } }
     if (best){
-      addDot(best, 'poison', e.dots.poison.dps, e.dots.poison.dur + 2);
+      addDot(best, 'poison', e.dots.poison.dps, e.dots.poison.dur + 2,
+        e.dots.poison.dps > 0 ? e.dots.poison.minionDps/e.dots.poison.dps : 0);
       G.fx.push({t:'ring', x:best.x, y:best.y, r:6, max:34, life:0.35, col:'#8be04e'});
     }
   }
@@ -2419,7 +2552,7 @@ const SLOW_AURA_BASE = 260, INFERNO_BASE = 110;
    а не замораживать комнату с одного прока. Замедление слабее прямого (20% против
    35%), и самого статуса аура НЕ накладывает — см. комментарий в цикле врагов. */
 const CHILL_AURA_R = 96, CHILL_AURA_SLOW = 0.20, CHILL_TAKEN = 1.25;
-function shockBurst(src, dmg){
+function shockBurst(src, dmg, minionShare=0){
   const list = [];
   for (const x of G.enemies){
     if (x === src) continue;
@@ -2429,7 +2562,7 @@ function shockBurst(src, dmg){
   list.sort((a,b) => a[0]-b[0]);
   for (let i = 0; i < Math.min(SHOCK_TARGETS, list.length); i++){
     const t = list[i][1];
-    applyDamage(t, dmg, false);
+    applyDamage(t, dmg, false, false, minionShare);
     G.fx.push({t:'bolt', x:src.x, y:src.y, x2:t.x, y2:t.y, life:0.2});
     burst(t.x, t.y, 3, '#ffe14a', 130, 3, 0.3);
   }
@@ -2440,8 +2573,9 @@ function nova(x, y, r, dmg, col, opt){
   G.fx.push({t:'ring', x, y, r:8, max:r, life:0.28, col});
   for (const e of G.enemies){
     if (dist(e,{x,y}) >= r + e.r) continue;
-    applyDamage(e, dmg, false);
-    if (opt && opt.ignite) addDot(e, 'fire', opt.ignite, 3*D.ailDur);   // мега-взрыв поджигает задетых
+    const minionShare = opt && opt.minionShare || 0;
+    applyDamage(e, dmg, false, false, minionShare);
+    if (opt && opt.ignite) addDot(e, 'fire', opt.ignite, 3*D.ailDur, minionShare); // мега-взрыв поджигает задетых
   }
 }
 
@@ -2463,12 +2597,12 @@ function statusText(e, txt, col){
 
 /* Эффекты книг. Вызывается и из атак игрока, и из ударов свиты —
    книги работают на всех, как и задумано. */
-function applyBookAilments(e, total){
+function applyBookAilments(e, total, chanceMul=1, fixedDamageMul=1, minionShare=0){
   const it = G.items; if (!it) return;
-  const proc = k => it[k] && Math.random()*100 < bookChance(k);
-  if (proc('fire'))  addDot(e, 'fire', total * 0.20 * D.ailEff, 1.5 * D.ailDur);
-  if (proc('poison')) addDot(e, 'poison', D.bookPoiDps, 3 * D.ailDur);
-  if (proc('bleed'))  addDot(e, 'bleed', bookBleedDps(), 4 * D.ailDur);
+  const proc = k => it[k] && Math.random()*100 < bookChance(k) * chanceMul;
+  if (proc('fire'))  addDot(e, 'fire', total * 0.20 * D.ailEff, 1.5 * D.ailDur, minionShare);
+  if (proc('poison')) addDot(e, 'poison', D.bookPoiDps * fixedDamageMul, 3 * D.ailDur, minionShare);
+  if (proc('bleed'))  addDot(e, 'bleed', bookBleedDps() * fixedDamageMul, 4 * D.ailDur, minionShare);
   if (proc('cold')){
     if (e.ail.chill <= 0) statusText(e, 'SLOWED', '#ffe14a');
     e.ail.chill = Math.max(e.ail.chill, 1.0 * D.ailDur);
@@ -2481,7 +2615,7 @@ function applyBookAilments(e, total){
    как если бы каждый стак жил отдельным таймером и истекал сам, но стоит O(1)
    памяти вместо списка из сотен объектов.
    Установившийся уровень = частота проков x урон за прок x длительность. */
-function addDot(e, type, dps, dur){
+function addDot(e, type, dps, dur, minionShare=0){
   // Оберег гасит и урон со временем своей стихии, иначе поджог обходил бы защиту
   if (e.ward && ((e.ward === 'fire' && type === 'fire') || (e.ward === 'poi' && type === 'poison')))
     dps *= 0.4;
@@ -2494,10 +2628,10 @@ function addDot(e, type, dps, dur){
   // dps × dur, и при таком слиянии он в точности равен сумме вкладов обоих проков.
   const tot = d.dps + dps;
   d.dur = tot > 0 ? (d.dps*d.dur + dps*dur) / tot : dur;
-  d.dps = tot; d.n += 1;
+  d.dps = tot; d.minionDps = (d.minionDps || 0) + dps*minionShare; d.n += 1;
 }
 /* Совместимость: кровотечение теперь просто один из типов DoT */
-function addBleed(e, dps){ addDot(e, 'bleed', dps, 6 * D.ailDur); }
+function addBleed(e, dps, minionShare=0){ addDot(e, 'bleed', dps, 6 * D.ailDur, minionShare); }
 
 /* Чумной взрыв не наносит мгновенный урон. Он заражает всех выживших в малом
    радиусе; чума всегда делает три тика: на 1-й, 2-й и 3-й секунде. Каждый тик
@@ -2563,6 +2697,7 @@ function needKind(){
    Скелет — самостоятельная сущность: ищет ближайшего врага в радиусе,
    добегает и бьёт. Его урон считается от вашего среднего удара,
    поэтому вся прокачка урона косвенно усиливает и свиту.            */
+const MINION_LIFE_MIN = 10, MINION_LIFE_MAX = 15;
 function spawnMinion(x, y, kind){
   kind = kind || needKind();
   if (!kind) return false;
@@ -2571,6 +2706,7 @@ function spawnMinion(x, y, kind){
     kind, x: px + rnd(-20,20), y: py + rnd(-20,20),
     r: minionR(kind), hp, max: hp,
     cd: rnd(0, 0.4), rot: rnd(0,6.28), hit:0, born:0, tgt:null, blinkT:undefined, hitN:0,
+    deathT: rnd(MINION_LIFE_MIN, MINION_LIFE_MAX), // независимая естественная смерть запускает общие посмертные эффекты
   });
   G.fx.push({t:'ring', x:px, y:py, r:4, max:26, life:0.25, col:MKIND[kind].col});
   return true;
@@ -2583,8 +2719,9 @@ function spawnMinion(x, y, kind){
    проходило почти всё — поджог, охлаждение, шок с разрядом, яд, оглушение,
    отбрасывание, добивание, сверхкриты, кольца, перчатки, счётчики «каждый N-й»
    и двойные удары. Некромант получал половину каталога вхолостую.
-   Отличий у свиты ровно три, и все они внутри damage(): свой шанс крита,
-   отбрасывание считается от приспешника, а не от игрока, и свой вампиризм. */
+   Отличия свиты отмечены через src.minion: свой шанс крита и вампиризм,
+   отбрасывание от позиции бойца, а также ×0.25 к шансам негативных эффектов.
+   Общий урон всех типов свиты отдельно уменьшен вдвое. */
 const FRENZY_R = 70;               // база радиуса взрыва «Буйства демонов»
 const WHIRL_R  = 55;               // база радиуса «Вихря когтей»
 /* КИПЯЩАЯ КРОВЬ. Лужа бьёт долей ТЕКУЩЕГО здоровья, поэтому урон не растёт
@@ -2608,7 +2745,7 @@ function tickBoils(dt){
     b2.t = 1;                                        // тик раз в секунду, а не каждый кадр
     for (const e of G.enemies){
       if (dist(e, b2) > b2.r + e.r) continue;
-      applyDamage(e, e.hp*BOIL_PCT, false, true);
+      applyDamage(e, e.hp*BOIL_PCT, false, true, 1);
       burst(e.x, e.y, 2, '#e0405a', 90, 2, 0.3);
     }
   }
@@ -2630,7 +2767,7 @@ function tickAcidPools(dt){
     a.t = 1;
     for (const e of G.enemies){
       if (e.dead || dist(e, a) > a.r + e.r) continue;
-      applyDamage(e, e.hp*ACID_PCT, false, true);
+      applyDamage(e, e.hp*ACID_PCT, false, true, 1);
       burst(e.x, e.y, 3, '#8be04e', 100, 3, 0.35);
     }
   }
@@ -2704,8 +2841,8 @@ function minionHit(e, m){
      считается по базовой доле в 15% от удара — той же, что у книги первого ранга.
      Так карточка работает и в связке с книгой, и сама по себе, а стаки при этом
      сливаются в один эффект по общему правилу усреднения кровотечения. */
-  if (D.minBath && Math.random() < 0.10){
-    addBleed(e, bookBleedDps() || avgHit()*0.15*D.ailEff);
+  if (D.minBath && Math.random() < 0.10 * MINION_AILMENT_CHANCE_MULT){
+    addBleed(e, bookBleedDps()*MINION_DAMAGE_MULT || avgHit()*0.15*D.ailEff*MINION_DAMAGE_MULT, 1);
     statusText(e, 'КРОВЬ', '#e0405a');
   }
   if (D.minFrenzy){
@@ -2717,7 +2854,7 @@ function minionHit(e, m){
       damage(o, {mul, minion:m, noDouble:true});
     }
   }
-  if (m.kind === 'golemB'){                          // тяжёлый удар отбрасывает
+  if (m.kind === 'golemB' && Math.random() < MINION_AILMENT_CHANCE_MULT){ // врождённое отбрасывание: 100% → 25%
     const a = Math.atan2(e.y-m.y, e.x-m.x);
     e.kb.x += Math.cos(a)*200; e.kb.y += Math.sin(a)*200;
     burst(e.x, e.y, 8, '#d4506a', 200, 4, 0.5);
@@ -2727,7 +2864,8 @@ function minionHit(e, m){
 /* Костяной голем: прямого урона нет вовсе — только кровотечение,
    после чего он сразу уходит к следующей цели. Добить никого не может. */
 function boneGolemHit(e){
-  addBleed(e, avgHit() * 0.03 * D.golemN * D.ailEff);
+  if (Math.random() >= MINION_AILMENT_CHANCE_MULT) return;
+  addBleed(e, avgHit() * 0.03 * D.golemN * D.ailEff * MINION_DAMAGE_MULT, 1);
   burst(e.x, e.y, 7, '#e0405a', 170, 3, 0.5);
 }
 
@@ -2742,15 +2880,40 @@ function minionShot(m, e, spell){
     vx:Math.cos(a)*470*D.projSpd, vy:Math.sin(a)*470*D.projSpd,
     r: (spell ? 7 : 4) * D.projSize, life:1.1/D.projSpd,
     pierce:D.pierce, chain:D.chain, ric:0, hitSet:[], orb:false,
-    mul:0.20, pierced:0, spell,                       // 20% урона от вашего
+    mul:0.20, pierced:0, spell, minion:m,
   });
+}
+
+/* Собственная стихия колдуна раньше срабатывала гарантированно поверх общего
+   удара. Теперь это тоже эффект удара свиты: шанс 25%, а урон эффекта ×0.5. */
+function applyMinionSpell(e, spell){
+  if (!spell || Math.random() >= MINION_AILMENT_CHANCE_MULT) return false;
+  const base = avgHit() * 0.20 * MINION_DAMAGE_MULT;
+  if (spell === 'fire'){
+    addDot(e, 'fire', base*0.25*D.ailEff, 3*D.ailDur, 1);
+    burst(e.x,e.y,5,'#ff7a2f',120,3,0.4);
+  }
+  if (spell === 'cold'){
+    if (e.ail.chill<=0) statusText(e,'SLOWED','#ffe14a');
+    e.ail.chill = 2.5*D.ailDur;
+    if (D.freeze){
+      if(e.ail.freeze<=0) statusText(e,'FROZEN','#7fd6ff');
+      e.ail.freeze = Math.max(e.ail.freeze, 1.4*D.ailDur*D.freezeDur);
+    }
+    burst(e.x,e.y,5,'#7fd6ff',120,3,0.4);
+  }
+  if (spell === 'poison'){
+    addDot(e, 'poison', base*0.15*D.ailEff*(D.radiation?2:1), 4*D.ailDur, 1);
+    burst(e.x,e.y,5,'#8be04e',120,3,0.4);
+  }
+  return true;
 }
 
 function killMinion(i){
   if (i < 0 || i >= G.minions.length) return;   // защита от индекса -1 у уже убитого
   const m = G.minions[i];
   if (D.venomancer) dropAcidPool(m);
-  if (D.minBoom) nova(m.x, m.y, 95*D.aoeR, avgHit()*D.minDmgMul*1.2*(G.bloodT>0?2:1), MKIND[m.kind].col);
+  if (D.minBoom) nova(m.x, m.y, 95*D.aoeR, avgHit()*D.minDmgMul*MINION_DAMAGE_MULT*1.2*(G.bloodT>0?2:1), MKIND[m.kind].col, {minionShare:1});
   G.fx.push({t:'ring', x:m.x, y:m.y, r:m.r, max:m.r*2.2, life:0.25, col:MKIND[m.kind].col});
   burst(m.x, m.y, m.kind.startsWith('golem') ? 26 : 12, MKIND[m.kind].col, 190, 4, 0.7);
   G.minions.splice(i,1);
@@ -2999,7 +3162,7 @@ function update(dt){
   if (amu('panic') && p.hp/D.life < 0.30) sp *= 1.60;
   if (amu('siege') && p.stillT > 1.5) sp *= 0.5;     // цена осадного огня
   if (p.dash > 0){
-    sp *= 3.4; p.dash -= dt;
+    sp *= DASH_SPEED_MULT; p.dash -= dt;
     if (!p.moving){ mx = p.faceX; my = p.faceY; }     // рывок с места — в последнюю сторону                                       // рывок = кратковременный разгон
     if (D.dashDmg) for (const e of G.enemies){                     // ТАРАННЫЙ РЫВОК
       if (p.dashHits.includes(e) || dist(e,p) > p.r + e.r + 12) continue;
@@ -3008,8 +3171,13 @@ function update(dt){
     }
   }
   p.inv = Math.max(0, p.inv - dt);
-  p.dashCd = Math.max(0, p.dashCd - dt);
-  if (p.dashN < D.dashMax && p.dashCd <= 0){ p.dashN++; p.dashCd = D.dashCd; }
+  if (p.dashN < D.dashMax){
+    p.dashCd = Math.max(0, p.dashCd - dt);
+    if (p.dashCd <= 0){
+      p.dashN++;
+      p.dashCd = p.dashN < D.dashMax ? D.dashCd : 0;
+    }
+  } else p.dashCd = 0;
 
   const oldX = p.x, oldY = p.y;
   p.x = clamp(p.x + mx*sp*dt, -ARENA, ARENA);
@@ -3104,11 +3272,12 @@ function update(dt){
       const d = e.dots[type];
       if (d.dps <= 0) continue;
       const v = d.dps * dt;
-      applyDamage(e, v, false, true);
+      const minionShare = d.dps > 0 ? clamp((d.minionDps || 0)/d.dps, 0, 1) : 0;
+      applyDamage(e, v, false, true, minionShare);
       e.dotAcc[type] += v;
       const k = Math.min(1, dt / d.dur);            // утечка стаков
-      d.dps -= d.dps * k; d.n -= d.n * k;
-      if (d.dps < 0.02){ d.dps = 0; d.n = 0; }
+      d.dps -= d.dps * k; d.minionDps = Math.max(0, (d.minionDps || 0) * (1-k)); d.n -= d.n * k;
+      if (d.dps < 0.02){ d.dps = 0; d.minionDps = 0; d.n = 0; }
     }
     // Урон со временем копится и всплывает раз в 0.4 сек своим цветом:
     // огонь красным, яд зелёным, кровотечение багровым
@@ -3130,7 +3299,8 @@ function update(dt){
         for (const o2 of G.enemies){
           if (o2 === e || o2.dots.fire.dps > 0) continue;
           if (dist(o2,e) > D.infernoR + o2.r) continue;
-          addDot(o2, 'fire', e.dots.fire.dps*0.5, 3*D.ailDur);
+          addDot(o2, 'fire', e.dots.fire.dps*0.5, 3*D.ailDur,
+            e.dots.fire.dps > 0 ? e.dots.fire.minionDps/e.dots.fire.dps : 0);
           burst(o2.x, o2.y, 4, '#ff7a2f', 90, 3, 0.4);
         }
       }
@@ -3192,7 +3362,7 @@ function update(dt){
     const ranged = e.t.ranged || !!e.madRanged;
     if (affLock){ /* движением распоряжается аффикс */ }
     else if (ranged){
-      // Стрелок держит дистанцию 260 и стреляет
+      // Призма держит дистанцию 260 и стреляет
       const d = dist(e,tgt);
       const dir = d > 300 ? 1 : d < 220 ? -1 : 0;
       e.x += Math.cos(a)*spd*dir*dt; e.y += Math.sin(a)*spd*dir*dt;
@@ -3267,6 +3437,8 @@ function update(dt){
 
     for (let i = G.minions.length-1; i >= 0; i--){
       const m = G.minions[i];
+      m.deathT = (m.deathT === undefined ? rnd(MINION_LIFE_MIN, MINION_LIFE_MAX) : m.deathT) - dt;
+      if (m.deathT <= 0){ killMinion(i); continue; }
       m.hit = Math.max(0, m.hit - dt); m.rot += dt*2.4; m.cd -= dt; m.born += dt;
       const mode = MKIND[m.kind].mode;
 
@@ -3363,18 +3535,9 @@ function update(dt){
     if (!dead) for (const e of G.enemies){
       if (s.hitSet.includes(e)) continue;
       if (dist(e,s) > e.r + s.r) continue;
-      damage(e, {mul: s.mul * (D.pierceBonus ? 1 + 0.2*s.pierced : 1)});
+      damage(e, {mul: s.mul * (D.pierceBonus ? 1 + 0.2*s.pierced : 1), minion:s.minion});
       s.hitSet.push(e);
-      if (s.spell){                                            // колдун кладёт статус гарантированно
-        const base = avgHit() * 0.20;
-        if (s.spell === 'fire'){ addDot(e, 'fire', base*0.25*D.ailEff, 3*D.ailDur);
-                                 burst(e.x,e.y,5,'#ff7a2f',120,3,0.4); }
-        if (s.spell === 'cold'){ if (e.ail.chill<=0) statusText(e,'SLOWED','#ffe14a'); e.ail.chill = 2.5*D.ailDur;
-                                 if (D.freeze){ if(e.ail.freeze<=0) statusText(e,'FROZEN','#7fd6ff'); e.ail.freeze = Math.max(e.ail.freeze, 1.4*D.ailDur*D.freezeDur); }
-                                 burst(e.x,e.y,5,'#7fd6ff',120,3,0.4); }
-        if (s.spell === 'poison'){ addDot(e, 'poison', base*0.15*D.ailEff*(D.radiation?2:1), 4*D.ailDur);
-                                   burst(e.x,e.y,5,'#8be04e',120,3,0.4); }
-      }
+      applyMinionSpell(e, s.spell);
       if (s.orb){ nova(s.x, s.y, G.weapon.aoe*D.aoeR, avgHit()*0.55, '#c08cff'); dead = true; break; }
       if (s.chain > 0){                                            // отскок на новую цель
         s.chain--;
@@ -3478,7 +3641,7 @@ function update(dt){
   if (G.portal){
     G.portal.t += dt;
     if (dist(G.portal, p) < G.portal.r + p.r && G.portal.t > 0.6){
-      G.gold += Math.round((12 + G.floor*6) * D.goldFind);        // премия за зачистку
+      G.gold += Math.round((12 + G.floor*6) * D.goldFind * D.goldGainMult); // премия за зачистку
       G.floor++;
       // Новый заряд только на рубежах: при «за этаж» к 20-му этажу копился 21 переброс
       // и раздача превращалась в поиск идеальной карточки вместо выбора из предложенных.
@@ -4172,9 +4335,10 @@ function updateHud(){
   }).join('');
   // У некроманта в строке показываем урон свиты: своего у него нет
   $('#dpsinfo').textContent = G.weapon.noAttack
-    ? 'свита ≈ ' + Math.round(avgHit()*D.minDmgMul*(D.minAspd/0.5)*Math.max(1, G.minions.length)) + ' урона/сек'
+    ? 'свита ≈ ' + Math.round(avgHit()*D.minDmgMul*MINION_DAMAGE_MULT*(D.minAspd/0.5)*Math.max(1, G.minions.length)) + ' урона/сек'
     : 'урон/сек ≈ ' + Math.round(avgHit()/D.atkCd*(G.weapon.type==='proj'?D.projN:1))
     + ' · рывки ' + G.player.dashN + '/' + D.dashMax
+    + (G.player.dashN < D.dashMax ? ' · заряд через ' + G.player.dashCd.toFixed(1) + 'с' : '')
     + (D.hasMin ? ' · свита ' + G.minions.length + '/' + D.minMax : '');
 }
 
@@ -4320,7 +4484,7 @@ function detailedSkillTip(m, card){
   if (m.id === 'def.recoup') return '<b>Когда срабатывает:</b> после того, как герой получает урон.<br><b>Эффект:</b> указанная доля полученного урона возвращается как лечение постепенно, а не сразу.<br><b>Пример:</b> при 20% возврата из 100 полученного урона со временем вернётся 20 HP.';
   if (m.id === 'min.crit') return '<b>Что меняет:</b> увеличивает шанс критического удара именно у приспешников.<br><b>Эффект:</b> каждый их удар отдельно проверяет этот шанс и использует их критический множитель.<br><b>Не влияет:</b> на шанс крита самого героя.';
   if (m.id === 'min.explode') return '<b>Когда срабатывает:</b> когда приспешник погибает.<br><b>Эффект:</b> он взрывается и наносит урон окружающим врагам.<br><b>Практически:</b> превращает гибель скелета в часть урона по плотной толпе.';
-  if (m.id === 'min.leech_to_owner') return '<b>Условие:</b> у свиты уже есть вампиризм.<br><b>Эффект:</b> указанная часть лечения, которое приспешники получают от своего вампиризма, передаётся герою.<br><b>Не создаёт:</b> новый урон или новый вампиризм — только делит уже существующее лечение.';
+  if (m.id === 'key.death_lord') return '<b>Только для Некроманта.</b><br><b>Эффект:</b> 0,1% всего фактически нанесённого свитой урона восстанавливает здоровье героя.<br><b>Учитывает:</b> удары всех приспешников, их дополнительные атаки, негативные эффекты, взрыв при смерти и классовые лужи.<br><b>Пример:</b> 10 000 реально нанесённого урона возвращают 10 HP.';
   if (m.id === 'cond.vs_low_hp') return '<b>Условие:</b> цель имеет меньше 35% своего максимального здоровья.<br><b>Эффект:</b> все ваши подходящие попадания по ней получают этот процент урона.<br><b>Практически:</b> помогает быстрее добивать раненых врагов.';
   if (m.id === 'cond.vs_full_hp') return '<b>Условие:</b> цель ещё не получила урон и находится на полном HP.<br><b>Эффект:</b> первый удар по ней получает этот процент урона.<br><b>Важно:</b> после первого попадания бонус для этой цели пропадает.';
   if (m.id === 'cond.vs_boss') return '<b>Условие:</b> цель является элитным врагом или боссом.<br><b>Эффект:</b> ваши попадания по такой цели получают указанный процент урона.<br><b>Не действует:</b> на обычных монстров.';
@@ -4337,7 +4501,7 @@ function detailedSkillTip(m, card){
   if (m.id === 'ail.chill.chance') return '<b>Когда проверяется:</b> при каждом подходящем попадании.<br><b>Эффект:</b> цель замедляется на 35% и получает на 25% больше урона; соседние враги рядом с ней тоже замедляются.<br><b>Важно:</b> это шанс наложения, а не величина самого замедления.';
   if (m.id === 'ail.shock.chance') return '<b>Когда проверяется:</b> при каждом подходящем попадании.<br><b>Эффект:</b> с указанным шансом из цели выходит разряд: цепная молния бьёт до 20 ближайших врагов в радиусе, нанося каждому 20% силы удара. Основная цель также получает Шок и начинает принимать на 30% больше урона.<br><b>Важно:</b> карточка повышает шанс разряда, но не сам урон цепной молнии и не множитель Шока.';
   if (m.id === 'ail.poison.chance') return '<b>Когда проверяется:</b> при каждом подходящем попадании.<br><b>Эффект:</b> с этим шансом накладывается один стак яда; стаки складываются и каждый наносит урон отдельно.<br><b>Важно:</b> яд не расходует время боя и не мешает накладывать новые стаки.';
-  if (m.id === 'cc.knockback') return '<b>Когда проверяется:</b> при каждом вашем попадании.<br><b>Эффект:</b> с этим шансом враг отбрасывается от героя.<br><b>Важно:</b> при 100% каждое подходящее попадание отбрасывает; тогда открывается «ГОЛОВОКРУЖЕНИЕ».';
+  if (m.id === 'cc.knockback') return '<b>Когда проверяется:</b> при каждом вашем попадании.<br><b>Эффект:</b> с этим шансом враг отбрасывается от героя.<br><b>Сопротивление:</b> сила толчка по Бегунам снижена на 30%, по любой элите — на 50%, по боссам — на 90%.<br><b>Важно:</b> при 100% каждое подходящее попадание отбрасывает; тогда открывается «ГОЛОВОКРУЖЕНИЕ».';
   if (m.id === 'cc.stun_chance') return '<b>Когда проверяется:</b> при каждом вашем попадании.<br><b>Эффект:</b> с этим шансом враг полностью перестаёт двигаться и атаковать на время оглушения.<br><b>Важно:</b> эта карточка повышает шанс, а длительность меняет «Длительность всех эффектов».';
   if (m.id === 'cc.slow') return '<b>Что меняет:</b> усиливает величину замедления, которое вы накладываете.<br><b>Пример:</b> более сильное замедление сильнее уменьшает скорость врагов, но не меняет шанс его наложения.<br><b>Не влияет:</b> на длительность контроля и урон.';
   if (m.id === 'prog.xp') return '<b>Что меняет:</b> увеличивает опыт, получаемый за убийство врагов.<br><b>Пример:</b> +25% превращает награду 10 опыта в 12,5 опыта.<br><b>Не влияет:</b> на уже набранный опыт и на размер наград золотом.';
@@ -4536,6 +4700,8 @@ function renderSheet(){
       r('Шанс крита', D.critCh.toFixed(1) + '%') +
       r('Множитель крита', Math.round(D.critMul) + '%') +
       r('Скорость бега', Math.round(D.mspd)) +
+      r('Получаемое золото', '×' + (D.goldFind*D.goldGainMult).toFixed(2) +
+        (D.goldGainMult > 1 ? ' · ВОР ×' + D.goldGainMult.toFixed(2) : '')) +
     '<h3>СТИХИИ</h3>' +
       r('Огонь', D.elem.fire.toFixed(1)) + r('Холод', D.elem.cold.toFixed(1)) +
       r('Молния', D.elem.lit.toFixed(1)) + r('Яд', D.elem.poi.toFixed(1)) +
@@ -4566,18 +4732,21 @@ function renderSheet(){
       (D.maxHunt ? r('Охотники', mCount('hunter') + ' / ' + D.maxHunt) : '') +
       (D.maxWarl ? r('Колдуны',  mCount('warlock') + ' / ' + D.maxWarl) : '') +
       (D.golemB ? r('Голем крови', 'ур. ' + D.golemB + '/10 · ' +
-        Math.round(D.minLife*0.35*D.golemB) + ' HP · ' + Math.round(avgHit()*D.golemBMul) + ' за удар · ' +
+        Math.round(D.minLife*0.35*D.golemB) + ' HP · ' + Math.round(avgHit()*D.golemBMul*MINION_DAMAGE_MULT) + ' за удар · ' +
         (D.minAspd/D.golemBCd).toFixed(2) + ' уд/сек') : '') +
       (D.golemN ? r('Костяной голем', 'ур. ' + D.golemN + '/10 · ' +
         Math.round(D.minLife*0.20*D.golemN) + ' HP · кровь ' +
         (avgHit()*0.03*D.golemN*D.ailEff).toFixed(1) + '/сек за стак') : '') +
-      r('Урон скелета', Math.round(avgHit()*D.minDmgMul)) +
+      r('Урон скелета', Math.round(avgHit()*D.minDmgMul*MINION_DAMAGE_MULT)) +
       r('Здоровье скелета', Math.round(D.minLife)) +
       r('Атак/сек', (D.minAspd/0.78).toFixed(2)) +
       r('Крит свиты', D.minCrit.toFixed(1) + '%') +
+      r('Шансы эффектов свиты', '25% от ваших') +
+      (D.deathLord ? r('Лорд Смерти', '0,1% фактического урона свиты лечит героя') : '') +
       r('Наследование статов', Math.round(D.minInherit*100) + '% (урон, здоровье, крит)') +
       r('Скорость свиты', 'атака ' + (D.minAspd/0.5).toFixed(1) + '/сек · бег ' + Math.round(D.minSpd)) +
       r('Воскрешение', D.minRevive.toFixed(2) + ' сек') +
+      r('Срок жизни бойца', MINION_LIFE_MIN + '–' + MINION_LIFE_MAX + ' сек · смерть запускает эффекты') +
       r('Перехват урона', Math.round(D.minBond) + '%' +
         (D.minBondRaw >= 50 ? ' (ветка на потолке)' : ''))
       + (D.bloodTies ? r('Кровные узы', 'x2 урона свиты на 3 сек после удара') : '')
@@ -4903,7 +5072,112 @@ function shopBuy(it, n, back){
   shopScreen(back);
 }
 
-/* ---------- 10c. АНИМАЦИЯ МОНЕТ МАГАЗИНА ---------- */
+/* ---------- 10c. СОЗВЕЗДИЯ ----------
+   Убийства — условие, не валюта: они никогда не списываются. Каждый клик
+   открывает ровно один ранг, чтобы игрок видел, как загорается новый узел. */
+function constellationReadyCount(){
+  let n = 0;
+  for (const it of CONSTELLATIONS){
+    const rank = constellationRank(it.id);
+    if (rank < 10 && constellationKills(it.id) >= it.req[rank]) n++;
+  }
+  return n;
+}
+
+function constellationUnlock(id, back){
+  const it = CONSTELLATIONS.find(x => x.id === id); if (!it) return false;
+  const cs = constellationState(), rank = cs.ranks[id];
+  if (rank >= 10 || cs.kills[id] < it.req[rank]) return false;
+  cs.ranks[id] = rank + 1;
+  Store.save();
+  tone(520, 0.08, 0.035, 'triangle'); tone(780, 0.15, 0.04, 'triangle', 0.07);
+  constellationScreen(back);
+  return true;
+}
+
+function constellationScreen(back){
+  $('#sheet').style.display = 'none'; $('#inventory').style.display = 'none';
+  $('#ov').style.display = 'flex'; $('#ov').classList.add('menu'); menuMode = true;
+  const fmt = n => Math.round(n).toLocaleString('ru-RU');
+  const card = it => {
+    const rank = constellationRank(it.id), kills = constellationKills(it.id), maxed = rank >= 10;
+    const next = maxed ? it.req[9] : it.req[rank], prev = rank ? it.req[rank-1] : 0;
+    const ready = !maxed && kills >= next;
+    const pct = maxed ? 100 : clamp((kills-prev) / Math.max(1,next-prev) * 100, 0, 100);
+    const nodes = it.req.map((_,i) => '<i class="const-node' + (i < rank ? ' done' : i === rank && ready ? ' ready' : '') + '" title="Ранг ' + (i+1) + ': ' + fmt(it.req[i]) + ' убийств"></i>').join('');
+    const action = maxed
+      ? '<div class="const-locked const-max">СОЗВЕЗДИЕ ЗАВЕРШЕНО · +50%</div>'
+      : ready
+        ? '<button class="const-unlock" data-const-id="' + it.id + '">ОТКРЫТЬ РАНГ</button>'
+        : '<div class="const-locked">ДО НОВОЙ ЗВЕЗДЫ: ' + fmt(Math.max(0,next-kills)) + '</div>';
+    return '<article class="const-card" style="--cc:' + it.col + '">' +
+      '<div class="const-head"><canvas class="const-icon" data-const-icon="' + it.id + '" width="54" height="54"></canvas>' +
+        '<div class="const-title"><b>' + it.nm + '</b><span>' + it.sub + '</span></div>' +
+        '<div class="const-rank">' + rank + '<small>РАНГ / 10</small></div></div>' +
+      '<div class="const-effect"><b>+' + (rank*5) + '%</b> к урону, опыту и золоту за этот тип врагов</div>' +
+      '<div class="const-nodes">' + nodes + '</div>' +
+      '<div class="const-progress-line"><span>УБИТО: <b>' + fmt(kills) + '</b></span><span>' + (maxed ? 'МАКСИМУМ' : 'ЦЕЛЬ: <b>' + fmt(next) + '</b>') + '</span></div>' +
+      '<div class="const-progress"><i style="width:' + pct.toFixed(2) + '%"></i></div>' + action + '</article>';
+  };
+  $('#ov').innerHTML =
+    '<h1 style="color:#d9c7ff">СОЗВЕЗДИЯ</h1>' +
+    '<h2>вечная охота · убийства не расходуются · каждый открытый узел даёт +5%</h2>' +
+    '<div id="constellations"><div class="const-sky"><canvas id="constsky"></canvas><div class="const-sky-copy"><b>КАРТА ВЕЧНОЙ ОХОТЫ</b><span>ШЕСТЬ ПУТЕЙ · ДЕСЯТЬ ЗВЁЗД В КАЖДОМ</span></div></div>' +
+      '<div class="const-grid">' + CONSTELLATIONS.map(card).join('') + '</div></div>' +
+    '<button id="constback">НАЗАД</button>';
+  document.querySelectorAll('[data-const-id]').forEach(el => el.onclick = () => constellationUnlock(el.dataset.constId, back));
+  $('#constback').onclick = () => back();
+  drawConstellationArt(performance.now()/1000);
+}
+
+function constellationPath(g, shape, x, y, r){
+  g.beginPath();
+  if (shape === 'circle') g.arc(x,y,r,0,Math.PI*2);
+  else if (shape === 'triangle'){ g.moveTo(x,y-r); g.lineTo(x+r*.92,y+r*.75); g.lineTo(x-r*.92,y+r*.75); g.closePath(); }
+  else if (shape === 'square') g.rect(x-r*.78,y-r*.78,r*1.56,r*1.56);
+  else if (shape === 'diamond'){ g.moveTo(x,y-r); g.lineTo(x+r,y); g.lineTo(x,y+r); g.lineTo(x-r,y); g.closePath(); }
+  else {
+    const points = shape === 'boss' ? 12 : 8;
+    for (let i=0;i<points;i++){
+      const rr = i%2 ? r*.48 : r, a = -Math.PI/2 + i*Math.PI*2/points;
+      if (!i) g.moveTo(x+Math.cos(a)*rr,y+Math.sin(a)*rr); else g.lineTo(x+Math.cos(a)*rr,y+Math.sin(a)*rr);
+    }
+    g.closePath();
+  }
+}
+
+function drawConstellationIcon(cv2, it, t){
+  if (!cv2 || !cv2.getContext) return;
+  const g = cv2.getContext('2d'), w=cv2.width, h=cv2.height, pulse=0.82+Math.sin(t*2+CONST_IDS.indexOf(it.id))*0.12;
+  g.clearRect(0,0,w,h); g.save(); g.shadowColor=it.col; g.shadowBlur=12*pulse;
+  g.strokeStyle=it.col; g.fillStyle=it.col+'22'; g.lineWidth=2;
+  constellationPath(g,it.shape,w/2,h/2,17); g.fill(); g.stroke();
+  g.fillStyle='#f5efff'; g.shadowBlur=7; g.beginPath(); g.arc(w/2,h/2,2.2,0,Math.PI*2); g.fill(); g.restore();
+}
+
+function drawConstellationArt(t){
+  const sky = $('#constsky');
+  if (sky && sky.getContext){
+    const d=window.devicePixelRatio||1, w=sky.clientWidth||900, h=sky.clientHeight||152;
+    if (sky.width!==Math.round(w*d)||sky.height!==Math.round(h*d)){ sky.width=Math.round(w*d); sky.height=Math.round(h*d); }
+    const g=sky.getContext('2d'); g.setTransform(d,0,0,d,0,0); g.clearRect(0,0,w,h);
+    for (let i=0;i<72;i++){
+      const x=((i*97+31)%997)/997*w, y=((i*i*29+i*17+13)%389)/389*h;
+      const a=.18+.42*(.5+.5*Math.sin(t*(.7+(i%5)*.11)+i));
+      g.fillStyle='rgba(226,218,255,'+a.toFixed(3)+')'; g.fillRect(x,y,i%11===0?2:1,i%11===0?2:1);
+    }
+    const pts=CONSTELLATIONS.map((it,i)=>({x:w*(.14+i*.144),y:h*(.63-Math.sin(i*.92)*.27),it}));
+    g.lineWidth=1;
+    for(let i=0;i<pts.length-1;i++){ const a=pts[i],b=pts[i+1]; g.strokeStyle='rgba(157,125,224,.34)'; g.beginPath(); g.moveTo(a.x,a.y); g.lineTo(b.x,b.y); g.stroke(); }
+    for (const p of pts){ g.save(); g.shadowColor=p.it.col; g.shadowBlur=10; g.fillStyle=p.it.col; g.beginPath(); g.arc(p.x,p.y,2.6,0,Math.PI*2); g.fill(); g.restore(); }
+  }
+  document.querySelectorAll('[data-const-icon]').forEach(cv2 => {
+    const it=CONSTELLATIONS.find(x=>x.id===cv2.dataset.constIcon); if(it) drawConstellationIcon(cv2,it,t);
+  });
+  const sigil=$('#constsigil'); if(sigil) drawConstellationIcon(sigil,{id:'elite',shape:'elite',col:'#b693ff'},t);
+}
+
+/* ---------- 10d. АНИМАЦИЯ МЕТА-МЕНЮ ---------- */
 let menuMode = false;                 // меню открыто: гоняем анимацию монет из общего цикла
 const COIN_STRIP = typeof Image !== 'undefined' ? new Image() : null;
 if (COIN_STRIP) COIN_STRIP.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAAAYCAYAAAAF6fiUAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAAGYktHRAAAAAAAAPlDu38AAAAHdElNRQfqCBoTHDZDcruTAAAAEGNhTnYAAAAYAAAAGAAAAAAAAAAAqiqycgAABjJJREFUaN7tWV1MVEcU/ubumqrZXYTQJpbQNE2b+lLb1G10b+q2KT+LQfvgT+rSWnioFdP0xaRNY2LUtCGNjS9VgrGgFLsCUTE0sMUo1GoDJFBJ0AeqpKtuERpJqEDCz869pw+z9+5eEdhlxzaNfMnkzsydOTP3fDPnzD0DLGIRTzJYog09TlB8uWMs8b5zQXVY5baPy5E71zj/xhjSxvE4QR4nSBvKID5RRHyiiLQeGxn1qU548igjHnIR57uIh1z07tOpyZwN/KaN+E0b6YP2xyK/ag2jyHQ3aRE/aRE/9e9k9DAhScFQujaUQVqPzZIiTYqZD25kCxrEUP6NYhDnuyiwFhRYC+IhV2oTnwUaLyYjyZatOkBaxE9VaxhVrWEmAQsmYfMzCvHpHuLTPaT12GiqglFwozVNVTBBwlDGgnbCVKNCPOSiyPQdCuYxCqwVhDwuEjTe+VgIiFf+5AlBQFOu2A1NuSKflECPExZTE9zIzBUfaVIo0qTQVIUgIH4nJEsCD7lM02Mof6pRocmjjIJ5Ii+XAGMHdEol11D05IlYasoVu4D3KsR75/4O5WHl/3rFBgBgffW4sE9HXimD4l4BrEwz29nXKbCvU3DxGEEfEPIvH2JIlATVAaKs66Cs60C4FumumK9i2czSTiYJ7H4AQIU0eaoDpLDDQiduBrvb6nNvHyHcPkJzfoelhzaUQZRWAGqtw8VjBF9lOoyyHia0NgM5hTESAODCPh0AkFfKoIcJT+2meT2/6gD9HBD9basd4M1jpuIpTGZ+20c6fryf+klCdYCu/l1sltev+F7KCUV1gGr8DM9/ysC7CXa3eBqEGPCq+qzjWXYApRWA9dVDDxPySplF+QCQ33ANrc2iLe/UwTt1k5B4UlJBW6N4ni3TcaZSkboL6I8fZImC6gBdaVfQFxLlS6et71nmUvBuMgmZDabGPE4Q66sHALQ2A0oWs6x8W4kf0L6B70vFJMGAQYI+QAmbIQrHmrU1inLrUUL+Tx/jbJmOLTvEgmn7Wt6Rnb3wgTRZbd8ysMylyC0CWvYQfMEutOwhCxl/doiUEAEALHZeHyBT+b7KdMD2mfnOV5k+g4Rk0D4O1t9FuNWgz3wZrsXWvbFpxfuE1LA7LqUOu5uBhieFPoJdUIa9+GvE2uaXayLNZe7sM2pWpgEYMc0OAGDwAdigG4AwPcAIfJXp4OdHsFC8tHmmuco/7gQg/EJ92Si27pX5w1oRdcLywLsJSwqWAewwaHgSxSeZxeS89Xo089vsMuY12jmFwDYfRRUv4N/PwM+PQMlmpt1nOduTmjyFCRQm8OYx5B93oq0R6DswCq13HFrvOF5dJfyArXCnFD/A7gegj8lxJ6oDxLsJgXKgetMEIqfqTHt/6TSwoWYZQvsnEpI1k4DBBzOqag8S/PvFamxtFmUA4ngarUsW73xB6O8SCQBGRgkvvsFwtkwHhUVeNhSnfJnvfyKegXJrvWF+PqxN0Al3jIEZys8rZcIRZzMoURtce5CwzUfIKRT1thI/KK3APIYap6dkgnR37zHcvSeav1fnAgBs2cFw7hTBXijMEcK1UhSlXdDMJBN2N0OgPEbEhpplSfW37IA3vRr0AYKSJZSih4Ujtq9ToGQz1J+IkhJd+Vq1UE5+wzXwTh1vf574Fm8fB/uqgzAySqjfPgoAOHdK9I93wrLAVAVMVWDz2eTKzVyK4pNCX8YuqN4kzE/V75T8/4bHCUuI4VFhByMcwSeKzHjRQiOjwbxY6IGHXJZ8ZPoO8ZBLiuGOj4bK8ClG2MEIN/TvFPEfIxSRaAxoximoYwzM69fpSq0CJUs4WX2AcPEYAXHzzj/jB3vQAr27Duv9+oLvB557Vsi81UBYtTpW33dgFC9/J0P1AtQuTKUGefcBdjdDyx5CbpGw9yXDXtSUpy4XHifMiKcRgLOEpKMhaiNKmspYqgN0oziWjACdsfpl/QlHqhk1eEENXjnyVAeI9yqkRfziHuDecjMEnUwYet6VYJiWy4esTQ17L+NmTHWAMqO+q/Q1Zv4PeF8ZlbZaI9WxhbKkZP54VaLzvnpzOQBh99vuivrQROK2/z+/knzURxl5mVeH/ze5i1jEk4F/ACdI6zFxxYckAAAAAElFTkSuQmCC';
@@ -4948,6 +5222,7 @@ function drawBrandTitle(){
 function menuTick(){
   const t = performance.now()/1000;
   coinTick(t);
+  drawConstellationArt(t);
 }
 
 /* Вывеска главного меню */
@@ -4961,6 +5236,7 @@ function startScreen(){
   $('#ov').style.display = 'flex';
   $('#ov').classList.add('menu');
   menuMode = true;
+  const constReady = constellationReadyCount();
   $('#ov').innerHTML =
     brandHtml() +
     '<h2>выберите один из трёх классов — он определяет, вокруг чего строить билд</h2>' +
@@ -4974,9 +5250,11 @@ function startScreen(){
         '<img class="class-sprite" src="' + HERO_SPRITE_DATA[spriteKey] + '" alt="">' +
       '</div>';
     }).join('') + '</div>' +
-    '<div style="display:flex;gap:12px;align-items:center">' +
+    '<div class="meta-actions">' +
       '<button id="shopb" class="shop-entry"><canvas id="coinl" class="shopcoin"></canvas>МАГАЗИН<canvas id="coinr" class="shopcoin"></canvas></button>' +
-      '<span id="bank">В БАНКЕ: ' + Math.round(Store.data.gold).toLocaleString('ru-RU') + ' золота</span></div>' +
+      '<button id="constb" class="const-entry"><canvas id="constsigil" width="46" height="46"></canvas><span class="const-entry-copy">СОЗВЕЗДИЯ<small class="' + (constReady ? 'ready' : '') + '">' +
+        (constReady ? 'ДОСТУПНО ОТКРЫТИЙ: ' + constReady : 'КАРТА ВЕЧНОЙ ОХОТЫ') + '</small></span></button></div>' +
+    '<span id="bank">В БАНКЕ: ' + Math.round(Store.data.gold).toLocaleString('ru-RU') + ' золота</span>' +
     '<div style="font-size:13.8px;color:#7d8b9a;text-align:center;line-height:1.8">' +
       'Каждое повышение уровня — выбор из ' + (cardCount() === 4 ? 'четырёх' : 'трёх') +
       ' модификаторов реального каталога.<br>' +
@@ -4984,6 +5262,7 @@ function startScreen(){
   drawBrandTitle();
   document.querySelectorAll('#ov .card').forEach(el => el.onclick = () => subclassScreen(el.dataset.w));
   $('#shopb').onclick = () => shopScreen(startScreen);
+  $('#constb').onclick = () => constellationScreen(startScreen);
 }
 
 /* Второй шаг: класс задаёт стиль атаки, подкласс — постоянный рост забега. */
@@ -5072,6 +5351,17 @@ function setHint(){
     + ' · атака автоматическая · ПРОБЕЛ — рывок · C — сменить управление · TAB — инвентарь · ESC/P — пауза';
 }
 
+function tryDash(){
+  const p = G.player;
+  if (p.dashN <= 0 || p.dash > 0) return false;
+  p.dashN--;
+  if (p.dashCd <= 0) p.dashCd = D.dashCd;            // откат начинается в момент расходования
+  p.dash = DASH_DURATION;
+  p.inv = D.iframe;
+  p.dashHits = [];
+  return true;
+}
+
 /* ---------- 12. ВВОД ---------- */
 addEventListener('keydown', e => {
   unlockSound();
@@ -5091,8 +5381,7 @@ addEventListener('keydown', e => {
   G.keys[k] = true;
   if (k === ' '){                                                   // рывок
     e.preventDefault();
-    const p = G.player;
-    if (p.dashN > 0 && p.dash <= 0){ p.dashN--; p.dash = 0.14; p.inv = D.iframe; p.dashHits = []; }
+    tryDash();
   }
   // e.repeat: браузер шлёт keydown повторно, пока клавиша зажата.
   // Без этой проверки удержание C дёргало бы схему по десять раз в секунду.

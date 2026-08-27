@@ -48,21 +48,23 @@ console.log('УЖАСАЮЩИЙ ВАМПИР');
   ok('карточка «Вампиризм %» убрана из каталога',
      !c.__api.MODS.some(m => m.id === 'life.leech'));
   const k = c.__api.MODS.find(m => m.id === 'key.dread_vampire');
-  ok('кейстоун в каталоге, редкость 3', !!k && k.rar === 3 && k.cat === 'Кейстоун'); }
+  ok('кейстоун в каталоге, редкость 3', !!k && k.rar === 3 && k.cat === 'Кейстоун' && k.noMin); }
+{ const c = loadGame('./PolyGrind.html'); c.newGame('necro','keys');
+  c.__api.G.bag.add('kDread','flag',1); c.recalc();
+  ok('Ужасающий вампир не действует у Некроманта', !c.__api.D.dread && c.__api.D.leech !== 0.3); }
 
 console.log('ПРОЧЕЕ');
-{ const a = loadGame('/tmp/pg_b7.html'), b = loadGame('./PolyGrind.html');
-  const dps = (c) => { c.newGame('bow','keys');
-    const t = c.__api.BOOKS.bleed.tiers[2][0];
-    c.__api.G.items = {bleed:{tier:3, val:t}}; c.recalc(); return [c.bookBleedDps(), t]; };
-  const [da, ta] = dps(a), [db, tb] = dps(b);
-  ok('книга крови вдвое слабее', Math.abs(db/da - 0.5) < 0.01,
-     'тир 3: ' + ta + '% \u2192 ' + tb + '%, ' + Math.round(da) + ' \u2192 ' + Math.round(db) + ' урона/сек'); }
+{ const {c,G} = mk([]), bleed = c.__api.BOOKS.bleed;
+  G.items = {bleed:{tier:3, val:bleed.tiers[2][0]}}; c.recalc();
+  const dps = c.bookBleedDps(), fullDps = c.avgHit() * 0.50 * c.__api.D.ailEff;
+  ok('книга крови вдвое слабее', JSON.stringify(bleed.tiers) === '[[15,15],[20,20],[25,25]]' &&
+     JSON.stringify(bleed.step) === '[5,5]' && Math.abs(dps - fullDps*0.5) < 0.0001,
+     'тир 3: 50% \u2192 ' + bleed.tiers[2][0] + '%, ' + Math.round(fullDps) + ' \u2192 ' + Math.round(dps) + ' урона/сек'); }
 { const {c,G} = mk([]);
   G.floor = 1; c.buildFloor();
   const e = c.spawnEnemy();
   const base = c.__api.ETYPES[e.t.shape === 'circle' ? 'blob' : e.t.shape === 'triangle' ? 'runner' :
                e.t.shape === 'square' ? 'tank' : 'shooter'].spd;
-  const expect = base * 1.265 * 1.10 * (e.kind === 'elite' ? 0.9 : 1);
-  ok('враги быстрее ещё на 10% (итого 1.3915×)', Math.abs(e.spd - expect) < 0.01,
+  const expect = base * 1.265 * 1.155 * (e.kind === 'elite' ? 0.9 : 1);
+  ok('враги быстрее ещё на 5% (итого 1.461075×)', Math.abs(e.spd - expect) < 0.01,
      Math.round(base) + ' \u2192 ' + Math.round(e.spd)); }

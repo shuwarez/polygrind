@@ -26,3 +26,18 @@ for (const rank of [1, 5]){
      base.avgHit().toFixed(1) + ' → ' + boosted.avgHit().toFixed(1));
   ok('скорость атаки магазина доходит до свиты', Math.abs(boosted.__api.D.minAspd / base.__api.D.minAspd - 1.5) < 0.001,
      base.__api.D.minAspd.toFixed(2) + ' → ' + boosted.__api.D.minAspd.toFixed(2)); }
+
+{ const r = c.__api.SHOP.find(x => x.id === 'regen');
+  ok('регенерация: потолок 50 HP/сек', !!r && r.max === 50 && r.fmt(r.max) === '+50 HP/сек',
+     r ? r.fmt(r.max) : 'товар не найден');
+  ok('регенерация: базовая цена удвоена', !!r && r.base === 3000 && c.shopCost(r,0) === 3000,
+     r ? c.shopCost(r,0).toLocaleString('ru-RU') + ' золота' : 'товар не найден');
+  c.__api.STORE.data.shop.regen = 49;
+  const batch = c.shopBatch(r, 10);
+  ok('пакетная покупка останавливается на 50', batch.cnt === 1,
+     'доступно уровней: ' + batch.cnt); }
+
+{ const legacy = loadGame('./PolyGrind.html');
+  legacy.__api.STORE.data.shop.regen = 100; legacy.newGame('bow','keys');
+  ok('старое сохранение не превышает новый потолок', legacy.__api.D.regen === 50,
+     legacy.__api.D.regen.toFixed(0) + ' HP/сек'); }

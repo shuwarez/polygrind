@@ -29,17 +29,20 @@ console.log('КРОВАВАЯ БАНЯ');
   const m = o.G.minions[0]; m.x = e.x; m.y = e.y;
   let procs = 0;
   for (let i=0;i<4000;i++){ e.dots.bleed.dps = 0; e.dots.bleed.n = 0; o.c.minionHit(e, m); if (e.dots.bleed.dps > 0) procs++; }
-  ok('срабатывает в 10% ударов', Math.abs(procs/4000 - 0.10) < 0.02, (procs/40).toFixed(1) + '%'); }
+  ok('срабатывает в 2.5% ударов свиты', Math.abs(procs/4000 - 0.025) < 0.01, (procs/40).toFixed(1) + '%'); }
 { const o = mk([['minBath',1]]);
   const e = foe(o); o.G.minions.length = 0; o.c.spawnMinion();
   const m = o.G.minions[0]; m.x = e.x; m.y = e.y;
   let dps = 0;
   for (let i=0;i<3000 && !dps;i++){ e.dots.bleed.dps = 0; o.c.minionHit(e, m); dps = e.dots.bleed.dps; }
-  ok('без книги крови считается по базовым 15%',
-     Math.abs(dps/(o.c.avgHit()*0.15*o.D.ailEff) - 1) < 0.35, Math.round(dps) + ' урона/сек'); }
+  ok('без книги крови: базовые 15% и штраф урона ×0.5',
+     Math.abs(dps/(o.c.avgHit()*0.15*o.D.ailEff*0.5) - 1) < 0.35, Math.round(dps) + ' урона/сек'); }
 { const o = mk([['minBath',1]], {bleed:{tier:3, val:25}});
-  ok('с книгой берётся её сила', o.c.bookBleedDps() > 0,
-     'книга даёт ' + Math.round(o.c.bookBleedDps()) + ' урона/сек'); }
+  const e = foe(o); o.G.minions.length = 0; o.c.spawnMinion();
+  const m = o.G.minions[0]; m.x = e.x; m.y = e.y; let dps = 0;
+  for (let i=0;i<3000 && !dps;i++){ e.dots.bleed.dps = 0; e.dots.bleed.n = 0; o.c.minionHit(e, m); dps = e.dots.bleed.dps; }
+  ok('с книгой берётся её сила и штраф урона ×0.5', Math.abs(dps/(o.c.bookBleedDps()*0.5)-1)<0.001,
+     Math.round(o.c.bookBleedDps()) + ' → ' + Math.round(dps) + ' урона/сек'); }
 { const o = mk([]);
   const e = foe(o); o.G.minions.length = 0; o.c.spawnMinion();
   const m = o.G.minions[0]; m.x = e.x; m.y = e.y;

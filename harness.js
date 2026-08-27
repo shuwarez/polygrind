@@ -8,8 +8,10 @@ function loadGame(file){
   // let/const в vm НЕ попадают в глобальный объект — пробрасываем мостом.
   const js = m[1] + '\n;this.__api = { get G(){return G}, get D(){return D}, ' +
              'get MODS(){return MODS}, get BOOKS(){return BOOKS}, ' +
-             'get WEAPONS(){return WEAPONS}, get ETYPES(){return ETYPES}, ' +
+             'get WEAPONS(){return WEAPONS}, get SUBCLASSES(){return SUBCLASSES}, get ETYPES(){return ETYPES}, ' +
              'get STORE(){return Store}, get PACKS(){return PACK_AFFIXES}, ' +
+             'get CONSTELLATIONS(){return typeof CONSTELLATIONS!=="undefined"?CONSTELLATIONS:null}, ' +
+             'constellationMultiplier:(e)=>constellationMultiplier(e), ' +
              'affectsMinions:(m)=>affectsMinions(m), get MINION_STATS(){return MINION_STATS}, ' +
              'get SHOP(){return typeof SHOP!=="undefined"?SHOP:null}, ' +
              'get AFFIXES(){return typeof BOSS_AFFIXES!=="undefined"?BOSS_AFFIXES:null} };\n';

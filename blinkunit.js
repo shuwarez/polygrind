@@ -29,7 +29,8 @@ function foe(o, dx, dy){
   const d0 = Math.hypot(o.m.x-e.x, o.m.y-e.y);
   o.c.minionBlink(o.m, e, DT);
   const d1 = Math.hypot(o.m.x-e.x, o.m.y-e.y);
-  ok('перенос: приспешник оказался у цели', d1 < 40 && d0 > 300,
+  const landing = e.r + o.m.r + 4;
+  ok('перенос: приспешник оказался у цели', Math.abs(d1 - landing) < 0.001 && d0 > 300,
      Math.round(d0) + ' \u2192 ' + Math.round(d1)); }
 { const o = mk([['minBlink',1]]);
   const e = foe(o, 400), near = foe(o, 400, 40), far = foe(o, 400, 300);
@@ -40,10 +41,15 @@ function foe(o, dx, dy){
   ok('дальнего не задевает', far.hp === h2, 'радиус ' + Math.round(60*o.D.aoeR)); }
 { const o = mk([['minBlink',1],['igniteCh',100]]);
   const e = foe(o, 400);
-  o.m.blinkT = 0; e.dots.fire.dps = 0;
-  o.c.minionBlink(o.m, e, DT);
-  ok('взрыв разносит эффекты игрока', e.dots.fire.dps > 0,
-     'цель горит на ' + Math.round(e.dots.fire.dps) + '/сек'); }
+  let procs = 0;
+  for (let i=0;i<600;i++){
+    o.m.blinkT = 0; e.dots.fire.dps = 0; e.dots.fire.n = 0;
+    o.c.minionBlink(o.m, e, DT);
+    if (e.dots.fire.dps > 0) procs++;
+  }
+  const rate = procs/600;
+  ok('взрыв разносит эффекты с шансом свиты', rate > 0.17 && rate < 0.33,
+     Math.round(rate*100) + '%'); }
 { const o = mk([['minBlink',1]]);
   const e = foe(o, 400);
   o.m.blinkT = 0; o.c.minionBlink(o.m, e, DT);
