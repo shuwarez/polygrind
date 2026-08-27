@@ -2,8 +2,8 @@
 const {loadGame} = require('./sim');
 const DT = 1/60;
 const ok = (nm, cond, det) => console.log((cond?'  \u2713 ':'  \u2717 ') + nm.padEnd(48) + (det||''));
-function mk(mods, amus, options){
-  const c = loadGame('./PolyGrind.html', options);
+function mk(mods, amus){
+  const c = loadGame('./PolyGrind.html');
   c.newGame('necro','keys');
   const G = c.__api.G;
   G.lvl = 25;
@@ -217,29 +217,6 @@ console.log('ЛОРД СМЕРТИ');
      Math.round(dealt) + ' урона → +' + (o.p.hp-hp0).toFixed(2) + ' HP'); }
 { const o = mk([], ['fang']); o.p.hp=o.D.life*0.25; const hp0=o.p.hp; hit(o);
   ok('обычный вампиризм больше не лечит от ударов свиты', o.D.leech>0 && o.p.hp===hp0); }
-
-console.log('КОСТЯНОЙ ВЫЗОВ');
-{ const c = loadGame('./PolyGrind.html');
-  const old = c.__api.MODS.find(m=>m.id==='min.taunt');
-  const key = c.__api.MODS.find(m=>m.id==='key.bone_challenge');
-  ok('старая карточка удалена, новая — оранжевый кейстоун', !old && !!key && key.rar===3 && key.req==='min' && key.kind==='flag'); }
-{ let roll=0.5; const o=mk([['kBoneChallenge',1]], [], {random:()=>roll});
-  roll=0.009999; o.e.tauntMinion=null;
-  ok('граница 1%: значение ниже 0.01 срабатывает', o.c.rollBoneChallenge(o.e,o.m) && o.e.tauntMinion===o.m);
-  roll=0.01; o.e.tauntMinion=null;
-  ok('граница 1%: значение 0.01 уже не срабатывает', !o.c.rollBoneChallenge(o.e,o.m) && !o.e.tauntMinion); }
-{ let roll=0.5; const o=mk([['kBoneChallenge',1]], [], {random:()=>roll});
-  roll=0; o.e.tauntMinion=null; hit(o);
-  ok('обычный прямой удар свиты бросает провокацию', o.e.tauntMinion===o.m); }
-{ const o=mk([['kBoneChallenge',1]]);
-  o.G.enemies=[o.e]; o.G.minions=[o.m]; o.G.spawnQueue=0; o.G.portal=null;
-  o.p.x=500; o.p.y=0; o.e.x=0; o.e.y=0; o.e.spd=100; o.e.dmg=0;
-  o.e.t=Object.assign({},o.e.t,{ranged:false}); o.e.roles=[]; o.e.aff=[]; o.e.pack=null;
-  o.e.kb.x=o.e.kb.y=0; o.m.x=-500; o.m.y=0; o.m.hp=o.m.max; o.e.tauntMinion=o.m;
-  o.c.update(0.1);
-  ok('сработавший эффект ведёт монстра к ударившему бойцу', o.e.x<0, 'x=' + o.e.x.toFixed(1));
-  o.G.minions.length=0; o.e.x=0; o.e.y=0; o.e.kb.x=o.e.kb.y=0; o.c.update(0.1);
-  ok('после смерти бойца агро возвращается к игроку', o.e.x>0 && o.e.tauntMinion===null, 'x=' + o.e.x.toFixed(1)); }
 
 console.log('ПРОЧЕЕ');
 { // Одиночный удар слишком шумит: и разброс базы, и случайный тип цели.

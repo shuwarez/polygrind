@@ -36,8 +36,7 @@ function foe(o,x,y){
   const hash=m && crypto.createHash('sha256').update(Buffer.from(m[1],'base64')).digest('hex').toUpperCase();
   const c=loadGame('./PolyGrind.html');
   ok('класс называется ВОИН', c.__api.WEAPONS.blade.nm==='ВОИН');
-  const png=m && Buffer.from(m[1],'base64');
-  ok('лист Воина встроен внутрь HTML', !!png && png.readUInt32BE(16)===512 && png.readUInt32BE(20)===256);
-  ok('встроен новый обработанный лист Воина', hash==='8F583D11B2589A8FB1D6A5B19AA9B6BD44B62EBF75490DE4F21E68351E3BC945', hash||'нет данных');
+  ok('спрайт Воина встроен внутрь HTML', !!m && Buffer.from(m[1],'base64').length===3002);
+  ok('встроен именно присланный PNG', hash==='1E84968E35AC49C88A3C0D883E4A09B0DB2003E420C36846CEBCED52BE6895D6', hash||'нет данных');
   ok('рендер связывает меч с новым спрайтом', html.includes("w.id === 'wpn.sword' ? 'warrior'") && html.includes("blade:'warrior'"));
 }
