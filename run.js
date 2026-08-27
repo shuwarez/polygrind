@@ -3,7 +3,7 @@
    и НЕ обнуляет G.pending — иначе билд не растёт весь прогон. */
 const {loadGame, DT} = require('./sim');
 
-const COMMON_GOOD = new Set(['dmg','aspd','life','armor','mspd','critCh','critMul','dblHit','triHit',
+const COMMON_GOOD = new Set(['dmg','aspd','life','armor','mspd','critCh','critMul','dblHit','deadlyHit',
   'onHit','onKill','regen','dr','drFlat','block','dodge','normalDr','majorDr','cheat','recoup']);
 const RANGED_GOOD = new Set(['dmgProj','projN','pierce','chain','ricochet','projSize','projSpd','far','homing']);
 const BLADE_GOOD = new Set(['dmgMelee','arc','close','perNear','knock','stun','dizzy','phasing','thorns','reflect']);
@@ -30,7 +30,7 @@ function pickCard(c, random=Math.random, strategy='random'){
     const m = strategy === 'smart'
       ? cards.map((m,i)=>({m,i,s:cardScore(c,m)})).sort((a,b)=>b.s-a.s || a.i-b.i)[0].m
       : cards[Math.floor(random()*cards.length)];
-    const v = m.r[0] === m.r[1] ? m.r[0] : m.r[0] + random()*(m.r[1]-m.r[0]);
+    const v = c.rollModValue(m, random);
     G.bag.add(m.stat, m.kind, v);
     G.picks.push({id:m.id, nm:m.nm, val:'', cat:m.cat});
     c.recalc();

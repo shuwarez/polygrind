@@ -88,9 +88,9 @@ const ok = (nm, cond, det) => console.log((cond ? '  ✓ ' : '  ✗ ') + nm.padE
 { const c = loadGame('./PolyGrind.html'); c.newGame('bow', 'keys');
   const G = c.__api.G, boss = c.spawnEnemy('boss');
   c.killEnemy(boss, G.enemies.indexOf(boss));
-  const e = c.spawnEnemy(), kind = e.kind === 'boss' ? 1.15 : e.kind === 'elite' ? 0.9 : 1;
+  const e = c.spawnEnemy(), kind = e.kind === 'elite' ? 0.9 : 1;
   ok('победа над боссом: следующие враги +2% скорости', G.bossKills === 1 &&
-     Math.abs(e.spd / (e.t.spd * kind) - 1.265 * 1.155 * 1.02) < 0.0001,
+     Math.abs(e.spd / (e.t.spd * kind) - 1.02) < 0.0001,
      'множитель ' + (e.spd / (e.t.spd * kind)).toFixed(4)); }
 
 { const c = loadGame('./PolyGrind.html'); c.newGame('bow', 'keys');

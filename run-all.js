@@ -22,8 +22,11 @@ const SUITES = [
   ['blinkunit',   12, 'внезапный взрыв и астральный набег'],
   ['clawunit',     9, 'резкие когти и вихрь когтей'],
   ['bb2unit',     11, 'кровавая баня и кипящая кровь'],
-  ['b7unit',      13, 'ужасающий вампир, классовое ограничение и книга крови'],
+  ['b7unit',      16, 'ужасающий вампир, щит, классовое ограничение и книга крови'],
   ['constunit',    24, 'созвездия: счётчики, ранги, награды и экран'],
+  ['doubleunit',   10, 'двойное и смертоносное попадание: потолок, анлок и урон'],
+  ['graveunit',     7, 'кладбище: миграция, последние 10 смертей и полная сводка'],
+  ['spriteunit',    11, 'встроенные PNG-враги: четыре кадра, разворот, масштаб и метки'],
   ['locunit',       8, 'локализация: EN по умолчанию, полнота каталогов и CSS-флаги'],
   ['bladeunit',    11, 'Воин: спрайт и круговая волна каждого третьего взмаха'],
   ['warriorunit',  20, 'три подкласса Воина: формулы, пороги, барьер и контроль'],
@@ -39,8 +42,9 @@ if (missing.length){
 }
 
 let bad = 0, total = 0;
+const node = JSON.stringify(process.execPath); // тот же runtime, даже если `node` отсутствует в PATH
 for (const [file, want, what] of SUITES){
-  const out = execSync('node ' + file + '.js', {encoding:'utf8'});
+  const out = execSync(node + ' ' + JSON.stringify(file + '.js'), {encoding:'utf8'});
   const got = (out.match(/\u2713/g) || []).length;
   const fail = (out.match(/\u2717/g) || []).length;
   total += got;
@@ -49,5 +53,5 @@ for (const [file, want, what] of SUITES){
   console.log((okk ? '  OK   ' : '  FAIL ') + file.padEnd(13) + got + '/' + want + '   ' + what);
 }
 console.log('\nвсего проверок: ' + total + (bad ? '   ПРОВАЛОВ: ' + bad : '   всё зелёное'));
-try { console.log(execSync('node orderscan.js', {encoding:'utf8'}).trim()); } catch(e){}
+try { console.log(execSync(node + ' "orderscan.js"', {encoding:'utf8'}).trim()); } catch(e){}
 process.exit(bad ? 1 : 0);

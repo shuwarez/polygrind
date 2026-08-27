@@ -10,7 +10,7 @@ function autoLevel(c, target){
     const cards = c.rollCards();
     if (!cards.length) continue;
     const m = cards[Math.floor(Math.random()*cards.length)];
-    const v = m.r[0] === m.r[1] ? m.r[0] : m.r[0] + Math.random()*(m.r[1]-m.r[0]);
+    const v = c.rollModValue(m);
     G.bag.add(m.stat, m.kind, v);
     G.picks.push({id:m.id, nm:m.nm, val:'', cat:m.cat});
     c.recalc();
