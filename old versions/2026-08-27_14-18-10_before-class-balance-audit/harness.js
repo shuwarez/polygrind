@@ -1,7 +1,7 @@
 /* Заглушка DOM: вырезаем JS из HTML и исполняем в vm. */
 const fs = require('fs'), vm = require('vm');
 
-function loadGame(file, options={}){
+function loadGame(file){
   const html = fs.readFileSync(file, 'utf8');
   const m = html.match(/<script>([\s\S]*)<\/script>/);
   if (!m) throw new Error('не нашёл <script>');
@@ -31,11 +31,7 @@ function loadGame(file, options={}){
     window:{devicePixelRatio:1, addEventListener:noop, localStorage:undefined},
     addEventListener:noop, requestAnimationFrame:noop,
     performance:{now:()=>0}, setTimeout:noop, clearTimeout:noop,
-    localStorage:undefined, console,
-    // Баланс-аудит подставляет общий seeded random и в игру, и в выбор карточек.
-    // Без этого два прогона одного seed расходятся уже на первой пачке врагов.
-    Math: options.random ? Object.assign(Object.create(Math), {random:options.random}) : Math,
-    Date, JSON,
+    localStorage:undefined, console, Math, Date, JSON,
   };
   c.window.window = c.window;
   vm.createContext(c);

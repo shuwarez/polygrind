@@ -247,23 +247,6 @@ button:disabled{opacity:.35;cursor:default}
 #bossbar .bh{height:8px;background:#000a;border-radius:4px;margin-top:9px;overflow:hidden;
   width:360px;max-width:100%;margin-left:auto;margin-right:auto;border:1px solid #ff5a4e33}
 #bossbar .bh i{display:block;height:100%;background:#ff5a4e;transition:width .12s linear}
-
-/* Язык выбирается только в главном меню: два равноправных флажка, активный
-   вариант читается и цветом, и рамкой, поэтому не зависит от одного цвета. */
-.language-switch{display:flex;gap:8px;justify-content:center;align-items:center;margin:-4px 0 12px}
-.language-switch button{min-width:82px;padding:8px 13px;border-color:#42505f;color:#b8c4d0;
-  font-size:14px;letter-spacing:1.5px;background:#0c1118d9}
-.language-switch button.active{border-color:#ffb340;color:#fff0a8;background:#2a1c0d;
-  box-shadow:0 0 15px #ff9a2f33}
-.language-switch button b{font-size:13px}
-.language-flag{display:inline-block;width:24px;height:15px;border:1px solid #ffffff66;border-radius:2px;
-  box-shadow:0 1px 3px #0008;vertical-align:-3px;margin-right:8px}
-.flag-ru{background:linear-gradient(#fff 0 33.33%,#1f57a5 33.33% 66.66%,#d52b1e 66.66%)}
-.flag-en{background:
-  linear-gradient(90deg,transparent 42%,#cf2135 42% 58%,transparent 58%),
-  linear-gradient(0deg,transparent 36%,#cf2135 36% 64%,transparent 64%),
-  linear-gradient(33deg,transparent 44%,#fff 44% 56%,transparent 56%),
-  linear-gradient(-33deg,transparent 44%,#fff 44% 56%,transparent 56%),#21468b}
 </style>
 </head>
 <body>
@@ -304,547 +287,6 @@ button:disabled{opacity:.35;cursor:default}
 
 <script>
 "use strict";
-/* ---------- 1a. ЛОКАЛИЗАЦИЯ EN / RU ----------
-   Русская строка остаётся каноническим ключом, чтобы старые сохранения и тесты
-   не зависели от языка. Любой новый видимый текст добавляется сразу парой. */
-const LANGUAGE_KEY = 'polygrind_language';
-let LANGUAGE = (() => {
-  try {
-    const saved = localStorage.getItem(LANGUAGE_KEY);
-    return saved === 'ru' ? 'ru' : 'en';
-  } catch (e) { return 'en'; }
-})();
-
-const EN_ITEMS = [
-  ["ЧЁРНОЕ ЗЕРКАЛО", "BLACK MIRROR"], ["после получения урона рядом встаёт ваша копия на 3 сек и повторяет ваши атаки · откат 10 сек", "when you take damage, a copy of you appears nearby for 3 sec and repeats your attacks · 10 sec cooldown"],
-  ["СЕРДЦЕ ГОЛЕМА", "GOLEM HEART"], ["+50 к броне · раз в 10 сек следующий удар по вам гасится полностью", "+50 Armor · once every 10 sec, the next hit against you is completely negated"],
-  ["КЛЫК ВАМПИРА", "VAMPIRE FANG"], ["+4% вампиризма · убийство элиты или босса лечит на 15% здоровья", "+4% Life Steal · killing an elite or boss restores 15% health"],
-  ["СЕРДЦЕ БУРИ", "HEART OF THE STORM"], ["раз в 8 сек молния бьёт ближайшего врага втройне и шокирует его", "every 8 sec, lightning strikes the nearest enemy for triple damage and Shocks it"],
-  ["ПЕПЕЛЬНОЕ СЕРДЦЕ", "ASHEN HEART"], ["+35% к урону огнём · смерть горящего врага лечит на 1% здоровья", "+35% Fire damage · the death of a burning enemy restores 1% health"],
-  ["ЛЕДЯНОЙ КРИСТАЛЛ", "ICE CRYSTAL"], ["+35% к урону холодом · заморозка держится на 40% дольше", "+35% Cold damage · Freeze lasts 40% longer"],
-  ["ЧУМНОЙ ЗУБ", "PLAGUE TOOTH"], ["+35% к урону ядом · 10% шанс, что с трупа яд перепрыгнет на соседа и продлится на 2 сек", "+35% Poison damage · 10% chance for Poison to jump from a corpse to a nearby enemy and last 2 sec longer"],
-  ["ЧАСОВОЙ МЕХАНИЗМ", "CLOCKWORK"], ["+10% к скорости атаки · раз в 30 сек всё вокруг вас замерзает на 1 сек", "+10% Attack Speed · once every 30 sec, everything around you is Frozen for 1 sec"],
-  ["ЗЕРКАЛЬНЫЙ ОСКОЛОК", "MIRROR SHARD"], ["10% шанс отбить вражеский снаряд обратно — он летит дальше уже как ваш", "10% chance to reflect an enemy projectile; it continues as your own projectile"],
-  ["КОСТЬ УДАЧИ", "LUCKY BONE"], ["каждый двадцатый ваш удар — гарантированный крит", "every twentieth hit you deal is guaranteed to be a critical hit"],
-  ["ЧЁРНАЯ СВЕЧА", "BLACK CANDLE"], ["+20% врагов в волнах и +15% к получаемому опыту — сделка, а не подарок", "+20% enemies in waves and +15% experience gained—a bargain, not a gift"],
-  ["ТАЛИСМАН ПОКОЯ", "TALISMAN OF STILLNESS"], ["простояли 2 сек — получаете барьер на 10% здоровья · после расхода откат 5 сек", "stand still for 2 sec to gain a barrier equal to 10% of your health · 5 sec cooldown after the barrier is consumed"],
-  ["ТАЛИСМАН БЕГУНА", "RUNNER'S TALISMAN"], ["+20% скорости в движении · +20% урона, если стоите дольше секунды", "+20% speed while moving · +20% damage after standing still for more than 1 sec"],
-  ["КУКЛА СМЕРТИ", "DEATH DOLL"], ["один раз на этаже отменяет смертельный удар целиком и даёт полторы секунды неуязвимости", "once per floor, completely negates a fatal hit and grants 1.5 sec of invulnerability"],
-  ["КОГТИ БЕРСЕРКА", "BERSERKER CLAWS"], ["+20% к скорости атаки · +1% к урону за каждые 10% потерянного здоровья", "+20% Attack Speed · +1% damage for every 10% of health missing"],
-  ["ПЕРЧАТКИ ГРОМА", "THUNDER GLOVES"], ["каждый двенадцатый удар шокирует цель и бьёт разрядом по округе", "every twelfth hit Shocks the target and releases a lightning discharge nearby"],
-  ["ПЕРЧАТКИ РИКОШЕТА", "RICOCHET GLOVES"], ["+1 отскок · каждый отскок усиливает снаряд на 10% вместо обычного затухания", "+1 Chain · each chain increases projectile damage by 10% instead of its usual damage loss"],
-  ["ПЕРЧАТКИ ГРОМИЛЫ", "BRUISER GLOVES"], ["+50% к шансу отбрасывания и в полтора раза сильнее толчок · −10% к скорости атаки", "+50% Knockback Chance and 50% stronger knockback · −10% Attack Speed"],
-  ["БОТИНКИ ЛАВЫ", "LAVA BOOTS"], ["за вами тянется горящий след · его урон растёт от вашей скорости бега", "you leave a burning trail behind you · its damage scales with your Movement Speed"],
-  ["БОТИНКИ МОРОЗИЛКИ", "FROST BOOTS"], ["за вами тянется ледяной след, охлаждающий всех, кто в него зашёл", "you leave an icy trail that Chills every enemy that crosses it"],
-  ["КОЛЬЦО ИМПУЛЬСА", "PULSE RING"], ["каждый восьмой удар выпускает ударную волну по площади", "every eighth hit releases an area shockwave"],
-  ["КОЛЬЦО ДОБИВАНИЯ", "EXECUTION RING"], ["+50% к урону по врагам, у которых осталось меньше пятой части здоровья", "+50% damage to enemies below 20% health"],
-  ["КОЛЬЦО ДУЭЛИ", "DUEL RING"], ["если в радиусе 300 остался ровно один враг, урон по нему множится на 1.75", "when exactly one enemy remains within 300 range, damage against it is multiplied by 1.75"],
-  ["КОЛЬЦО СМЕРТИ", "DEATH RING"], ["каждые 100 убийств следующий удар убивает цель мгновенно, кем бы она ни была", "every 100 kills, your next hit instantly kills its target, no matter what it is"],
-  ["ЧАША КРОВИ", "BLOOD CHALICE"], ["каждые 50 убийств полностью восстанавливают здоровье", "every 50 kills fully restore your health"],
-  ["КОРОНА ПЕПЛА", "CROWN OF ASH"], ["+50% ко всему урону стихиями: огонь, холод, молния и яд разом", "+50% to all elemental damage: Fire, Cold, Lightning, and Poison"],
-  ["МАСКА БОССА", "BOSS MASK"], ["каждая пачка элиты получает лишний аффикс, но с её последнего бойца находка гарантирована", "each elite pack gains an extra affix, but its last member always drops a find"],
-  ["РАЗГОН", "MOMENTUM"], ["+4% урона за каждые 2 сек непрерывного бега, до +40%. Любая остановка обнуляет разгон", "+4% damage for every 2 sec of continuous movement, up to +40%. Stopping resets all Momentum"],
-  ["ОСАДНЫЙ ОГОНЬ", "SIEGE FIRE"], ["простояли 1.5 сек — +70% урона, но вдвое медленнее ходите. Сделка для тех, кто умеет выбирать место", "after standing still for 1.5 sec, gain +70% damage but move at half speed. A trade-off for those who choose their ground well"],
-  ["САПОГИ МАРАФОНЦА", "MARATHON BOOTS"], ["+3% к скорости бега за каждые 3 сек без остановки, до +30%", "+3% Movement Speed for every 3 sec without stopping, up to +30%"],
-  ["ПАНИКА", "PANIC"], ["здоровья меньше трети — +60% к скорости бега", "while below one-third health, gain +60% Movement Speed"],
-  ["ПОСЛЕДНИЙ РЫВОК", "FINAL SPRINT"], ["каждое убийство даёт +40% к скорости бега на 2 сек", "each kill grants +40% Movement Speed for 2 sec"],
-  ["КОНТРУДАР", "RIPOSTE"], ["получили удар — ваш следующий бьёт на 150% сильнее", "after taking a hit, your next hit deals 150% more damage"],
-  ["РУКА ПАЛАЧА", "EXECUTIONER'S HAND"], ["по врагам ниже 15% здоровья урон удваивается. Множитель поверх всей формулы", "damage is doubled against enemies below 15% health. This multiplier is applied on top of the entire formula"],
-  ["ГЛАЗ ХИЩНИКА", "PREDATOR'S EYE"], ["+20% урона на 2 сек после убийства, каждое следующее продлевает", "+20% damage for 2 sec after a kill; each subsequent kill refreshes the duration"],
-  ["ОСКОЛОК БОССА", "BOSS SHARD"], ["+5% урона за каждого элитного врага в радиусе 250, до +50%. Чем страшнее комната, тем сильнее вы", "+5% damage for each elite enemy within 250 range, up to +50%. The deadlier the room, the stronger you become"],
-  ["ТРИЕДИНСТВО", "TRINITY"], ["цель горит, охлаждена и отравлена одновременно — следующий удар по ней гарантированный крит", "when a target is simultaneously Burning, Chilled, and Poisoned, your next hit against it is guaranteed to be critical"],
-  ["ПЕРЕГРУЗКА", "OVERLOAD"], ["поджог шокированного врага вызывает разряд по округе", "Igniting a Shocked enemy releases a lightning discharge nearby"],
-  ["КРИТИЧЕСКАЯ МАССА", "CRITICAL MASS"], ["каждый крит выпускает волну радиусом 55 на половину его урона. Радиус растёт от «Радиуса области»", "each critical hit releases a wave with 55 radius for half its damage. Radius scales with Area of Effect Radius"],
-  ["ЦЕПЬ КРИТОВ", "CRITICAL CHAIN"], ["после крита следующий удар получает +10% шанса крита, до трёх раз подряд", "after a critical hit, your next hit gains +10% Critical Chance, up to three times in a row"],
-  ["КРИТИЧЕСКИЙ ПРИЦЕЛ", "CRITICAL AIM"], ["простояли секунду — +25% к шансу крита", "stand still for 1 sec to gain +25% Critical Chance"],
-  ["ПАНЦИРЬ ЦЕЛОГО", "UNBROKEN SHELL"], ["пока здоровье полное, получаемый урон на 35% меньше", "while at full health, take 35% less damage"],
-  ["ПОСЛЕДНЯЯ БРОНЯ", "LAST ARMOR"], ["здоровья меньше пятой части — получаемый урон на 40% меньше", "while below 20% health, take 40% less damage"],
-  ["СТАЛЬНАЯ ВОЛЯ", "STEEL WILL"], ["один удар не может снять больше 80% вашего запаса. Срабатывает раз в 10 сек", "a single hit cannot remove more than 80% of your maximum health. Can trigger once every 10 sec"],
-  ["ПОСЛЕДНИЙ ВЗДОХ", "LAST BREATH"], ["смертельный удар оставляет 1 здоровья и даёт 2 сек неуязвимости. Откат 120 сек", "a fatal hit leaves you at 1 health and grants 2 sec of invulnerability. 120 sec cooldown"],
-  ["ПУЛЬС ЖИЗНИ", "LIFE PULSE"], ["каждые 15 сек восстанавливает 5% запаса", "restores 5% of maximum health every 15 sec"],
-  ["ВАКУУМ", "VACUUM"], ["каждое убийство коротко подтягивает соседей к месту смерти", "each kill briefly pulls nearby enemies toward the place of death"],
-  ["ГРАВИТАЦИОННЫЙ КОЛОДЕЦ", "GRAVITY WELL"], ["раз в 12 сек рядом открывается воронка: секунду тянет врагов к себе, потом взрывается", "every 12 sec, a vortex opens nearby, pulling enemies in for 1 sec before exploding"],
-  ["ТАРАННАЯ ПЕРЧАТКА", "RAMMING GLOVE"], ["каждый восьмой удар отбрасывает врага втрое сильнее обычного", "every eighth hit knocks the enemy back with triple force"],
-  ["ОХОТНИК ЗА ЛУТОМ", "LOOT HUNTER"], ["радиус подбора опыта и золота впятеро больше", "experience and gold pickup radius is five times larger"],
-  ["БОЕВЫЕ СКЕЛЕТЫ", "BATTLE SKELETONS"], ["скелеты бьют на 25% чаще. Големов, охотников и колдунов не касается", "Skeletons attack 25% faster. Does not affect Golems, Hunters, or Warlocks"],
-  ["ТАЛИСМАН СКОРОСТИ", "TALISMAN OF SPEED"], ["убийство элиты или босса даёт +20% к скорости атаки и бега на 5 сек. Свита разгоняется вместе с вами", "killing an elite or boss grants +20% Attack and Movement Speed for 5 sec. Your minions speed up with you"],
-  ["ТАЛИСМАН ВЫЖИВАНИЯ", "TALISMAN OF SURVIVAL"], ["пока здоровья меньше трети — +20% к скорости атаки и бега. Свите достаётся тоже", "while below one-third health, gain +20% Attack and Movement Speed. Your minions gain it too"],
-  ["СТРЕЛА ИЗ КОЛЕНА", "ARROW TO THE KNEE"], ["+50% к скорости снарядов. Дальность не меняется — снаряд просто долетает быстрее", "+50% Projectile Speed. Range is unchanged; projectiles simply reach their destination faster"],
-  ["БЕСКОНЕЧНЫЙ МЕШОК ЗОЛОТА", "BOTTOMLESS BAG OF GOLD"], ["+50% золота с элитных монстров и боссов. Рядовые платят как обычно", "+50% gold from elites and bosses. Normal enemies pay the usual amount"],
-  ["БЕСКОНЕЧНЫЙ МЕШОК ОПЫТА", "BOTTOMLESS BAG OF EXPERIENCE"], ["+50% опыта с элитных монстров и боссов. Рядовые платят как обычно", "+50% experience from elites and bosses. Normal enemies grant the usual amount"],
-];
-
-const EN_WORLD = [
-  /* Созвездия и типы врагов */
-  ["БЕГУН", "RUNNER"], ["треугольные охотники", "triangular hunters"],
-  ["ЯДРО", "CORE"], ["круглые сгустки", "round blobs"],
-  ["БАСТИОН", "BASTION"], ["квадратные тяжёлые", "square heavyweights"],
-  ["ПРИЗМА", "PRISM"], ["ромбовидные стрелки", "diamond-shaped shooters"],
-  ["ЭЛИТА", "ELITES"], ["усиленные противники", "empowered enemies"],
-  ["БОСС", "BOSS"], ["хозяева пятого этажа", "masters of every fifth floor"],
-  ["Ядро", "Core"], ["Бегун", "Runner"], ["Бастион", "Bastion"], ["Призма", "Prism"],
-
-  /* Магазин */
-  ["РЕГЕНЕРАЦИЯ", "REGENERATION"], ["+1 здоровья в секунду за уровень, потолок +50 HP/сек.", "+1 health per second per level, capped at +50 HP/sec."],
-  ["БРОНЯ", "ARMOR"], ["+1 к броне за уровень.", "+1 Armor per level."],
-  ["СНИЖЕНИЕ УРОНА", "DAMAGE REDUCTION"], ["+1% к снижению входящего урона, потолок 60%.", "+1% incoming damage reduction per level, capped at 60%."],
-  ["ПАНЦИРЬ ОТ РОЯ", "SWARM SHELL"], ["Вычитает 1 урона из каждого попадания за уровень.", "Subtracts 1 damage from every hit per level."],
-  ["БЛОК", "BLOCK"], ["+1% шанса блока за уровень.", "+1% Block Chance per level."],
-  ["УВОРОТ", "EVASION"], ["+1% шанса уворота за уровень, потолок 70%.", "+1% Evasion Chance per level, capped at 70%."],
-  ["ЗАРЯДЫ РЫВКА", "DASH CHARGES"], ["Дополнительный заряд рывка. Базовый один, максимум три; каждый заряд восстанавливается 5 секунд.", "Adds a Dash charge. You start with one and can have up to three; each charge takes 5 seconds to recover."],
-  ["БЫСТРЫЙ СБОР", "QUICK PICKUP"], ["+20% к радиусу и скорости притяжения опыта и золота за ранг. На 10-м ранге они летят к вам с тройной скоростью из втрое большей дальности.", "+20% experience and gold attraction radius and speed per rank. At rank 10, they fly toward you three times faster from three times farther away."],
-  ["ИСКАТЕЛЬ РЕЛИКВИЙ", "RELIC SEEKER"], ["+1 процентный пункт к шансу выпадения предмета за ранг. Максимум +10 п.п.: обычный враг 0,4% → 10,4%, элита 2% → 12%, босс 16% → 26%. Дорогая QoL-ветка, не добавляет силу напрямую.", "+1 percentage point to item drop chance per rank. Maximum +10 points: normal enemy 0.4% → 10.4%, elite 2% → 12%, boss 16% → 26%. An expensive quality-of-life branch that grants no direct power."],
-  ["ПЕРВЫЙ ШАГ", "FIRST STEP"], ["В начале каждой новой партии даёт одно дополнительное повышение уровня за ранг. На максимуме выбираете пять модификаторов до первого боя.", "At the start of every new run, grants one additional level-up per rank. At maximum rank, you choose five modifiers before the first fight."],
-  ["ЧЕТВЁРТАЯ КАРТА", "FOURTH CARD"], ["При повышении уровня показывать четыре модификатора вместо трёх. Действует всю партию, на каждом уровне.", "Shows four modifiers instead of three whenever you level up. Active for the entire run at every level."],
-  ["ВЕСЬ УРОН", "ALL DAMAGE"], ["+1% ко всему урону: оружие, стихии, свита, поджог, яд, кровотечение. Складывается в общий процент вместе с карточками.", "+1% to all damage: weapons, elements, minions, Ignite, Poison, and Bleeding. Added to the same increased-damage total as cards."],
-  ["СКОРОСТЬ АТАКИ", "ATTACK SPEED"], ["+1% к скорости атаки. Тот же процент, что и на карточках, — суммируется с ними в один множитель.", "+1% Attack Speed. This is the same bonus type as cards and is added into the same multiplier."],
-  ["ЗДОРОВЬЕ ПЛЮСОМ", "FLAT HEALTH"], ["+1 к максимальному здоровью. Прибавляется ДО процентов, поэтому каждый процент здоровья делает его дороже по эффекту.", "+1 maximum health. Added BEFORE percentage bonuses, so each health percentage makes it more effective."],
-  ["ЗДОРОВЬЕ В ПРОЦЕНТАХ", "PERCENT HEALTH"], ["+1% к максимальному здоровью. Дорогая ветка: процент усиливает и базовое здоровье, и все постоянные прибавки здоровья.", "+1% maximum health. An expensive branch: the percentage increases both base health and all permanent flat health bonuses."],
-  ["СКОРОСТЬ БЕГА", "MOVEMENT SPEED"], ["+1% к скорости передвижения. Самый дорогой процент в магазине: бег — это уклонение, а уклонение не имеет потолка.", "+1% Movement Speed. The store's most expensive percentage: movement is avoidance, and avoidance has no cap."],
-  ["+1% к снижению получаемого урона. Считается ОТДЕЛЬНЫМ множителем после защиты из карточек, поэтому даже 70% плюс 60% с билда не дают неуязвимости — только 88% суммарно.", "+1% reduced damage taken. Applied as a SEPARATE multiplier after card defenses, so even 70% here plus 60% from your build yields 88% total reduction, not invulnerability."],
-  ["ОПЫТ", "EXPERIENCE"], ["+1% к получаемому опыту. Быстрее уровни — больше карточек за партию, то есть покупка не силы, а скорости сборки билда.", "+1% experience gained. Faster levels mean more cards per run, so this buys build speed rather than direct power."],
-  ["ЗОЛОТО", "GOLD"], ["+1% к найденному золоту. Единственная покупка, которая окупает сама себя, поэтому берётся первой почти всегда.", "+1% gold found. The only purchase that pays for itself, so it is almost always bought first."],
-  ["ПЛОТНОСТЬ ВРАГОВ", "ENEMY DENSITY"], ["+1% врагов на этаже. Сделка, а не подарок: больше опыта, золота и находок, но и этаж дольше, и толпа плотнее.", "+1% enemies per floor. A trade-off, not a gift: more experience, gold, and finds, but longer floors and denser crowds."],
-
-  /* Аффиксы боссов */
-  ["панцирь", "bulwark"], ["мелкие частые удары почти не проходят, крупные — проходят", "small rapid hits barely get through, while heavy hits do"],
-  ["оберег", "ward"], ["одна стихия срезается на 60% — цвет ауры выдаёт какая", "one element is reduced by 60%; the aura color reveals which one"],
-  ["залп", "volley"], ["раз в 3 сек веер снарядов по кругу — бегать надо по дуге, не по прямой", "every 3 sec, fires a fan of projectiles; run in an arc, not in a straight line"],
-  ["волна", "wave"], ["раз в 5 сек расходится кольцо — безопасно только вплотную или далеко", "every 5 sec, releases an expanding ring; only very close or far away is safe"],
-  ["смола", "tar"], ["оставляет за собой лужи — стоять на месте нельзя", "leaves pools behind; standing still is dangerous"],
-  ["таран", "charge"], ["раз в 3 сек: замах 0.7 сек, затем рывок по прямой с отбрасыванием", "every 3 sec: winds up for 0.7 sec, then charges in a straight line with knockback"],
-  ["зов", "summoning"], ["раз в 6 сек поднимает свежих врагов вокруг себя", "every 6 sec, summons fresh enemies around itself"],
-  ["знамя", "banner"], ["пока жив, вся комната на 30% быстрее и на 20% злее", "while alive, the entire room moves 30% faster and deals 20% more damage"],
-
-  /* Аффиксы элитных пачек */
-  ["берсеркеры", "berserkers"], ["чем меньше здоровья осталось, тем быстрее и сильнее бьют", "the less health they have, the faster and harder they strike"],
-  ["бронированные", "armored"], ["−50% получаемого урона, пока выше половины здоровья", "take 50% less damage while above half health"],
-  ["регенераторы", "regenerators"], ["2.5% здоровья в секунду, пока по ним не попадают", "recover 2.5% health per second while not being hit"],
-  ["вампиры", "vampires"], ["урон, прошедший по игроку, лечит всю пачку — доля делится на всех", "damage dealt to the player heals the entire pack, with the share divided among its members"],
-  ["мстители", "avengers"], ["смерть одного разгоняет соседей: +30% скорости и урона на 6 сек", "when one dies, nearby allies gain +30% speed and damage for 6 sec"],
-  ["прыгуны", "jumpers"], ["раз в 3.5 сек один прыгает игроку под ноги", "every 3.5 sec, one jumps to the player's position"],
-  ["охотники", "hunters"], ["один монстр не отвлекается на свиту и бежит к игроку на 50% быстрее", "one enemy ignores minions and runs toward the player 50% faster"],
-  ["размножение", "breeding"], ["каждый погибший оставляет двух уменьшенных копий", "each slain enemy leaves two smaller copies"],
-  ["улей", "hive"], ["пока матка жива, вся пачка восстанавливает 1.2% здоровья в секунду", "while the queen lives, the entire pack recovers 1.2% health per second"],
-  ["связанные", "linked"], ["−30% получаемого урона, пока рядом стоит свой", "take 30% less damage while near an ally"],
-  ["кровная связь", "blood bond"], ["80% урона по одному растекается на остальных — общий урон тот же, но убить кого-то одного нельзя", "80% of damage to one member is spread among the others; total damage is unchanged, but focusing down one target is impossible"],
-  ["маяк", "beacon"], ["носитель даёт своим в радиусе 180 половину урона сверху — его выгодно убить первым", "the bearer grants allies within 180 range 50% more damage, making it the best target to kill first"],
-  ["авангард", "vanguard"], ["у передового вдвое больше здоровья, и он перехватывает треть попаданий по своим", "the vanguard has twice as much health and intercepts one third of hits aimed at its allies"],
-  ["командир", "commander"], ["пока командир жив, пачка на 30% быстрее двигается и бьёт", "while the commander lives, the pack moves and attacks 30% faster"],
-  ["священный круг", "sanctuary"], ["вокруг носителя круг радиусом 150: свои внутри лечатся на 1.5% в секунду", "a 150-radius circle surrounds the bearer; allies inside recover 1.5% health per second"],
-  ["последнее слово", "last word"], ["после смерти выпускает три снаряда в сторону игрока", "fires three projectiles toward the player on death"],
-  ["разделяющиеся", "splitters"], ["на половине здоровья монстр делится надвое, у каждой половины 40% исходного запаса", "at half health, the enemy splits into two, each with 40% of the original maximum health"],
-  ["безумные", "mad"], ["каждые 2 сек заново бросают кости: скорость, размер, урон, курс и способ атаки", "every 2 sec, reroll their speed, size, damage, direction, and attack behavior"],
-
-  /* Виды свиты */
-  ["Скелет", "Skeleton"], ["Охотник", "Hunter"], ["Колдун", "Warlock"],
-  ["Голем крови", "Blood Golem"], ["Костяной голем", "Bone Golem"],
-];
-const EN_UI_PAIRS = [
-  ["P — пауза", "P — Pause"], ["HP/сек", "HP/sec"], ["с удара", "per hit"],
-  ["ОРУЖИЕ", "WEAPON"], ["Реген/сек", "Regen/sec"], ["Средний удар", "Average Hit"],
-  ["/сек", "/sec"], ["(до ", "(up to "],
-  /* Бой, HUD и всплывающие сообщения */
-  ["Ур.", "Lv."], ["ЭТАЖ", "FLOOR"], ["ЭТАЖ ", "FLOOR "], ["ДВА БОССА", "TWO BOSSES"],
-  ["ПАЧКА", "PACK"], ["ЖИВЫХ", "ALIVE"], ["врагов:", "enemies:"], ["золота", "gold"],
-  ["ТРИАДА", "TRINITY"], ["КОНТРУДАР", "RIPOSTE"], ["СМЕРТЬ", "DEATH"],
-  ["КОЛЬЦО СМЕРТИ ГОТОВО", "DEATH RING READY"], ["ЧАША ПОЛНА", "CHALICE FILLED"],
-  ["ЧУМА", "PLAGUE"], ["КРОВЬ", "BLOOD"], ["ВРАГ", "ENEMY"],
-  ["ЗАБЛОКИРОВАНО", "BLOCKED"], ["уворот", "evaded"], ["КУКЛА РАССЫПАЛАСЬ", "DOLL SHATTERED"],
-  ["СПАСЕНИЕ", "SAVED"], ["СОБСТВЕННЫЙ ВЗРЫВ", "SELF EXPLOSION"], ["НЕИЗВЕСТНЫЙ УРОН", "UNKNOWN DAMAGE"],
-  ["автолечение", "automatic healing"], ["снаряд", "projectile"], ["контакт", "contact"], ["отбито", "reflected"],
-  ["ВРАЖЕСКИЙ СНАРЯД", "ENEMY PROJECTILE"], ["ЛУЖА СМОЛЫ", "TAR POOL"],
-  ["УДАРНАЯ ВОЛНА БОССА", "BOSS SHOCKWAVE"], ["ПОРТАЛ ОТКРЫТ", "PORTAL OPEN"],
-  ["свита ≈", "minions ≈"], ["урон/сек ≈", "damage/sec ≈"], [" урона/сек", " damage/sec"],
-  [" · рывки ", " · Dashes "], [" · заряд через ", " · charge in "], [" · свита ", " · minions "],
-  ["цел", "intact"], ["разбит", "broken"],
-
-  /* Находки, книги и тотемы */
-  ["тотем · ранг", "totem · rank"], ["из 4 · растёт от каждой следующей находки", "of 4 · each new find raises its rank"],
-  ["Весь ваш урон по", "All your damage against"], ["целям увеличен на", "targets is increased by"],
-  ["Действует и на удары свиты.", "Also affects minion hits."], ["Ранги:", "Ranks:"],
-  ["ДРУГИЕ ТОТЕМЫ", "OTHER TOTEMS"], ["ПРОДОЛЖИТЬ", "CONTINUE"],
-  ["ОБЫЧНЫЙ", "COMMON"], ["РЕДКИЙ", "RARE"], ["ЭПИЧЕСКИЙ", "EPIC"], ["ЛЕГЕНДАРНЫЙ", "LEGENDARY"],
-  ["находится один раз за партию", "can be found once per run"], ["УЖЕ НАДЕТО", "ALREADY EQUIPPED"],
-  ["список прокручивается", "scroll to see the full list"], ["было +", "was +"], ["срабатывание", "proc chance"],
-  ["Флэт-урон огнём", "Flat Fire damage"], ["Флэт-урон холодом", "Flat Cold damage"],
-  ["Отравление за прок", "Poison per proc"], ["Кровотечение за прок", "Bleeding per proc"],
-  ["Плотность волн", "Wave density"], ["Получаемый опыт", "Experience gained"],
-  ["тир", "tier"], ["повышена с", "upgraded from"], ["первая находка", "first find"],
-  ["СИЛА", "POWER"], ["ШАНС СРАБАТЫВАНИЯ", "PROC CHANCE"], ["потолок достигнут", "maximum reached"],
-  ["+10% за следующую", "+10% on the next find"], ["ВСЕ КНИГИ СУММАРНО", "ALL BOOKS COMBINED"],
-
-  /* Типы карточек и подсказки */
-  ["к урону плюсом", "added as flat damage"], ["суммируется в процентах", "additive percentage"],
-  ["отдельный множитель", "separate multiplier"], ["шанс", "chance"], ["свойство", "property"],
-  ["В этой карточке:", "This card grants:"], ["сейчас:", "current:"], ["ДЕЙСТВУЕТ И НА СВИТУ", "ALSO AFFECTS MINIONS"],
-  ["сейчас", "current"],
-
-  /* Экран характеристик и инвентарь */
-  ["Подкласс", "Subclass"], ["ИЗ МАГАЗИНА", "FROM THE STORE"], ["ОСНОВНОЕ", "CORE STATS"],
-  ["Макс. здоровье", "Maximum Health"], ["Регенерация", "Regeneration"], ["Урон атаки", "Attack Damage"],
-  ["Скорость атаки", "Attack Speed"], ["Шанс крита", "Critical Chance"], ["Множитель крита", "Critical Multiplier"],
-  ["Скорость бега", "Movement Speed"], ["Получаемое золото", "Gold Gained"],
-  ["СТИХИИ", "ELEMENTS"], ["Броня", "Armor"], ["гасит", "mitigates"], ["входящего урона", "incoming damage"],
-  ["Снижение урона", "Damage Reduction"], ["магазин", "store"], ["Блок", "Block"], ["Уворот", "Evasion"],
-  ["От обычных монстров", "From normal enemies"], ["От элиты и боссов", "From elites and bosses"], ["Вампиризм", "Life Steal"],
-  ["ГЕОМЕТРИЯ", "ATTACK SHAPE"], ["Снарядов", "Projectiles"], ["Пробитие", "Pierce"], ["Отскоки", "Chains"],
-  ["Радиус AoE", "AoE Radius"], ["Радиус чумы / сфера", "Plague / orb radius"], ["Разлёт молний", "Lightning discharge"],
-  ["целей", "targets"], ["Перекидывание поджога", "Ignite spread"], ["Аура замедления", "Slowing Aura"],
-  ["Круговые орбы", "Orbiting Orbs"], ["за касание", "per contact"], ["Чумный взрыв трупа", "Corpse Plague Explosion"],
-  ["МЕГА-чума", "MEGA Plague"], ["радиус ×2", "radius ×2"], ["Всего приспешников", "Total Minions"],
-  ["Скелеты", "Skeletons"], ["Охотники", "Hunters"], ["Колдуны", "Warlocks"], ["ур.", "rank"],
-  ["за удар", "per hit"], ["уд/сек", "hits/sec"], ["кровь", "Bleeding"], ["за стак", "per stack"],
-  ["Урон скелета", "Skeleton Damage"], ["Здоровье скелета", "Skeleton Health"], ["Атак/сек", "Attacks/sec"],
-  ["Крит свиты", "Minion Critical Chance"], ["Шансы эффектов свиты", "Minion Ailment Chances"], ["25% от ваших", "25% of yours"],
-  ["Лорд Смерти", "Death Lord"], ["0,1% фактического урона свиты лечит героя", "0.1% of actual minion damage heals the hero"],
-  ["Наследование статов", "Stat Inheritance"], ["урон, здоровье, крит", "damage, health, critical chance"],
-  ["Скорость свиты", "Minion Speed"], ["атака", "attack"], ["бег", "movement"], ["Воскрешение", "Revival"],
-  ["Срок жизни бойца", "Minion Lifetime"], ["смерть запускает эффекты", "death triggers effects"],
-  ["Перехват урона", "Damage Interception"], ["ветка на потолке", "branch capped"], ["Кровные узы", "Blood Ties"],
-  ["x2 урона свиты на 3 сек после удара", "×2 minion damage for 3 sec after you are hit"],
-  ["Вампиры хозяина", "Master's Vampires"], ["урона свиты уходит ей в здоровье", "of minion damage is recovered as minion health"],
-  ["Буйство демонов", "Demon Frenzy"], ["взрыв радиусом", "explosion radius"], ["Астральный набег", "Astral Raid"],
-  ["Внезапный взрыв", "Sudden Blast"], ["раз в", "every"], ["% удара", "% of a hit"], ["радиус", "radius"],
-  ["Резкие когти", "Razor Claws"], ["каждый 5-й удар · +30% мощности", "every 5th hit · +30% power"],
-  ["Вихрь когтей", "Claw Whirlwind"], ["каждый 10-й удар · 20% по радиусу", "every 10th hit · 20% area damage"],
-  ["Кровавая баня", "Bloodbath"], ["10% ударов свиты", "10% of minion hits"], ["Кипящая кровь", "Boiling Blood"],
-  ["5% на лужу радиусом", "5% chance for a pool with radius"], ["5% текущего здоровья в секунду", "5% current health per second"],
-  ["Кислота веномансера", "Venomancer Acid"], ["3 сек · 15% текущего здоровья/сек", "3 sec · 15% current health/sec"],
-  ["Трупов на земле", "Corpses on the Ground"], ["ТОТЕМЫ", "TOTEMS"], ["следующий ранг", "next rank"], ["максимум", "maximum"],
-  ["ПРЕДМЕТЫ:", "ITEMS:"], ["НАЙДЕННЫЕ КНИГИ", "BOOKS FOUND"], ["срабатывает", "procs at"],
-  ["ВЗЯТО МОДИФИКАТОРОВ:", "MODIFIERS TAKEN:"], ["Пока ничего не найдено.", "Nothing found yet."],
-  ["шанс срабатывания", "proc chance"], ["Сила:", "Power:"], ["обычный", "common"], ["редкий", "rare"],
-  ["эпический", "epic"], ["легендарный", "legendary"], ["Следующая находка повышает ранг, пока не достигнут великий тотем.", "Each new find raises the rank until the Grand Totem is reached."],
-  ["Постоянный модификатор этого забега.", "A permanent modifier for this run."], ["ИНВЕНТАРЬ", "INVENTORY"],
-  ["TAB или ESC — закрыть и продолжить", "TAB or ESC — close and continue"], ["БРОНЯ:", "ARMOR:"],
-  ["Гасит", "Mitigates"], ["каждого обычного входящего удара.", "of each regular incoming hit."],
-  ["После брони отдельно применяются блок, плоское и процентное снижение урона.", "After Armor, Block, flat reduction, and percentage damage reduction are applied separately."],
-  ["КНИГИ", "BOOKS"], ["АМУЛЕТЫ И СНАРЯЖЕНИЕ", "AMULETS AND EQUIPMENT"], ["МОДИФИКАТОРЫ УРОВНЕЙ", "LEVEL MODIFIERS"],
-
-  /* QA-панель и итоги */
-  ["постоянное свойство", "permanent property"], ["% множитель", "% multiplier"], ["ВЗЯТО", "TAKEN"], ["ВЫДАТЬ", "GRANT"],
-  ["Ничего не найдено.", "Nothing found."], ["ТЕСТОВАЯ ВЫДАЧА НАВЫКОВ", "TEST SKILL GRANT"],
-  ["Поиск по названию, категории или ID · значения бросаются в обычном диапазоне", "Search by name, category, or ID · values roll within their normal range"],
-  ["Например: чума, crit, скорость, min.", "For example: plague, crit, speed, min."],
-  ["Завершить забег и сохранить", "End the run and save"], ["золота в банк?", "gold to the bank?"],
-  ["ЗАБЕГ ЗАВЕРШЁН", "RUN ENDED"], ["ВЫ ПАЛИ", "YOU HAVE FALLEN"], ["итоги забега", "run summary"],
-  ["этаж", "floor"], ["уровень", "level"], ["время", "time"], ["ПРИЧИНА СМЕРТИ:", "CAUSE OF DEATH:"],
-  ["неизвестна", "unknown"], ["получено", "taken"], ["урона", "damage"], ["золота в банк · всего", "gold banked · total"],
-  ["рекорд: этаж", "record: floor"], ["УБИТО ВСЕГО", "TOTAL KILLS"], ["ОБЫЧНЫЕ / ЭЛИТЫ / БОССЫ", "NORMAL / ELITE / BOSS"],
-  ["НАНЕСЕНО УРОНА", "DAMAGE DEALT"], ["САМЫЙ СИЛЬНЫЙ УДАР", "STRONGEST HIT"], ["КРИТИЧЕСКИХ УДАРОВ", "CRITICAL HITS"],
-  ["ПОЛУЧЕНО УРОНА", "DAMAGE TAKEN"], ["ВОССТАНОВЛЕНО HP", "HP RESTORED"], ["ПРОЙДЕНО РАССТОЯНИЕ", "DISTANCE TRAVELED"],
-  ["МОДИФИКАТОРОВ", "MODIFIERS"], ["КНИГИ / ТИРЫ КНИГ", "BOOKS / BOOK TIERS"], ["СНАРЯЖЕНИЕ / ТОТЕМЫ", "EQUIPMENT / TOTEMS"],
-  ["ЗАЧИЩЕННЫХ ЭТАЖЕЙ", "FLOORS CLEARED"], ["В МЕНЮ", "MAIN MENU"],
-
-  /* Магазин и созвездия */
-  ["АТАКА", "ATTACK"], ["урон и темп", "damage and tempo"], ["ЗДОРОВЬЕ", "HEALTH"], ["запас HP", "maximum HP"],
-  ["ЗАЩИТА", "DEFENSE"], ["выживаемость", "survivability"], ["ФАРМ", "FARMING"], ["опыт, золото, плотность", "experience, gold, density"],
-  ["КАЧЕСТВО ЖИЗНИ", "QUALITY OF LIFE"], ["старт, движение и сбор", "starting power, movement, and pickup"],
-  ["МАКСИМУМ", "MAXIMUM"], ["ур.", "lv."], ["МАГАЗИН", "STORE"],
-  ["постоянные бонусы для всех будущих забегов · наведите на карточку для подробностей", "permanent bonuses for all future runs · hover over a card for details"],
-  ["В БАНКЕ:", "IN THE BANK:"], ["потрачено за всё время:", "all-time spent:"], ["НАЗАД", "BACK"],
-  ["Достигнут максимум.", "Maximum reached."], ["Следующий ранг:", "Next rank:"], ["цена", "cost"],
-  ["Текущий эффект:", "Current effect:"], ["на следующем ранге", "at the next rank"],
-  ["СОЗВЕЗДИЕ ЗАВЕРШЕНО", "CONSTELLATION COMPLETE"], ["ОТКРЫТЬ РАНГ", "UNLOCK RANK"],
-  ["ДО НОВОЙ ЗВЕЗДЫ:", "UNTIL THE NEXT STAR:"], ["РАНГ / 10", "RANK / 10"],
-  ["к урону, опыту и золоту за этот тип врагов", "to damage, experience, and gold for this enemy type"],
-  ["УБИТО:", "KILLED:"], ["ЦЕЛЬ:", "TARGET:"], ["СОЗВЕЗДИЯ", "CONSTELLATIONS"],
-  ["вечная охота · убийства не расходуются · каждый открытый узел даёт +5%", "eternal hunt · kills are never spent · each unlocked node grants +5%"],
-  ["КАРТА ВЕЧНОЙ ОХОТЫ", "MAP OF THE ETERNAL HUNT"], ["ШЕСТЬ ПУТЕЙ · ДЕСЯТЬ ЗВЁЗД В КАЖДОМ", "SIX PATHS · TEN STARS IN EACH"],
-  ["Ранг", "Rank"], ["убийств", "kills"],
-
-  /* Главное меню и управление */
-  ["выберите один из четырёх классов — он определяет, вокруг чего строить билд", "choose one of four classes—it determines the foundation of your build"],
-  ["ДОСТУПНО ОТКРЫТИЙ:", "UNLOCKS AVAILABLE:"], ["Каждое повышение уровня — выбор из", "Each level-up offers a choice of"],
-  ["четырёх", "four"], ["трёх", "three"], ["модификаторов реального каталога.", "modifiers from the actual catalog."],
-  ["flat складывается · inc суммируется в один процент · more множится отдельно.", "flat values add together · inc values combine into one percentage · more multipliers multiply separately."],
-  ["выберите подкласс · его бонусы растут с каждым уровнем", "choose a subclass · its bonuses grow with every level"],
-  ["подкласс", "subclass"], ["НАЗАД К ВЫБОРУ КЛАССА", "BACK TO CLASS SELECTION"],
-  ["КЛАВИАТУРА", "KEYBOARD"], ["Движение на WASD или стрелках. Точный контроль остановки — удобно для билдов на стрельбу с места.", "Move with WASD or the arrow keys. Precise stopping control is ideal for stationary-ranged builds."],
-  ["МЫШЬ", "MOUSE"], ["Персонаж непрерывно бежит к курсору. Чтобы встать, наведите курсор на себя — вокруг персонажа есть зона покоя.", "The character continuously runs toward the cursor. To stop, move the cursor over the character; a dead zone surrounds them."],
-  ["чем управлять? · сменить можно в любой момент на C", "choose your control scheme · press C to switch at any time"],
-  ["управление", "controls"], ["Атака автоматическая в обеих схемах · ПРОБЕЛ — рывок · ESC или P — пауза", "Attacks are automatic in both schemes · SPACE — Dash · ESC or P — Pause"],
-  ["УПРАВЛЕНИЕ:", "CONTROLS:"], ["МЫШЬ — движение к курсору, наведите на себя чтобы встать", "MOUSE — move toward cursor; hover over yourself to stop"],
-  ["WASD — движение", "WASD — move"], ["атака автоматическая", "attacks are automatic"], ["ПРОБЕЛ — рывок", "SPACE — Dash"],
-  ["C — сменить управление", "C — switch controls"], ["TAB — инвентарь", "TAB — Inventory"], ["ESC/P — пауза", "ESC/P — Pause"],
-  ["ПАУЗА", "PAUSED"], ["ESC или P — продолжить", "ESC or P — continue"],
-  ["ЗАВЕРШИТЬ ЗАБЕГ · СОХРАНИТЬ ЗОЛОТО", "END RUN · SAVE GOLD"],
-];
-
-const EN_TEXT = Object.freeze(Object.fromEntries([
-  /* Общие категории и термины */
-  ["Здоровье", "Health"], ["Кейстоун", "Keystone"], ["Защита", "Defense"],
-  ["Урон", "Damage"], ["Криты", "Critical Hits"], ["Скорость", "Speed"],
-  ["Передвижение", "Movement"], ["Геометрия", "Attack Shape"], ["Огонь", "Fire"],
-  ["Холод", "Cold"], ["Молния", "Lightning"], ["Яд", "Poison"],
-  ["Эффекты", "Ailments"], ["Условные", "Conditional"], ["Уклонение", "Evasion"],
-  ["Смерть", "Death"], ["Контроль", "Crowd Control"], ["Экзотика", "Exotic"],
-  ["Триггеры", "Triggers"], ["Прогрессия", "Progression"], ["Лут", "Loot"],
-  ["Свита", "Minions"], ["Големы", "Golems"],
-
-  /* Карточки: здоровье, урон, крит, скорость */
-  ["Здоровье за убийство", "Health on Kill"],
-  ["Здоровье за попадание", "Health on Hit"],
-  ["сильно с быстрыми атаками", "especially strong with fast attacks"],
-  ["Здоровье за крит", "Health on Critical Hit"],
-  ["УЖАСАЮЩИЙ ВАМПИР", "DREAD VAMPIRE"],
-  ["единственный источник восстановления: 0.3% нанесённого урона. Всё остальное лечение и вампиризм — с карточек, книг, амулетов, зачистки этажа — перестаёт работать", "your only source of recovery becomes 0.3% of damage dealt. All other healing and life steal—from cards, books, items, and floor clears—stops working"],
-  ["МГНОВЕННЫЙ ВАМПИРИЗМ", "INSTANT LIFE STEAL"],
-  ["вытягивание перестаёт течь во времени и лечит целиком в момент удара", "life steal no longer recovers health over time and heals the full amount on hit"],
-  ["Снижение урона от обычных монстров", "Damage Reduction from Normal Enemies"],
-  ["Случайно −5…−15% входящего урона от обычных врагов за выбор; суммируется до −25%.", "Grants 5–15% less incoming damage from normal enemies per pick; stacks up to 25%."],
-  ["Снижение урона от элиты и боссов", "Damage Reduction from Elites and Bosses"],
-  ["Случайно −5…−15% входящего урона от элитных врагов и боссов за выбор; суммируется до −25%.", "Grants 5–15% less incoming damage from elites and bosses per pick; stacks up to 25%."],
-  ["+N ко всему урону", "+N to All Damage"], ["+% ко всему урону", "+% to All Damage"],
-  ["Множитель урона", "Damage Multiplier"],
-  ["самый ценный тип — множится, а не складывается", "the most valuable type: multiplicative instead of additive"],
-  ["Урон по площади", "Area Damage"], ["Урон снарядов", "Projectile Damage"],
-  ["Урон ближнего боя", "Melee Damage"], ["Шипы: N урона атакующему", "Thorns: N Damage to the Attacker"],
-  ["ОТРАЖЕНИЕ УРОНА", "DAMAGE REFLECTION"],
-  ["% полученного урона возвращается атакующему поверх шипов", "% of damage taken is returned to the attacker in addition to Thorns"],
-  ["Урон в размере % от HP врага", "Damage Equal to % of Enemy HP"],
-  ["работает против жирных боссов", "effective against high-health bosses"],
-  ["Добивание ниже X% HP", "Execute Below X% HP"],
-  ["Сужение разброса урона", "Tighter Damage Range"],
-  ["меньше казино, стабильнее ДПС", "less randomness, more consistent DPS"],
-  ["Урон считается дважды, берётся лучшее", "Roll Damage Twice, Keep the Better Roll"],
-  ["+N% к шансу крита", "+N% Critical Hit Chance"], ["+% к шансу крита", "+% Critical Hit Chance"],
-  ["Множитель критического урона", "Critical Damage Multiplier"], ["СВЕРХКРИТ", "SUPER CRITICAL"],
-  ["крит внутри крита: урон ×2 и кровотечение на 3% от удара в секунду — стакается без предела", "a critical hit within a critical hit: ×2 damage and bleeding for 3% of the hit per second; stacks without limit"],
-  ["Ударная волна при крите", "Critical Shockwave"], ["Шанс крита считается дважды", "Roll Critical Chance Twice"],
-  ["Скорость атаки", "Attack Speed"], ["Скорость действий (глобально)", "Global Action Speed"],
-  ["Скорость передвижения", "Movement Speed"], ["Ускорение после убийства", "Speed after Kill"],
-  ["+40% скорости на 2 сек", "+40% speed for 2 sec"],
-
-  /* Карточки: геометрия и стихии */
-  ["Доп. снаряды", "Additional Projectiles"], ["один из сильнейших модификаторов", "one of the strongest modifiers"],
-  ["Пробитие насквозь (N целей)", "Pierce (N Targets)"], ["Отскоки на другие цели", "Chains to Other Targets"],
-  ["Самонаведение", "Homing"], ["Скорость снарядов", "Projectile Speed"], ["Размер снарядов", "Projectile Size"],
-  ["Радиус области действия", "Area of Effect Radius"], ["Дуга рассекающего удара", "Cleave Arc"],
-  ["Шанс чумного взрыва трупа", "Chance for Corpse Plague Explosion"],
-  ["заражает ближайшую толпу чумой", "infects the nearby crowd with plague"],
-  ["Шанс МЕГА-чумного взрыва", "Chance for MEGA Plague Explosion"],
-  ["вдвое больший радиус чумы; заражает всю задетую толпу", "double plague radius; infects the entire crowd caught in the blast"],
-  ["Шанс двойного попадания", "Double Hit Chance"], ["ТРОЙНОЕ ПОПАДАНИЕ", "TRIPLE HIT"],
-  ["третий удар вдогонку двойному, 40% урона", "a third hit follows the double hit at 40% damage"],
-  ["ДРОБОВИК", "SHOTGUN"], ["снаряды летят тугим пучком — весь залп ложится в одну цель", "projectiles fly in a tight cluster, allowing the entire volley to hit one target"],
-  ["ЭКО-ОТСКОКИ", "ECHO CHAINS"], ["отскоки перестают терять 25% урона на каждом прыжке", "chained hits no longer lose 25% damage with each jump"],
-  ["СВЕРХПРОБИТИЕ", "SUPER PIERCE"], ["+20% урона за каждую уже пробитую цель", "+20% damage for each target already pierced"],
-  ["РАДИУС В УРОН", "RADIUS INTO DAMAGE"], ["каждый процент радиуса области даёт 0.6% урона", "each 1% of area radius grants 0.6% damage"],
-  ["Круговой орб", "Orbiting Orb"], ["кружок вращается вокруг вас и бьёт всё, чего коснётся, на 15% от автоатаки — со всеми модификаторами. До 10 штук", "an orb circles you and hits everything it touches for 15% of your basic attack, including all modifiers. Up to 10 orbs"],
-  ["Рикошет от стен", "Wall Ricochet"],
-  ["+N к урону: Огонь", "+N Fire Damage"], ["+% к урону: Огонь", "+% Fire Damage"],
-  ["Шанс наложить: Поджог", "Chance to Ignite"], ["горение тикает уроном по площади", "burning deals area damage over time"],
-  ["ИНФЕРНО", "INFERNO"], ["горящие враги поджигают всех вокруг себя на 3 секунды — пожар идёт по толпе сам", "burning enemies ignite everything around them for 3 seconds, letting the fire spread through the crowd"],
-  ["+N к урону: Холод", "+N Cold Damage"], ["+% к урону: Холод", "+% Cold Damage"],
-  ["Шанс наложить: Охлаждение", "Chance to Chill"], ["цель замедлена на 35% и принимает на 25% больше урона; соседи рядом с ней тоже вязнут", "the target is slowed by 35% and takes 25% more damage; nearby enemies are slowed as well"],
-  ["ЗАМОРОЗКА", "FREEZE"], ["охлаждение вмораживает цель в пол: полная остановка на 1.4 сек", "Chill freezes the target in place, stopping it completely for 1.4 sec"],
-  ["+N к урону: Молния", "+N Lightning Damage"], ["широкий разброс", "wide damage range"], ["+% к урону: Молния", "+% Lightning Damage"],
-  ["Шанс разряда молнии", "Lightning Discharge Chance"], ["разряд бьёт по ближайшим врагам, а цель получает Шок: +30% входящего урона", "the discharge strikes nearby enemies and Shocks the target, causing it to take 30% more damage"],
-  ["+N к урону: Яд", "+N Poison Damage"], ["+% к урону: Яд", "+% Poison Damage"],
-  ["Шанс наложить: Отравление", "Chance to Poison"], ["стакается, не тратит время боя", "stacks without consuming attack time"],
-  ["РАДИАЦИЯ", "RADIATION"], ["каждое отравление кладёт сразу два стака, потолок стаков 20 → 40", "each Poison applies two stacks at once; maximum stacks increase from 20 to 40"],
-  ["Сила всех негативных эффектов", "All Ailment Effect"],
-  ["<b>Формула:</b> урон эффекта × (1 + бонус / 100). Усиливает урон поджога, яда, кровотечения, разряда от шока и огненного следа.<br><b>Пример:</b> +36% превращает 100 урона/сек в 136 урона/сек.<br><b>Не влияет:</b> на шанс наложения, длительность, радиус, прямой урон атаки, силу замедления и кислоту Веномансера.", "<b>Formula:</b> ailment damage × (1 + bonus / 100). Increases damage from Ignite, Poison, Bleeding, Shock discharge, and the burning trail.<br><b>Example:</b> +36% turns 100 damage/sec into 136 damage/sec.<br><b>Does not affect:</b> application chance, duration, radius, direct attack damage, slow strength, or Venomancer acid."],
-  ["Длительность всех эффектов", "All Ailment Duration"],
-  ["<b>Формула:</b> длительность × (1 + бонус / 100). Продлевает поджог, яд, кровотечение, охлаждение, заморозку, шок, оглушение и головокружение.<br><b>Пример:</b> +50% превращает обычный поджог 3 сек в 4,5 сек, яд 4 сек — в 6 сек, кровотечение 6 сек — в 9 сек.<br><b>Не продлевает:</b> кислоту Веномансера, лужи, снаряды и время действия предметов.", "<b>Formula:</b> duration × (1 + bonus / 100). Extends Ignite, Poison, Bleeding, Chill, Freeze, Shock, Stun, and Daze.<br><b>Example:</b> +50% turns a 3-sec Ignite into 4.5 sec, a 4-sec Poison into 6 sec, and a 6-sec Bleed into 9 sec.<br><b>Does not extend:</b> Venomancer acid, pools, projectiles, or item effect durations."],
-
-  /* Карточки: условия, защита, контроль, прогрессия */
-  ["Урон по раненым врагам", "Damage to Injured Enemies"], ["цель ниже 35% HP", "target is below 35% HP"],
-  ["Урон по врагам на полном HP", "Damage to Enemies at Full HP"], ["Урон по боссам и элите", "Damage to Bosses and Elites"],
-  ["Урон в движении", "Damage while Moving"], ["Урон при стоянии на месте", "Damage while Stationary"], ["турель-архетип", "turret archetype"],
-  ["Урон при малом здоровье", "Damage at Low Health"], ["высокий риск: ниже 35% своего HP", "high risk: while below 35% of your HP"],
-  ["Урон за каждого врага рядом", "Damage per Nearby Enemy"], ["считает до 8 целей в радиусе 220 — в толпе даёт максимум", "counts up to 8 targets within 220 range, reaching its maximum in a crowd"],
-  ["Урон после недавнего убийства", "Damage after a Recent Kill"], ["держится 3 секунды после каждого убийства", "lasts 3 seconds after each kill"],
-  ["Урон вблизи", "Close-Range Damage"], ["Урон издалека", "Long-Range Damage"],
-  ["Урон за каждую секунду боя", "Damage per Second in Combat"], ["разгон с начала боя, потолок +40%, сбрасывается при зачистке", "ramps from the start of combat, capped at +40%, and resets when the room is cleared"],
-  ["<b>Формула:</b> выбранное значение × прошедшее время боя в секундах, пока на арене есть хотя бы один живой враг. Бонус прибавляется к обычным процентам урона и растёт плавно, включая доли секунды.<br><b>Пример:</b> +2% даёт +20% через 10 сек и достигает потолка +40% через 20 сек.<br><b>Сброс:</b> сразу после зачистки, когда живых врагов не остаётся. Работает и на урон свиты.", "<b>Formula:</b> rolled value × elapsed combat time in seconds while at least one enemy is alive in the arena. The bonus is added to regular increased damage and grows smoothly, including fractions of a second.<br><b>Example:</b> +2% grants +20% after 10 sec and reaches the +40% cap after 20 sec.<br><b>Reset:</b> immediately after the room is cleared. Also affects minion damage."],
-  ["БРОНЯ В УРОН", "ARMOR INTO DAMAGE"], ["каждые 100 брони превращаются в +12 к урону", "every 100 Armor grants +12 Damage"],
-  ["ПРОХОД СКВОЗЬ ВРАГОВ", "PHASE THROUGH ENEMIES"], ["в движении вы проходите сквозь тела и не получаете контактный урон — но не стоя на месте", "while moving, you phase through enemies and take no contact damage; this does not work while stationary"],
-  ["ТАРАННЫЙ РЫВОК", "RAMMING DASH"], ["рывок сносит всех на пути (120% урона) и вызывает головокружение", "Dash plows through enemies in its path for 120% damage and Dazes them"],
-  ["Возврат % полученного урона со временем", "Recoup % of Damage Taken over Time"],
-  ["Шанс избежать смертельного удара", "Chance to Avoid a Fatal Hit"], ["откат 25 сек", "25 sec cooldown"],
-  ["Шанс отбрасывания", "Knockback Chance"], ["сила толчка: Бегуны −30% · элита −50% · боссы −90%", "knockback force: Runners −30% · elites −50% · bosses −90%"],
-  ["ГОЛОВОКРУЖЕНИЕ", "DAZE"], ["после отбрасывания враг ковыляет на 50% медленнее 2 секунды", "after being knocked back, the enemy moves 50% slower for 2 seconds"],
-  ["Шанс оглушения", "Stun Chance"], ["Сила замедления", "Slow Strength"], ["Аура замедления врагов", "Enemy-Slowing Aura"],
-  ["−25% скорости всем в радиусе 260", "−25% speed to all enemies within 260 range"],
-  ["Взрыв при убийстве (вспышка)", "Explosion on Kill"], ["Ответный удар при получении урона", "Retaliation when Hit"],
-  ["Автолечение при малом здоровье", "Automatic Healing at Low Health"], ["25% HP, откат 20 сек", "25% HP, 20 sec cooldown"],
-  ["+% к получаемому опыту", "+% Experience Gained"], ["Находимое золото", "Gold Find"],
-  ["Радиус автоподбора", "Pickup Radius"], ["Притягивание лута", "Loot Magnet"],
-
-  /* Карточки: свита и кейстоуны */
-  ["Ещё один скелет", "Additional Skeleton"], ["потолок скелетов — 6", "maximum 6 Skeletons"],
-  ["СВИТА ОХОТНИКОВ", "HUNTER RETINUE"], ["до шести стрелков: те же автоатаки, что у вас, но на 20% урона", "up to six ranged Hunters: they use your basic attacks at 20% damage"],
-  ["СВИТА КОЛДУНОВ", "WARLOCK RETINUE"], ["до шести чародеев: заклинания на 20% урона, каждое кладёт случайный статус — поджог, холод или яд", "up to six Warlocks: their spells deal 20% damage and apply a random ailment—Ignite, Chill, or Poison"],
-  ["ГОЛЕМ КРОВИ", "BLOOD GOLEM"], ["танк с провокацией. Первый уровень: вдвое реже скелета, втрое сильнее. Дальше растёт урон и понемногу темп; на десятом — запас как у 3.5 скелетов", "a taunting tank. At rank 1 it attacks half as often as a Skeleton but hits three times harder. Further ranks increase damage and gradually improve attack speed; at rank 10 it has the health of 3.5 Skeletons"],
-  ["КОСТЯНОЙ ГОЛЕМ", "BONE GOLEM"], ["прямого урона не наносит вовсе: вешает кровотечение и сразу бежит к следующему, разнося стаки по всей толпе. Бьёт чаще всех в свите; на десятом уровне запас как у двух скелетов", "deals no direct damage: it applies Bleeding, then immediately seeks a new target to spread stacks through the crowd. It attacks faster than any other minion; at rank 10 it has the health of two Skeletons"],
-  ["Урон приспешников", "Minion Damage"], ["на +50% суммарно открывается БУЙСТВО ДЕМОНОВ. Потолка у ветки нет, качается дальше", "at +50% total, unlocks DEMON FRENZY. This branch has no cap and can be upgraded further"],
-  ["КРОВАВАЯ БАНЯ", "BLOODBATH"], ["каждый десятый удар свиты вызывает кровотечение — то же самое, что ставит книга крови, и в тот же стак", "every tenth minion hit causes the same Bleeding as the Book of Blood and adds it to the same stack"],
-  ["КИПЯЩАЯ КРОВЬ", "BOILING BLOOD"], ["удар по приспешнику с шансом 5% оставляет под ним кипящую лужу на 3 сек: каждую секунду она снимает 5% ТЕКУЩЕГО здоровья всем, кто в ней стоит", "when a minion is hit, it has a 5% chance to leave a boiling pool beneath it for 3 sec. Each second, the pool removes 5% of the CURRENT health of everything standing in it"],
-  ["БУЙСТВО ДЕМОНОВ", "DEMON FRENZY"], ["каждый удар свиты добавляет взрыв по площади. Взрыв бьёт на полный урон удара и разносит все ваши эффекты. Радиус растёт от «Радиуса области действия»", "every minion hit triggers an area explosion. The explosion deals the hit's full damage and applies all your effects. Its radius scales with Area of Effect Radius"],
-  ["Здоровье приспешников", "Minion Health"], ["на +50% суммарно открываются ВАМПИРЫ ХОЗЯИНА", "at +50% total, unlocks MASTER'S VAMPIRES"],
-  ["ВАМПИРЫ ХОЗЯИНА", "MASTER'S VAMPIRES"], ["свита забирает себе 25% нанесённого урона как здоровье. Лечит только их самих — хозяину не достаётся ничего", "minions recover health equal to 25% of the damage they deal. This heals only the minions; their master receives nothing"],
-  ["Скорость атаки приспешников", "Minion Attack Speed"], ["на +50% открываются РЕЗКИЕ КОГТИ, на +100% — ВИХРЬ КОГТЕЙ. Потолка у ветки нет", "at +50%, unlocks RAZOR CLAWS; at +100%, unlocks CLAW WHIRLWIND. This branch has no cap"],
-  ["РЕЗКИЕ КОГТИ", "RAZOR CLAWS"], ["каждый пятый удар приспешника добавляет второй, на 30% мощности. Считается отдельно у каждого бойца", "every fifth hit by a minion adds a second hit at 30% power. Counted separately for each minion"],
-  ["ВИХРЬ КОГТЕЙ", "CLAW WHIRLWIND"], ["каждый десятый удар приспешника рассекает всё вокруг него на 20% мощности", "every tenth hit by a minion cleaves everything around it at 20% power"],
-  ["Скорость передвижения свиты", "Minion Movement Speed"], ["на +100% открывается ВНЕЗАПНЫЙ ВЗРЫВ, на +200% — АСТРАЛЬНЫЙ НАБЕГ. Потолка у ветки нет", "at +100%, unlocks SUDDEN BLAST; at +200%, unlocks ASTRAL RAID. This branch has no cap"],
-  ["ВНЕЗАПНЫЙ ВЗРЫВ", "SUDDEN BLAST"], ["раз в 10 сек приспешник переносится к своей цели и взрывается на 30% удара. Взрыв идёт как обычная атака — со всеми вашими эффектами", "every 10 sec, a minion teleports to its target and explodes for 30% of a hit. The explosion counts as a regular attack and applies all your effects"],
-  ["АСТРАЛЬНЫЙ НАБЕГ", "ASTRAL RAID"], ["перенос раз в 4 сек, взрыв шире и на 50% удара. Заменяет собой ВНЕЗАПНЫЙ ВЗРЫВ, а не складывается с ним", "teleports every 4 sec, with a wider explosion dealing 50% of a hit. Replaces SUDDEN BLAST instead of stacking with it"],
-  ["Крит приспешников", "Minion Critical Chance"], ["Взрыв приспешника при смерти", "Minion Death Explosion"],
-  ["Приспешники стягивают агро", "Minions Draw Aggro"], ["враги бьют свиту, а не вас", "enemies attack your minions instead of you"],
-  ["ЛОРД СМЕРТИ", "DEATH LORD"], ["0,1% всего фактически нанесённого свитой урона восстанавливает здоровье Некроманта", "0.1% of all damage actually dealt by minions restores the Necromancer's health"],
-  ["Часть урона по вам идёт приспешнику", "Part of Damage Taken Is Redirected to a Minion"], ["потолок ветки — 50%. На пятидесяти открываются КРОВНЫЕ УЗЫ", "this branch is capped at 50%. At 50%, unlocks BLOOD TIES"],
-  ["КРОВНЫЕ УЗЫ", "BLOOD TIES"], ["каждое попадание по вам приводит свиту в ярость: вдвое больше урона следующие 3 секунды", "each hit you take enrages your minions, doubling their damage for the next 3 seconds"],
-  ["Свита наследует % ваших статов", "Minions Inherit % of Your Stats"], ["урон и здоровье масштабируются от вас", "damage and health scale from your stats"],
-  ["Повышение ранга призываемых", "Upgrade Summoned Minions"], ["+60% здоровья и +45% урона всей свите", "+60% health and +45% damage to all minions"],
-  ["Некромантская связь", "Necromantic Bond"], ["40% урона по вам уходит свите, но свита бьёт в полтора раза сильнее", "40% of damage taken is redirected to your minions, but minions deal 50% more damage"],
-  ["Стеклянная пушка", "Glass Cannon"], ["+60% урона (more), но −40% макс. здоровья", "60% more damage, but −40% maximum health"],
-  ["Выверенная техника", "Measured Technique"], ["криты невозможны, но +50% урона (more)", "critical hits are disabled, but you deal 50% more damage"],
-  ["Тяжёлый удар", "Heavy Strike"], ["вдвое медленнее, но вчетверо сильнее", "attacks are twice as slow but four times as strong"],
-  ["Шквал", "Flurry"], ["вдвое быстрее, но вдвое слабее", "attacks are twice as fast but deal half damage"],
-  ["Акробатика", "Acrobatics"], ["блок обнуляется, уклонение удвоено, +15% скорости", "Block is set to zero, Evasion is doubled, and Movement Speed is increased by 15%"],
-  ["Чумная смерть", "Plague Death"], ["каждый труп гарантированно даёт чумный взрыв, но радиус чумы уменьшается на 35%", "every corpse always causes a plague explosion, but plague radius is reduced by 35%"],
-  ["Налегке", "Unburdened"], ["броня обнуляется, но +35% скорости и +25% скорости атаки", "Armor is set to zero, but you gain +35% Movement Speed and +25% Attack Speed"],
-
-  /* Классы, подклассы, книги, тотемы */
-  ["ВОИН", "WARRIOR"], ["Дуговой удар вблизи. Каждый третий взмах становится круговой волной и гарантированно отбрасывает врагов, освобождая место для манёвра.", "A close-range arcing strike. Every third swing becomes a circular wave that always knocks enemies back, creating room to maneuver."],
-  ["ЛУЧНИК", "ARCHER"], ["Быстрые снаряды. Средний урон, лучше всех работает с доп. снарядами, пробитием и отскоками.", "Fast projectiles with moderate damage. Benefits most from additional projectiles, Pierce, and Chains."],
-  ["МАГ", "MAGE"], ["Медленная сфера, взрывается по площади. Ставка на модификаторы области и стихии.", "A slow orb that explodes in an area. Built around area and elemental modifiers."],
-  ["НЕКРОМАНТ", "NECROMANCER"], ["Сам не атакует вовсе. Каждый труп поднимается скелетом, и весь урон наносит свита: открывает ветку модификаторов min.*", "Does not attack directly. Every corpse rises as a Skeleton, and all damage is dealt by your minions, unlocking the min.* modifier branch."],
-  ["ВОР", "THIEF"], ["+2% ко всему получаемому золоту за уровень отдельным множителем. Также +1% скорости передвижения за уровень. Бонуса к уклонению нет.", "+2% to all gold gained per level as a separate multiplier. Also +1% Movement Speed per level. Grants no Evasion."],
-  ["ОХОТНИК", "HUNTER"], ["+1% скорости атаки за уровень.", "+1% Attack Speed per level."],
-  ["БОЕВОЙ ТАНЦОР", "BATTLE DANCER"], ["+1 рывок (всего 2) и +1 брони за уровень; бонус брони до 60.", "+1 Dash charge (2 total) and +1 Armor per level, up to +60 Armor."],
-  ["БЕРСЕРК", "BERSERKER"], ["+1% к урону ближних атак за уровень. При здоровье ниже 40% получает +20% скорости атаки.", "+1% Melee Attack Damage per level. Below 40% Health, gains +20% Attack Speed."],
-  ["СТРАЖ", "GUARDIAN"], ["+0,75% максимального здоровья за уровень. Круговая волна, задевшая хотя бы трёх врагов, даёт барьер на 6% здоровья; перезарядка 4 сек.", "+0.75% Maximum Health per level. A circular wave that hits at least three enemies grants a barrier equal to 6% of Maximum Health; 4 sec cooldown."],
-  ["МАСТЕР МЕЧА", "SWORDMASTER"], ["+1% к радиусу круговой волны и +1,5% к силе её отбрасывания за уровень, до +60% и +90%. С 30-го уровня волна оглушает обычных врагов на 0,35 сек.", "+1% circular wave radius and +1.5% wave knockback force per level, capped at +60% and +90%. From level 30, the wave Stuns normal enemies for 0.35 sec."],
-  ["БАРЬЕР СТРАЖА", "GUARDIAN BARRIER"],
-  ["МАГ РАЗРУШЕНИЯ", "DESTRUCTION MAGE"], ["+1% ко всем радиусам за уровень.", "+1% to all radii per level."],
-  ["МАГ МУЛЬТИПЛИКАЦИИ", "MULTIPLICATION MAGE"], ["+1 дополнительный снаряд каждые 20 уровней.", "+1 additional projectile every 20 levels."],
-  ["МАГ ЭЛЕМЕНТАЛИСТ", "ELEMENTALIST MAGE"], ["+1% к урону огнём, холодом, молнией и ядом за уровень.", "+1% Fire, Cold, Lightning, and Poison damage per level."],
-  ["ГРАБИТЕЛЬ МОГИЛ", "GRAVE ROBBER"], ["+1% скорости персонажа и свиты за уровень.", "+1% character and minion speed per level."],
-  ["АНИМАТОР", "ANIMATOR"], ["+1 дополнительный скелет каждые 20 уровней.", "+1 additional Skeleton every 20 levels."],
-  ["ВЕНОМАНСЕР", "VENOMANCER"], ["Павший миньон оставляет кислоту на 3 сек: 15% текущего HP цели в секунду.", "A fallen minion leaves acid for 3 sec, dealing 15% of the target's current HP per second."],
-  ["КНИГА ОГНЯ", "BOOK OF FIRE"], ["+N урона огнём всем атакам — вашим и свиты. При срабатывании поджигает: 20% от удара в секунду, 1.5 сек, стакается", "+N Fire damage to all your and your minions' attacks. On proc, Ignites for 20% of the hit per second for 1.5 sec; stacks"],
-  ["КНИГА ЛЬДА", "BOOK OF ICE"], ["+N урона холодом всем атакам. При срабатывании охлаждает цель на 1 сек", "+N Cold damage to all attacks. On proc, Chills the target for 1 sec"],
-  ["КНИГА ЯДА", "BOOK OF POISON"], ["При срабатывании травит: N урона каждые 0.25 сек, 3 сек, стакается. Масштабируется процентами к яду и к урону", "On proc, Poisons for N damage every 0.25 sec for 3 sec; stacks. Scales with increased Poison and all Damage"],
-  ["КНИГА КРОВИ", "BOOK OF BLOOD"], ["При срабатывании вызывает кровотечение: N% от автоатаки в секунду, 4 сек, стакается", "On proc, causes Bleeding for N% of the basic attack per second for 4 sec; stacks"],
-  ["КНИГА МОНСТРОВ", "BOOK OF MONSTERS"], ["+N% врагов в последующих волнах. Больше целей — больше опыта, золота и книг. Стакается без предела", "+N% enemies in future waves. More targets mean more experience, gold, and books. Stacks without limit"],
-  ["КНИГА ОПЫТА", "BOOK OF EXPERIENCE"], ["+N% к получаемому опыту. Стакается без предела", "+N% experience gained. Stacks without limit"],
-  ["АМУЛЕТ", "AMULET"], ["ПЕРЧАТКИ", "GLOVES"], ["БОТИНКИ", "BOOTS"], ["КОЛЬЦО", "RING"], ["РЕЛИКВИЯ", "RELIC"],
-  ["МАЛЫЙ", "MINOR"], ["СРЕДНИЙ", "MEDIUM"], ["БОЛЬШОЙ", "MAJOR"], ["ВЕЛИКИЙ", "GRAND"],
-  ["ТОТЕМ ОГНЯ", "TOTEM OF FIRE"], ["горящим", "burning"], ["ТОТЕМ ЗАМОРОЗКИ", "TOTEM OF FREEZING"], ["замороженным", "frozen"],
-  ["ТОТЕМ ОТРАВЛЕНИЯ", "TOTEM OF POISONING"], ["отравленным", "poisoned"], ["ТОТЕМ КРОВИ", "TOTEM OF BLOOD"], ["кровоточащим", "bleeding"],
-].concat(EN_ITEMS, EN_WORLD, EN_UI_PAIRS)));
-
-function tr(value){
-  if (LANGUAGE === 'ru' || typeof value !== 'string' || !/[А-Яа-яЁё]/.test(value)) return value;
-  const exact = EN_TEXT[value];
-  if (exact) return exact;
-  let out = value;
-  for (const pair of EN_PARTS) out = out.split(pair[0]).join(pair[1]);
-  return out;
-}
-
-const EN_PARTS = Object.entries(EN_TEXT)
-  .filter(pair => pair[0].length <= 80 && /[А-Яа-яЁё]/.test(pair[0]))
-  .sort((a,b) => b[0].length - a[0].length);
-
-function localizeTree(root){
-  if (LANGUAGE !== 'en' || !root || typeof document === 'undefined') return;
-  const visit = node => {
-    if (node.nodeType === 3){
-      const translated = tr(node.nodeValue);
-      if (translated !== node.nodeValue) node.nodeValue = translated;
-      return;
-    }
-    if (node.nodeType !== 1) return;
-    for (const attr of ['title','placeholder','aria-label']){
-      if (node.hasAttribute && node.hasAttribute(attr)){
-        const before = node.getAttribute(attr), after = tr(before);
-        if (after !== before) node.setAttribute(attr, after);
-      }
-    }
-    for (const child of [...node.childNodes]) visit(child);
-  };
-  visit(root);
-}
-
-function setLanguage(next){
-  LANGUAGE = next === 'ru' ? 'ru' : 'en';
-  try{ localStorage.setItem(LANGUAGE_KEY, LANGUAGE); }catch(e){}
-  if (typeof document !== 'undefined' && document.documentElement) document.documentElement.lang = LANGUAGE;
-  // Переключатель доступен только в главном меню. Перезагрузка восстанавливает
-  // исходные русские DOM-узлы перед применением выбранного языка и не затрагивает забег.
-  if (typeof location !== 'undefined' && location.reload) location.reload();
-  else { startScreen(); localizeTree(document.body); }
-}
-
-function languageSwitchHtml(){
-  return '<div class="language-switch" role="group" aria-label="Language">' +
-    '<button type="button" data-language="en" class="' + (LANGUAGE === 'en' ? 'active' : '') + '" aria-label="English"><i class="language-flag flag-en"></i><b>EN</b></button>' +
-    '<button type="button" data-language="ru" class="' + (LANGUAGE === 'ru' ? 'active' : '') + '" aria-label="Русский"><i class="language-flag flag-ru"></i><b>RU</b></button></div>';
-}
-
-function bindLanguageSwitch(){
-  if (typeof document === 'undefined') return;
-  document.querySelectorAll('[data-language]').forEach(el => el.onclick = () => setLanguage(el.dataset.language));
-}
-
-/* Английская карточка сохраняет формулу и ограничения, но строится из уже
-   переведённых декларативных данных. Так новая карточка получает понятную
-   подсказку сразу после добавления nm/nt/tip в билингвальный реестр. */
-function englishSkillTip(m, card){
-  const shown = card && card.val ? card.val : (m.kind === 'flag' ? 'property' : 'value');
-  const specific = m.tip || m.nt;
-  const effect = specific ? '<b>Effect:</b> ' + tr(specific) + '<br>' : '';
-  const formula = {
-    flat:'<b>Stacking:</b> the value is added directly before percentage bonuses.',
-    inc:'<b>Stacking:</b> added to other increased percentages, then applied to the base value.',
-    more:'<b>Stacking:</b> a separate multiplier applied after increased percentages; multiple more multipliers multiply.',
-    chance:'<b>Roll:</b> an independent chance on every eligible event, normally capped at 100%.',
-    flag:'<b>Duration:</b> this unique property remains active until the end of the current run.'
-  }[m.kind] || '';
-  const limits = m.hide ? '<br><b>Limit:</b> the card leaves the pool when its mechanical cap is reached.' : '';
-  const minions = m.req === 'min' ? '<br><b>Class:</b> available only to a minion-based class.' :
-    (m.noMin ? '<br><b>Minions:</b> does not affect minions.' : '');
-  return effect + '<b>This card:</b> ' + shown + '<br>' + formula + limits + minions;
-}
-
-function localizationMissing(){
-  const rows = [];
-  const add = value => { if (typeof value === 'string' && /[А-Яа-яЁё]/.test(value) && !EN_TEXT[value]) rows.push(value); };
-  const scan = list => (list || []).forEach(item => ['cat','nm','nt','desc','tip','st','sub'].forEach(field => add(item && item[field])));
-  scan(typeof MODS === 'undefined' ? [] : MODS);
-  scan(typeof WEAPONS === 'undefined' ? [] : Object.values(WEAPONS));
-  scan(typeof SUBCLASSES === 'undefined' ? [] : Object.values(SUBCLASSES).flat());
-  scan(typeof BOOKS === 'undefined' ? [] : Object.values(BOOKS));
-  scan(typeof AMULETS === 'undefined' ? [] : Object.values(AMULETS));
-  scan(typeof TOTEMS === 'undefined' ? [] : Object.values(TOTEMS));
-  scan(typeof CONSTELLATIONS === 'undefined' ? [] : CONSTELLATIONS);
-  scan(typeof SHOP === 'undefined' ? [] : SHOP);
-  scan(typeof ETYPES === 'undefined' ? [] : Object.values(ETYPES));
-  scan(typeof BOSS_AFFIXES === 'undefined' ? [] : BOSS_AFFIXES);
-  scan(typeof PACK_AFFIXES === 'undefined' ? [] : PACK_AFFIXES);
-  scan(typeof MKIND === 'undefined' ? [] : Object.values(MKIND));
-  scan(typeof CONTROLS === 'undefined' ? [] : Object.values(CONTROLS));
-  return [...new Set(rows)];
-}
-
-if (typeof document !== 'undefined' && document.documentElement) document.documentElement.lang = LANGUAGE;
-if (typeof MutationObserver !== 'undefined'){
-  const languageObserver = new MutationObserver(records => {
-    if (LANGUAGE !== 'en') return;
-    for (const record of records){
-      if (record.type === 'characterData') localizeTree(record.target);
-      else for (const node of record.addedNodes) localizeTree(node);
-    }
-  });
-  languageObserver.observe(document.body, {subtree:true, childList:true, characterData:true});
-  localizeTree(document.body);
-}
-
 /* ==================================================================
    PolyGrind — top-down action RPG на примитивах
    Смесь Diablo 2 (лут-система заменена на модификаторы) и аренного гриндера.
@@ -856,8 +298,6 @@ if (typeof MutationObserver !== 'undefined'){
 /* ---------- 1. ХОЛСТ И БАЗОВЫЕ УТИЛИТЫ ---------- */
 const cv = document.getElementById('cv');          // сам холст
 const ctx = cv.getContext('2d');                   // 2D-контекст рисования
-const nativeFillText = ctx.fillText.bind(ctx);      // Canvas-текст проходит через тот же словарь
-ctx.fillText = (value, ...args) => nativeFillText(tr(String(value)), ...args);
 let W = 0, H = 0;                                  // размеры окна в пикселях
 function resize(){                                 // подгоняем холст под окно с учётом retina
   const d = window.devicePixelRatio || 1;
@@ -888,9 +328,9 @@ const MOUSE_DEADZONE = 34;                         // радиус покоя в
    превращается в нелепо перевёрнутую фигурку. В VM-харнессе Image отсутствует,
    поэтому там автоматически остаются геометрические запасные силуэты. */
 const HERO_SPRITES = {};
-const HERO_SPRITE_DATA = {warrior:'data:image/png;base64,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', archer:'data:image/png;base64,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', mage:'data:image/png;base64,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', necromancer:'data:image/png;base64,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'};
+const HERO_SPRITE_DATA = {archer:'data:image/png;base64,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', mage:'data:image/png;base64,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', necromancer:'data:image/png;base64,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'};
 if (typeof Image !== 'undefined'){
-  for (const key of ['archer','mage','necromancer','warrior']){
+  for (const key of ['archer','mage','necromancer']){
     const img = new Image(); img.src = HERO_SPRITE_DATA[key]; HERO_SPRITES[key] = img;
   }
 }
@@ -1156,8 +596,8 @@ const MODS = [
 /* Оружие/класс: базовые архетипы — определяют способ доставки урона.
    У некроманта флаг minions:true — он включает всю ветку приспешников. */
 const WEAPONS = {
-  blade:{ id:'wpn.sword', nm:'ВОИН',  type:'melee', dmg:[9,15], cd:0.42, reach:92,  arc:1.5,
-          desc:'Дуговой удар вблизи. Каждый третий взмах становится круговой волной и гарантированно отбрасывает врагов, освобождая место для манёвра.' },
+  blade:{ id:'wpn.sword', nm:'КЛИНОК',  type:'melee', dmg:[9,15], cd:0.42, reach:92,  arc:1.5,
+          desc:'Дуговой удар вблизи. Высокий базовый урон, задевает нескольких, но требует лезть в толпу.' },
   bow:  { id:'wpn.bow',   nm:'ЛУЧНИК',  type:'proj',  dmg:[6,10], cd:0.34, speed:620, life:0.95,
           desc:'Быстрые снаряды. Средний урон, лучше всех работает с доп. снарядами, пробитием и отскоками.' },
   wand: { id:'wpn.wand',  nm:'МАГ',     type:'orb',   dmg:[13,20],cd:0.72, speed:330, life:1.6, aoe:74,
@@ -1170,8 +610,8 @@ const WEAPONS = {
           desc:'Сам не атакует вовсе. Каждый труп поднимается скелетом, и весь урон наносит свита: открывает ветку модификаторов min.*' },
 };
 
-// У Воина есть полный набор подклассов, поэтому он снова доступен в главном меню.
-const PLAYABLE_CLASSES = ['bow','wand','necro','blade'];
+// Клинок пока остаётся в данных и тестах, но игроку предлагаются только три готовых класса.
+const PLAYABLE_CLASSES = ['bow','wand','necro'];
 
 /* Подкласс выбирается до схемы управления и остаётся на весь забег. Все его
    числа завязаны на G.lvl, поэтому бонусы растут сразу после повышения уровня. */
@@ -1190,11 +630,6 @@ const SUBCLASSES = {
     {id:'graverobber', nm:'ГРАБИТЕЛЬ МОГИЛ', ico:'⚑', desc:'+1% скорости персонажа и свиты за уровень.'},
     {id:'animator',    nm:'АНИМАТОР',       ico:'☠', desc:'+1 дополнительный скелет каждые 20 уровней.'},
     {id:'venomancer',  nm:'ВЕНОМАНСЕР',     ico:'☣', desc:'Павший миньон оставляет кислоту на 3 сек: 15% текущего HP цели в секунду.'},
-  ],
-  blade: [
-    {id:'berserker',  nm:'БЕРСЕРК',      ico:'⚔', desc:'+1% к урону ближних атак за уровень. При здоровье ниже 40% получает +20% скорости атаки.'},
-    {id:'guardian',   nm:'СТРАЖ',        ico:'⬟', desc:'+0,75% максимального здоровья за уровень. Круговая волна, задевшая хотя бы трёх врагов, даёт барьер на 6% здоровья; перезарядка 4 сек.'},
-    {id:'swordmaster',nm:'МАСТЕР МЕЧА',  ico:'◎', desc:'+1% к радиусу круговой волны и +1,5% к силе её отбрасывания за уровень, до +60% и +90%. С 30-го уровня волна оглушает обычных врагов на 0,35 сек.'},
   ],
 };
 
@@ -1625,7 +1060,7 @@ function newGame(weaponKey, control, subclassKey){
     stats:{damage:0, maxHit:0, crits:0, taken:0, healing:0, distance:0, normals:0, elites:0, bosses:0},
     inventoryOpen:false,
     player:{x:0,y:0,vx:0,vy:0,r:13,hp:100,inv:0,dash:0,dashCd:0,dashN:0,
-            atkCd:0, aim:0, dashHits:[], leechPool:0, barrier:0, hitN:0, bladeN:0, guardianCd:0, berserkLow:false,
+            atkCd:0, aim:0, dashHits:[], leechPool:0, barrier:0, hitN:0,
             kills:0, reaper:false, trailT:0,
             moveT:0, predT:0, critChain:0, riposte:false, swiftT:0, lowHp:false, moving:false, faceX:1, faceY:0, spriteFace:1, stillT:0, combatT:0, killT:0, cheatCd:0, healCd:0, recoup:0},
     enemies:[], shots:[], eshots:[], orbs:[], fx:[],
@@ -1659,12 +1094,11 @@ function recalc(){
   const thief = sub === 'thief', hunter = sub === 'hunter', dancer = sub === 'dancer';
   const destroyer = sub === 'destroyer', multiplier = sub === 'multiplier', elementalist = sub === 'elementalist';
   const graverobber = sub === 'graverobber', animator = sub === 'animator';
-  const berserker = sub === 'berserker', guardian = sub === 'guardian', swordmaster = sub === 'swordmaster';
   const thiefMove = thief ? 1 + G.lvl/100 : 1;
   const graveMove = graverobber ? 1 + G.lvl/100 : 1;
 
   // --- Живучесть ---
-  D.life   = b.calc('life', 100 + G.lvl*4) * (glass ? 0.6 : 1) * (guardian ? 1 + G.lvl*0.0075 : 1);
+  D.life   = b.calc('life', 100 + G.lvl*4) * (glass ? 0.6 : 1);
   D.regen  = b.calc('regen', 0) + D.life * b.flat('regenPct')/100;
   D.armor  = unburd ? 0 : b.calc('armor', 0) + (amu('golem') ? 50 : 0) + (dancer ? Math.min(60, G.lvl) : 0);
   D.dr     = clamp(b.flat('dr'), 0, 60);
@@ -1699,9 +1133,6 @@ function recalc(){
   // --- Урон: база оружия + стихии, всё по формуле каталога ---
   D.incAll = (b.s.dmg ? b.s.dmg.inc : 0) + (w.type==='melee'? b.sum('dmgMelee') : 0)
            + (w.type!=='melee'? b.sum('dmgProj') : 0) + (w.type==='orb'? b.sum('dmgAoe') : 0);
-  // Берсерк усиливает только прямой взмах Воина. В общий D.incAll бонус не
-  // входит, иначе заодно разгонит самостоятельные взрывы, следы и DoT.
-  D.warriorMeleeInc = berserker ? G.lvl : 0;
   D.moreAll = (b.s.dmg ? b.s.dmg.more : 1) * (glass?1.6:1) * (noCrit?1.5:1) * (heavy?4:1) * (flurry?0.5:1);
 
   const phys = w.dmg[0] + G.lvl*0.45 + b.flat('dmg');
@@ -1751,7 +1182,7 @@ function recalc(){
              * (amu('runner') && P && P.moving ? 1.20 : 1);
   D.aspd  = b.calc('aspd', 1) * (heavy?0.5:1) * (flurry?2:1) * (unburd?1.25:1)
           * (amu('clock') ? 1.10 : 1) * (amu('claws') ? 1.20 : 1) * (amu('brute') ? 0.90 : 1)
-          * rush * (hunter ? 1 + G.lvl/100 : 1) * (berserker && P && P.berserkLow ? 1.20 : 1);
+          * rush * (hunter ? 1 + G.lvl/100 : 1);
   D.mspd  = b.calc('mspd', 235) * (acro?1.15:1) * (unburd?1.35:1) * rush * dash
           * thiefMove * graveMove;
 
@@ -1771,9 +1202,6 @@ function recalc(){
   D.slowAuraR  = SLOW_AURA_BASE * D.aoeR;   // аура замедления врагов
   D.infernoR   = INFERNO_BASE   * D.aoeR;   // перекидывание поджога
   D.arc     = 1 + b.sum('arc')/100;
-  D.berserker = berserker; D.guardian = guardian; D.swordmaster = swordmaster;
-  D.warriorWaveRadius = swordmaster ? 1 + Math.min(60, G.lvl)/100 : 1;
-  D.warriorWaveKnock  = swordmaster ? 1 + Math.min(90, G.lvl*1.5)/100 : 1;
   D.orbitN      = clamp(Math.round(b.flat('orbit')), 0, 10);   // круговые орбы, потолок 10
   D.explode     = clamp(b.flat('explode') + (b.has('kVolat') ? 100 : 0), 0, 100);
   D.explodeMega = clamp(b.flat('explodeMega'), 0, 100);
@@ -1923,9 +1351,6 @@ function avgHit(){
   const crit = 1 + (D.critCh/100) * (D.critMul/100 - 1);
   return raw * crit;
 }
-// Только интерфейс: реальный бонус Берсерка применяется в damage(), чтобы не
-// усиливать эффекты, которые лишь используют avgHit() как расчётную базу.
-function attackAvgHit(){ return avgHit() * (1 + (D.warriorMeleeInc||0)/100); }
 
 /* ---------- 5. ГЕНЕРАЦИЯ ЭТАЖА ---------- */
 const ETYPES = {
@@ -1957,7 +1382,7 @@ const BOSS_AFFIXES = [
       // Панцирь считается не как обычная броня (та режет фиксированный процент
       // независимо от размера удара), а по размеру самого удара: чем мельче
       // удар, тем большая его доля съедается. Это единственный способ сделать
-      // аффикс, который душит лук и свиту, но не трогает воина с жезлом.
+      // аффикс, который душит лук и свиту, но не трогает клинок с жезлом.
       e.bulwark = 9 * hpScale(G.floor);   // 16 давало x3.1 некроманту при x1.0 жезлу — слишком жёсткая контра
       e.maxHp = e.hp = Math.round(e.maxHp * 0.85);  // цена за панцирь; 0.7 делал босса слабее обычного для жезла
     } },
@@ -2619,7 +2044,7 @@ function damage(e, src){
   let total = (base
     + el.fire * (e.ward==='fire'?wd:1) + el.cold * (e.ward==='cold'?wd:1)
     + el.lit  * (e.ward==='lit' ?wd:1) + el.poi  * (e.ward==='poi' ?wd:1));
-  total *= (1 + (D.incAll + conditionalInc(e, src) + (src.warriorMelee ? D.warriorMeleeInc : 0))/100) * D.moreAll;
+  total *= (1 + (D.incAll + conditionalInc(e, src))/100) * D.moreAll;
   if (src.minion) total *= MINION_DAMAGE_MULT;       // режет весь удар, включая унаследованные стихии
 
   // Крит: два ролла при crit.lucky, сверхкрит сверху.
@@ -2768,8 +2193,8 @@ function damage(e, src){
   if (!src.noDouble){
     // Метку приспешника обязательно тащим в добавочные удары: иначе двойной
     // удар свиты считался бы по криту игрока и лечил бы не того
-    if (Math.random()*100 < D.dblHit) damage(e, {mul:(src.mul||1)*0.6, noDouble:true, minion:src.minion, warriorMelee:src.warriorMelee});
-    if (Math.random()*100 < D.triHit) damage(e, {mul:(src.mul||1)*0.4, noDouble:true, minion:src.minion, warriorMelee:src.warriorMelee});
+    if (Math.random()*100 < D.dblHit) damage(e, {mul:(src.mul||1)*0.6, noDouble:true, minion:src.minion});
+    if (Math.random()*100 < D.triHit) damage(e, {mul:(src.mul||1)*0.4, noDouble:true, minion:src.minion});
   }
 }
 
@@ -3658,37 +3083,12 @@ function attack(src){
 
   if (w.type === 'melee'){
     const reach = w.reach * D.arc, arc = w.arc * D.arc;
-    const bladeWave = !src && w.id === 'wpn.sword' && ++p.bladeN % 3 === 0;
-    if (bladeWave){
-      /* Воин проигрывал не по урону: контрольная комната показывала нормальный
-         DPS, но бот стабильно погибал на 1–3 этажах из-за невозможности разорвать
-         контакт. Поэтому каждый третий взмах заменяет сектор круговой волной —
-         урон не удваивается, зато вокруг героя снова появляется пространство. */
-      const waveR = reach * 1.45 * D.warriorWaveRadius;
-      let waveHits = 0;
-      G.fx.push({t:'ring', x:o.x, y:o.y, r:18, max:waveR, life:0.22, col:'#ffd24a'});
-      for (const e of G.enemies){
-        if (dist(e,o) > waveR + e.r) continue;
-        waveHits++; damage(e, {warriorMelee:true});
-        const a = Math.atan2(e.y-o.y, e.x-o.x), force = 520 * D.warriorWaveKnock * knockbackScale(e);
-        e.kb.x += Math.cos(a)*force; e.kb.y += Math.sin(a)*force;
-        e.ail.dizzy = Math.max(e.ail.dizzy, 0.75*D.ailDur);
-        if (D.swordmaster && G.lvl >= 30 && e.kind === 'norm')
-          e.ail.stun = Math.max(e.ail.stun, 0.35*D.ailDur);
-      }
-      if (D.guardian && waveHits >= 3 && p.guardianCd <= 0){
-        p.barrier = Math.max(p.barrier, D.life*0.06); p.guardianCd = 4;
-        G.fx.push({t:'ring', x:p.x, y:p.y, r:p.r, max:p.r+24, life:0.45, col:'#5ec2e0'});
-        G.fx.push({t:'txt', x:p.x, y:p.y-30, s:'БАРЬЕР СТРАЖА', life:0.9, col:'#5ec2e0'});
-      }
-    } else {
-      G.fx.push({t:'arc', x:o.x, y:o.y, a:ang, arc, r:reach, life:0.16});
-      for (const e of G.enemies){
-        if (dist(e,o) > reach + e.r) continue;
-        let da = Math.atan2(e.y-o.y, e.x-o.x) - ang;
-        da = Math.atan2(Math.sin(da), Math.cos(da));               // нормализуем угол
-        if (Math.abs(da) < arc/2) damage(e, {warriorMelee:true});
-      }
+    G.fx.push({t:'arc', x:o.x, y:o.y, a:ang, arc, r:reach, life:0.16});
+    for (const e of G.enemies){
+      if (dist(e,o) > reach + e.r) continue;
+      let da = Math.atan2(e.y-o.y, e.x-o.x) - ang;
+      da = Math.atan2(Math.sin(da), Math.cos(da));                 // нормализуем угол
+      if (Math.abs(da) < arc/2) damage(e, {});
     }
   } else {
     const n = D.projN, spread = D.shotgun ? 0.035 : 0.16;   // дробовик стягивает залп в пучок
@@ -3744,19 +3144,17 @@ function update(dt){
   p.killT = Math.max(0, p.killT - dt);
   p.cheatCd = Math.max(0, p.cheatCd - dt);
   p.healCd  = Math.max(0, p.healCd  - dt);
-  p.guardianCd = Math.max(0, p.guardianCd - dt);
   /* Всё, что разгоняет по условию, живёт в D.mspd и D.aspd, а условия меняются
      в кадре. Пересчёт зовём только на ПЕРЕКЛЮЧЕНИИ, а не каждый кадр: recalc()
      тяжёлый, и гонять его шестьдесят раз в секунду ради пары множителей незачем. */
   const wasKill = p.spdKill > 0, wasMove = p.dashMoving,
-        wasSwift = p.swiftT > 0, wasLow = p.lowHp, wasBerserkLow = p.berserkLow;
+        wasSwift = p.swiftT > 0, wasLow = p.lowHp;
   p.spdKill = Math.max(0, (p.spdKill||0) - dt);
   p.swiftT  = Math.max(0, (p.swiftT||0)  - dt);
   p.dashMoving = p.moving;
   p.lowHp   = p.hp/D.life < 0.30;
-  p.berserkLow = p.hp/D.life < 0.40;
   if ((p.spdKill > 0) !== wasKill || (amu('runner') && p.moving !== wasMove) ||
-      (p.swiftT > 0) !== wasSwift || p.lowHp !== wasLow || p.berserkLow !== wasBerserkLow) recalc();
+      (p.swiftT > 0) !== wasSwift || p.lowHp !== wasLow) recalc();
   p.predT   = Math.max(0, (p.predT||0)   - dt);      // ГЛАЗ ХИЩНИКА
 
   let sp = D.mspd;                                   // разгон уже внутри, см. recalc()
@@ -4420,7 +3818,7 @@ function drawHero(p){
   const w = G.weapon, outline = p.inv > 0 ? '#ffffff' :
     w.id === 'wpn.wand' ? '#c08cff' : w.id === 'wpn.scythe' ? '#8be04e' : '#ffb340';
   const spriteKey = w.id === 'wpn.bow' ? 'archer' : w.id === 'wpn.wand' ? 'mage' :
-                    w.id === 'wpn.scythe' ? 'necromancer' : w.id === 'wpn.sword' ? 'warrior' : null;
+                    w.id === 'wpn.scythe' ? 'necromancer' : null;
   const sprite = spriteKey && HERO_SPRITES[spriteKey];
   if (sprite && sprite.complete && sprite.naturalWidth){
     ctx.save(); ctx.translate(p.x, p.y); ctx.scale(p.spriteFace < 0 ? -1 : 1, 1);
@@ -4457,7 +3855,7 @@ function drawHero(p){
     ctx.strokeStyle = '#9aa7b4'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(-8,13); ctx.lineTo(13,-15); ctx.stroke();
     ctx.strokeStyle = '#d8f7c5'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(14,-10,9,1.9,4.55); ctx.stroke();
   } else {
-    // Запасной силуэт Воина используется только если встроенный PNG не загрузился.
+    // Клинок сохраняет старый лаконичный ромб: у него уже есть читаемая ближняя дуга атаки.
     ctx.fillStyle = '#ffb34033'; ctx.lineWidth = 3; drawPoly(0,0,p.r,4,0.785); ctx.fill(); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(p.r+11,0); ctx.stroke();
   }
@@ -4938,7 +4336,7 @@ function updateHud(){
   // У некроманта в строке показываем урон свиты: своего у него нет
   $('#dpsinfo').textContent = G.weapon.noAttack
     ? 'свита ≈ ' + Math.round(avgHit()*D.minDmgMul*MINION_DAMAGE_MULT*(D.minAspd/0.5)*Math.max(1, G.minions.length)) + ' урона/сек'
-    : 'урон/сек ≈ ' + Math.round(attackAvgHit()/D.atkCd*(G.weapon.type==='proj'?D.projN:1))
+    : 'урон/сек ≈ ' + Math.round(avgHit()/D.atkCd*(G.weapon.type==='proj'?D.projN:1))
     + ' · рывки ' + G.player.dashN + '/' + D.dashMax
     + (G.player.dashN < D.dashMax ? ' · заряд через ' + G.player.dashCd.toFixed(1) + 'с' : '')
     + (D.hasMin ? ' · свита ' + G.minions.length + '/' + D.minMax : '');
@@ -5071,7 +4469,6 @@ const SKILL_TIPS = {
 };
 
 function detailedSkillTip(m, card){
-  if (LANGUAGE === 'en') return englishSkillTip(m, card);
   if (m.tip) return m.tip;
   if (SKILL_TIPS[m.id]) return SKILL_TIPS[m.id];
   const v = card.v, shown = card.val || v;
@@ -5083,7 +4480,7 @@ function detailedSkillTip(m, card){
   if (m.id === 'dmg.more_all') return '<b>Что меняет:</b> умножает итоговый урон на отдельный множитель <b>' + shown + '</b>.<br><b>Пример:</b> 100 урона с «×1,20» становится 120 после обычных процентных бонусов.<br><b>Важно:</b> несколько таких карточек перемножаются между собой.';
   if (m.id === 'dmg.aoe') return '<b>Условие:</b> урон должен быть нанесён по площади — взрывом, волной, лужей или сферой мага.<br><b>Эффект:</b> этот урон получает указанный процент бонуса.<br><b>Не действует:</b> на одиночное прямое попадание стрелы.';
   if (m.id === 'dmg.projectile') return '<b>Условие:</b> урон должен прийти от летящего снаряда — стрелы или сферы.<br><b>Эффект:</b> снаряд и его подходящие попадания получают этот процент урона.<br><b>Не действует:</b> на ближние удары.';
-  if (m.id === 'dmg.melee') return '<b>Условие:</b> урон должен быть нанесён ближней атакой воина.<br><b>Эффект:</b> такой удар получает указанный процент урона.<br><b>Не действует:</b> на стрелы, сферы и самостоятельные эффекты по площади.';
+  if (m.id === 'dmg.melee') return '<b>Условие:</b> урон должен быть нанесён ближней атакой клинка.<br><b>Эффект:</b> такой удар получает указанный процент урона.<br><b>Не действует:</b> на стрелы, сферы и самостоятельные эффекты по площади.';
   if (m.id === 'def.recoup') return '<b>Когда срабатывает:</b> после того, как герой получает урон.<br><b>Эффект:</b> указанная доля полученного урона возвращается как лечение постепенно, а не сразу.<br><b>Пример:</b> при 20% возврата из 100 полученного урона со временем вернётся 20 HP.';
   if (m.id === 'min.crit') return '<b>Что меняет:</b> увеличивает шанс критического удара именно у приспешников.<br><b>Эффект:</b> каждый их удар отдельно проверяет этот шанс и использует их критический множитель.<br><b>Не влияет:</b> на шанс крита самого героя.';
   if (m.id === 'min.explode') return '<b>Когда срабатывает:</b> когда приспешник погибает.<br><b>Эффект:</b> он взрывается и наносит урон окружающим врагам.<br><b>Практически:</b> превращает гибель скелета в часть урона по плотной толпе.';
@@ -5298,7 +4695,7 @@ function renderSheet(){
       r('Здоровье', Math.round(D.life)) +
       r('Реген/сек', D.regen.toFixed(1)) +
       r('Урон за удар', Math.round(D.baseMin) + '–' + Math.round(D.baseMax)) +
-      r('Средний удар', Math.round(attackAvgHit())) +
+      r('Средний удар', Math.round(avgHit())) +
       r('Скорость атаки', (1/D.atkCd).toFixed(2) + '/сек') +
       r('Шанс крита', D.critCh.toFixed(1) + '%') +
       r('Множитель крита', Math.round(D.critMul) + '%') +
@@ -5470,8 +4867,7 @@ function testPreview(m){
   return rolls[m.id] || (rolls[m.id] = testValue(m));
 }
 function testSkillMatches(m, q){
-  const bothLanguages = m.nm + ' ' + tr(m.nm) + ' ' + m.id + ' ' + m.cat + ' ' + tr(m.cat);
-  return !q || bothLanguages.toLowerCase().includes(q);
+  return !q || (m.nm + ' ' + m.id + ' ' + m.cat).toLowerCase().includes(q);
 }
 function renderTestPanel(){
   const input = $('#testsearch'), q = input ? input.value.trim().toLowerCase() : '';
@@ -5554,7 +4950,7 @@ function endRun(){
    возвращаемся сюда же, а второй раз класть в банк ту же партию нельзя. */
 function deathScreen(){
   const earned = G.earned || 0;
-  const s = G.stats, fmt = n => Math.round(n).toLocaleString(LANGUAGE === 'ru' ? 'ru-RU' : 'en-US');
+  const s = G.stats, fmt = n => Math.round(n).toLocaleString('ru-RU');
   const duration = Math.floor(G.time), mins = Math.floor(duration/60), secs = duration%60;
   const time = mins + ':' + String(secs).padStart(2, '0');
   const books = Object.keys(G.items).length, bookTiers = Object.values(G.items).reduce((n, it) => n + it.tier, 0);
@@ -5589,7 +4985,7 @@ function shopScreen(back){
   $('#inventory').style.display = 'none';
   $('#ov').style.display = 'flex';
   menuMode = false; $('#ov').classList.remove('menu');
-  const money = n => Math.round(n).toLocaleString(LANGUAGE === 'ru' ? 'ru-RU' : 'en-US');
+  const money = n => Math.round(n).toLocaleString('ru-RU');
   const catOf = it => it.cat || (['dmg','aspd'].includes(it.id) ? 'attack' :
     ['sxp','sgold','smon'].includes(it.id) ? 'farm' : 'qol');
   const cats = [
@@ -5702,7 +5098,7 @@ function constellationUnlock(id, back){
 function constellationScreen(back){
   $('#sheet').style.display = 'none'; $('#inventory').style.display = 'none';
   $('#ov').style.display = 'flex'; $('#ov').classList.add('menu'); menuMode = true;
-  const fmt = n => Math.round(n).toLocaleString(LANGUAGE === 'ru' ? 'ru-RU' : 'en-US');
+  const fmt = n => Math.round(n).toLocaleString('ru-RU');
   const card = it => {
     const rank = constellationRank(it.id), kills = constellationKills(it.id), maxed = rank >= 10;
     const next = maxed ? it.req[9] : it.req[rank], prev = rank ? it.req[rank-1] : 0;
@@ -5842,10 +5238,10 @@ function startScreen(){
   menuMode = true;
   const constReady = constellationReadyCount();
   $('#ov').innerHTML =
-    brandHtml() + languageSwitchHtml() +
-    '<h2>выберите один из четырёх классов — он определяет, вокруг чего строить билд</h2>' +
+    brandHtml() +
+    '<h2>выберите один из трёх классов — он определяет, вокруг чего строить билд</h2>' +
     '<div class="cards">' + PLAYABLE_CLASSES.map(k => {
-      const w = WEAPONS[k], spriteKey = {bow:'archer', wand:'mage', necro:'necromancer', blade:'warrior'}[k];
+      const w = WEAPONS[k], spriteKey = {bow:'archer', wand:'mage', necro:'necromancer'}[k];
       return '<div class="card class-card" data-w="' + k + '">' +
         '<div class="cat">' + w.id + '</div>' +
         '<div class="nm">' + w.nm + '</div>' +
@@ -5858,14 +5254,12 @@ function startScreen(){
       '<button id="shopb" class="shop-entry"><canvas id="coinl" class="shopcoin"></canvas>МАГАЗИН<canvas id="coinr" class="shopcoin"></canvas></button>' +
       '<button id="constb" class="const-entry"><canvas id="constsigil" width="46" height="46"></canvas><span class="const-entry-copy">СОЗВЕЗДИЯ<small class="' + (constReady ? 'ready' : '') + '">' +
         (constReady ? 'ДОСТУПНО ОТКРЫТИЙ: ' + constReady : 'КАРТА ВЕЧНОЙ ОХОТЫ') + '</small></span></button></div>' +
-    '<span id="bank">В БАНКЕ: ' + Math.round(Store.data.gold).toLocaleString(LANGUAGE === 'ru' ? 'ru-RU' : 'en-US') + ' золота</span>' +
+    '<span id="bank">В БАНКЕ: ' + Math.round(Store.data.gold).toLocaleString('ru-RU') + ' золота</span>' +
     '<div style="font-size:13.8px;color:#7d8b9a;text-align:center;line-height:1.8">' +
       'Каждое повышение уровня — выбор из ' + (cardCount() === 4 ? 'четырёх' : 'трёх') +
       ' модификаторов реального каталога.<br>' +
       'flat складывается · inc суммируется в один процент · more множится отдельно.</div>';
   drawBrandTitle();
-  bindLanguageSwitch();
-  localizeTree($('#ov'));
   document.querySelectorAll('#ov .card').forEach(el => el.onclick = () => subclassScreen(el.dataset.w));
   $('#shopb').onclick = () => shopScreen(startScreen);
   $('#constb').onclick = () => constellationScreen(startScreen);

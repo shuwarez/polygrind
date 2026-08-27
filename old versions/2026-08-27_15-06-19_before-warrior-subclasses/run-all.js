@@ -26,7 +26,6 @@ const SUITES = [
   ['constunit',    24, 'созвездия: счётчики, ранги, награды и экран'],
   ['locunit',       8, 'локализация: EN по умолчанию, полнота каталогов и CSS-флаги'],
   ['bladeunit',    11, 'Воин: спрайт и круговая волна каждого третьего взмаха'],
-  ['warriorunit',  20, 'три подкласса Воина: формулы, пороги, барьер и контроль'],
 ];
 const missing = CORE.concat(SUITES.map(x => x[0] + '.js')).filter(f => !fs.existsSync(f));
 if (missing.length){

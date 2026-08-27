@@ -40,7 +40,14 @@ console.log('КРОВАВАЯ БАНЯ');
 { const o = mk([['minBath',1]], {bleed:{tier:3, val:25}});
   const e = foe(o); o.G.minions.length = 0; o.c.spawnMinion();
   const m = o.G.minions[0]; m.x = e.x; m.y = e.y; let dps = 0;
-  for (let i=0;i<3000 && !dps;i++){ e.dots.bleed.dps = 0; e.dots.bleed.n = 0; o.c.minionHit(e, m); dps = e.dots.bleed.dps; }
+  // Книга крови может сработать тем же ударом раньше Кровавой бани. Старый
+  // тест хватал первый любой bleed и мигал от случайности. Ждём именно подпись
+  // механики и один стак: тогда замерен стак Бани без примеси книжного прока.
+  for (let i=0;i<10000 && !dps;i++){
+    e.dots.bleed.dps = 0; e.dots.bleed.n = 0; o.G.fx.length = 0;
+    o.c.minionHit(e, m);
+    if (e.dots.bleed.n === 1 && o.G.fx.some(f=>f.t==='txt' && f.s==='КРОВЬ')) dps=e.dots.bleed.dps;
+  }
   ok('с книгой берётся её сила и штраф урона ×0.5', Math.abs(dps/(o.c.bookBleedDps()*0.5)-1)<0.001,
      Math.round(o.c.bookBleedDps()) + ' → ' + Math.round(dps) + ' урона/сек'); }
 { const o = mk([]);

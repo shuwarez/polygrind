@@ -1,0 +1,1 @@
+Saved: 2026-08-27 15:06:19 +03:00 Before changes: add Berserker, Guardian, and Swordmaster subclasses and return Warrior to the class menu. Source state includes the embedded user-supplied Warrior sprite and all uncommitted localization/balance work.

@@ -555,7 +555,7 @@ const EN_UI_PAIRS = [
   ["Ранг", "Rank"], ["убийств", "kills"],
 
   /* Главное меню и управление */
-  ["выберите один из четырёх классов — он определяет, вокруг чего строить билд", "choose one of four classes—it determines the foundation of your build"],
+  ["выберите один из трёх классов — он определяет, вокруг чего строить билд", "choose one of three classes—it determines the foundation of your build"],
   ["ДОСТУПНО ОТКРЫТИЙ:", "UNLOCKS AVAILABLE:"], ["Каждое повышение уровня — выбор из", "Each level-up offers a choice of"],
   ["четырёх", "four"], ["трёх", "three"], ["модификаторов реального каталога.", "modifiers from the actual catalog."],
   ["flat складывается · inc суммируется в один процент · more множится отдельно.", "flat values add together · inc values combine into one percentage · more multipliers multiply separately."],
@@ -709,17 +709,13 @@ const EN_TEXT = Object.freeze(Object.fromEntries([
   ["Налегке", "Unburdened"], ["броня обнуляется, но +35% скорости и +25% скорости атаки", "Armor is set to zero, but you gain +35% Movement Speed and +25% Attack Speed"],
 
   /* Классы, подклассы, книги, тотемы */
-  ["ВОИН", "WARRIOR"], ["Дуговой удар вблизи. Каждый третий взмах становится круговой волной и гарантированно отбрасывает врагов, освобождая место для манёвра.", "A close-range arcing strike. Every third swing becomes a circular wave that always knocks enemies back, creating room to maneuver."],
+  ["КЛИНОК", "BLADE"], ["Дуговой удар вблизи. Высокий базовый урон, задевает нескольких, но требует лезть в толпу.", "A close-range arcing strike. High base damage and can hit several enemies, but requires fighting inside the crowd."],
   ["ЛУЧНИК", "ARCHER"], ["Быстрые снаряды. Средний урон, лучше всех работает с доп. снарядами, пробитием и отскоками.", "Fast projectiles with moderate damage. Benefits most from additional projectiles, Pierce, and Chains."],
   ["МАГ", "MAGE"], ["Медленная сфера, взрывается по площади. Ставка на модификаторы области и стихии.", "A slow orb that explodes in an area. Built around area and elemental modifiers."],
   ["НЕКРОМАНТ", "NECROMANCER"], ["Сам не атакует вовсе. Каждый труп поднимается скелетом, и весь урон наносит свита: открывает ветку модификаторов min.*", "Does not attack directly. Every corpse rises as a Skeleton, and all damage is dealt by your minions, unlocking the min.* modifier branch."],
   ["ВОР", "THIEF"], ["+2% ко всему получаемому золоту за уровень отдельным множителем. Также +1% скорости передвижения за уровень. Бонуса к уклонению нет.", "+2% to all gold gained per level as a separate multiplier. Also +1% Movement Speed per level. Grants no Evasion."],
   ["ОХОТНИК", "HUNTER"], ["+1% скорости атаки за уровень.", "+1% Attack Speed per level."],
   ["БОЕВОЙ ТАНЦОР", "BATTLE DANCER"], ["+1 рывок (всего 2) и +1 брони за уровень; бонус брони до 60.", "+1 Dash charge (2 total) and +1 Armor per level, up to +60 Armor."],
-  ["БЕРСЕРК", "BERSERKER"], ["+1% к урону ближних атак за уровень. При здоровье ниже 40% получает +20% скорости атаки.", "+1% Melee Attack Damage per level. Below 40% Health, gains +20% Attack Speed."],
-  ["СТРАЖ", "GUARDIAN"], ["+0,75% максимального здоровья за уровень. Круговая волна, задевшая хотя бы трёх врагов, даёт барьер на 6% здоровья; перезарядка 4 сек.", "+0.75% Maximum Health per level. A circular wave that hits at least three enemies grants a barrier equal to 6% of Maximum Health; 4 sec cooldown."],
-  ["МАСТЕР МЕЧА", "SWORDMASTER"], ["+1% к радиусу круговой волны и +1,5% к силе её отбрасывания за уровень, до +60% и +90%. С 30-го уровня волна оглушает обычных врагов на 0,35 сек.", "+1% circular wave radius and +1.5% wave knockback force per level, capped at +60% and +90%. From level 30, the wave Stuns normal enemies for 0.35 sec."],
-  ["БАРЬЕР СТРАЖА", "GUARDIAN BARRIER"],
   ["МАГ РАЗРУШЕНИЯ", "DESTRUCTION MAGE"], ["+1% ко всем радиусам за уровень.", "+1% to all radii per level."],
   ["МАГ МУЛЬТИПЛИКАЦИИ", "MULTIPLICATION MAGE"], ["+1 дополнительный снаряд каждые 20 уровней.", "+1 additional projectile every 20 levels."],
   ["МАГ ЭЛЕМЕНТАЛИСТ", "ELEMENTALIST MAGE"], ["+1% к урону огнём, холодом, молнией и ядом за уровень.", "+1% Fire, Cold, Lightning, and Poison damage per level."],
@@ -888,9 +884,9 @@ const MOUSE_DEADZONE = 34;                         // радиус покоя в
    превращается в нелепо перевёрнутую фигурку. В VM-харнессе Image отсутствует,
    поэтому там автоматически остаются геометрические запасные силуэты. */
 const HERO_SPRITES = {};
-const HERO_SPRITE_DATA = {warrior:'data:image/png;base64,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', archer:'data:image/png;base64,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', mage:'data:image/png;base64,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', necromancer:'data:image/png;base64,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'};
+const HERO_SPRITE_DATA = {archer:'data:image/png;base64,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', mage:'data:image/png;base64,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', necromancer:'data:image/png;base64,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'};
 if (typeof Image !== 'undefined'){
-  for (const key of ['archer','mage','necromancer','warrior']){
+  for (const key of ['archer','mage','necromancer']){
     const img = new Image(); img.src = HERO_SPRITE_DATA[key]; HERO_SPRITES[key] = img;
   }
 }
@@ -1156,8 +1152,8 @@ const MODS = [
 /* Оружие/класс: базовые архетипы — определяют способ доставки урона.
    У некроманта флаг minions:true — он включает всю ветку приспешников. */
 const WEAPONS = {
-  blade:{ id:'wpn.sword', nm:'ВОИН',  type:'melee', dmg:[9,15], cd:0.42, reach:92,  arc:1.5,
-          desc:'Дуговой удар вблизи. Каждый третий взмах становится круговой волной и гарантированно отбрасывает врагов, освобождая место для манёвра.' },
+  blade:{ id:'wpn.sword', nm:'КЛИНОК',  type:'melee', dmg:[9,15], cd:0.42, reach:92,  arc:1.5,
+          desc:'Дуговой удар вблизи. Высокий базовый урон, задевает нескольких, но требует лезть в толпу.' },
   bow:  { id:'wpn.bow',   nm:'ЛУЧНИК',  type:'proj',  dmg:[6,10], cd:0.34, speed:620, life:0.95,
           desc:'Быстрые снаряды. Средний урон, лучше всех работает с доп. снарядами, пробитием и отскоками.' },
   wand: { id:'wpn.wand',  nm:'МАГ',     type:'orb',   dmg:[13,20],cd:0.72, speed:330, life:1.6, aoe:74,
@@ -1170,8 +1166,8 @@ const WEAPONS = {
           desc:'Сам не атакует вовсе. Каждый труп поднимается скелетом, и весь урон наносит свита: открывает ветку модификаторов min.*' },
 };
 
-// У Воина есть полный набор подклассов, поэтому он снова доступен в главном меню.
-const PLAYABLE_CLASSES = ['bow','wand','necro','blade'];
+// Клинок пока остаётся в данных и тестах, но игроку предлагаются только три готовых класса.
+const PLAYABLE_CLASSES = ['bow','wand','necro'];
 
 /* Подкласс выбирается до схемы управления и остаётся на весь забег. Все его
    числа завязаны на G.lvl, поэтому бонусы растут сразу после повышения уровня. */
@@ -1190,11 +1186,6 @@ const SUBCLASSES = {
     {id:'graverobber', nm:'ГРАБИТЕЛЬ МОГИЛ', ico:'⚑', desc:'+1% скорости персонажа и свиты за уровень.'},
     {id:'animator',    nm:'АНИМАТОР',       ico:'☠', desc:'+1 дополнительный скелет каждые 20 уровней.'},
     {id:'venomancer',  nm:'ВЕНОМАНСЕР',     ico:'☣', desc:'Павший миньон оставляет кислоту на 3 сек: 15% текущего HP цели в секунду.'},
-  ],
-  blade: [
-    {id:'berserker',  nm:'БЕРСЕРК',      ico:'⚔', desc:'+1% к урону ближних атак за уровень. При здоровье ниже 40% получает +20% скорости атаки.'},
-    {id:'guardian',   nm:'СТРАЖ',        ico:'⬟', desc:'+0,75% максимального здоровья за уровень. Круговая волна, задевшая хотя бы трёх врагов, даёт барьер на 6% здоровья; перезарядка 4 сек.'},
-    {id:'swordmaster',nm:'МАСТЕР МЕЧА',  ico:'◎', desc:'+1% к радиусу круговой волны и +1,5% к силе её отбрасывания за уровень, до +60% и +90%. С 30-го уровня волна оглушает обычных врагов на 0,35 сек.'},
   ],
 };
 
@@ -1625,7 +1616,7 @@ function newGame(weaponKey, control, subclassKey){
     stats:{damage:0, maxHit:0, crits:0, taken:0, healing:0, distance:0, normals:0, elites:0, bosses:0},
     inventoryOpen:false,
     player:{x:0,y:0,vx:0,vy:0,r:13,hp:100,inv:0,dash:0,dashCd:0,dashN:0,
-            atkCd:0, aim:0, dashHits:[], leechPool:0, barrier:0, hitN:0, bladeN:0, guardianCd:0, berserkLow:false,
+            atkCd:0, aim:0, dashHits:[], leechPool:0, barrier:0, hitN:0,
             kills:0, reaper:false, trailT:0,
             moveT:0, predT:0, critChain:0, riposte:false, swiftT:0, lowHp:false, moving:false, faceX:1, faceY:0, spriteFace:1, stillT:0, combatT:0, killT:0, cheatCd:0, healCd:0, recoup:0},
     enemies:[], shots:[], eshots:[], orbs:[], fx:[],
@@ -1659,12 +1650,11 @@ function recalc(){
   const thief = sub === 'thief', hunter = sub === 'hunter', dancer = sub === 'dancer';
   const destroyer = sub === 'destroyer', multiplier = sub === 'multiplier', elementalist = sub === 'elementalist';
   const graverobber = sub === 'graverobber', animator = sub === 'animator';
-  const berserker = sub === 'berserker', guardian = sub === 'guardian', swordmaster = sub === 'swordmaster';
   const thiefMove = thief ? 1 + G.lvl/100 : 1;
   const graveMove = graverobber ? 1 + G.lvl/100 : 1;
 
   // --- Живучесть ---
-  D.life   = b.calc('life', 100 + G.lvl*4) * (glass ? 0.6 : 1) * (guardian ? 1 + G.lvl*0.0075 : 1);
+  D.life   = b.calc('life', 100 + G.lvl*4) * (glass ? 0.6 : 1);
   D.regen  = b.calc('regen', 0) + D.life * b.flat('regenPct')/100;
   D.armor  = unburd ? 0 : b.calc('armor', 0) + (amu('golem') ? 50 : 0) + (dancer ? Math.min(60, G.lvl) : 0);
   D.dr     = clamp(b.flat('dr'), 0, 60);
@@ -1699,9 +1689,6 @@ function recalc(){
   // --- Урон: база оружия + стихии, всё по формуле каталога ---
   D.incAll = (b.s.dmg ? b.s.dmg.inc : 0) + (w.type==='melee'? b.sum('dmgMelee') : 0)
            + (w.type!=='melee'? b.sum('dmgProj') : 0) + (w.type==='orb'? b.sum('dmgAoe') : 0);
-  // Берсерк усиливает только прямой взмах Воина. В общий D.incAll бонус не
-  // входит, иначе заодно разгонит самостоятельные взрывы, следы и DoT.
-  D.warriorMeleeInc = berserker ? G.lvl : 0;
   D.moreAll = (b.s.dmg ? b.s.dmg.more : 1) * (glass?1.6:1) * (noCrit?1.5:1) * (heavy?4:1) * (flurry?0.5:1);
 
   const phys = w.dmg[0] + G.lvl*0.45 + b.flat('dmg');
@@ -1751,7 +1738,7 @@ function recalc(){
              * (amu('runner') && P && P.moving ? 1.20 : 1);
   D.aspd  = b.calc('aspd', 1) * (heavy?0.5:1) * (flurry?2:1) * (unburd?1.25:1)
           * (amu('clock') ? 1.10 : 1) * (amu('claws') ? 1.20 : 1) * (amu('brute') ? 0.90 : 1)
-          * rush * (hunter ? 1 + G.lvl/100 : 1) * (berserker && P && P.berserkLow ? 1.20 : 1);
+          * rush * (hunter ? 1 + G.lvl/100 : 1);
   D.mspd  = b.calc('mspd', 235) * (acro?1.15:1) * (unburd?1.35:1) * rush * dash
           * thiefMove * graveMove;
 
@@ -1771,9 +1758,6 @@ function recalc(){
   D.slowAuraR  = SLOW_AURA_BASE * D.aoeR;   // аура замедления врагов
   D.infernoR   = INFERNO_BASE   * D.aoeR;   // перекидывание поджога
   D.arc     = 1 + b.sum('arc')/100;
-  D.berserker = berserker; D.guardian = guardian; D.swordmaster = swordmaster;
-  D.warriorWaveRadius = swordmaster ? 1 + Math.min(60, G.lvl)/100 : 1;
-  D.warriorWaveKnock  = swordmaster ? 1 + Math.min(90, G.lvl*1.5)/100 : 1;
   D.orbitN      = clamp(Math.round(b.flat('orbit')), 0, 10);   // круговые орбы, потолок 10
   D.explode     = clamp(b.flat('explode') + (b.has('kVolat') ? 100 : 0), 0, 100);
   D.explodeMega = clamp(b.flat('explodeMega'), 0, 100);
@@ -1923,9 +1907,6 @@ function avgHit(){
   const crit = 1 + (D.critCh/100) * (D.critMul/100 - 1);
   return raw * crit;
 }
-// Только интерфейс: реальный бонус Берсерка применяется в damage(), чтобы не
-// усиливать эффекты, которые лишь используют avgHit() как расчётную базу.
-function attackAvgHit(){ return avgHit() * (1 + (D.warriorMeleeInc||0)/100); }
 
 /* ---------- 5. ГЕНЕРАЦИЯ ЭТАЖА ---------- */
 const ETYPES = {
@@ -1957,7 +1938,7 @@ const BOSS_AFFIXES = [
       // Панцирь считается не как обычная броня (та режет фиксированный процент
       // независимо от размера удара), а по размеру самого удара: чем мельче
       // удар, тем большая его доля съедается. Это единственный способ сделать
-      // аффикс, который душит лук и свиту, но не трогает воина с жезлом.
+      // аффикс, который душит лук и свиту, но не трогает клинок с жезлом.
       e.bulwark = 9 * hpScale(G.floor);   // 16 давало x3.1 некроманту при x1.0 жезлу — слишком жёсткая контра
       e.maxHp = e.hp = Math.round(e.maxHp * 0.85);  // цена за панцирь; 0.7 делал босса слабее обычного для жезла
     } },
@@ -2619,7 +2600,7 @@ function damage(e, src){
   let total = (base
     + el.fire * (e.ward==='fire'?wd:1) + el.cold * (e.ward==='cold'?wd:1)
     + el.lit  * (e.ward==='lit' ?wd:1) + el.poi  * (e.ward==='poi' ?wd:1));
-  total *= (1 + (D.incAll + conditionalInc(e, src) + (src.warriorMelee ? D.warriorMeleeInc : 0))/100) * D.moreAll;
+  total *= (1 + (D.incAll + conditionalInc(e, src))/100) * D.moreAll;
   if (src.minion) total *= MINION_DAMAGE_MULT;       // режет весь удар, включая унаследованные стихии
 
   // Крит: два ролла при crit.lucky, сверхкрит сверху.
@@ -2768,8 +2749,8 @@ function damage(e, src){
   if (!src.noDouble){
     // Метку приспешника обязательно тащим в добавочные удары: иначе двойной
     // удар свиты считался бы по криту игрока и лечил бы не того
-    if (Math.random()*100 < D.dblHit) damage(e, {mul:(src.mul||1)*0.6, noDouble:true, minion:src.minion, warriorMelee:src.warriorMelee});
-    if (Math.random()*100 < D.triHit) damage(e, {mul:(src.mul||1)*0.4, noDouble:true, minion:src.minion, warriorMelee:src.warriorMelee});
+    if (Math.random()*100 < D.dblHit) damage(e, {mul:(src.mul||1)*0.6, noDouble:true, minion:src.minion});
+    if (Math.random()*100 < D.triHit) damage(e, {mul:(src.mul||1)*0.4, noDouble:true, minion:src.minion});
   }
 }
 
@@ -3658,37 +3639,12 @@ function attack(src){
 
   if (w.type === 'melee'){
     const reach = w.reach * D.arc, arc = w.arc * D.arc;
-    const bladeWave = !src && w.id === 'wpn.sword' && ++p.bladeN % 3 === 0;
-    if (bladeWave){
-      /* Воин проигрывал не по урону: контрольная комната показывала нормальный
-         DPS, но бот стабильно погибал на 1–3 этажах из-за невозможности разорвать
-         контакт. Поэтому каждый третий взмах заменяет сектор круговой волной —
-         урон не удваивается, зато вокруг героя снова появляется пространство. */
-      const waveR = reach * 1.45 * D.warriorWaveRadius;
-      let waveHits = 0;
-      G.fx.push({t:'ring', x:o.x, y:o.y, r:18, max:waveR, life:0.22, col:'#ffd24a'});
-      for (const e of G.enemies){
-        if (dist(e,o) > waveR + e.r) continue;
-        waveHits++; damage(e, {warriorMelee:true});
-        const a = Math.atan2(e.y-o.y, e.x-o.x), force = 520 * D.warriorWaveKnock * knockbackScale(e);
-        e.kb.x += Math.cos(a)*force; e.kb.y += Math.sin(a)*force;
-        e.ail.dizzy = Math.max(e.ail.dizzy, 0.75*D.ailDur);
-        if (D.swordmaster && G.lvl >= 30 && e.kind === 'norm')
-          e.ail.stun = Math.max(e.ail.stun, 0.35*D.ailDur);
-      }
-      if (D.guardian && waveHits >= 3 && p.guardianCd <= 0){
-        p.barrier = Math.max(p.barrier, D.life*0.06); p.guardianCd = 4;
-        G.fx.push({t:'ring', x:p.x, y:p.y, r:p.r, max:p.r+24, life:0.45, col:'#5ec2e0'});
-        G.fx.push({t:'txt', x:p.x, y:p.y-30, s:'БАРЬЕР СТРАЖА', life:0.9, col:'#5ec2e0'});
-      }
-    } else {
-      G.fx.push({t:'arc', x:o.x, y:o.y, a:ang, arc, r:reach, life:0.16});
-      for (const e of G.enemies){
-        if (dist(e,o) > reach + e.r) continue;
-        let da = Math.atan2(e.y-o.y, e.x-o.x) - ang;
-        da = Math.atan2(Math.sin(da), Math.cos(da));               // нормализуем угол
-        if (Math.abs(da) < arc/2) damage(e, {warriorMelee:true});
-      }
+    G.fx.push({t:'arc', x:o.x, y:o.y, a:ang, arc, r:reach, life:0.16});
+    for (const e of G.enemies){
+      if (dist(e,o) > reach + e.r) continue;
+      let da = Math.atan2(e.y-o.y, e.x-o.x) - ang;
+      da = Math.atan2(Math.sin(da), Math.cos(da));                 // нормализуем угол
+      if (Math.abs(da) < arc/2) damage(e, {});
     }
   } else {
     const n = D.projN, spread = D.shotgun ? 0.035 : 0.16;   // дробовик стягивает залп в пучок
@@ -3744,19 +3700,17 @@ function update(dt){
   p.killT = Math.max(0, p.killT - dt);
   p.cheatCd = Math.max(0, p.cheatCd - dt);
   p.healCd  = Math.max(0, p.healCd  - dt);
-  p.guardianCd = Math.max(0, p.guardianCd - dt);
   /* Всё, что разгоняет по условию, живёт в D.mspd и D.aspd, а условия меняются
      в кадре. Пересчёт зовём только на ПЕРЕКЛЮЧЕНИИ, а не каждый кадр: recalc()
      тяжёлый, и гонять его шестьдесят раз в секунду ради пары множителей незачем. */
   const wasKill = p.spdKill > 0, wasMove = p.dashMoving,
-        wasSwift = p.swiftT > 0, wasLow = p.lowHp, wasBerserkLow = p.berserkLow;
+        wasSwift = p.swiftT > 0, wasLow = p.lowHp;
   p.spdKill = Math.max(0, (p.spdKill||0) - dt);
   p.swiftT  = Math.max(0, (p.swiftT||0)  - dt);
   p.dashMoving = p.moving;
   p.lowHp   = p.hp/D.life < 0.30;
-  p.berserkLow = p.hp/D.life < 0.40;
   if ((p.spdKill > 0) !== wasKill || (amu('runner') && p.moving !== wasMove) ||
-      (p.swiftT > 0) !== wasSwift || p.lowHp !== wasLow || p.berserkLow !== wasBerserkLow) recalc();
+      (p.swiftT > 0) !== wasSwift || p.lowHp !== wasLow) recalc();
   p.predT   = Math.max(0, (p.predT||0)   - dt);      // ГЛАЗ ХИЩНИКА
 
   let sp = D.mspd;                                   // разгон уже внутри, см. recalc()
@@ -4420,7 +4374,7 @@ function drawHero(p){
   const w = G.weapon, outline = p.inv > 0 ? '#ffffff' :
     w.id === 'wpn.wand' ? '#c08cff' : w.id === 'wpn.scythe' ? '#8be04e' : '#ffb340';
   const spriteKey = w.id === 'wpn.bow' ? 'archer' : w.id === 'wpn.wand' ? 'mage' :
-                    w.id === 'wpn.scythe' ? 'necromancer' : w.id === 'wpn.sword' ? 'warrior' : null;
+                    w.id === 'wpn.scythe' ? 'necromancer' : null;
   const sprite = spriteKey && HERO_SPRITES[spriteKey];
   if (sprite && sprite.complete && sprite.naturalWidth){
     ctx.save(); ctx.translate(p.x, p.y); ctx.scale(p.spriteFace < 0 ? -1 : 1, 1);
@@ -4457,7 +4411,7 @@ function drawHero(p){
     ctx.strokeStyle = '#9aa7b4'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(-8,13); ctx.lineTo(13,-15); ctx.stroke();
     ctx.strokeStyle = '#d8f7c5'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(14,-10,9,1.9,4.55); ctx.stroke();
   } else {
-    // Запасной силуэт Воина используется только если встроенный PNG не загрузился.
+    // Клинок сохраняет старый лаконичный ромб: у него уже есть читаемая ближняя дуга атаки.
     ctx.fillStyle = '#ffb34033'; ctx.lineWidth = 3; drawPoly(0,0,p.r,4,0.785); ctx.fill(); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(p.r+11,0); ctx.stroke();
   }
@@ -4938,7 +4892,7 @@ function updateHud(){
   // У некроманта в строке показываем урон свиты: своего у него нет
   $('#dpsinfo').textContent = G.weapon.noAttack
     ? 'свита ≈ ' + Math.round(avgHit()*D.minDmgMul*MINION_DAMAGE_MULT*(D.minAspd/0.5)*Math.max(1, G.minions.length)) + ' урона/сек'
-    : 'урон/сек ≈ ' + Math.round(attackAvgHit()/D.atkCd*(G.weapon.type==='proj'?D.projN:1))
+    : 'урон/сек ≈ ' + Math.round(avgHit()/D.atkCd*(G.weapon.type==='proj'?D.projN:1))
     + ' · рывки ' + G.player.dashN + '/' + D.dashMax
     + (G.player.dashN < D.dashMax ? ' · заряд через ' + G.player.dashCd.toFixed(1) + 'с' : '')
     + (D.hasMin ? ' · свита ' + G.minions.length + '/' + D.minMax : '');
@@ -5083,7 +5037,7 @@ function detailedSkillTip(m, card){
   if (m.id === 'dmg.more_all') return '<b>Что меняет:</b> умножает итоговый урон на отдельный множитель <b>' + shown + '</b>.<br><b>Пример:</b> 100 урона с «×1,20» становится 120 после обычных процентных бонусов.<br><b>Важно:</b> несколько таких карточек перемножаются между собой.';
   if (m.id === 'dmg.aoe') return '<b>Условие:</b> урон должен быть нанесён по площади — взрывом, волной, лужей или сферой мага.<br><b>Эффект:</b> этот урон получает указанный процент бонуса.<br><b>Не действует:</b> на одиночное прямое попадание стрелы.';
   if (m.id === 'dmg.projectile') return '<b>Условие:</b> урон должен прийти от летящего снаряда — стрелы или сферы.<br><b>Эффект:</b> снаряд и его подходящие попадания получают этот процент урона.<br><b>Не действует:</b> на ближние удары.';
-  if (m.id === 'dmg.melee') return '<b>Условие:</b> урон должен быть нанесён ближней атакой воина.<br><b>Эффект:</b> такой удар получает указанный процент урона.<br><b>Не действует:</b> на стрелы, сферы и самостоятельные эффекты по площади.';
+  if (m.id === 'dmg.melee') return '<b>Условие:</b> урон должен быть нанесён ближней атакой клинка.<br><b>Эффект:</b> такой удар получает указанный процент урона.<br><b>Не действует:</b> на стрелы, сферы и самостоятельные эффекты по площади.';
   if (m.id === 'def.recoup') return '<b>Когда срабатывает:</b> после того, как герой получает урон.<br><b>Эффект:</b> указанная доля полученного урона возвращается как лечение постепенно, а не сразу.<br><b>Пример:</b> при 20% возврата из 100 полученного урона со временем вернётся 20 HP.';
   if (m.id === 'min.crit') return '<b>Что меняет:</b> увеличивает шанс критического удара именно у приспешников.<br><b>Эффект:</b> каждый их удар отдельно проверяет этот шанс и использует их критический множитель.<br><b>Не влияет:</b> на шанс крита самого героя.';
   if (m.id === 'min.explode') return '<b>Когда срабатывает:</b> когда приспешник погибает.<br><b>Эффект:</b> он взрывается и наносит урон окружающим врагам.<br><b>Практически:</b> превращает гибель скелета в часть урона по плотной толпе.';
@@ -5298,7 +5252,7 @@ function renderSheet(){
       r('Здоровье', Math.round(D.life)) +
       r('Реген/сек', D.regen.toFixed(1)) +
       r('Урон за удар', Math.round(D.baseMin) + '–' + Math.round(D.baseMax)) +
-      r('Средний удар', Math.round(attackAvgHit())) +
+      r('Средний удар', Math.round(avgHit())) +
       r('Скорость атаки', (1/D.atkCd).toFixed(2) + '/сек') +
       r('Шанс крита', D.critCh.toFixed(1) + '%') +
       r('Множитель крита', Math.round(D.critMul) + '%') +
@@ -5843,9 +5797,9 @@ function startScreen(){
   const constReady = constellationReadyCount();
   $('#ov').innerHTML =
     brandHtml() + languageSwitchHtml() +
-    '<h2>выберите один из четырёх классов — он определяет, вокруг чего строить билд</h2>' +
+    '<h2>выберите один из трёх классов — он определяет, вокруг чего строить билд</h2>' +
     '<div class="cards">' + PLAYABLE_CLASSES.map(k => {
-      const w = WEAPONS[k], spriteKey = {bow:'archer', wand:'mage', necro:'necromancer', blade:'warrior'}[k];
+      const w = WEAPONS[k], spriteKey = {bow:'archer', wand:'mage', necro:'necromancer'}[k];
       return '<div class="card class-card" data-w="' + k + '">' +
         '<div class="cat">' + w.id + '</div>' +
         '<div class="nm">' + w.nm + '</div>' +
