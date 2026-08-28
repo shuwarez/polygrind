@@ -432,11 +432,11 @@ const EN_WORLD = [
   ["ГНЕВ ПУСТОТЫ", "VOID WRATH"],
   ["создаёт 3–5 разломов: через секунду они отнимают 40% максимального здоровья и замедляют", "creates 3–5 rifts that erupt after one second for 40% maximum health and slow the player"],
   ["УЖАСАЮЩИЙ МИНОТАВР", "DREAD MINOTAUR"],
-  ["редкий босс: постоянно снижает входящий урон на 95%, после промаха натиском уязвим; гарантирует две находки", "rare boss: always reduces incoming damage by 95%, then becomes vulnerable after a missed charge; guarantees two finds"],
+  ["редкий босс: защищён до промаха натиском, после удара о стену уязвим; гарантирует две находки", "rare boss: protected until its charge misses, then vulnerable after hitting a wall; guarantees two finds"],
   ["ПАДШИЙ СЕРАФИМ", "FALLEN SERAPH"],
   ["трижды подряд отмечает игрока и обрушивает тёмный луч на 20% максимального здоровья", "marks the player three times in succession and calls down a dark beam for 20% maximum health"],
   ["ЧУМНАЯ МАТРИАРХ", "PLAGUE MATRIARCH"],
-  ["каждую секунду выплёвывает двух Бегунов, пока их меньше 36", "spits out two Runners every second while fewer than 36 are alive"],
+  ["каждую секунду выплёвывает одного Бегуна", "spits out one Runner every second"],
   ["ДЕМОНИЧЕСКАЯ КОРОЛЕВА", "DEMON QUEEN"],
   ["исчезает, отмечает место и через секунду обрушивается, нанося 35% максимального здоровья и замедляя", "vanishes, marks a location, and crashes down one second later for 35% maximum health and a slow"],
 
@@ -2205,9 +2205,9 @@ const BOSS_TYPES = {
   behemoth:{nm:'БЕЗДОННЫЙ БЕГЕМОТ', nt:'раз в 3 сек прыгает к отмеченной позиции игрока', weight:30, spd:62, col:'#a0505b'},
   vampire:{nm:'ВАМПИРСКИЙ ЛОРД', nt:'кровавая метка фиксирует позицию; рывок и крестовой удар лечат босса при попадании', weight:30, spd:78, col:'#c7253e'},
   voidwrath:{nm:'ГНЕВ ПУСТОТЫ', nt:'создаёт 3–5 разломов: через секунду они отнимают 40% максимального здоровья и замедляют', weight:30, spd:66, col:'#8e45e8'},
-  minotaur:{nm:'УЖАСАЮЩИЙ МИНОТАВР', nt:'редкий босс: постоянно снижает входящий урон на 95%, после промаха натиском уязвим; гарантирует две находки', weight:10, spd:64, col:'#a95b32', rare:true},
+  minotaur:{nm:'УЖАСАЮЩИЙ МИНОТАВР', nt:'редкий босс: защищён до промаха натиском, после удара о стену уязвим; гарантирует две находки', weight:10, spd:64, col:'#a95b32', rare:true},
   seraph:{nm:'ПАДШИЙ СЕРАФИМ', nt:'трижды подряд отмечает игрока и обрушивает тёмный луч на 20% максимального здоровья', weight:30, spd:70, col:'#b83236'},
-  matriarch:{nm:'ЧУМНАЯ МАТРИАРХ', nt:'каждую секунду выплёвывает двух Бегунов, пока их меньше 36', weight:30, spd:60, col:'#819b31'},
+  matriarch:{nm:'ЧУМНАЯ МАТРИАРХ', nt:'каждую секунду выплёвывает одного Бегуна', weight:30, spd:60, col:'#819b31'},
   demonqueen:{nm:'ДЕМОНИЧЕСКАЯ КОРОЛЕВА', nt:'исчезает, отмечает место и через секунду обрушивается, нанося 35% максимального здоровья и замедляя', weight:30, spd:74, col:'#b1326f'},
 };
 const BOSS_KEYS = Object.keys(BOSS_TYPES);
@@ -2719,7 +2719,7 @@ function tickBossSkill(e, dt){
         G.fx.push({t:'judgment',x:T.judgeX,y:T.judgeY,r:68,life:0.38,col:def.col});
         T.judgeLeft--;
         if (T.judgeLeft > 0){ T.judgeX=clamp(p.x,-ARENA+68,ARENA-68); T.judgeY=clamp(p.y,-ARENA+68,ARENA-68); T.judgeWarn=BOSS_SERAPH_WARN; }
-        else T.judgeCd=4;
+        else T.judgeCd=5;
       }
       return false;
     }
@@ -2732,11 +2732,7 @@ function tickBossSkill(e, dt){
 
   if (e.bossId === 'matriarch'){
     T.spawn=(T.spawn === undefined ? 1 : T.spawn)-dt;
-    if (T.spawn <= 0){
-      T.spawn+=1;
-      summonMatriarchRunner(e);
-      summonMatriarchRunner(e);
-    }
+    if (T.spawn <= 0){ T.spawn+=1; summonMatriarchRunner(e); }
     return false;
   }
 
@@ -2747,11 +2743,11 @@ function tickBossSkill(e, dt){
         e.x=T.leapX; e.y=T.leapY; T.hidden=false;
         if (dist(e,p) <= 115+p.r){ hurt(D.life*0.35,false,false,enemyCause(e,'демонический прыжок'),'boss'); applyBossSlow(0.50,2); }
         G.fx.push({t:'ring',x:e.x,y:e.y,r:115,max:145,life:0.4,col:def.col});
-        burst(e.x,e.y,20,def.col,240,5,0.6); T.leapCd=5;
+        burst(e.x,e.y,20,def.col,240,5,0.6); T.leapCd=7;
       }
       return true;
     }
-    T.leapCd=(T.leapCd === undefined ? 5 : T.leapCd)-dt;
+    T.leapCd=(T.leapCd === undefined ? 4 : T.leapCd)-dt;
     if (T.leapCd <= 0){
       T.leapX=clamp(p.x,-ARENA+115,ARENA-115); T.leapY=clamp(p.y,-ARENA+115,ARENA-115);
       T.leapWarn=BOSS_QUEEN_WARN; T.hidden=true; return true;
@@ -2766,7 +2762,7 @@ function tickBossSkill(e, dt){
 function mitigate(e, total, minionShare=0){
   total *= 1 - e.armor/(e.armor + 60);
   if (e.kind === 'boss' && e.bossId === 'minotaur')
-    total *= e.bossT && e.bossT.vulnerable > 0 ? 1.40 : 0.05;
+    total *= e.bossT && e.bossT.vulnerable > 0 ? 1.40 : 0.65;
   if (e.bulwark) total *= total / (total + e.bulwark);
   if (e.pack) total = packTaken(e, total, minionShare); // броня пачки, связь, кровная связь
   return total;

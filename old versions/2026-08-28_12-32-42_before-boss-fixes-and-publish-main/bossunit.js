@@ -171,7 +171,7 @@ ok('все четырнадцать листов вместе весят мен�
 { const c=loadGame('./PolyGrind.html',{random:()=>0.99}); c.newGame('bow','keys');
   const G=c.__api.G, e=c.spawnEnemy('boss','minotaur'); e.armor=0;
   ok('Dread Minotaur — редкий босс', c.bossType(e).rare===true);
-  e.bossT={}; ok('защита Минотавра постоянно срезает 95% урона', Math.abs(c.mitigate(e,100)-5)<0.001);
+  e.bossT={}; ok('защита Минотавра постоянно срезает 35% урона', Math.abs(c.mitigate(e,100)-65)<0.001);
   e.bossT.vulnerable=1; ok('после промаха Минотавр получает +40% входящего урона', Math.abs(c.mitigate(e,100)-140)<0.001);
   e.x=0; e.y=0; G.player.x=0; G.player.y=500; e.bossT={chargeWarn:0.01,chargeA:0};
   c.tickBossSkill(e,0.02); c.tickBossSkill(e,5);
@@ -191,14 +191,14 @@ ok('все четырнадцать листов вместе весят мен�
   c.tickBossSkill(e,0.81);
   ok('первый луч наносит 20% max HP', Math.abs(p.hp-D.life*0.80)<0.001);
   p.inv=0; c.tickBossSkill(e,0.81); p.inv=0; c.tickBossSkill(e,0.81);
-  ok('Суд Падшего делает три удара и уходит в откат на 4 сек', e.bossT.judgeLeft===0 && e.bossT.judgeCd===4); }
+  ok('Суд Падшего делает три удара и уходит в откат на 5 сек', e.bossT.judgeLeft===0 && e.bossT.judgeCd===5); }
 
 { const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys');
   const G=c.__api.G, e=c.spawnEnemy('boss','matriarch'); G.enemies=[e]; e.x=0; e.y=0;
   c.tickBossSkill(e,1);
-  const runners=G.enemies.filter(x=>x.summonedByMatriarch);
-  ok('Plague Matriarch выплёвывает двух Бегунов каждую секунду', runners.length===2 && runners.every(x=>x.typeKey==='runner'));
-  ok('порождённые Бегуны не фармят опыт и предметы', runners.every(x=>x.noLoot && x.xp===0)); }
+  const runner=G.enemies.find(x=>x.summonedByMatriarch);
+  ok('Plague Matriarch выплёвывает Бегуна каждую секунду', runner && runner.typeKey==='runner');
+  ok('порождённый Бегун не фармит опыт и предметы', runner && runner.noLoot && runner.xp===0); }
 
 { const c=loadGame('./PolyGrind.html',{random:()=>0.99}); c.newGame('bow','keys');
   const G=c.__api.G, D=c.__api.D, p=G.player, e=c.spawnEnemy('boss','demonqueen');
@@ -209,7 +209,7 @@ ok('все четырнадцать листов вместе весят мен�
   ok('прыжок приземляется в зафиксированную точку, а не преследует игрока', e.x===40 && e.y===50 && p.hp===D.life && !e.bossT.hidden);
   p.x=0; p.y=0; p.hp=D.life; p.inv=0; e.bossT={hidden:true,leapWarn:0.01,leapX:0,leapY:0}; c.tickBossSkill(e,0.02);
   ok('попадание Демонического прыжка наносит 35% max HP', Math.abs(p.hp-D.life*0.65)<0.001);
-  ok('прыжок замедляет на 50% на 2 секунды и уходит в откат на 5', p.bossSlowT===2 && p.bossSlowMul===0.5 && e.bossT.leapCd===5); }
+  ok('прыжок замедляет на 50% на 2 секунды и уходит в откат на 7', p.bossSlowT===2 && p.bossSlowMul===0.5 && e.bossT.leapCd===7); }
 
 console.log(JSON.stringify({n,fail}));
 process.exitCode=fail?1:0;

@@ -1,4 +1,4 @@
-/* Четырнадцать уникальных боссов: встроенные листы, редкость, умения и награды. */
+/* Восемь уникальных боссов: встроенные листы, редкость, умения и награды. */
 const fs = require('fs');
 const {loadGame} = require('./harness');
 let n=0, fail=0;
@@ -14,32 +14,34 @@ const embeddedPng = key => {
 const pngInfo = b => b.length < 26 ? {w:0,h:0,color:-1} :
   ({w:b.readUInt32BE(16),h:b.readUInt32BE(20),color:b[25]});
 
-const bossIds=['lich','goat','plague','greed','executioner','tyrant','grave','behemoth',
-  'vampire','voidwrath','minotaur','seraph','matriarch','demonqueen'];
-const sheets=bossIds.map(k => embeddedPng(k));
-ok('четырнадцать листов боссов встроены в единственный HTML', sheets.every(b => b.length>0));
-ok('листы оптимизированы до 256×96 и 16-цветной палитры',
-  sheets.every(b => {const p=pngInfo(b); return p.w===256 && p.h===96 && p.color===3;}));
-ok('все четырнадцать листов вместе весят меньше 90 КБ', sheets.reduce((s,b)=>s+b.length,0)<90000,
+const sheets=['lich','goat','plague','greed','executioner','tyrant','grave','behemoth'].map(k => embeddedPng(k));
+ok('восемь листов боссов встроены в единственный HTML', sheets.every(b => b.length>0));
+ok('листы оптимизированы до 512×192 и индексированной палитры',
+  sheets.every(b => {const p=pngInfo(b); return p.w===512 && p.h===192 && p.color===3;}));
+ok('все восемь листов вместе весят меньше 165 КБ', sheets.reduce((s,b)=>s+b.length,0)<165000,
   sheets.reduce((s,b)=>s+b.length,0)+' байт');
 
 { const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys');
-  const bosses=bossIds.map(id=>c.spawnEnemy('boss',id));
-  ok('каждый идентификатор создаёт собственного босса', bosses.every((b,i)=>b.bossId===bossIds[i] && c.bossType(b)));
-  ok('у каждого из четырнадцати боссов четыре кадра отдельного листа', bosses.every(b =>
-    [0,1,2,3].every(animT => c.enemySpriteFrame({...b,animT}).frame.w===64)));
+  const ids=['lich','goat','plague','greed','executioner','tyrant','grave','behemoth'];
+  const bosses=ids.map(id=>c.spawnEnemy('boss',id));
+  ok('каждый идентификатор создаёт собственного босса', bosses.every((b,i)=>b.bossId===ids[i] && c.bossType(b)));
+  ok('у каждого из восьми боссов четыре кадра отдельного листа', bosses.every(b =>
+    [0,1,2,3].every(animT => c.enemySpriteFrame({...b,animT}).frame.w===128)));
+  const tank={kind:'norm',typeKey:'tank',animT:0,r:c.__api.ETYPES.tank.r};
   const bossHeight=bosses[0].r*c.enemySpriteFrame(bosses[0]).meta.scale;
-  const heroHeight=48;
-  ok('модель босса не меньше чем в 2.5 раза выше героя', bossHeight/heroHeight>=2.5,
-    '×'+(bossHeight/heroHeight).toFixed(2)); }
+  const tankHeight=tank.r*c.enemySpriteFrame(tank).meta.scale;
+  ok('модель босса примерно в 1.5–1.7 раза выше Бастиона', bossHeight/tankHeight>=1.5 && bossHeight/tankHeight<=1.7,
+    '×'+(bossHeight/tankHeight).toFixed(2)); }
 
-{ const common=loadGame('./PolyGrind.html',{random:()=>0}); common.newGame('bow','keys');
+{ const common=loadGame('./PolyGrind.html',{random:()=>0});
+  const greedRoll=loadGame('./PolyGrind.html',{random:()=>0.475});
+  const tyrantRoll=loadGame('./PolyGrind.html',{random:()=>0.675});
+  common.newGame('bow','keys'); greedRoll.newGame('bow','keys'); tyrantRoll.newGame('bow','keys');
   ok('в начале шкалы выбирается обычный Изумрудный Лич', common.rollBossType()==='lich');
-  const defs=bossIds.map(id=>common.bossType(common.spawnEnemy('boss',id)));
-  ok('обычные боссы имеют стандартный вес 30', defs.filter(d=>!d.rare).every(d=>d.weight===30));
-  ok('три редких босса имеют низкий вес 10', defs.filter(d=>d.rare).length===3 && defs.filter(d=>d.rare).every(d=>d.weight===10));
+  ok('Greed Boss занимает собственный редкий сектор', greedRoll.rollBossType()==='greed');
+  ok('Horned Tyrant занимает второй редкий сектор', tyrantRoll.rollBossType()==='tyrant');
   ok('два босса на этаже выбираются без повторения',
-    common.rollBossType(bossIds.slice(0,-1))==='demonqueen'); }
+    tyrantRoll.rollBossType(['lich','goat','plague','greed','executioner','tyrant','grave'])==='behemoth'); }
 
 { const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys');
   const G=c.__api.G, p=G.player, e=c.spawnEnemy('boss','lich'); G.eshots.length=0;
@@ -60,7 +62,7 @@ ok('все четырнадцать листов вместе весят мен�
   ok('Демон предупреждает, останавливается и наносит 25% max HP', warned && Math.abs(p.hp-D.life*0.75)<0.001,
     p.hp.toFixed(1)+'/'+D.life.toFixed(1)); }
 
-{ const c=loadGame('./PolyGrind.html',{random:()=>0.99}); c.newGame('bow','keys');
+{ const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys');
   const G=c.__api.G, D=c.__api.D, p=G.player, e=c.spawnEnemy('boss','plague');
   G.eshots.length=0; e.x=-150; e.y=0; p.x=0; p.y=0;
   c.tickBossSkill(e,1);
@@ -69,8 +71,6 @@ ok('все четырнадцать листов вместе весят мен�
   ok('смерть Мерзости оставляет кислоту радиусом 135 на 10 сек',
     G.bossPools.length===1 && G.bossPools[0].r===135 && G.bossPools[0].life===10);
   G.enemies.length=0; G.spawnQueue=0; p.x=G.bossPools[0].x; p.y=G.bossPools[0].y; p.hp=D.life;
-  D.dodge=0; D.block=0; D.armor=0; D.drFlat=0; D.dr=0; D.drShop=0;
-  D.normalDr=0; D.majorDr=0; p.inv=0;
   c.update(1);
   ok('кислота тикает раз в секунду на 10% max HP', Math.abs(p.hp-D.life*0.9)<0.001); }
 
@@ -144,72 +144,6 @@ ok('все четырнадцать листов вместе весят мен�
   ok('прыжок использует позицию игрока, зафиксированную в начале', e.bossT.jumpT>0 && tx===120 && ty===40);
   c.tickBossSkill(e,0.35);
   ok('Бегемот завершает прыжок в отмеченной точке', Math.abs(e.x-tx)<0.01 && Math.abs(e.y-ty)<0.01); }
-
-{ const c=loadGame('./PolyGrind.html',{random:()=>0.99}); c.newGame('bow','keys');
-  const G=c.__api.G, D=c.__api.D, p=G.player, e=c.spawnEnemy('boss','vampire');
-  D.dodge=D.block=D.armor=D.drFlat=D.dr=D.drShop=D.normalDr=D.majorDr=0;
-  e.x=-200; e.y=0; p.x=80; p.y=20; e.hp=e.maxHp*0.25;
-  c.tickBossSkill(e,3.01); const mark={x:e.bossT.markX,y:e.bossT.markY}; p.x=400; p.y=400;
-  c.tickBossSkill(e,2.01);
-  ok('Vampire Lord фиксирует позицию в момент Кровавой метки', mark.x===80 && mark.y===20 && e.x===80 && e.y===20);
-  ok('уклонение от зафиксированной позиции не лечит Вампира', Math.abs(e.hp-e.maxHp*0.25)<0.001);
-  p.x=0; p.y=0; p.hp=D.life; p.inv=0; e.x=-100; e.y=0; e.hp=e.maxHp*0.25;
-  e.bossT={markWarn:0.01,markX:0,markY:0}; c.tickBossSkill(e,0.02);
-  ok('крестовой рывок наносит 30% max HP', Math.abs(p.hp-D.life*0.70)<0.001);
-  ok('Vampiric Bite восстанавливает 50% HP босса', Math.abs(e.hp-e.maxHp*0.75)<0.001); }
-
-{ const c=loadGame('./PolyGrind.html',{random:()=>0.5}); c.newGame('bow','keys');
-  const G=c.__api.G, D=c.__api.D, p=G.player, e=c.spawnEnemy('boss','voidwrath');
-  D.dodge=D.block=D.armor=D.drFlat=D.dr=D.drShop=D.normalDr=D.majorDr=0;
-  p.x=0; p.y=0; p.hp=D.life; p.inv=0; e.bossT={riftCd:0}; c.tickBossSkill(e,0.01);
-  ok('Void Wrath создаёт от трёх до пяти разломов', e.bossT.rifts.length>=3 && e.bossT.rifts.length<=5);
-  e.bossT.rifts=[{x:0,y:0,r:52,warn:0.01},{x:200,y:0,r:52,warn:0.01},{x:-200,y:0,r:52,warn:0.01}];
-  c.tickBossSkill(e,0.02);
-  ok('взрыв Разлома Пустоты наносит 40% max HP только один раз', Math.abs(p.hp-D.life*0.60)<0.001);
-  ok('Разлом замедляет на 60% ровно на секунду', p.bossSlowT===1 && p.bossSlowMul===0.40); }
-
-{ const c=loadGame('./PolyGrind.html',{random:()=>0.99}); c.newGame('bow','keys');
-  const G=c.__api.G, e=c.spawnEnemy('boss','minotaur'); e.armor=0;
-  ok('Dread Minotaur — редкий босс', c.bossType(e).rare===true);
-  e.bossT={}; ok('защита Минотавра постоянно срезает 95% урона', Math.abs(c.mitigate(e,100)-5)<0.001);
-  e.bossT.vulnerable=1; ok('после промаха Минотавр получает +40% входящего урона', Math.abs(c.mitigate(e,100)-140)<0.001);
-  e.x=0; e.y=0; G.player.x=0; G.player.y=500; e.bossT={chargeWarn:0.01,chargeA:0};
-  c.tickBossSkill(e,0.02); c.tickBossSkill(e,5);
-  ok('натиск идёт до края арены и промах открывает окно на 3 сек',
-    Math.abs(e.x-(1500-e.r))<0.01 && e.bossT.vulnerable===3 && e.bossT.crash===3);
-  G.eshots.length=0; e.bossT={quake:0,chargeCd:99}; c.tickBossSkill(e,0.01);
-  const waves=G.eshots.filter(s=>s.shotType==='quake');
-  ok('Axe Quake выпускает три волны по 25% max HP', waves.length===3 && waves.every(s=>s.maxHpPct===0.25));
-  G.orbs.length=0; c.killEnemy(e,G.enemies.indexOf(e));
-  ok('Dread Minotaur гарантирует две случайные находки', G.orbs.filter(o=>o.book||o.amu||o.totem).length===2); }
-
-{ const c=loadGame('./PolyGrind.html',{random:()=>0.99}); c.newGame('bow','keys');
-  const G=c.__api.G, D=c.__api.D, p=G.player, e=c.spawnEnemy('boss','seraph');
-  D.dodge=D.block=D.armor=D.drFlat=D.dr=D.drShop=D.normalDr=D.majorDr=0;
-  p.x=10; p.y=20; p.hp=D.life; p.inv=0; e.bossT={judgeCd:0}; c.tickBossSkill(e,0.01);
-  ok('Fallen Seraph начинает серию из трёх отмеченных лучей', e.bossT.judgeLeft===3 && e.bossT.judgeWarn>0);
-  c.tickBossSkill(e,0.81);
-  ok('первый луч наносит 20% max HP', Math.abs(p.hp-D.life*0.80)<0.001);
-  p.inv=0; c.tickBossSkill(e,0.81); p.inv=0; c.tickBossSkill(e,0.81);
-  ok('Суд Падшего делает три удара и уходит в откат на 4 сек', e.bossT.judgeLeft===0 && e.bossT.judgeCd===4); }
-
-{ const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys');
-  const G=c.__api.G, e=c.spawnEnemy('boss','matriarch'); G.enemies=[e]; e.x=0; e.y=0;
-  c.tickBossSkill(e,1);
-  const runners=G.enemies.filter(x=>x.summonedByMatriarch);
-  ok('Plague Matriarch выплёвывает двух Бегунов каждую секунду', runners.length===2 && runners.every(x=>x.typeKey==='runner'));
-  ok('порождённые Бегуны не фармят опыт и предметы', runners.every(x=>x.noLoot && x.xp===0)); }
-
-{ const c=loadGame('./PolyGrind.html',{random:()=>0.99}); c.newGame('bow','keys');
-  const G=c.__api.G, D=c.__api.D, p=G.player, e=c.spawnEnemy('boss','demonqueen');
-  D.dodge=D.block=D.armor=D.drFlat=D.dr=D.drShop=D.normalDr=D.majorDr=0;
-  e.x=-200; e.y=0; p.x=40; p.y=50; p.hp=D.life; e.bossT={leapCd:0}; c.tickBossSkill(e,0.01);
-  ok('Demon Queen исчезает и фиксирует круг на секунду', e.bossT.hidden && e.bossT.leapX===40 && e.bossT.leapY===50);
-  p.x=400; p.y=400; c.tickBossSkill(e,1.01);
-  ok('прыжок приземляется в зафиксированную точку, а не преследует игрока', e.x===40 && e.y===50 && p.hp===D.life && !e.bossT.hidden);
-  p.x=0; p.y=0; p.hp=D.life; p.inv=0; e.bossT={hidden:true,leapWarn:0.01,leapX:0,leapY:0}; c.tickBossSkill(e,0.02);
-  ok('попадание Демонического прыжка наносит 35% max HP', Math.abs(p.hp-D.life*0.65)<0.001);
-  ok('прыжок замедляет на 50% на 2 секунды и уходит в откат на 5', p.bossSlowT===2 && p.bossSlowMul===0.5 && e.bossT.leapCd===5); }
 
 console.log(JSON.stringify({n,fail}));
 process.exitCode=fail?1:0;

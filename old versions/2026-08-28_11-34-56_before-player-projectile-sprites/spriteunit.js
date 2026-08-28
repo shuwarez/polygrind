@@ -22,12 +22,6 @@ const shooterShotBytes=embeddedPng('SHOOTER_PROJECTILE_DATA'), shooterShot=pngIn
 ok('снаряд Призмы упакован в индексированный лист 32×8 меньше 400 байт',
   shooterShot.png && shooterShot.w===32 && shooterShot.h===8 && shooterShot.color===3 && shooterShotBytes.length<400,
   shooterShotBytes.length+' байт');
-const arrowBytes=embeddedPng('archerProjectile'), arrow=pngInfo(arrowBytes);
-const mageShotBytes=embeddedPng('mageProjectile'), mageShot=pngInfo(mageShotBytes);
-ok('стрела и сфера игрока — индексированные PNG в бюджете 12 px',
-  arrow.png && arrow.w===12 && arrow.h===6 && arrow.color===3 && arrowBytes.length<250 &&
-  mageShot.png && mageShot.w===32 && mageShot.h===8 && mageShot.color===3 && mageShotBytes.length<400,
-  arrowBytes.length+' / '+mageShotBytes.length+' байт');
 
 const c=loadGame('./PolyGrind.html');
 const frames=[0,1,2,3,0].map(animT => c.enemySpriteFrame({typeKey:'runner',animT}).index);
@@ -56,25 +50,6 @@ G.time=0; const projectileFrames=[];
 for (const t of [0,0.1,0.2,0.3]){ G.time=t; projectileFrames.push(c.enemyProjectileSpriteFrame({shotType:'shooter'}).index); }
 ok('текстура снаряда циклически использует четыре кадра без своего таймера',
   JSON.stringify(projectileFrames)==='[0,1,2,3]' && c.enemyProjectileSpriteFrame({shotType:'lich'})===null);
-G.time=0; const mageFrames=[];
-for (const t of [0,0.1,0.2,0.3]){ G.time=t; mageFrames.push(c.playerProjectileSpriteFrame({spriteType:'mage'}).index); }
-ok('сфера Мага использует общий четырёхкадровый цикл, стрела статична',
-  JSON.stringify(mageFrames)==='[0,1,2,3]' && c.playerProjectileSpriteFrame({spriteType:'arrow'}).index===0 &&
-  c.playerProjectileSpriteFrame({spriteType:'reflected'})===null);
-
-const playerShotType = key => {
-  const game=loadGame('./PolyGrind.html'); game.newGame(key,'keys');
-  const state=game.__api.G, target=game.spawnEnemy(); state.enemies=[target]; state.pending=0; state.spawnQueue=0;
-  state.player.x=0; state.player.y=0; target.x=100; target.y=0; target.spd=0; game.attack();
-  return state.shots[0] && state.shots[0].spriteType;
-};
-ok('штатные атаки Лучника и Мага получают свои sprite-маркеры',
-  playerShotType('bow')==='arrow' && playerShotType('wand')==='mage');
-const minionGame=loadGame('./PolyGrind.html'); minionGame.newGame('bow','keys');
-minionGame.minionShot({x:0,y:0},{x:100,y:0},false);
-minionGame.minionShot({x:0,y:0},{x:100,y:0},true);
-ok('охотник и колдун свиты используют те же канонические текстуры',
-  minionGame.__api.G.shots[0].spriteType==='arrow' && minionGame.__api.G.shots[1].spriteType==='mage');
 const prism=c.spawnEnemy('shooter'); G.enemies=[prism]; G.spawnQueue=1; G.eshots.length=0;
 p.x=0; p.y=0; prism.x=250; prism.y=0; prism.cd=0; prism.spd=0; prism.aff=[]; prism.kb={x:0,y:0};
 c.update(0.01); G.pending=0;
