@@ -12,9 +12,10 @@ import base64
 import io
 import json
 import re
+from collections import deque
 from pathlib import Path
 
-from PIL import Image
+from PIL import Image, ImageChops, ImageFilter
 
 
 ROOT = Path(__file__).resolve().parent
@@ -166,6 +167,105 @@ def coin_sheet(source: Image.Image) -> bytes:
     return indexed_png(sheet)
 
 
+def remove_baked_checker(source: Image.Image) -> Image.Image:
+    """Удалить светлую шахматную подложку, связанную с краями кадра.
+
+    Flood fill важен: белые зубы и блики внутри тёмного контура остаются частью
+    силуэта, хотя по цвету похожи на клетки фона.
+    """
+    rgba = source.convert("RGBA")
+    if source.mode in ("RGBA", "LA") and rgba.getchannel("A").getextrema()[0] < 255:
+        return rgba
+    width, height = rgba.size
+    pixels = rgba.load()
+    outside = bytearray(width * height)
+    queue: deque[tuple[int, int]] = deque()
+
+    def background(x: int, y: int) -> bool:
+        red, green, blue, _ = pixels[x, y]
+        return min(red, green, blue) >= 225 and max(red, green, blue) - min(red, green, blue) <= 14
+
+    def seed(x: int, y: int) -> None:
+        index = y * width + x
+        if not outside[index] and background(x, y):
+            outside[index] = 1
+            queue.append((x, y))
+
+    for x in range(width):
+        seed(x, 0); seed(x, height - 1)
+    for y in range(height):
+        seed(0, y); seed(width - 1, y)
+    while queue:
+        x, y = queue.popleft()
+        for nx, ny in ((x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)):
+            if nx < 0 or ny < 0 or nx >= width or ny >= height:
+                continue
+            index = ny * width + nx
+            if not outside[index] and background(nx, ny):
+                outside[index] = 1
+                queue.append((nx, ny))
+    alpha = Image.new("L", rgba.size, 255)
+    alpha.putdata([0 if value else 255 for value in outside])
+    rgba.putalpha(alpha)
+    return rgba
+
+
+def elite_variant_sheet(path: Path) -> bytes:
+    """Четыре кадра элитной разновидности → компактный лист 192×48."""
+    source = remove_baked_checker(Image.open(path))
+    sheet = Image.new("RGBA", (192, 48))
+    for index in range(4):
+        x0 = round(index * source.width / 4)
+        x1 = round((index + 1) * source.width / 4)
+        frame = fit_frame(source.crop((x0, 0, x1, source.height)), (48, 48), padding=1)
+        sheet.alpha_composite(frame, (index * 48, 0))
+    return indexed_png(sheet)
+
+
+def install_object_payloads(html: str, object_name: str, payload: dict[str, str]) -> str:
+    """Добавить или заменить data URI внутри автономного JS-объекта."""
+    match = re.search(rf"const {re.escape(object_name)} = \{{.*?\n\}};", html, flags=re.S)
+    if not match:
+        raise SystemExit(f"Не найден объект {object_name}")
+    body = match.group(0)
+    for key, value in payload.items():
+        entry = f"  {key}:'data:image/png;base64,{value}',"
+        pattern = rf"^\s*{re.escape(key)}:'data:image/png;base64,[^']+',\s*$"
+        if re.search(pattern, body, flags=re.M):
+            body = re.sub(pattern, entry, body, count=1, flags=re.M)
+        else:
+            body = body[:-3] + entry + "\n};"
+    return html[:match.start()] + body + html[match.end():]
+
+
+def constellation_sheets(path: Path) -> dict[str, bytes]:
+    """Два ряда по четыре кадра: убрать тёмный фон и собрать 4×48 для UI."""
+    source = Image.open(path).convert("RGBA")
+    if source.size != (1536, 1024):
+        raise SystemExit("Лист созвездий должен быть 1536×1024")
+    result = {}
+    for key, row in (("elite", 0), ("boss", 1)):
+        sheet = Image.new("RGBA", (192, 48))
+        for index in range(4):
+            cell = source.crop((index * 384, row * 512, (index + 1) * 384, (row + 1) * 512))
+            red, green, blue, _ = cell.split()
+            luminance = ImageChops.lighter(ImageChops.lighter(red, green), blue)
+            mask = luminance.point(lambda value: 255 if value >= 105 else 0).filter(ImageFilter.MaxFilter(17))
+            box = mask.getbbox()
+            if not box:
+                raise SystemExit(f"Пустой кадр созвездия: {key} {index}")
+            crop, crop_mask = cell.crop(box), mask.crop(box)
+            crop.putalpha(crop_mask)
+            ratio = min(46 / crop.width, 46 / crop.height)
+            size = (max(1, round(crop.width * ratio)), max(1, round(crop.height * ratio)))
+            crop = crop.resize(size, Image.Resampling.NEAREST)
+            frame = Image.new("RGBA", (48, 48))
+            frame.alpha_composite(crop, ((48 - size[0]) // 2, 47 - size[1]))
+            sheet.alpha_composite(frame, (index * 48, 0))
+        result[key] = indexed_png(sheet)
+    return result
+
+
 def uri_bytes(html: str, key: str) -> bytes:
     match = re.search(rf"{re.escape(key)}\s*[:=]\s*'data:image/png;base64,([^']+)'", html)
     if not match:
@@ -205,13 +305,87 @@ def main() -> None:
     parser.add_argument("--seraph-boss", type=Path)
     parser.add_argument("--matriarch-boss", type=Path)
     parser.add_argument("--demon-queen-boss", type=Path)
+    parser.add_argument("--constellation-sheet", type=Path)
+    parser.add_argument("--ice-wolf", type=Path)
+    parser.add_argument("--toxic-runner", type=Path)
+    parser.add_argument("--cursed-rogue", type=Path)
+    parser.add_argument("--skeleton-warrior", type=Path)
+    parser.add_argument("--blight-grunt", type=Path)
+    parser.add_argument("--bone-gargoyle", type=Path)
+    parser.add_argument("--pyromancer-cultist", type=Path)
+    parser.add_argument("--beholder-slave", type=Path)
+    parser.add_argument("--skeleton-crossbow", type=Path)
+    parser.add_argument("--forgotten-guard", type=Path)
+    parser.add_argument("--abyssal-warden", type=Path)
+    parser.add_argument("--acid-carrier", type=Path)
     parser.add_argument("--emit-shooter-base64", action="store_true",
                         help="вывести JSON двух оптимизированных data payload без изменения HTML")
     parser.add_argument("--emit-player-projectile-base64", action="store_true",
                         help="вывести JSON стрелы и сферы без изменения HTML")
     parser.add_argument("--emit-new-boss-base64", action="store_true",
                         help="вывести JSON шести новых листов боссов без изменения HTML")
+    parser.add_argument("--emit-constellation-base64", action="store_true",
+                        help="вывести JSON листов элиты и босса для созвездий")
+    parser.add_argument("--emit-elite-variant-base64", action="store_true",
+                        help="вывести JSON шести оптимизированных разновидностей элиты")
+    parser.add_argument("--install-elite-variants", action="store_true",
+                        help="упаковать шесть разновидностей элиты прямо в автономный HTML")
+    parser.add_argument("--emit-elite-ranged-tank-base64", action="store_true",
+                        help="вывести JSON шести оптимизированных ranged/tank разновидностей элиты")
+    parser.add_argument("--install-elite-ranged-tank", action="store_true",
+                        help="добавить шесть ranged/tank разновидностей элиты в автономный HTML")
     args = parser.parse_args()
+
+    elite_sources = {
+        "frostWolf": args.ice_wolf,
+        "toxicRunner": args.toxic_runner,
+        "cursedRogue": args.cursed_rogue,
+        "skeletonWarrior": args.skeleton_warrior,
+        "blightGrunt": args.blight_grunt,
+        "boneGargoyle": args.bone_gargoyle,
+    }
+    if args.emit_elite_variant_base64 or args.install_elite_variants:
+        missing = [key for key, path in elite_sources.items() if not path]
+        if missing:
+            parser.error("elite variants: отсутствуют " + ", ".join(missing))
+        generated = {key: elite_variant_sheet(path) for key, path in elite_sources.items()}
+        payload = {key: base64.b64encode(data).decode("ascii") for key, data in generated.items()}
+        if args.emit_elite_variant_base64:
+            print(json.dumps(payload, separators=(",", ":")))
+            return
+        html = HTML.read_text(encoding="utf-8")
+        body = "const ELITE_SPRITE_DATA = {\n" + "\n".join(
+            f"  {key}:'data:image/png;base64,{value}'," for key, value in payload.items()
+        ) + "\n};"
+        html, count = re.subn(r"const ELITE_SPRITE_DATA = \{.*?\n\};", body, html, flags=re.S)
+        if count != 1:
+            raise SystemExit(f"ELITE_SPRITE_DATA: ожидалась одна замена, получено {count}")
+        HTML.write_text(html, encoding="utf-8")
+        print(json.dumps({key: len(data) for key, data in generated.items()}, separators=(",", ":")))
+        return
+
+    ranged_tank_sources = {
+        "fallenPyromancer": args.pyromancer_cultist,
+        "beholderSlave": args.beholder_slave,
+        "skeletonCrossbow": args.skeleton_crossbow,
+        "forgottenGuard": args.forgotten_guard,
+        "abyssalExecutioner": args.abyssal_warden,
+        "plagueOgre": args.acid_carrier,
+    }
+    if args.emit_elite_ranged_tank_base64 or args.install_elite_ranged_tank:
+        missing = [key for key, path in ranged_tank_sources.items() if not path]
+        if missing:
+            parser.error("elite ranged/tank: отсутствуют " + ", ".join(missing))
+        generated = {key: elite_variant_sheet(path) for key, path in ranged_tank_sources.items()}
+        payload = {key: base64.b64encode(data).decode("ascii") for key, data in generated.items()}
+        if args.emit_elite_ranged_tank_base64:
+            print(json.dumps(payload, separators=(",", ":")))
+            return
+        html = HTML.read_text(encoding="utf-8")
+        html = install_object_payloads(html, "ELITE_SPRITE_DATA", payload)
+        HTML.write_text(html, encoding="utf-8")
+        print(json.dumps({key: len(data) for key, data in generated.items()}, separators=(",", ":")))
+        return
 
     if args.emit_shooter_base64:
         if not args.shooter or not args.shooter_projectile:
@@ -250,6 +424,14 @@ def main() -> None:
             parser.error("--emit-new-boss-base64: отсутствуют " + ", ".join(missing))
         payload = {key: base64.b64encode(new_boss_sheet(path)).decode("ascii")
                    for key, path in sources.items()}
+        print(json.dumps(payload, separators=(",", ":")))
+        return
+
+    if args.emit_constellation_base64:
+        if not args.constellation_sheet:
+            parser.error("--emit-constellation-base64 требует --constellation-sheet")
+        payload = {key: base64.b64encode(data).decode("ascii")
+                   for key, data in constellation_sheets(args.constellation_sheet).items()}
         print(json.dumps(payload, separators=(",", ":")))
         return
 

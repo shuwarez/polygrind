@@ -16,6 +16,10 @@ ok('интерфейс содержит обе случайные кнопки �
 ok('меню не обновляется из update() и строится только при открытии',
   !/function update\(dt\)[\s\S]*?function [^(]+\([^)]*\)\s*\{/.exec(html)?.[0].includes('renderSpawnMenu') &&
   (html.match(/renderSpawnMenu\(\)/g)||[]).length===2);
+ok('Spawn Menu строит отдельную строку для каждой разновидности элиты',
+  /Object\.keys\(ELITE_VARIANTS\).*data-spawn-elite/.test(html));
+ok('кнопки отдельных элит подключены к debugSpawnEliteVariant',
+  /querySelectorAll\('\[data-spawn-elite\]'\)/.test(html) && /debugSpawnEliteVariant\(el\.dataset\.spawnElite\)/.test(html));
 
 { const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys');
   const G=c.__api.G;
@@ -41,6 +45,22 @@ ok('меню не обновляется из update() и строится то�
     const d=Math.hypot(e.x-G.player.x,e.y-G.player.y);
     return d>=100 && d<=250 && Math.abs(e.x)<=1500-e.r && Math.abs(e.y)<=1500-e.r;
   })); }
+
+{ const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys');
+  const G=c.__api.G, ids=['frostWolf','toxicRunner','cursedRogue','skeletonWarrior','blightGrunt','boneGargoyle',
+    'fallenPyromancer','beholderSlave','skeletonCrossbow','forgottenGuard','abyssalExecutioner','plagueOgre'];
+  const expected={frostWolf:'runner',toxicRunner:'runner',cursedRogue:'runner',skeletonWarrior:'blob',blightGrunt:'blob',boneGargoyle:'blob',
+    fallenPyromancer:'shooter',beholderSlave:'shooter',skeletonCrossbow:'shooter',forgottenGuard:'tank',abyssalExecutioner:'tank',plagueOgre:'tank'};
+  const made=[];
+  for (const id of ids){
+    const e=c.debugSpawnEliteVariant(id); made.push(e);
+    ok('отдельная элита '+id+' создаётся точной разновидностью',e&&e.kind==='elite'&&e.eliteVariant===id&&e.typeKey===expected[id]&&!e.pack);
+  }
+  ok('все отдельные элиты появляются в 100–250 px и внутри арены',made.every(e=>{
+    const d=Math.hypot(e.x-G.player.x,e.y-G.player.y);
+    return d>=100&&d<=250&&Math.abs(e.x)<=1500-e.r&&Math.abs(e.y)<=1500-e.r;
+  }));
+  ok('неизвестный id отдельной элиты безопасно отклоняется',c.debugSpawnEliteVariant('missingElite')===null); }
 
 { const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys');
   const G=c.__api.G, ids=['lich','goat','plague','greed','executioner','tyrant','grave','behemoth',

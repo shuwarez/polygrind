@@ -1,7 +1,9 @@
 /* Постоянная мета-прогрессия созвездий: счётчики, ранги и три награды. */
 const {loadGame} = require('./sim');
+const fs = require('fs');
 const ok = (nm, cond, det) => console.log((cond?'  \u2713 ':'  \u2717 ') + nm.padEnd(50) + (det||''));
 const c = loadGame('./PolyGrind.html'), C = c.__api.CONSTELLATIONS, S = c.__api.STORE;
+const source = fs.readFileSync('./PolyGrind.html','utf8');
 const ids = ['runner','blob','tank','shooter','elite','boss'];
 
 ok('каталог: шесть согласованных созвездий',
@@ -79,3 +81,17 @@ cs.kills.runner=100; c.constellationScreen(()=>{}); html=c.document.getElementBy
 ok('готовый ранг показывает кнопку открытия', html.includes('data-const-id="runner"') && html.includes('>ОТКРЫТЬ РАНГ</button>'));
 cs.ranks.runner=10; c.constellationScreen(()=>{}); html=c.document.getElementById('ov').innerHTML;
 ok('максимальный ранг показывает полный бонус', html.includes('СОЗВЕЗДИЕ ЗАВЕРШЕНО · +50%'));
+
+const constellationPng = key => {
+  const m=source.match(new RegExp(key+":'data:image/png;base64,([^']+)'"));
+  const b=m ? Buffer.from(m[1],'base64') : Buffer.alloc(0);
+  return b.length>=26 ? {bytes:b.length,w:b.readUInt32BE(16),h:b.readUInt32BE(20),color:b[25]} : {bytes:0};
+};
+const elitePng=constellationPng('elite'), bossPng=constellationPng('boss');
+ok('элита и босс получили отдельные прозрачные листы 4×48',
+  elitePng.w===192 && elitePng.h===48 && bossPng.w===192 && bossPng.h===48);
+ok('листы созвездий индексированы в 16 цветов и весят меньше 6 КБ',
+  elitePng.color===3 && bossPng.color===3 && elitePng.bytes+bossPng.bytes<6000,
+  (elitePng.bytes+bossPng.bytes)+' байт');
+ok('рядовые созвездия переиспользуют игровые листы и анимируют четыре кадра',
+  source.includes('const regular = ENEMY_SPRITE_META[it.id]') && source.includes('Math.floor(t*6') && source.includes('g.drawImage(sprite,frame*frameSize'));

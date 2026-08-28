@@ -69,20 +69,19 @@ const ok = (nm, cond, det) => console.log((cond ? '  ✓ ' : '  ✗ ') + nm.padE
     const bosses = G.enemies.filter(e => e.kind === 'boss');
     return {f, bosses, text:f + ':' + bosses.length + 'x' + (bosses[0] ? bosses[0].aff.length : 0)};
   };
-  const early = [5,10,15,20,25,30].map(inspect);
-  ok('боссы 5–30: 1x1, 2x1, 1x2, 2x2, 1x3, 2x3',
-     early.map(x => x.text).join(',') === '5:1x1,10:2x1,15:1x2,20:2x2,25:1x3,30:2x3',
+  const early = [3,6,9,10,13,16,19,20].map(inspect);
+  ok('сетка X3/X6/X9/X0 создаёт 1/2/3/4 боссов',
+     early.map(x => x.bosses.length).join(',') === '1,2,3,4,1,2,3,4',
      early.map(x => x.text).join(' · '));
-  const late = [35,40,45,50,55,60,65,70,75,80].map(inspect);
-  ok('прогрессия продолжается парами до восьми аффиксов',
-     late.map(x => x.text).join(',') === '35:1x4,40:2x4,45:1x5,50:2x5,55:1x6,60:2x6,65:1x7,70:2x7,75:1x8,80:2x8',
-     late.map(x => x.text).join(' · '));
-  const end = late[late.length-1];
-  ok('80-й этаж: оба босса получают весь каталог', end.bosses.length === 2 &&
+  ok('аффиксы растут по десяткам, а 30-й этаж делает скачок к четырём',
+     [23,26,29,30,40].map(inspect).map(x => x.text).join(',') ===
+       '23:1x3,26:2x3,29:3x3,30:4x4,40:4x5');
+  const end = inspect(80);
+  ok('80-й этаж: четыре босса получают весь каталог', end.bosses.length === 4 &&
      end.bosses.every(b => b.aff.length === totalAffixes && new Set(b.aff.map(a => a.id)).size === totalAffixes),
      totalAffixes + ' аффиксов у каждого');
-  const plateau = inspect(85);
-  ok('после 80-го остаются два босса со всеми аффиксами', plateau.bosses.length === 2 &&
+  const plateau = inspect(100);
+  ok('после 80-го потолок остаётся восемь аффиксов', plateau.bosses.length === 4 &&
      plateau.bosses.every(b => b.aff.length === totalAffixes), plateau.text); }
 
 { const c = loadGame('./PolyGrind.html'); c.newGame('bow', 'keys');

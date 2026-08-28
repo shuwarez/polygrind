@@ -1,0 +1,47 @@
+/* Визуальная реакция игрока на урон: пороги, длительности и поглощение. */
+const {loadGame} = require('./sim');
+const fs = require('fs');
+const ok = (nm, cond, det) => console.log((cond ? '  ✓ ' : '  ✗ ') + nm.padEnd(54) + (det || ''));
+
+function fresh(){ const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys'); return c; }
+function hit(c, amount){ c.hurt(amount,true,false,'ТЕСТОВЫЙ УДАР'); return c.__api.G; }
+function shake(G){ return G.fx.find(f=>f.t==='shake'); }
+function number(G){ return G.fx.find(f=>f.t==='hurtNum'); }
+
+{ const c=fresh(), G=hit(c,4), p=G.player, s=shake(G);
+  ok('слабый удар: flash 60 мс и shake 2.5 px', p.hitFlash===0.06 && s.amp===2.5 && s.life===0.08,
+    p.hitFlash.toFixed(3)+'с · '+s.amp+'px');
+  ok('слабый удар: нет hit-stop', G.hitStop===0);
+  ok('слабый удар: четыре короткие Canvas-частицы', G.parts.length===4 && G.parts.every(q=>q.max>=0.10 && q.max<=0.20),
+    G.parts.length+' част.'); }
+
+{ const c=fresh(), G=hit(c,10), s=shake(G);
+  ok('средний удар: shake 3 px на 100 мс', s.amp===3 && s.life===0.10,
+    s.amp+'px · '+s.life.toFixed(2)+'с');
+  ok('средний удар: виньетка сильнее слабой', G.hurtVignette===0.125 && G.hurtVignetteOpacity>0.25 && G.hitStop===0,
+    'opacity '+G.hurtVignetteOpacity.toFixed(2)); }
+
+{ const c=fresh(), G=hit(c,20), p=G.player, s=shake(G), n=number(G);
+  ok('сильный удар: shake 5.5 px и hit-stop 30 мс', s.amp===5.5 && s.life===0.135 && G.hitStop===0.03,
+    s.amp+'px · stop '+G.hitStop.toFixed(2)+'с');
+  ok('сильный удар: крупная цифра живёт 400 мс', n && n.v==='-20' && n.life===0.4 && n.max===0.4,
+    n && n.v);
+  ok('сильный удар: шесть частиц и 150 мс HP-flash', G.parts.length===6 && p.hpFlash===0.15,
+    G.parts.length+' част.');
+  ok('HP-хвост хранит уровень до попадания', p.hpLag===1 && p.hp/c.__api.D.life<0.82,
+    Math.round(p.hpLag*100)+'% → '+Math.round(p.hp/c.__api.D.life*100)+'%'); }
+
+{ const c=fresh(), G=hit(c,40), s=shake(G);
+  ok('максимальный удар: shake 7.5 px и hit-stop 40 мс', s.amp===7.5 && s.life===0.15 && G.hitStop===0.04,
+    s.amp+'px · stop '+G.hitStop.toFixed(2)+'с');
+  const time=G.time; c.render=()=>{}; c.loop(16);
+  ok('hit-stop замораживает action, но отсчитывается по RAF', G.time===time && G.hitStop<0.04,
+    'action '+G.time.toFixed(3)+' · осталось '+G.hitStop.toFixed(3)+'с'); }
+
+{ const c=fresh(), G=c.__api.G, p=G.player;
+  p.barrier=20; c.hurt(10,true,false,'ПОГЛОЩЕНО');
+  ok('полностью поглощённый удар не запускает feedback', p.hp===c.__api.D.life && !number(G) && !shake(G) && G.hurtVignette===0); }
+
+{ const html=fs.readFileSync('./PolyGrind.html','utf8');
+  ok('HUD содержит белый хвост и класс вспышки HP-бара', /id="hpbar"><b><\/b><i/.test(html) && /#hpbar\.hurt/.test(html));
+  ok('виньетка рисуется экранным radial gradient', /hurtVignette > 0/.test(html) && /createRadialGradient\(W\/2,H\/2/.test(html)); }
