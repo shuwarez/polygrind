@@ -11,6 +11,14 @@ function mk(dbl=0, deadly=false){
   return {c,G,D:c.__api.D};
 }
 
+function plague(chance=0){
+  const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys','hunter');
+  const G=c.__api.G;
+  if (chance) G.bag.add('explode','chance',chance);
+  c.recalc();
+  return {c,G,D:c.__api.D};
+}
+
 function neutralHit(deadly=true){
   const o=mk(25,deadly), {c,G,D}=o;
   const e=c.spawnEnemy(); G.enemies=[e]; G.spawnQueue=0;
@@ -68,3 +76,17 @@ function neutralHit(deadly=true){
   finally { Math.random=old; }
   // Удар свиты наносит 50 из-за MINION_DAMAGE_MULT, затем снимает 25% от 950.
   ok('каждая атака свиты тоже получает 1%-бросок', Math.abs(e.hp-712.5)<1e-9, 'HP '+e.hp); }
+
+console.log('ЧУМНЫЙ ВЗРЫВ');
+{ const {c}=plague(), m=c.__api.MODS.find(x=>x.id==='shape.explode_on_kill');
+  ok('синяя карточка: 3–7%, целые значения, потолок 25%',
+    m.rar===1 && m.r[0]===3 && m.r[1]===7 && m.int===true && m.cap===25); }
+{ const {c,G}=plague(23), m=c.__api.MODS.find(x=>x.id==='shape.explode_on_kill');
+  ok('последняя карточка чумы обрезается до остатка',
+    c.rollModValue(m,()=>0.999999)===2 && G.bag.flat('explode')===23); }
+{ const {c,D}=plague(100), m=c.__api.MODS.find(x=>x.id==='shape.explode_on_kill');
+  ok('механический потолок чумного взрыва 25%, затем карта уходит', D.explode===25 && D.explodeBase===25 && m.hide()); }
+{ const a=plague(24), b=plague(25);
+  const ma=a.c.__api.MODS.find(x=>x.id==='shape.explode_mega');
+  const mb=b.c.__api.MODS.find(x=>x.id==='shape.explode_mega');
+  ok('МЕГА-чумной взрыв открывается на новом потолке 25%', !ma.show() && mb.show()); }

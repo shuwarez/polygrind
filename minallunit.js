@@ -28,24 +28,25 @@ const procRate = (o, reset, active, n=600) => {
   return procs/n;
 };
 const quarter = v => v > 0.17 && v < 0.33;
+const quarterOfCap = v => v > 0.02 && v < 0.11;
 
 console.log('СТАТУСЫ ОТ УДАРА СВИТЫ');
-{ const o = mk([['igniteCh',100]]);
+{ const o = mk([['igniteCh',25]]);
   const r = procRate(o, ()=>{ o.e.dots.fire.dps=0; o.e.dots.fire.n=0; }, ()=>o.e.dots.fire.dps>0);
-  ok('поджог: 100% хозяина → около 25% у свиты', quarter(r), Math.round(r*100) + '%'); }
-{ const o = mk([['chillCh',100]]);
+  ok('поджог: 25% хозяина → около 6,25% у свиты', quarterOfCap(r), Math.round(r*100) + '%'); }
+{ const o = mk([['chillCh',25]]);
   const r = procRate(o, ()=>{ o.e.ail.chill=0; }, ()=>o.e.ail.chill>0);
-  ok('охлаждение: 100% хозяина → около 25%', quarter(r), Math.round(r*100) + '%'); }
-{ const o = mk([['chillCh',100],['freeze',1]]);
+  ok('охлаждение: 25% хозяина → около 6,25%', quarterOfCap(r), Math.round(r*100) + '%'); }
+{ const o = mk([['chillCh',25],['freeze',1]]);
   const r = procRate(o, ()=>{ o.e.ail.chill=0; o.e.ail.freeze=0; }, ()=>o.e.ail.freeze>0);
-  ok('заморозка: 100% хозяина → около 25%', quarter(r), Math.round(r*100) + '%'); }
-{ const o = mk([['shockCh',100]]);
+  ok('заморозка: отдельный 1% после редкого охлаждения свиты', r < 0.01, (r*100).toFixed(2) + '%'); }
+{ const o = mk([['shockCh',25]]);
   const other = o.c.spawnEnemy(); other.maxHp = other.hp = 1e9; other.x = o.e.x+60; other.y = o.e.y;
   const r = procRate(o, ()=>{ o.e.ail.shock=0; }, ()=>o.e.ail.shock>0);
-  ok('шок: 100% хозяина → около 25%', quarter(r) && other.hp < other.maxHp, Math.round(r*100) + '%'); }
-{ const o = mk([['poiCh',100]]);
+  ok('шок: 25% хозяина → около 6,25%', quarterOfCap(r) && other.hp < other.maxHp, Math.round(r*100) + '%'); }
+{ const o = mk([['poiCh',25]]);
   const r = procRate(o, ()=>{ o.e.dots.poison.dps=0; o.e.dots.poison.n=0; }, ()=>o.e.dots.poison.dps>0);
-  ok('яд: 100% хозяина → около 25%', quarter(r), Math.round(r*100) + '%'); }
+  ok('яд: 25% хозяина → около 6,25%', quarterOfCap(r), Math.round(r*100) + '%'); }
 { const o = mk([['stun',100]]);
   const r = procRate(o, ()=>{ o.e.ail.stun=0; }, ()=>o.e.ail.stun>0);
   ok('оглушение: 100% хозяина → около 25%', quarter(r), Math.round(r*100) + '%'); }
@@ -99,7 +100,7 @@ console.log('БАЛАНС ВСЕЙ СВИТЫ');
     o.e.dots.fire.dps=0; o.e.dots.fire.n=0;
     if (o.c.applyMinionSpell(o.e, 'fire')){ procs++; dps = o.e.dots.fire.dps; }
   }
-  const expected = o.c.avgHit()*0.20*0.5*0.25*o.D.ailEff;
+  const expected = o.c.avgHit()*0.20*0.5*0.20*o.D.ailEff;
   ok('колдун: шанс эффекта 25% и половина урона', procs > 102 && procs < 198 && Math.abs(dps/expected-1)<0.001,
      Math.round(procs/6) + '% · ' + dps.toFixed(2) + ' урона/сек'); }
 { const o = mk([]); o.D.golemN = 1; let procs = 0, dps = 0;

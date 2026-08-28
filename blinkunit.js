@@ -39,7 +39,7 @@ function foe(o, dx, dy){
   o.c.minionBlink(o.m, e, DT);
   ok('взрыв бьёт цель и соседа', e.hp < h0 && near.hp < h1);
   ok('дальнего не задевает', far.hp === h2, 'радиус ' + Math.round(60*o.D.aoeR)); }
-{ const o = mk([['minBlink',1],['igniteCh',100]]);
+{ const o = mk([['minBlink',1],['igniteCh',25]]);
   const e = foe(o, 400);
   let procs = 0;
   for (let i=0;i<600;i++){
@@ -48,7 +48,7 @@ function foe(o, dx, dy){
     if (e.dots.fire.dps > 0) procs++;
   }
   const rate = procs/600;
-  ok('взрыв разносит эффекты с шансом свиты', rate > 0.17 && rate < 0.33,
+  ok('взрыв разносит эффекты с шансом свиты', rate > 0.02 && rate < 0.11,
      Math.round(rate*100) + '%'); }
 { const o = mk([['minBlink',1]]);
   const e = foe(o, 400);

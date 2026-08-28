@@ -16,23 +16,25 @@ console.log('ОБЩИЕ СНАРЯДЫ МАГА');
 { const c=loadGame('./PolyGrind.html');
   const all=c.__api.SUBCLASSES.wand;
   ok('описания всех трёх подклассов сообщают общий бонус',
-     all.length===3 && all.every(s=>s.desc.includes('+1 снаряд каждые 10 уровней'))); }
+     all.length===3 && all.every(s=>s.desc.includes('+1 снаряд каждые 15 уровней'))); }
 
 for (const [id,nm] of [['destroyer','Разрушитель'],['multiplier','Мультипликатор'],['elementalist','Элементалист']]){
-  const n9=mage(id,9).D.projN, n10=mage(id,10).D.projN;
-  ok(nm + ': общий бонус начинается ровно на 10-м уровне', n9===1 && n10===2,
-     n9 + ' → ' + n10);
+  const n14=mage(id,14).D.projN, n15=mage(id,15).D.projN;
+  ok(nm + ': общий бонус начинается ровно на 15-м уровне', n14===1 && n15===2,
+     n14 + ' → ' + n15);
 }
 
-{ const d=mage('destroyer',20).D.projN, e=mage('elementalist',20).D.projN;
-  ok('на 20-м Разрушитель и Элементалист получают общие +2', d===3 && e===3,
+{ const d=mage('destroyer',30).D.projN, e=mage('elementalist',30).D.projN;
+  ok('на 30-м Разрушитель и Элементалист получают общие +2', d===3 && e===3,
      d + ' / ' + e + ' снаряда'); }
 { const m=mage('multiplier',20).D.projN;
-  ok('Мультипликатор сохраняет собственный бонус поверх общего', m===4,
+  ok('Мультипликатор сохраняет собственный бонус поверх общего', m===3,
      m + ' снаряда на 20-м уровне'); }
-{ const m=mage('multiplier',20,2).D.projN;
-  ok('карточки дополнительных снарядов также складываются сверху', m===6,
-     m + ' снарядов с +2 от карточек'); }
+{ const c=loadGame('./PolyGrind.html');
+  const mod=c.__api.MODS.find(m=>m.id==='shape.proj_count');
+  ok('карточка дополнительных снарядов исключена из пула Мага',
+     JSON.stringify(mod.wep)==='["proj"]' && mod.noMin===true,
+     'доступ: ' + JSON.stringify(mod.wep)); }
 { const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys','hunter');
   c.__api.G.lvl=20; c.recalc();
   ok('общий бонус не распространяется на другие классы', c.__api.D.projN===1,

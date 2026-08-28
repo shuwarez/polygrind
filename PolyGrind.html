@@ -451,7 +451,7 @@ const EN_WORLD = [
   ["УВОРОТ", "EVASION"], ["+1% шанса уворота за уровень, потолок 70%.", "+1% Evasion Chance per level, capped at 70%."],
   ["ЗАРЯДЫ РЫВКА", "DASH CHARGES"], ["Дополнительный заряд рывка. Базовый один, максимум три; каждый заряд восстанавливается 5 секунд.", "Adds a Dash charge. You start with one and can have up to three; each charge takes 5 seconds to recover."],
   ["БЫСТРЫЙ СБОР", "QUICK PICKUP"], ["+20% к радиусу и скорости притяжения опыта и золота за ранг. На 10-м ранге они летят к вам с тройной скоростью из втрое большей дальности.", "+20% experience and gold attraction radius and speed per rank. At rank 10, they fly toward you three times faster from three times farther away."],
-  ["ИСКАТЕЛЬ РЕЛИКВИЙ", "RELIC SEEKER"], ["+1 процентный пункт к шансу выпадения предмета за ранг. Максимум +10 п.п.: обычный враг 0,4% → 10,4%, элита 2% → 12%, босс 16% → 26%. Дорогая QoL-ветка, не добавляет силу напрямую.", "+1 percentage point to item drop chance per rank. Maximum +10 points: normal enemy 0.4% → 10.4%, elite 2% → 12%, boss 16% → 26%. An expensive quality-of-life branch that grants no direct power."],
+  ["ИСКАТЕЛЬ РЕЛИКВИЙ", "RELIC SEEKER"], ["Повышает шанс любой случайной находки примерно на 0,38 процентного пункта за ранг. На максимуме: обычный враг 0,15% → 3,99%, элита 0,77% → 4,60%, босс 6,13% → 9,97%. Дорогая QoL-ветка, не добавляет силу напрямую.", "Increases the chance of any random find by about 0.38 percentage points per rank. At maximum rank: normal enemy 0.15% → 3.99%, elite 0.77% → 4.60%, boss 6.13% → 9.97%. An expensive quality-of-life branch that grants no direct power."],
   ["ПЕРВЫЙ ШАГ", "FIRST STEP"], ["В начале каждой новой партии даёт одно дополнительное повышение уровня за ранг. На максимуме выбираете пять модификаторов до первого боя.", "At the start of every new run, grants one additional level-up per rank. At maximum rank, you choose five modifiers before the first fight."],
   ["ЧЕТВЁРТАЯ КАРТА", "FOURTH CARD"], ["При повышении уровня показывать четыре модификатора вместо трёх. Действует всю партию, на каждом уровне.", "Shows four modifiers instead of three whenever you level up. Active for the entire run at every level."],
   ["ВЕСЬ УРОН", "ALL DAMAGE"], ["+1% ко всему урону: оружие, стихии, свита, поджог, яд, кровотечение. Складывается в общий процент вместе с карточками.", "+1% to all damage: weapons, elements, minions, Ignite, Poison, and Bleeding. Added to the same increased-damage total as cards."],
@@ -677,8 +677,8 @@ const EN_TEXT = Object.freeze(Object.fromEntries([
   ["Урон в размере % от HP врага", "Damage Equal to % of Enemy HP"],
   ["работает против жирных боссов", "effective against high-health bosses"],
   ["Добивание ниже X% HP", "Execute Below X% HP"],
-  ["Сужение разброса урона", "Tighter Damage Range"],
-  ["меньше казино, стабильнее ДПС", "less randomness, more consistent DPS"],
+  ["Надёжный удар", "Reliable Hit"],
+  ["минимальный урон приближается к максимальному; максимум не снижается", "minimum damage moves toward maximum damage; maximum damage is unchanged"],
   ["Урон считается дважды, берётся лучшее", "Roll Damage Twice, Keep the Better Roll"],
   ["+N% к шансу крита", "+N% Critical Hit Chance"], ["+% к шансу крита", "+% Critical Hit Chance"],
   ["Множитель критического урона", "Critical Damage Multiplier"], ["СВЕРХКРИТ", "SUPER CRITICAL"],
@@ -686,7 +686,7 @@ const EN_TEXT = Object.freeze(Object.fromEntries([
   ["Ударная волна при крите", "Critical Shockwave"], ["Шанс крита считается дважды", "Roll Critical Chance Twice"],
   ["Скорость атаки", "Attack Speed"], ["Скорость действий (глобально)", "Global Action Speed"],
   ["Скорость передвижения", "Movement Speed"], ["Ускорение после убийства", "Speed after Kill"],
-  ["+40% скорости на 2 сек", "+40% speed for 2 sec"],
+  ["+25% скорости на 0,8 сек", "+25% speed for 0.8 sec"],
 
   /* Карточки: геометрия и стихии */
   ["Доп. снаряды", "Additional Projectiles"], ["один из сильнейших модификаторов", "one of the strongest modifiers"],
@@ -694,11 +694,11 @@ const EN_TEXT = Object.freeze(Object.fromEntries([
   ["Самонаведение", "Homing"], ["Скорость снарядов", "Projectile Speed"], ["Размер снарядов", "Projectile Size"],
   ["Радиус области действия", "Area of Effect Radius"], ["Дуга рассекающего удара", "Cleave Arc"],
   ["Шанс чумного взрыва трупа", "Chance for Corpse Plague Explosion"],
-  ["заражает ближайшую толпу чумой", "infects the nearby crowd with plague"],
+  ["заражает ближайшую толпу чумой · суммарный потолок 25%", "infects the nearby crowd with plague · total cap 25%"],
   ["Шанс МЕГА-чумного взрыва", "Chance for MEGA Plague Explosion"],
   ["вдвое больший радиус чумы; заражает всю задетую толпу", "double plague radius; infects the entire crowd caught in the blast"],
   ["Шанс двойного попадания", "Double Hit Chance"], ["СМЕРТОНОСНОЕ ПОПАДАНИЕ", "DEADLY HIT"],
-  ["случайно +5…15%; суммарный потолок 25%", "random +5–15%; total cap 25%"],
+  ["суммарный потолок 25%", "total cap 25%"],
   ["каждая атака имеет 1% шанс снять 25% текущего HP цели", "each attack has a 1% chance to remove 25% of the target's current HP"],
   ["ДРОБОВИК", "SHOTGUN"], ["снаряды летят тугим пучком — весь залп ложится в одну цель", "projectiles fly in a tight cluster, allowing the entire volley to hit one target"],
   ["ЭКО-ОТСКОКИ", "ECHO CHAINS"], ["отскоки перестают терять 25% урона на каждом прыжке", "chained hits no longer lose 25% damage with each jump"],
@@ -707,24 +707,27 @@ const EN_TEXT = Object.freeze(Object.fromEntries([
   ["Круговой орб", "Orbiting Orb"], ["кружок вращается вокруг вас и бьёт всё, чего коснётся, на 15% от автоатаки — со всеми модификаторами. До 10 штук", "an orb circles you and hits everything it touches for 15% of your basic attack, including all modifiers. Up to 10 orbs"],
   ["Рикошет от стен", "Wall Ricochet"],
   ["+N к урону: Огонь", "+N Fire Damage"], ["+% к урону: Огонь", "+% Fire Damage"],
-  ["Шанс наложить: Поджог", "Chance to Ignite"], ["горение тикает уроном по площади", "burning deals area damage over time"],
+  ["Шанс наложить: Поджог", "Chance to Ignite"], ["поджог наносит 20% полного удара в секунду в течение 3 секунд", "Ignite deals 20% of the full hit per second for 3 seconds"],
   ["ИНФЕРНО", "INFERNO"], ["горящие враги поджигают всех вокруг себя на 3 секунды — пожар идёт по толпе сам", "burning enemies ignite everything around them for 3 seconds, letting the fire spread through the crowd"],
   ["+N к урону: Холод", "+N Cold Damage"], ["+% к урону: Холод", "+% Cold Damage"],
-  ["Шанс наложить: Охлаждение", "Chance to Chill"], ["цель замедлена на 35% и принимает на 25% больше урона; соседи рядом с ней тоже вязнут", "the target is slowed by 35% and takes 25% more damage; nearby enemies are slowed as well"],
-  ["ЗАМОРОЗКА", "FREEZE"], ["охлаждение вмораживает цель в пол: полная остановка на 1.4 сек", "Chill freezes the target in place, stopping it completely for 1.4 sec"],
+  ["Шанс наложить: Охлаждение", "Chance to Chill"], ["на 0,5 сек: −15% скорости, +10% входящего урона и дополнительный удар на 10%; соседи замедляются на 5%", "for 0.5 sec: −15% speed, +10% damage taken, and an extra hit for 10%; nearby enemies are slowed by 5%"],
+  ["ЗАМОРОЗКА", "FREEZE"], ["каждое охлаждение имеет 1% шанс полностью остановить цель на 1 секунду; замороженная цель получает ещё +10% урона", "each Chill has a 1% chance to stop the target completely for 1 second; a frozen target takes an additional 10% damage"],
   ["+N к урону: Молния", "+N Lightning Damage"], ["широкий разброс", "wide damage range"], ["+% к урону: Молния", "+% Lightning Damage"],
-  ["Шанс разряда молнии", "Lightning Discharge Chance"], ["разряд бьёт по ближайшим врагам, а цель получает Шок: +30% входящего урона", "the discharge strikes nearby enemies and Shocks the target, causing it to take 30% more damage"],
+  ["Шанс разряда молнии", "Lightning Discharge Chance"], ["разряд бьёт до 5 соседей на 15% удара, а Шок на 1 секунду даёт цели +10% входящего урона", "the discharge strikes up to 5 nearby enemies for 15% of the hit, while Shock makes the target take 10% more damage for 1 second"],
+  ["ТЕСЛА", "TESLA"], ["разряд бьёт до 20 соседей на 25% силы удара", "the discharge strikes up to 20 nearby enemies for 25% of the hit"],
   ["+N к урону: Яд", "+N Poison Damage"], ["+% к урону: Яд", "+% Poison Damage"],
   ["Шанс наложить: Отравление", "Chance to Poison"], ["стакается, не тратит время боя", "stacks without consuming attack time"],
-  ["РАДИАЦИЯ", "RADIATION"], ["каждое отравление кладёт сразу два стака, потолок стаков 20 → 40", "each Poison applies two stacks at once; maximum stacks increase from 20 to 40"],
+  ["РАДИАЦИЯ", "RADIATION"], ["удваивает урон каждого прока яда: 30% полного удара в секунду вместо 15%", "doubles the damage of every Poison proc: 30% of the full hit per second instead of 15%"],
   ["Сила всех негативных эффектов", "All Ailment Effect"],
-  ["<b>Формула:</b> урон эффекта × (1 + бонус / 100). Усиливает урон поджога, яда, кровотечения, разряда от шока и огненного следа.<br><b>Пример:</b> +36% превращает 100 урона/сек в 136 урона/сек.<br><b>Не влияет:</b> на шанс наложения, длительность, радиус, прямой урон атаки, силу замедления и кислоту Веномансера.", "<b>Formula:</b> ailment damage × (1 + bonus / 100). Increases damage from Ignite, Poison, Bleeding, Shock discharge, and the burning trail.<br><b>Example:</b> +36% turns 100 damage/sec into 136 damage/sec.<br><b>Does not affect:</b> application chance, duration, radius, direct attack damage, slow strength, or Venomancer acid."],
+  ["<b>Формула:</b> урон эффекта × (1 + бонус / 100). Усиливает урон поджога, яда, кровотечения, дополнительный урон охлаждения, разряд шока и огненный след.<br><b>Пример:</b> +36% превращает 100 урона/сек в 136 урона/сек.<br><b>Не влияет:</b> на шанс наложения, длительность, радиус, прямой урон атаки, силу замедления и кислоту Веномансера.", "<b>Formula:</b> ailment damage × (1 + bonus / 100). Increases damage from Ignite, Poison, Bleeding, Chill's extra hit, Shock discharge, and the burning trail.<br><b>Example:</b> +36% turns 100 damage/sec into 136 damage/sec.<br><b>Does not affect:</b> application chance, duration, radius, direct attack damage, slow strength, or Venomancer acid."],
   ["Длительность всех эффектов", "All Ailment Duration"],
   ["<b>Формула:</b> длительность × (1 + бонус / 100). Продлевает поджог, яд, кровотечение, охлаждение, заморозку, шок, оглушение и головокружение.<br><b>Пример:</b> +50% превращает обычный поджог 3 сек в 4,5 сек, яд 4 сек — в 6 сек, кровотечение 6 сек — в 9 сек.<br><b>Не продлевает:</b> кислоту Веномансера, лужи, снаряды и время действия предметов.", "<b>Formula:</b> duration × (1 + bonus / 100). Extends Ignite, Poison, Bleeding, Chill, Freeze, Shock, Stun, and Daze.<br><b>Example:</b> +50% turns a 3-sec Ignite into 4.5 sec, a 4-sec Poison into 6 sec, and a 6-sec Bleed into 9 sec.<br><b>Does not extend:</b> Venomancer acid, pools, projectiles, or item effect durations."],
 
   /* Карточки: условия, защита, контроль, прогрессия */
   ["Урон по раненым врагам", "Damage to Injured Enemies"], ["цель ниже 35% HP", "target is below 35% HP"],
-  ["Урон по врагам на полном HP", "Damage to Enemies at Full HP"], ["Урон по боссам и элите", "Damage to Bosses and Elites"],
+  ["Урон по врагам на полном HP", "Damage to Enemies at Full HP"],
+  ["пример без других бонусов: +30% превращает первый удар на 100 в 130 урона; после этого цель уже не на полном HP и бонус отключается", "example without other bonuses: +30% turns the first 100-damage hit into 130 damage; after that the target is no longer at Full HP and the bonus turns off"],
+  ["Урон по боссам и элите", "Damage to Bosses and Elites"],
   ["Урон в движении", "Damage while Moving"], ["Урон при стоянии на месте", "Damage while Stationary"], ["турель-архетип", "turret archetype"],
   ["Урон при малом здоровье", "Damage at Low Health"], ["высокий риск: ниже 35% своего HP", "high risk: while below 35% of your HP"],
   ["Урон за каждого врага рядом", "Damage per Nearby Enemy"], ["считает до 8 целей в радиусе 220 — в толпе даёт максимум", "counts up to 8 targets within 220 range, reaching its maximum in a crowd"],
@@ -792,14 +795,14 @@ const EN_TEXT = Object.freeze(Object.fromEntries([
   ["СТРАЖ", "GUARDIAN"], ["+0,75% максимального здоровья за уровень. Круговая волна, задевшая хотя бы трёх врагов, даёт барьер на 6% здоровья; перезарядка 4 сек.", "+0.75% Maximum Health per level. A circular wave that hits at least three enemies grants a barrier equal to 6% of Maximum Health; 4 sec cooldown."],
   ["МАСТЕР МЕЧА", "SWORDMASTER"], ["+1% к радиусу круговой волны и +1,5% к силе её отбрасывания за уровень, до +60% и +90%. С 30-го уровня волна оглушает обычных врагов на 0,35 сек.", "+1% circular wave radius and +1.5% wave knockback force per level, capped at +60% and +90%. From level 30, the wave Stuns normal enemies for 0.35 sec."],
   ["БАРЬЕР СТРАЖА", "GUARDIAN BARRIER"],
-  ["МАГ РАЗРУШЕНИЯ", "DESTRUCTION MAGE"], ["+1% ко всем радиусам за уровень. Как и любой Маг, получает +1 снаряд каждые 10 уровней.", "+1% to all radii per level. Like every Mage, gains +1 projectile every 10 levels."],
-  ["МАГ МУЛЬТИПЛИКАЦИИ", "MULTIPLICATION MAGE"], ["+1 дополнительный снаряд каждые 20 уровней. Как и любой Маг, получает +1 снаряд каждые 10 уровней; бонусы складываются.", "+1 additional projectile every 20 levels. Like every Mage, gains +1 projectile every 10 levels; the bonuses stack."],
-  ["МАГ ЭЛЕМЕНТАЛИСТ", "ELEMENTALIST MAGE"], ["+1% к урону огнём, холодом, молнией и ядом за уровень. Как и любой Маг, получает +1 снаряд каждые 10 уровней.", "+1% Fire, Cold, Lightning, and Poison damage per level. Like every Mage, gains +1 projectile every 10 levels."],
+  ["МАГ РАЗРУШЕНИЯ", "DESTRUCTION MAGE"], ["+1% ко всем радиусам за уровень. Как и любой Маг, получает +1 снаряд каждые 15 уровней.", "+1% to all radii per level. Like every Mage, gains +1 projectile every 15 levels."],
+  ["МАГ МУЛЬТИПЛИКАЦИИ", "MULTIPLICATION MAGE"], ["+1 дополнительный снаряд каждые 20 уровней. Как и любой Маг, получает +1 снаряд каждые 15 уровней; бонусы складываются.", "+1 additional projectile every 20 levels. Like every Mage, gains +1 projectile every 15 levels; the bonuses stack."],
+  ["МАГ ЭЛЕМЕНТАЛИСТ", "ELEMENTALIST MAGE"], ["+1% к урону огнём, холодом, молнией и ядом за уровень. Как и любой Маг, получает +1 снаряд каждые 15 уровней.", "+1% Fire, Cold, Lightning, and Poison damage per level. Like every Mage, gains +1 projectile every 15 levels."],
   ["ГРАБИТЕЛЬ МОГИЛ", "GRAVE ROBBER"], ["+1% скорости персонажа и свиты за уровень.", "+1% character and minion speed per level."],
   ["АНИМАТОР", "ANIMATOR"], ["+1 дополнительный скелет каждые 20 уровней.", "+1 additional Skeleton every 20 levels."],
   ["ВЕНОМАНСЕР", "VENOMANCER"], ["Павший миньон оставляет кислоту на 3 сек: 15% текущего HP цели в секунду.", "A fallen minion leaves acid for 3 sec, dealing 15% of the target's current HP per second."],
-  ["КНИГА ОГНЯ", "BOOK OF FIRE"], ["+N урона огнём всем атакам — вашим и свиты. При срабатывании поджигает: 20% от удара в секунду, 1.5 сек, стакается", "+N Fire damage to all your and your minions' attacks. On proc, Ignites for 20% of the hit per second for 1.5 sec; stacks"],
-  ["КНИГА ЛЬДА", "BOOK OF ICE"], ["+N урона холодом всем атакам. При срабатывании охлаждает цель на 1 сек", "+N Cold damage to all attacks. On proc, Chills the target for 1 sec"],
+  ["КНИГА ОГНЯ", "BOOK OF FIRE"], ["+N урона огнём всем атакам — вашим и свиты. При срабатывании поджигает: 20% от удара в секунду, 3 сек, стакается", "+N Fire damage to all your and your minions' attacks. On proc, Ignites for 20% of the hit per second for 3 sec; stacks"],
+  ["КНИГА ЛЬДА", "BOOK OF ICE"], ["+N урона холодом всем атакам. При срабатывании охлаждает на 0,5 сек и наносит ещё 10% удара", "+N Cold damage to all attacks. On proc, Chills for 0.5 sec and deals another 10% of the hit"],
   ["КНИГА ЯДА", "BOOK OF POISON"], ["При срабатывании травит: N урона каждые 0.25 сек, 3 сек, стакается. Масштабируется процентами к яду и к урону", "On proc, Poisons for N damage every 0.25 sec for 3 sec; stacks. Scales with increased Poison and all Damage"],
   ["КНИГА КРОВИ", "BOOK OF BLOOD"], ["При срабатывании вызывает кровотечение: N% от автоатаки в секунду, 4 сек, стакается", "On proc, causes Bleeding for N% of the basic attack per second for 4 sec; stacks"],
   ["КНИГА МОНСТРОВ", "BOOK OF MONSTERS"], ["+N% врагов в последующих волнах. Больше целей — больше опыта, золота и книг. Стакается без предела", "+N% enemies in future waves. More targets mean more experience, gold, and books. Stacks without limit"],
@@ -875,10 +878,11 @@ function englishSkillTip(m, card){
     flat:'<b>Stacking:</b> the value is added directly before percentage bonuses.',
     inc:'<b>Stacking:</b> added to other increased percentages, then applied to the base value.',
     more:'<b>Stacking:</b> a separate multiplier applied after increased percentages; multiple more multipliers multiply.',
-    chance:'<b>Roll:</b> an independent chance on every eligible event, normally capped at 100%.',
+    chance:'<b>Roll:</b> an independent chance on every eligible event.',
     flag:'<b>Duration:</b> this unique property remains active until the end of the current run.'
   }[m.kind] || '';
-  const limits = m.hide ? '<br><b>Limit:</b> the card leaves the pool when its mechanical cap is reached.' : '';
+  const limits = m.cap !== undefined ? '<br><b>Limit:</b> capped at ' + m.cap + '%; the card then leaves the pool.' :
+    (m.hide ? '<br><b>Limit:</b> the card leaves the pool when its mechanical cap is reached.' : '');
   const minions = m.req === 'min' ? '<br><b>Class:</b> available only to a minion-based class.' :
     (m.noMin ? '<br><b>Minions:</b> does not affect minions.' : '');
   return effect + '<b>This card:</b> ' + shown + '<br>' + formula + limits + minions;
@@ -1222,7 +1226,7 @@ const MODS = [
 
 // --- Урон, общие ---
 {id:'dmg.flat_all',    cat:'Урон', nm:'+N ко всему урону',              kind:'flat', stat:'dmg',        r:[3,7]},
-{id:'dmg.inc_all',     cat:'Урон', nm:'+% ко всему урону',              kind:'inc',  stat:'dmg',        r:[12,22]},
+{id:'dmg.inc_all',     cat:'Урон', nm:'+% ко всему урону',              kind:'inc',  stat:'dmg',        r:[12,22], rar:1},
 {id:'dmg.more_all',    cat:'Урон', nm:'Множитель урона',                kind:'more', stat:'dmg',        r:[14,20], rar:2, nt:'самый ценный тип — множится, а не складывается'},
 {id:'dmg.aoe',         cat:'Урон', nm:'Урон по площади',                kind:'inc',  stat:'dmgAoe',     r:[18,30], wep:['orb']},
 {id:'dmg.projectile',  cat:'Урон', nm:'Урон снарядов',                  kind:'inc',  stat:'dmgProj',   r:[18,30], wep:['proj','orb']},
@@ -1232,13 +1236,14 @@ const MODS = [
  nt:'% полученного урона возвращается атакующему поверх шипов', show:()=>D.thorns>=40},
 {id:'dmg.pct_enemy_hp',cat:'Урон', nm:'Урон в размере % от HP врага',   kind:'flat', stat:'pctHp',      r:[1,2.5], rar:2, nt:'работает против жирных боссов'},
 {id:'dmg.execute',     cat:'Урон', nm:'Добивание ниже X% HP',           kind:'flat', stat:'execute',    r:[6,12], rar:2},
-{id:'dmg.range_narrow',cat:'Урон', nm:'Сужение разброса урона',         kind:'inc',  stat:'narrow',     r:[25,45], nt:'меньше казино, стабильнее ДПС'},
+{id:'dmg.range_narrow',cat:'Урон', nm:'Надёжный удар',                  kind:'inc',  stat:'narrow',     r:[5,15], int:true, cap:50,
+ nt:'минимальный урон приближается к максимальному; максимум не снижается', hide:()=>D.narrow>=50},
 {id:'dmg.lucky',       cat:'Урон', nm:'Урон считается дважды, берётся лучшее', kind:'flag', stat:'lucky', r:[1,1], rar:2},
 
 // --- Критические удары ---
 {id:'crit.chance_flat',cat:'Криты', nm:'+N% к шансу крита',             kind:'flat', stat:'critCh',     r:[4,8], hide:()=>D.critCh>=100},
 {id:'crit.chance_inc', cat:'Криты', nm:'+% к шансу крита',              kind:'inc',  stat:'critCh',     r:[25,45], hide:()=>D.critCh>=100},
-{id:'crit.multi',      cat:'Криты', nm:'Множитель критического урона',  kind:'flat', stat:'critMul',    r:[20,40]},
+{id:'crit.multi',      cat:'Криты', nm:'Множитель критического урона',  kind:'flat', stat:'critMul',    r:[2,7], rar:1},
 {id:'crit.super_chance',cat:'Криты',nm:'СВЕРХКРИТ',                     kind:'chance',stat:'superCh',   r:[15,25], rar:2, w:45, unlock:true,
  nt:'крит внутри крита: урон ×2 и кровотечение на 3% от удара в секунду — стакается без предела',
  show:()=>D.critCh>=100},
@@ -1246,13 +1251,13 @@ const MODS = [
 {id:'crit.lucky',      cat:'Криты', nm:'Шанс крита считается дважды',   kind:'flag', stat:'critLucky',  r:[1,1], rar:2},
 
 // --- Скорости ---
-{id:'spd.attack',      cat:'Скорость', nm:'Скорость атаки',             kind:'inc',  stat:'aspd',       r:[10,18]},
+{id:'spd.attack',      cat:'Скорость', nm:'Скорость атаки',             kind:'inc',  stat:'aspd',       r:[5,10]},
 {id:'spd.action',      cat:'Скорость', nm:'Скорость действий (глобально)',kind:'more',stat:'aspd',      r:[10,15], rar:2},
 {id:'mov.speed',       cat:'Передвижение', nm:'Скорость передвижения',  kind:'inc',  stat:'mspd',       r:[8,14]},
-{id:'mov.speed_on_kill',cat:'Передвижение',nm:'Ускорение после убийства',kind:'flag', stat:'spdKill',   r:[1,1], rar:1, nt:'+40% скорости на 2 сек'},
+{id:'mov.speed_on_kill',cat:'Передвижение',nm:'Ускорение после убийства',kind:'flag', stat:'spdKill',   r:[1,1], rar:1, nt:'+25% скорости на 0,8 сек'},
 
 // --- Геометрия атак ---
-{id:'shape.proj_count',cat:'Геометрия', nm:'Доп. снаряды',              kind:'flat', stat:'projN',      r:[1,1], rar:1, nt:'один из сильнейших модификаторов', wep:['proj','orb'], noMin:true},
+{id:'shape.proj_count',cat:'Геометрия', nm:'Доп. снаряды',              kind:'flat', stat:'projN',      r:[1,1], rar:1, nt:'один из сильнейших модификаторов', wep:['proj'], noMin:true},
 {id:'shape.pierce',    cat:'Геометрия', nm:'Пробитие насквозь (N целей)',kind:'flat', stat:'pierce',    r:[1,2], wep:['proj']},
 {id:'shape.chain',     cat:'Геометрия', nm:'Отскоки на другие цели',    kind:'flat', stat:'chain',      r:[1,2], rar:1, wep:['proj']},
 {id:'shape.homing',    cat:'Геометрия', nm:'Самонаведение',             kind:'inc',  stat:'homing',     r:[35,70], rar:1, wep:['proj','orb']},
@@ -1260,14 +1265,14 @@ const MODS = [
 {id:'shape.proj_size', cat:'Геометрия', nm:'Размер снарядов',           kind:'inc',  stat:'projSize',   r:[20,35], wep:['proj','orb'], noMin:true},
 {id:'shape.aoe_radius',cat:'Геометрия', nm:'Радиус области действия',   kind:'inc',  stat:'aoeR',       r:[15,28]},
 {id:'shape.cleave_arc',cat:'Геометрия', nm:'Дуга рассекающего удара',   kind:'inc',  stat:'arc',        r:[20,40], wep:['melee'], noMin:true},
-{id:'shape.explode_on_kill',cat:'Геометрия',nm:'Шанс чумного взрыва трупа',kind:'chance',stat:'explode', r:[15,30], rar:1, nt:'заражает ближайшую толпу чумой',
- hide:()=> D.explode >= 100},                                        // на 100% карточка уходит из пула
+{id:'shape.explode_on_kill',cat:'Геометрия',nm:'Шанс чумного взрыва трупа',kind:'chance',stat:'explode', r:[3,7], int:true, cap:25, rar:1,
+ nt:'заражает ближайшую толпу чумой · суммарный потолок 25%', hide:()=>D.explode>=25},
 {id:'shape.explode_mega',cat:'Геометрия', nm:'Шанс МЕГА-чумного взрыва',kind:'chance',stat:'explodeMega',r:[15,25], rar:2,
  nt:'вдвое больший радиус чумы; заражает всю задетую толпу',
- show:()=> D.explode >= 100,                                        // открывается только после 100% обычного
+ show:()=> D.explode >= 25,                                         // открывается на новом потолке обычного
  unlock:true, w:45},                                                // первый раз выпадает гарантированно
 {id:'shape.double_hit',cat:'Геометрия', nm:'Шанс двойного попадания', kind:'chance',stat:'dblHit', r:[5,15], int:true, cap:25, rar:1,
- nt:'случайно +5…15%; суммарный потолок 25%', hide:()=>D.dblHit>=25},
+ nt:'суммарный потолок 25%', hide:()=>D.dblHit>=25},
 {id:'shape.deadly_hit',cat:'Геометрия', nm:'СМЕРТОНОСНОЕ ПОПАДАНИЕ', kind:'flag',stat:'deadlyHit', r:[1,1], rar:2, w:45, unlock:true,
  nt:'каждая атака имеет 1% шанс снять 25% текущего HP цели', show:()=>D.dblHit>=25},
 {id:'shape.shotgun',   cat:'Геометрия', nm:'ДРОБОВИК',                  kind:'flag', stat:'shotgun',    r:[1,1], rar:2, w:45, unlock:true,
@@ -1284,32 +1289,39 @@ const MODS = [
 {id:'shape.ricochet',  cat:'Геометрия', nm:'Рикошет от стен',           kind:'flat', stat:'ricochet',   r:[1,2], wep:['proj','orb'], noMin:true},
 
 // --- Стихии (урон по типам) ---
-{id:'dt.fire.flat',    cat:'Огонь',  nm:'+N к урону: Огонь',            kind:'flat', stat:'dFire',      r:[4,9]},
-{id:'dt.fire.inc',     cat:'Огонь',  nm:'+% к урону: Огонь',            kind:'inc',  stat:'iFire',      r:[20,35]},
-{id:'ail.ignite.chance',cat:'Огонь', nm:'Шанс наложить: Поджог',        kind:'chance',stat:'igniteCh',  r:[15,30], nt:'горение тикает уроном по площади', hide:()=>D.igniteCh>=100},
-{id:'ail.ignite.spread',cat:'Огонь', nm:'ИНФЕРНО',                      kind:'flag', stat:'inferno',    r:[1,1], rar:2, w:45, unlock:true,
- nt:'горящие враги поджигают всех вокруг себя на 3 секунды — пожар идёт по толпе сам', show:()=>D.igniteCh>=100},
-{id:'dt.cold.flat',    cat:'Холод',  nm:'+N к урону: Холод',            kind:'flat', stat:'dCold',      r:[3,7]},
-{id:'dt.cold.inc',     cat:'Холод',  nm:'+% к урону: Холод',            kind:'inc',  stat:'iCold',      r:[20,35]},
-{id:'ail.chill.chance',cat:'Холод',  nm:'Шанс наложить: Охлаждение',    kind:'chance',stat:'chillCh',   r:[20,40], nt:'цель замедлена на 35% и принимает на 25% больше урона; соседи рядом с ней тоже вязнут', hide:()=>D.chillCh>=100},
-{id:'ail.freeze.chance',cat:'Холод', nm:'ЗАМОРОЗКА',                    kind:'flag', stat:'freeze',     r:[1,1], rar:2, w:45, unlock:true,
- nt:'охлаждение вмораживает цель в пол: полная остановка на 1.4 сек', show:()=>D.chillCh>=100},
-{id:'dt.lightning.flat',cat:'Молния',nm:'+N к урону: Молния',           kind:'flat', stat:'dLit',       r:[2,12], nt:'широкий разброс'},
-{id:'dt.lightning.inc',cat:'Молния', nm:'+% к урону: Молния',           kind:'inc',  stat:'iLit',       r:[20,35]},
-{id:'ail.shock.chance',cat:'Молния', nm:'Шанс разряда молнии',          kind:'chance',stat:'shockCh',   r:[15,28], nt:'разряд бьёт по ближайшим врагам, а цель получает Шок: +30% входящего урона'},
-{id:'dt.poison.flat',  cat:'Яд',     nm:'+N к урону: Яд',               kind:'flat', stat:'dPoi',       r:[3,8]},
-{id:'dt.poison.inc',   cat:'Яд',     nm:'+% к урону: Яд',               kind:'inc',  stat:'iPoi',       r:[20,35]},
-{id:'ail.poison.chance',cat:'Яд',    nm:'Шанс наложить: Отравление',    kind:'chance',stat:'poiCh',     r:[20,40], nt:'стакается, не тратит время боя', hide:()=>D.poiCh>=100},
-{id:'ail.double_stack',cat:'Яд',     nm:'РАДИАЦИЯ',                     kind:'flag', stat:'radiation',  r:[1,1], rar:2, w:45, unlock:true,
- nt:'каждое отравление кладёт сразу два стака, потолок стаков 20 → 40', show:()=>D.poiCh>=100},
+{id:'dt.fire.flat',    cat:'Огонь',  nm:'+N к урону: Огонь',            kind:'flat', stat:'dFire',      r:[4,9], rar:1, show:()=>D.igniteCh>0},
+{id:'dt.fire.inc',     cat:'Огонь',  nm:'+% к урону: Огонь',            kind:'inc',  stat:'iFire',      r:[20,35], show:()=>D.igniteCh>0},
+{id:'ail.ignite.chance',cat:'Огонь', nm:'Шанс наложить: Поджог',        kind:'chance',stat:'igniteCh',  r:[1,5], int:true, cap:25,
+ nt:'поджог наносит 20% полного удара в секунду в течение 3 секунд', hide:()=>D.igniteCh>=25},
+{id:'ail.ignite.spread',cat:'Огонь', nm:'ИНФЕРНО',                      kind:'flag', stat:'inferno',    r:[1,1], rar:2, w:45,
+ nt:'горящие враги поджигают всех вокруг себя на 3 секунды — пожар идёт по толпе сам', show:()=>D.igniteCh>=25},
+{id:'dt.cold.flat',    cat:'Холод',  nm:'+N к урону: Холод',            kind:'flat', stat:'dCold',      r:[3,7], rar:1, show:()=>D.chillCh>0},
+{id:'dt.cold.inc',     cat:'Холод',  nm:'+% к урону: Холод',            kind:'inc',  stat:'iCold',      r:[20,35], show:()=>D.chillCh>0},
+{id:'ail.chill.chance',cat:'Холод',  nm:'Шанс наложить: Охлаждение',    kind:'chance',stat:'chillCh',   r:[1,5], int:true, cap:25,
+ nt:'на 0,5 сек: −15% скорости, +10% входящего урона и дополнительный удар на 10%; соседи замедляются на 5%', hide:()=>D.chillCh>=25},
+{id:'ail.freeze.chance',cat:'Холод', nm:'ЗАМОРОЗКА',                    kind:'flag', stat:'freeze',     r:[1,1], rar:2, w:45,
+ nt:'каждое охлаждение имеет 1% шанс полностью остановить цель на 1 секунду; замороженная цель получает ещё +10% урона', show:()=>D.chillCh>=25},
+{id:'dt.lightning.flat',cat:'Молния',nm:'+N к урону: Молния',           kind:'flat', stat:'dLit',       r:[2,12], rar:1, nt:'широкий разброс', show:()=>D.shockCh>0},
+{id:'dt.lightning.inc',cat:'Молния', nm:'+% к урону: Молния',           kind:'inc',  stat:'iLit',       r:[20,35], show:()=>D.shockCh>0},
+{id:'ail.shock.chance',cat:'Молния', nm:'Шанс разряда молнии',          kind:'chance',stat:'shockCh',   r:[1,5], int:true, cap:25,
+ nt:'разряд бьёт до 5 соседей на 15% удара, а Шок на 1 секунду даёт цели +10% входящего урона', hide:()=>D.shockCh>=25},
+{id:'ail.shock.tesla', cat:'Молния', nm:'ТЕСЛА',                        kind:'flag', stat:'tesla',      r:[1,1], rar:2, w:45,
+ nt:'разряд бьёт до 20 соседей на 25% силы удара', show:()=>D.shockCh>=25},
+{id:'dt.poison.flat',  cat:'Яд',     nm:'+N к урону: Яд',               kind:'flat', stat:'dPoi',       r:[3,8], rar:1, show:()=>D.poiCh>0},
+{id:'dt.poison.inc',   cat:'Яд',     nm:'+% к урону: Яд',               kind:'inc',  stat:'iPoi',       r:[20,35], show:()=>D.poiCh>0},
+{id:'ail.poison.chance',cat:'Яд',    nm:'Шанс наложить: Отравление',    kind:'chance',stat:'poiCh',     r:[1,5], int:true, cap:25,
+ nt:'стакается, не тратит время боя', hide:()=>D.poiCh>=25},
+{id:'ail.poison.radiation',cat:'Яд', nm:'РАДИАЦИЯ',                     kind:'flag', stat:'radiation',  r:[1,1], rar:2, w:45,
+ nt:'удваивает урон каждого прока яда: 30% полного удара в секунду вместо 15%', show:()=>D.poiCh>=25},
 {id:'ail.all_effect',  cat:'Эффекты',nm:'Сила всех негативных эффектов',kind:'inc',  stat:'ailEff',     r:[25,45], rar:1,
- tip:'<b>Формула:</b> урон эффекта × (1 + бонус / 100). Усиливает урон поджога, яда, кровотечения, разряда от шока и огненного следа.<br><b>Пример:</b> +36% превращает 100 урона/сек в 136 урона/сек.<br><b>Не влияет:</b> на шанс наложения, длительность, радиус, прямой урон атаки, силу замедления и кислоту Веномансера.'},
+ tip:'<b>Формула:</b> урон эффекта × (1 + бонус / 100). Усиливает урон поджога, яда, кровотечения, дополнительный урон охлаждения, разряд шока и огненный след.<br><b>Пример:</b> +36% превращает 100 урона/сек в 136 урона/сек.<br><b>Не влияет:</b> на шанс наложения, длительность, радиус, прямой урон атаки, силу замедления и кислоту Веномансера.'},
 {id:'ail.all_duration',cat:'Эффекты',nm:'Длительность всех эффектов',   kind:'inc',  stat:'ailDur',     r:[25,50],
  tip:'<b>Формула:</b> длительность × (1 + бонус / 100). Продлевает поджог, яд, кровотечение, охлаждение, заморозку, шок, оглушение и головокружение.<br><b>Пример:</b> +50% превращает обычный поджог 3 сек в 4,5 сек, яд 4 сек — в 6 сек, кровотечение 6 сек — в 9 сек.<br><b>Не продлевает:</b> кислоту Веномансера, лужи, снаряды и время действия предметов.'},
 
 // --- Условные бонусы ---
 {id:'cond.vs_low_hp',  cat:'Условные', nm:'Урон по раненым врагам',     kind:'inc',  stat:'vsLow',      r:[30,55], nt:'цель ниже 35% HP'},
-{id:'cond.vs_full_hp', cat:'Условные', nm:'Урон по врагам на полном HP',kind:'inc',  stat:'vsFull',     r:[30,55]},
+{id:'cond.vs_full_hp', cat:'Условные', nm:'Урон по врагам на полном HP',kind:'inc',  stat:'vsFull',     r:[30,55],
+ nt:'пример без других бонусов: +30% превращает первый удар на 100 в 130 урона; после этого цель уже не на полном HP и бонус отключается'},
 {id:'cond.vs_boss',    cat:'Условные', nm:'Урон по боссам и элите',     kind:'inc',  stat:'vsBoss',     r:[30,60]},
 {id:'cond.while_moving',cat:'Условные',nm:'Урон в движении',            kind:'inc',  stat:'whMove',     r:[25,45]},
 {id:'cond.while_still',cat:'Условные', nm:'Урон при стоянии на месте',  kind:'inc',  stat:'whStill',    r:[35,60], noMin:true, nt:'турель-архетип'},
@@ -1450,9 +1462,9 @@ const SUBCLASSES = {
     {id:'dancer', nm:'БОЕВОЙ ТАНЦОР',  ico:'✦', desc:'+1 рывок (всего 2) и +1 брони за уровень; бонус брони до 60.'},
   ],
   wand: [
-    {id:'destroyer',     nm:'МАГ РАЗРУШЕНИЯ',    ico:'◉', desc:'+1% ко всем радиусам за уровень. Как и любой Маг, получает +1 снаряд каждые 10 уровней.'},
-    {id:'multiplier',    nm:'МАГ МУЛЬТИПЛИКАЦИИ',ico:'✣', desc:'+1 дополнительный снаряд каждые 20 уровней. Как и любой Маг, получает +1 снаряд каждые 10 уровней; бонусы складываются.'},
-    {id:'elementalist',  nm:'МАГ ЭЛЕМЕНТАЛИСТ',  ico:'◇', desc:'+1% к урону огнём, холодом, молнией и ядом за уровень. Как и любой Маг, получает +1 снаряд каждые 10 уровней.'},
+    {id:'destroyer',     nm:'МАГ РАЗРУШЕНИЯ',    ico:'◉', desc:'+1% ко всем радиусам за уровень. Как и любой Маг, получает +1 снаряд каждые 15 уровней.'},
+    {id:'multiplier',    nm:'МАГ МУЛЬТИПЛИКАЦИИ',ico:'✣', desc:'+1 дополнительный снаряд каждые 20 уровней. Как и любой Маг, получает +1 снаряд каждые 15 уровней; бонусы складываются.'},
+    {id:'elementalist',  nm:'МАГ ЭЛЕМЕНТАЛИСТ',  ico:'◇', desc:'+1% к урону огнём, холодом, молнией и ядом за уровень. Как и любой Маг, получает +1 снаряд каждые 15 уровней.'},
   ],
   necro: [
     {id:'graverobber', nm:'ГРАБИТЕЛЬ МОГИЛ', ico:'⚑', desc:'+1% скорости персонажа и свиты за уровень.'},
@@ -1494,10 +1506,10 @@ Bag.prototype.has  = function(k){ return this.flat(k) > 0; };
 const BOOKS = {
   fire:  {nm:'КНИГА ОГНЯ',  col:'#ff7a2f', el:'dFire', ico:'\u25C6', proc:true,
           tiers:[[3,5],[6,8],[9,12]], step:[3,5],
-          desc:'+N урона огнём всем атакам — вашим и свиты. При срабатывании поджигает: 20% от удара в секунду, 1.5 сек, стакается'},
+          desc:'+N урона огнём всем атакам — вашим и свиты. При срабатывании поджигает: 20% от удара в секунду, 3 сек, стакается'},
   cold:  {nm:'КНИГА ЛЬДА',  col:'#7fd6ff', el:'dCold', ico:'\u2744', proc:true,
           tiers:[[3,5],[6,8],[9,12]], step:[3,5],
-          desc:'+N урона холодом всем атакам. При срабатывании охлаждает цель на 1 сек'},
+          desc:'+N урона холодом всем атакам. При срабатывании охлаждает на 0,5 сек и наносит ещё 10% удара'},
   poison:{nm:'КНИГА ЯДА',   col:'#8be04e', ico:'\u2620', proc:true,
           tiers:[[3,3],[5,5],[8,8]], step:[3,3],
           desc:'При срабатывании травит: N урона каждые 0.25 сек, 3 сек, стакается. Масштабируется процентами к яду и к урону'},
@@ -1548,8 +1560,7 @@ const TOTEM_KEYS = Object.keys(TOTEMS);
 /* Ранг тотема: 0 — нет, 1..4 — от малого до великого */
 const totemTier = k => (G.totems && G.totems[k]) || 0;
 const totemVal  = k => totemTier(k) ? TOTEM_VALS[totemTier(k)-1] : 0;
-/* Доля тотемов среди находок. Книги, предметы и тотемы делят один ролл на дроп:
-   три независимых шанса разъехались бы при первой же правке частоты находок. */
+/* Исходная доля тотемов в общем пуле до индивидуальных множителей частоты. */
 const TOTEM_SHARE = 0.25;
 const AMULETS = {
   mirror: {nm:'ЧЁРНОЕ ЗЕРКАЛО', col:'#c08cff', ico:'\u25D1', slot:'amu', rar:2,
@@ -1692,9 +1703,12 @@ const AMULETS = {
     nt:'+50% опыта с элитных монстров и боссов. Рядовые платят как обычно'},
 };
 const AMU_KEYS = Object.keys(AMULETS);
-/* Доля амулетов в дропе. Замер: партия до 10 этажа даёт около 3 находок,
-   при 0.30 из них примерно одна — амулет. Число одно и правится тут. */
+/* Исходные доли категорий и отдельные нерфы частоты. Категории по-прежнему
+   делят один бросок: предметы выпадают вдвое реже, книги и тотемы — втрое. */
 const AMU_SHARE = 0.30;
+const BOOK_SHARE = 1 - AMU_SHARE - TOTEM_SHARE;
+const ITEM_DROP_SCALE = 1/2, BOOK_DROP_SCALE = 1/3, TOTEM_DROP_SCALE = 1/3;
+const FIND_RATE_SCALE = AMU_SHARE*ITEM_DROP_SCALE + BOOK_SHARE*BOOK_DROP_SCALE + TOTEM_SHARE*TOTEM_DROP_SCALE;
 const amu = k => !!(G.amu && G.amu[k]);
 
 /* Шанс срабатывания: 10% за книгу, потолок 100%. Дальше растёт только сила эффекта. */
@@ -1816,8 +1830,8 @@ const SHOP = [
    nt:'+20% к радиусу и скорости притяжения опыта и золота за ранг. На 10-м ранге они летят к вам с тройной скоростью из втрое большей дальности.',
    fmt:l => l ? '+' + (l*20) + '% к сбору' : '—'},
   {id:'itemDrop', cat:'qol', nm:'ИСКАТЕЛЬ РЕЛИКВИЙ', max:10, base:25000, grow:1.8, unit:'%',
-   nt:'+1 процентный пункт к шансу выпадения предмета за ранг. Максимум +10 п.п.: обычный враг 0,4% → 10,4%, элита 2% → 12%, босс 16% → 26%. Дорогая QoL-ветка, не добавляет силу напрямую.',
-   fmt:l => l ? '+' + l + ' п.п. к шансу предмета' : '—'},
+   nt:'Повышает шанс любой случайной находки примерно на 0,38 процентного пункта за ранг. На максимуме: обычный враг 0,15% → 3,99%, элита 0,77% → 4,60%, босс 6,13% → 9,97%. Дорогая QoL-ветка, не добавляет силу напрямую.',
+   fmt:l => l ? '+' + (l*FIND_RATE_SCALE).toFixed(2).replace('.', ',') + ' п.п. к шансу находки' : '—'},
   {id:'startSkill', cat:'qol', nm:'ПЕРВЫЙ ШАГ', max:5, base:24000, grow:2.4,
    nt:'В начале каждой новой партии даёт одно дополнительное повышение уровня за ранг. На максимуме выбираете пять модификаторов до первого боя.',
    fmt:l => l ? '+' + l + ' к стартовым навыкам' : '—'},
@@ -1937,7 +1951,7 @@ function newGame(weaponKey, control, subclassKey){
             elitePoisonT:0, elitePoisonTick:0, elitePoisonStacks:0, eliteCutT:0, eliteCutTick:0,
             elitePyroBurnT:0, elitePyroBurnTick:0, eliteAbyssBurnT:0, eliteAbyssBurnTick:0,
             eliteGuardSlowT:0, eliteGuardSlowStacks:0,
-            moveT:0, predT:0, critChain:0, riposte:false, swiftT:0, lowHp:false, moving:false, faceX:1, faceY:0, spriteFace:1, heroWalkT:0,
+            moveT:0, predT:0, critChain:0, riposte:false, swiftT:0, spdKill:0, sprintT:0, lowHp:false, moving:false, faceX:1, faceY:0, spriteFace:1, heroWalkT:0,
             stillT:0, combatT:0, killT:0, cheatCd:0, healCd:0, recoup:0,
             hitFlash:0, hpFlash:0, hpLag:1, hpLagFrom:1, hpLagTimer:0},
     enemies:[], shots:[], eshots:[], orbs:[], fx:[],
@@ -2022,11 +2036,11 @@ function recalc(){
   const phys = w.dmg[0] + G.lvl*0.45 + b.flat('dmg');
   const physMax = w.dmg[1] + G.lvl*0.7 + b.flat('dmg');
   D.baseMin = phys;  D.baseMax = physMax;
-  // Разброс сужается модификатором dmg.range_narrow
+  // «Надёжный удар» поднимает только нижнюю границу к верхней. Максимум не
+  // уменьшается, поэтому карточка действительно повышает средний урон.
   if (b.has('armorDmg')){ D.baseMin += D.armor*0.12; D.baseMax += D.armor*0.12; }  // conv.armor_damage
-  const nr = clamp(b.sum('narrow'),0,80)/100;
-  const mid = (D.baseMin+D.baseMax)/2;
-  D.baseMin += (mid-D.baseMin)*nr; D.baseMax -= (D.baseMax-mid)*nr;
+  D.narrow = clamp(b.sum('narrow'),0,50);
+  D.baseMin += (D.baseMax-D.baseMin)*(D.narrow/100);
 
   // Книги — отдельный источник флэт-урона: сумка их не хранит, чтобы тир можно было поднимать
   const bk = k => (G.items && G.items[k]) ? G.items[k].val : 0;
@@ -2058,11 +2072,12 @@ function recalc(){
   const rush = (amu('swift') && P && P.swiftT > 0 ? 1.20 : 1)
              * (amu('survive') && P && P.hp/Math.max(1, D.life) < 0.30 ? 1.20 : 1);
   /* Разгон движения: считается ЗДЕСЬ, а не множителем в кадре. Раньше три
-     источника (+40% после убийства, «Последний рывок», «Талисман бегуна»)
+     источника (карточка после убийства, «Последний рывок», «Талисман бегуна»)
      умножались прямо в шаге игрока, а свита берёт долю от скорости хозяина —
      то есть от значения ДО них, и не разгонялась вообще. Теперь всё в одном месте,
      и приспешники едут вместе с хозяином без отдельного правила. */
-  const dash = (P && P.spdKill > 0 ? 1.40 : 1)
+  const dash = (P && P.spdKill > 0 ? 1.25 : 1)
+             * (P && P.sprintT > 0 ? 1.40 : 1)
              * (amu('runner') && P && P.moving ? 1.20 : 1);
   D.aspd  = b.calc('aspd', 1) * (heavy?0.5:1) * (flurry?2:1) * (unburd?1.25:1)
           * (amu('clock') ? 1.10 : 1) * (amu('claws') ? 1.20 : 1) * (amu('brute') ? 0.90 : 1)
@@ -2071,10 +2086,11 @@ function recalc(){
           * thiefMove * graveMove;
 
   // --- Геометрия ---
-  /* Все подклассы Мага получают общий +1 снаряд за каждые 10 уровней.
-     Личный бонус Мага Мультипликации раз в 20 уровней складывается сверху,
-     как и обычные карточки projN. */
-  const mageProjectiles = w.id === 'wpn.wand' ? Math.floor(G.lvl/10) : 0;
+  /* Все подклассы Мага получают общий +1 снаряд за каждые 15 уровней.
+     Личный бонус Мага Мультипликации раз в 20 уровней складывается сверху.
+     Карточка projN оставлена только Лучнику: для Мага она слишком сильно
+     умножала урон сферы поверх уже встроенного классового роста. */
+  const mageProjectiles = w.id === 'wpn.wand' ? Math.floor(G.lvl/15) : 0;
   D.projN   = 1 + Math.round(b.flat('projN')) + mageProjectiles
             + (multiplier ? Math.floor(G.lvl/20) : 0);
   D.pierce  = Math.round(b.flat('pierce'));
@@ -2095,7 +2111,8 @@ function recalc(){
   D.warriorWaveRadius = swordmaster ? 1 + Math.min(60, G.lvl)/100 : 1;
   D.warriorWaveKnock  = swordmaster ? 1 + Math.min(90, G.lvl*1.5)/100 : 1;
   D.orbitN      = clamp(Math.round(b.flat('orbit')), 0, 10);   // круговые орбы, потолок 10
-  D.explode     = clamp(b.flat('explode') + (b.has('kVolat') ? 100 : 0), 0, 100);
+  D.explodeBase = clamp(b.flat('explode'), 0, 25);
+  D.explode     = b.has('kVolat') ? 100 : D.explodeBase;
   D.explodeMega = clamp(b.flat('explodeMega'), 0, 100);
   D.plagueRadius= b.has('kVolat') ? 0.65 : 1;
   D.dblHit   = clamp(b.flat('dblHit'), 0, 25);
@@ -2124,13 +2141,16 @@ function recalc(){
   D.dashDmg = b.has('dashDmg'); D.phasing = b.has('phasing');
   D.dashCd  = DASH_COOLDOWN;
   D.iframe  = 0.22 * (1 + b.sum('iframe')/100);
-  D.igniteCh = clamp(b.flat('igniteCh'), 0, 100);       // потолки статусов — иначе ветки не откроются
-  D.chillCh  = clamp(b.flat('chillCh'),  0, 100);
-  D.poiCh    = clamp(b.flat('poiCh'),    0, 100);
+  // Четыре универсальные стихийные ветки ограничены 25%: ранний забег больше
+  // нельзя превратить в гарантированную цепочку статусов несколькими картами.
+  D.igniteCh = clamp(b.flat('igniteCh'), 0, 25);
+  D.chillCh  = clamp(b.flat('chillCh'),  0, 25);
+  D.shockCh  = clamp(b.flat('shockCh'),  0, 25);
+  D.poiCh    = clamp(b.flat('poiCh'),    0, 25);
   D.knock    = clamp(b.flat('knock') + (amu('brute') ? 50 : 0), 0, 100);
   D.knockPow = amu('brute') ? 1.5 : 1;                 // сила толчка отдельно от шанса
   D.inferno  = b.has('inferno'); D.freeze = b.has('freeze');
-  D.radiation= b.has('radiation'); D.dizzy = b.has('dizzy');
+  D.tesla    = b.has('tesla'); D.radiation= b.has('radiation'); D.dizzy = b.has('dizzy');
   D.ailEff  = 1 + b.sum('ailEff')/100;
   D.ailDur  = 1 + b.sum('ailDur')/100;
   D.freezeDur = amu('ice') ? 1.4 : 1;        // ледяной кристалл продлевает только заморозку
@@ -3714,11 +3734,11 @@ function damage(e, src){
   } else if (amu('critchain')) p.critChain = 0;   // цепь рвётся на первом же некрите
   // Урон в размере % от максимального HP цели — против «жирных»
   if (b.flat('pctHp')) total += e.maxHp * b.flat('pctHp')/100;
-  // Шок увеличивает получаемый целью урон
-  if (e.ail.shock > 0) total *= 1.30;
-  // Охлаждение делает то же самое: раньше оно только замедляло, и вся ветка холода
-  // была чистой утилитой при том, что заморозка открывается лишь на 100% охлаждения
+  // Стихийный контроль оставляет небольшие отдельные множители. Полная заморозка
+  // добавляет свой x1.10 поверх x1.10 охлаждения, пока оба статуса активны.
+  if (e.ail.shock > 0) total *= SHOCK_TAKEN;
   if (e.ail.chill > 0) total *= CHILL_TAKEN;
+  if (e.ail.freeze > 0) total *= FREEZE_TAKEN;
   // РУКА ПАЛАЧА: множитель поверх формулы, иначе удвоение растворилось бы
   if (amu('headsman') && e.hp/e.maxHp < 0.15) total *= 2;
   // КОНТРУДАР: заряд тратится на первый же удар игрока, свите не достаётся
@@ -3780,27 +3800,30 @@ function damage(e, src){
   const ailmentChanceMul = src.minion ? MINION_AILMENT_CHANCE_MULT : 1;
   const roll = v => Math.random()*100 < v * ailmentChanceMul;
   if (roll(D.igniteCh)){
-    addDot(e, 'fire', total*0.25*D.ailEff, 3*D.ailDur, src.minion ? 1 : 0);
+    addDot(e, 'fire', total*IGNITE_DPS_SHARE*D.ailEff, 3*D.ailDur, src.minion ? 1 : 0);
     // ПЕРЕГРУЗКА: огонь по шокированному замыкает разряд
     if (amu('overload') && e.ail.shock > 0){
-      shockBurst(e, total * SHOCK_SHARE * D.ailEff, src.minion ? 1 : 0);
+      shockBurst(e, total, src.minion ? 1 : 0);
       G.fx.push({t:'ring', x:e.x, y:e.y, r:6, max:120*D.aoeR, life:0.3, col:'#ffe14a'});
     }
   }
   if (roll(D.chillCh)){
     if (e.ail.chill <= 0) statusText(e, 'SLOWED', '#ffe14a');
-    e.ail.chill = Math.max(e.ail.chill, 2.5*D.ailDur);
-    if (D.freeze){                                                        // ЗАМОРОЗКА
+    e.ail.chill = Math.max(e.ail.chill, CHILL_DURATION*D.ailDur);
+    // Охлаждение наносит отдельные 10% уже рассчитанного удара; это эффект,
+    // поэтому «Сила всех негативных эффектов» продолжает его усиливать.
+    applyDamage(e, total*CHILL_DAMAGE_SHARE*D.ailEff, false, false, src.minion ? 1 : 0);
+    if (D.freeze && Math.random() < FREEZE_CHANCE){                       // ЗАМОРОЗКА
       if (e.ail.freeze <= 0) statusText(e, 'FROZEN', '#7fd6ff');
-      e.ail.freeze = Math.max(e.ail.freeze, 1.4*D.ailDur*D.freezeDur);
+      e.ail.freeze = Math.max(e.ail.freeze, FREEZE_DURATION*D.ailDur*D.freezeDur);
     }
   }
-  if (roll(b.flat('shockCh'))){
-    e.ail.shock = Math.max(e.ail.shock, 3*D.ailDur);
-    shockBurst(e, total * SHOCK_SHARE * D.ailEff, src.minion ? 1 : 0); // разряд по округе
+  if (roll(D.shockCh)){
+    e.ail.shock = Math.max(e.ail.shock, SHOCK_DURATION*D.ailDur);
+    shockBurst(e, total, src.minion ? 1 : 0); // базовый разряд 5×15%, ТЕСЛА 20×25%
   }
-  if (roll(D.poiCh))                                                      // РАДИАЦИЯ: двойной стак
-    addDot(e, 'poison', total*0.15*D.ailEff*(D.radiation?2:1), 4*D.ailDur, src.minion ? 1 : 0);
+  if (roll(D.poiCh))                                                      // РАДИАЦИЯ: двойной урон тика
+    addDot(e, 'poison', total*POISON_DPS_SHARE*D.ailEff*(D.radiation?2:1), 4*D.ailDur, src.minion ? 1 : 0);
   if (roll(b.flat('stun')))  e.ail.stun = 0.7 * D.ailDur;   // единственный статус, ходивший мимо длительности
   // ТАРАННАЯ ПЕРЧАТКА: свой толчок мимо шанса отбрасывания, каждый восьмой удар
   if (amu('shove') && p.hitN % 8 === 0){
@@ -3824,8 +3847,8 @@ function damage(e, src){
     applyDamage(e, e.hp, false, false, src.minion ? 1 : 0);
   // ПЕРЧАТКИ ГРОМА: свой период, но общий счётчик ударов
   if (amu('thunder') && p.hitN % 12 === 0){
-    e.ail.shock = Math.max(e.ail.shock, 3*D.ailDur);
-    shockBurst(e, total * SHOCK_SHARE * D.ailEff, src.minion ? 1 : 0);
+    e.ail.shock = Math.max(e.ail.shock, SHOCK_DURATION*D.ailDur);
+    shockBurst(e, total, src.minion ? 1 : 0);
     G.fx.push({t:'bolt', x:p.x, y:p.y, x2:e.x, y2:e.y, life:0.18, col:'#ffe14a'});
   }
   // КОЛЬЦО ИМПУЛЬСА
@@ -3857,36 +3880,56 @@ function applyDamage(e, amount, crit, silent, minionShare=0){
   return dealt;
 }
 
-/* Шанс книги: 0.4% с рядового, впятеро с элиты, в сорок раз с мини-босса.
-   Потолка тиров нет — на глубоких этажах книга продолжает расти. */
-/* Одна проверка на находку, затем выбор категории. Амулеты не имеют своего
-   ролла: иначе два независимых шанса разъезжались бы при любой правке дропа. */
+/* Одна проверка на случайную находку, затем выбор категории. До нерфа база
+   была 0,4% с рядового, ×5 с элиты и ×40 с босса. Теперь общий шанс умножен
+   на FIND_RATE_SCALE, составленный из отдельных нерфов трёх категорий. */
 function tryDropBook(e){
   const mult = e.kind === 'boss' ? 40 : e.kind === 'elite' ? 5 : 1;
-  // «Искатель реликвий» добавляет процентные пункты к уже рассчитанному шансу:
-  // +10 п.п. = 0,4% → 10,4% у обычного, 2% → 12% у элиты, 16% → 26% у босса.
-  const chance = Math.min(100, 0.4 * mult + shopLvl('itemDrop'));
+  const pools = findDropPools(), balance = findDropBalance(pools);
+  // Нерф применяется и к «Искателю реликвий», иначе на высоком ранге предметы
+  // стали бы выпадать даже чаще прежнего из-за изменившихся долей категорий.
+  const chance = Math.min(100, (0.4 * mult + shopLvl('itemDrop')) * balance.rate);
   if (Math.random()*100 >= chance) return;
-  dropItem(e);
+  dropItem(e, pools, balance);
+}
+
+function findDropPools(){
+  const pool = [];
+  for (const k of AMU_KEYS){
+    if (G.amu[k]) continue;
+    if (AMULETS[k].minOnly && !G.weapon.minions) continue;
+    const w = [16, 10, 5, 2][AMULETS[k].rar];
+    for (let i = 0; i < w; i++) pool.push(k);
+  }
+  const tot = TOTEM_KEYS.filter(k => totemTier(k) < 4 && G.items && G.items[TOTEMS[k].book]);
+  return {pool, tot};
+}
+
+/* Сначала воспроизводим старый fallback отсутствующих категорий, затем режем
+   фактическую долю каждой оставшейся категории. Поэтому после сбора всех
+   предметов их бывшая доля не превращается в лишние книги или тотемы. */
+function findDropBalance(pools){
+  const hasItems = pools.pool.length > 0, hasTotems = pools.tot.length > 0;
+  const itemBase = hasItems ? AMU_SHARE : 0;
+  const totemBase = hasTotems ? TOTEM_SHARE + (hasItems ? 0 : AMU_SHARE) : 0;
+  const bookBase = 1 - itemBase - totemBase;
+  const itemWeight = itemBase * ITEM_DROP_SCALE;
+  const totemWeight = totemBase * TOTEM_DROP_SCALE;
+  const bookWeight = bookBase * BOOK_DROP_SCALE;
+  const rate = itemWeight + totemWeight + bookWeight;
+  return {rate, itemShare:itemWeight/rate, totemShare:totemWeight/rate};
 }
 
 /* Выбор категории находки. Отдельной функцией, потому что «Маска босса»
    вызывает её мимо ролла на шанс. */
-function dropItem(e){
-  // Ненайденные предметы, вес по редкости
-  const pool = [];
-  for (const k of AMU_KEYS){
-    if (G.amu[k]) continue;
-    if (AMULETS[k].minOnly && !G.weapon.minions) continue;   // предмет только для классов со свитой
-    const w = [16, 10, 5, 2][AMULETS[k].rar];    // обычный, редкий, эпический, легендарный
-    for (let i = 0; i < w; i++) pool.push(k);
-  }
-  // Тотемы, открытые соответствующей книгой и ещё не доросшие до великого
-  const tot = TOTEM_KEYS.filter(k => totemTier(k) < 4 && G.items && G.items[TOTEMS[k].book]);
+function dropItem(e, preparedPools, preparedBalance){
+  const pools = preparedPools || findDropPools();
+  const balance = preparedBalance || findDropBalance(pools);
+  const pool = pools.pool, tot = pools.tot;
   const r = Math.random();
-  if (pool.length && r < AMU_SHARE)
+  if (pool.length && r < balance.itemShare)
     G.orbs.push({x:e.x, y:e.y, r:9, amu:pick(pool)});
-  else if (tot.length && r < AMU_SHARE + TOTEM_SHARE)
+  else if (tot.length && r < balance.itemShare + balance.totemShare)
     G.orbs.push({x:e.x, y:e.y, r:9, totem:pick(tot)});
   else
     G.orbs.push({x:e.x, y:e.y, r:9, book:pick(BOOK_KEYS)});
@@ -4137,7 +4180,19 @@ function killEnemy(e, i){
       G.fx.push({t:'ring', x:best.x, y:best.y, r:6, max:34, life:0.35, col:'#8be04e'});
     }
   }
-  if (b.has('spdKill') || amu('sprint')) p.spdKill = 2;
+  // Карточка и «Последний рывок» имеют разные силу и длительность, поэтому
+  // держат отдельные таймеры. recalc() нужен именно при включении: без него
+  // бонус впервые проявлялся только после закрытия следующего level-up.
+  let speedChanged = false;
+  if (b.has('spdKill')){
+    if (!(p.spdKill > 0)) speedChanged = true;
+    p.spdKill = 0.8;
+  }
+  if (amu('sprint')){
+    if (!(p.sprintT > 0)) speedChanged = true;
+    p.sprintT = 2;
+  }
+  if (speedChanged) recalc();
   if (amu('predator')) p.predT = 2;              // ГЛАЗ ХИЩНИКА, продлевается каждым убийством
   // ТАЛИСМАН СКОРОСТИ: платит только за крупную цель
   if (amu('swift') && e.kind !== 'norm'){
@@ -4196,19 +4251,25 @@ function burst(x, y, n, col, spd, size, life){
   }
 }
 
-/* Шок бьёт молнией по округе: до 20 ближайших целей в радиусе 400
-   получают долю от того удара, который наложил шок. */
-const SHOCK_TARGETS = 20, SHOCK_RANGE = 400, SHOCK_SHARE = 0.20;
+/* Базовый разряд намеренно мал; ТЕСЛА возвращает большой цепной удар только
+   после развития шанса до потолка 25%. Радиус остаётся общим для обеих версий. */
+const SHOCK_BASE_TARGETS = 5, SHOCK_TESLA_TARGETS = 20, SHOCK_RANGE = 400;
+const SHOCK_BASE_SHARE = 0.15, SHOCK_TESLA_SHARE = 0.25, SHOCK_DURATION = 1;
 /* Базы площадных радиусов игрока. Все они умножаются на D.aoeR в recalc():
    правило простое — если область принадлежит игроку, «Радиус области действия»
    её растит. Раньше через aoeR ходило только то, что зовёт nova(), а шок,
    обе ауры и инферно считали дистанцию своим циклом и мимо стата прошли. */
 const SLOW_AURA_BASE = 260, INFERNO_BASE = 110;
-/* Аура охлаждения. Радиус намеренно маленький: она должна поощрять бой в толпе,
-   а не замораживать комнату с одного прока. Замедление слабее прямого (20% против
-   35%), и самого статуса аура НЕ накладывает — см. комментарий в цикле врагов. */
-const CHILL_AURA_R = 96, CHILL_AURA_SLOW = 0.20, CHILL_TAKEN = 1.25;
-function shockBurst(src, dmg, minionShare=0){
+/* Охлаждение — короткий ослабленный удар контроля: 15% прямого замедления,
+   5% соседям, x1.10 входящего урона и 10% дополнительного урона от атаки. */
+const CHILL_AURA_R = 96, CHILL_SLOW = 0.15, CHILL_AURA_SLOW = 0.05, CHILL_TAKEN = 1.10;
+const CHILL_DURATION = 0.5, CHILL_DAMAGE_SHARE = 0.10;
+const SHOCK_TAKEN = 1.10, FREEZE_TAKEN = 1.10;
+const FREEZE_CHANCE = 0.01, FREEZE_DURATION = 1;
+const IGNITE_DPS_SHARE = 0.20, POISON_DPS_SHARE = 0.15;
+const shockTargets = () => D.tesla ? SHOCK_TESLA_TARGETS : SHOCK_BASE_TARGETS;
+const shockShare = () => D.tesla ? SHOCK_TESLA_SHARE : SHOCK_BASE_SHARE;
+function shockBurst(src, hitDamage, minionShare=0){
   const list = [];
   for (const x of G.enemies){
     if (x === src) continue;
@@ -4216,9 +4277,9 @@ function shockBurst(src, dmg, minionShare=0){
     if (d < D.shockR) list.push([d, x]);
   }
   list.sort((a,b) => a[0]-b[0]);
-  for (let i = 0; i < Math.min(SHOCK_TARGETS, list.length); i++){
+  for (let i = 0; i < Math.min(shockTargets(), list.length); i++){
     const t = list[i][1];
-    applyDamage(t, dmg, false, false, minionShare);
+    applyDamage(t, hitDamage*shockShare()*D.ailEff, false, false, minionShare);
     G.fx.push({t:'bolt', x:src.x, y:src.y, x2:t.x, y2:t.y, life:0.2});
     burst(t.x, t.y, 3, '#ffe14a', 130, 3, 0.3);
   }
@@ -4306,12 +4367,17 @@ function statusText(e, txt, col){
 function applyBookAilments(e, total, chanceMul=1, fixedDamageMul=1, minionShare=0){
   const it = G.items; if (!it) return;
   const proc = k => it[k] && Math.random()*100 < bookChance(k) * chanceMul;
-  if (proc('fire'))  addDot(e, 'fire', total * 0.20 * D.ailEff, 1.5 * D.ailDur, minionShare);
+  if (proc('fire'))  addDot(e, 'fire', total * IGNITE_DPS_SHARE * D.ailEff, 3 * D.ailDur, minionShare);
   if (proc('poison')) addDot(e, 'poison', D.bookPoiDps * fixedDamageMul, 3 * D.ailDur, minionShare);
   if (proc('bleed'))  addDot(e, 'bleed', bookBleedDps() * fixedDamageMul, 4 * D.ailDur, minionShare);
   if (proc('cold')){
     if (e.ail.chill <= 0) statusText(e, 'SLOWED', '#ffe14a');
-    e.ail.chill = Math.max(e.ail.chill, 1.0 * D.ailDur);
+    e.ail.chill = Math.max(e.ail.chill, CHILL_DURATION * D.ailDur);
+    applyDamage(e, total * CHILL_DAMAGE_SHARE * D.ailEff, false, false, minionShare);
+    if (D.freeze && Math.random() < FREEZE_CHANCE){
+      if (e.ail.freeze <= 0) statusText(e, 'FROZEN', '#7fd6ff');
+      e.ail.freeze = Math.max(e.ail.freeze, FREEZE_DURATION * D.ailDur * D.freezeDur);
+    }
   }
 }
 
@@ -4326,10 +4392,8 @@ function addDot(e, type, dps, dur, minionShare=0){
   if (e.ward && ((e.ward === 'fire' && type === 'fire') || (e.ward === 'poi' && type === 'poison')))
     dps *= 0.4;
   const d = e.dots[type];
-  // Длительность у котла одна на всех, а базы у источников разные: поджог от
-  // карточки горит 3 секунды, от книги огня — 1.5. Раньше здесь стояло d.dur = dur,
-  // то есть длительность задавал последний прок, и слабый прок книги обрезал вдвое
-  // весь котёл, накопленный карточкой (замер: −749 из 1500 от прока ценой в 1 урона).
+  // Длительность у котла одна на все источники. Раньше здесь стояло d.dur = dur,
+  // поэтому последний прок мог обрезать уже накопленный котёл.
   // Берём средневзвешенную по урону. Это не приближение: суммарный урон котла равен
   // dps × dur, и при таком слиянии он в точности равен сумме вкладов обоих проков.
   const tot = d.dps + dps;
@@ -4597,20 +4661,21 @@ function applyMinionSpell(e, spell){
   if (!spell || Math.random() >= MINION_AILMENT_CHANCE_MULT) return false;
   const base = avgHit() * 0.20 * MINION_DAMAGE_MULT;
   if (spell === 'fire'){
-    addDot(e, 'fire', base*0.25*D.ailEff, 3*D.ailDur, 1);
+    addDot(e, 'fire', base*IGNITE_DPS_SHARE*D.ailEff, 3*D.ailDur, 1);
     burst(e.x,e.y,5,'#ff7a2f',120,3,0.4);
   }
   if (spell === 'cold'){
     if (e.ail.chill<=0) statusText(e,'SLOWED','#ffe14a');
-    e.ail.chill = 2.5*D.ailDur;
-    if (D.freeze){
+    e.ail.chill = CHILL_DURATION*D.ailDur;
+    applyDamage(e, base*CHILL_DAMAGE_SHARE*D.ailEff, false, false, 1);
+    if (D.freeze && Math.random() < FREEZE_CHANCE){
       if(e.ail.freeze<=0) statusText(e,'FROZEN','#7fd6ff');
-      e.ail.freeze = Math.max(e.ail.freeze, 1.4*D.ailDur*D.freezeDur);
+      e.ail.freeze = Math.max(e.ail.freeze, FREEZE_DURATION*D.ailDur*D.freezeDur);
     }
     burst(e.x,e.y,5,'#7fd6ff',120,3,0.4);
   }
   if (spell === 'poison'){
-    addDot(e, 'poison', base*0.15*D.ailEff*(D.radiation?2:1), 4*D.ailDur, 1);
+    addDot(e, 'poison', base*POISON_DPS_SHARE*D.ailEff*(D.radiation?2:1), 4*D.ailDur, 1);
     burst(e.x,e.y,5,'#8be04e',120,3,0.4);
   }
   return true;
@@ -4959,14 +5024,15 @@ function update(dt){
   /* Всё, что разгоняет по условию, живёт в D.mspd и D.aspd, а условия меняются
      в кадре. Пересчёт зовём только на ПЕРЕКЛЮЧЕНИИ, а не каждый кадр: recalc()
      тяжёлый, и гонять его шестьдесят раз в секунду ради пары множителей незачем. */
-  const wasKill = p.spdKill > 0, wasMove = p.dashMoving,
+  const wasKill = p.spdKill > 0, wasSprint = p.sprintT > 0, wasMove = p.dashMoving,
         wasSwift = p.swiftT > 0, wasLow = p.lowHp, wasBerserkLow = p.berserkLow;
   p.spdKill = Math.max(0, (p.spdKill||0) - dt);
+  p.sprintT = Math.max(0, (p.sprintT||0) - dt);
   p.swiftT  = Math.max(0, (p.swiftT||0)  - dt);
   p.dashMoving = p.moving;
   p.lowHp   = p.hp/D.life < 0.30;
   p.berserkLow = p.hp/D.life < 0.40;
-  if ((p.spdKill > 0) !== wasKill || (amu('runner') && p.moving !== wasMove) ||
+  if ((p.spdKill > 0) !== wasKill || (p.sprintT > 0) !== wasSprint || (amu('runner') && p.moving !== wasMove) ||
       (p.swiftT > 0) !== wasSwift || p.lowHp !== wasLow || p.berserkLow !== wasBerserkLow) recalc();
   p.predT   = Math.max(0, (p.predT||0)   - dt);      // ГЛАЗ ХИЩНИКА
 
@@ -5144,11 +5210,11 @@ function update(dt){
     let aspdMul = 1;
     if (e.pack){ const pm = packMods(e); spd *= pm.spd; edmg *= pm.dmg; aspdMul *= pm.aspd; }
     if (e.rage > 0){ spd *= 1.3; edmg *= 1.3; }        // след мстителей: чужая смерть разогнала
-    if (e.ail.chill > 0) spd *= 1 - 0.35*(1 + b.sum('slowMag')/100);
+    if (e.ail.chill > 0) spd *= 1 - CHILL_SLOW*(1 + b.sum('slowMag')/100);
     // АУРА ОХЛАЖДЕНИЯ: соседи охлаждённого тоже вязнут.
     // Аура только замедляет и сам статус не накладывает. Если бы накладывала,
     // один прок расползся бы по всей комнате цепочкой (A морозит B, B морозит C),
-    // и каждый враг получил бы +25% к принимаемому урону бесплатно и навсегда.
+    // и каждый враг получил бы +10% к принимаемому урону бесплатно и навсегда.
     e.frost = false;
     if (e.ail.chill <= 0 && chillSrc.length){
       for (const cs of chillSrc){
@@ -5591,7 +5657,7 @@ function tickAmulets(dt){
       G.amuT.storm = 8;
       G.fx.push({t:'bolt', x:p.x, y:p.y, x2:t.x, y2:t.y, life:0.22, col:'#ffe14a'});
       damage(t, {mul:3});
-      t.ail.shock = Math.max(t.ail.shock, 3*D.ailDur);
+      t.ail.shock = Math.max(t.ail.shock, SHOCK_DURATION*D.ailDur);
       burst(t.x, t.y, 14, '#ffe14a', 220, 3, 0.5);
     }
   }
@@ -5676,7 +5742,7 @@ function tickTrail(dt){
     if (f) applyDamage(e, dps*dt, false, true);
     if (cd){
       if (e.ail.chill <= 0) statusText(e, 'SLOWED', '#ffe14a');
-      e.ail.chill = Math.max(e.ail.chill, 0.6*D.ailDur);
+      e.ail.chill = Math.max(e.ail.chill, CHILL_DURATION*D.ailDur);
     }
   }
 }
@@ -6719,7 +6785,7 @@ const MINION_STATS = new Set([
   'dFire','iFire','dCold','iCold','dLit','iLit','dPoi','iPoi',
   'dblHit','deadlyHit',
   // Статусы и эффекты — накладываются внутри damage() на ударе приспешника
-  'igniteCh','chillCh','freeze','shockCh','poiCh','radiation','ailEff','ailDur',
+  'igniteCh','chillCh','freeze','shockCh','tesla','poiCh','radiation','ailEff','ailDur',
   'knock','dizzy','stun','slowMag','inferno',
   // Условные проценты; дистанционные считаются от самого приспешника
   'vsLow','vsFull','vsBoss','whMove','whStill','whLow','perNear','afterKill','close','far','ramp',
@@ -6782,19 +6848,19 @@ const SKILL_TIPS = {
   'dmg.reflect':'<b>Требование:</b> открывается при 40 шипах.<br><b>Когда срабатывает:</b> после полученного удара.<br><b>Эффект:</b> возвращает атакующему процент от урона, который вы получили; шипы при этом наносят свой фиксированный урон отдельно.',
   'dmg.pct_enemy_hp':'<b>Когда срабатывает:</b> при вашем попадании по врагу.<br><b>Эффект:</b> добавляет урон, равный указанному проценту от здоровья цели.<br><b>Практически:</b> особенно силён против врагов и боссов с большим запасом HP; по раненой цели добавка становится меньше.',
   'dmg.execute':'<b>Когда срабатывает:</b> когда после попадания здоровье врага оказывается ниже указанного процента от максимума.<br><b>Эффект:</b> цель немедленно добивается, независимо от оставшегося количества HP.<br><b>Пример:</b> при 10% добивание сработает, когда у врага останется меньше десятой части его максимального здоровья.',
-  'dmg.range_narrow':'<b>Что меняет:</b> уменьшает случайный разброс между минимальным и максимальным уроном вашего оружия.<br><b>Пример:</b> при высоком значении удары реже бывают «слабыми» и чаще близки к верхней границе.<br><b>Не добавляет:</b> ни минимальный, ни максимальный урон напрямую — повышает стабильность.',
+  'dmg.range_narrow':'<b>Что меняет:</b> подтягивает минимальный урон к максимальному на указанный процент, не уменьшая верхнюю границу.<br><b>Пример:</b> диапазон 6–10 при +50% становится 8–10, поэтому средний урон растёт с 8 до 9.<br><b>Предел:</b> одна карточка даёт 5–15%; суммарный бонус не превышает 50%, после чего карточка уходит из пула.',
   'dmg.lucky':'<b>Когда срабатывает:</b> при каждом вашем ударе.<br><b>Эффект:</b> игра дважды бросает случайный урон в диапазоне оружия и выбирает больший результат.<br><b>Важно:</b> не создаёт второй удар и не удваивает урон; это выбор лучшего из двух бросков.',
   'crit.chance_flat':'<b>Что меняет:</b> прибавляет указанное число процентных пунктов к шансу критического удара.<br><b>Пример:</b> 20% крита + 8% с карточки = 28% крита.<br><b>Предел:</b> шанс не может стать выше 100%.',
   'crit.chance_inc':'<b>Что меняет:</b> усиливает уже имеющийся шанс крита на указанный процент.<br><b>Пример:</b> при 20% базового шанса +50% даст 30%, а не 70%.<br><b>Предел:</b> итоговый шанс не превышает 100%.',
-  'crit.multi':'<b>Когда срабатывает:</b> только на критическом попадании.<br><b>Эффект:</b> добавляет указанное число процентов к множителю критического урона.<br><b>Пример:</b> крит ×2,0 с бонусом +29 становится ×2,29: обычный удар на 100 нанесёт критом 229.',
+  'crit.multi':'<b>Когда срабатывает:</b> только на критическом попадании.<br><b>Эффект:</b> добавляет указанное число процентов к множителю критического урона.<br><b>Пример:</b> крит ×2,0 с бонусом +5 становится ×2,05: обычный удар на 100 нанесёт критом 205.',
   'crit.super_chance':'<b>Требование:</b> открывается при 100% обычного крита.<br><b>Когда срабатывает:</b> после критического удара бросается отдельный шанс сверхкрита.<br><b>Эффект:</b> сверхкрит удваивает уже критический урон и накладывает кровотечение на 3% силы удара в секунду; кровотечения складываются без предела.',
   'crit.on_crit_shockwave':'<b>Когда срабатывает:</b> каждый раз, когда ваш удар критует.<br><b>Эффект:</b> от точки попадания расходится ударная волна, наносящая урон соседним врагам.<br><b>Важно:</b> без критов эффект не появляется; радиус растёт от бонусов к области действия.',
   'crit.lucky':'<b>Когда срабатывает:</b> при определении, будет ли удар критическим.<br><b>Эффект:</b> игра бросает шанс крита дважды и берёт лучший результат.<br><b>Пример:</b> при 30% крита вероятность получить хотя бы один успех становится 51%, а не 30%.',
   'spd.attack':'<b>Что меняет:</b> уменьшает задержку между автоатаками на указанный процент.<br><b>Пример:</b> +20% скорости атаки означает примерно в 1,2 раза больше атак за то же время.<br><b>Влияет:</b> на основную атаку и частоту ударов свиты там, где применяется её собственная скорость.',
   'spd.action':'<b>Что меняет:</b> это отдельный множитель скорости атаки, а не обычный процент.<br><b>Пример:</b> при 100% обычной скорости «×1,15» делает итог 115%; несколько таких множителей перемножаются.<br><b>Почему ценен:</b> складывается отдельно от карточек «Скорость атаки».',
   'mov.speed':'<b>Что меняет:</b> увеличивает скорость движения героя во все стороны.<br><b>Пример:</b> +10% означает, что одинаковая дистанция проходится примерно за 90% прежнего времени.<br><b>Не влияет:</b> на скорость снарядов, атаки, рывок и скорость свиты.',
-  'mov.speed_on_kill':'<b>Когда срабатывает:</b> сразу после каждого убийства.<br><b>Эффект:</b> герой получает +40% скорости передвижения на 2 секунды.<br><b>Обновление:</b> новое убийство обновляет время действия, поэтому в плотной волне ускорение можно поддерживать постоянно.',
-  'shape.proj_count':'<b>Что меняет:</b> каждая ваша атака выпускает ещё один снаряд/сферу.<br><b>Эффект:</b> дополнительный снаряд наносит полный урон и может отдельно критовать, пробивать и накладывать эффекты.<br><b>Важно:</b> для лучника и мага; у некроманта нет собственной автоатаки.',
+  'mov.speed_on_kill':'<b>Когда срабатывает:</b> сразу после каждого убийства.<br><b>Эффект:</b> герой получает +25% скорости передвижения на 0,8 секунды.<br><b>Обновление:</b> новое убийство сразу обновляет время действия.',
+  'shape.proj_count':'<b>Что меняет:</b> каждая атака Лучника выпускает ещё один снаряд.<br><b>Эффект:</b> дополнительный снаряд наносит полный урон и может отдельно критовать, пробивать и накладывать эффекты.<br><b>Важно:</b> карточка доступна только Лучнику; Маг получает дополнительные снаряды только от классового роста и бонуса Мага Мультипликации.',
   'shape.pierce':'<b>Что меняет:</b> снаряд не исчезает после первой цели и может пройти ещё через указанное число врагов.<br><b>Пример:</b> «2 цели» позволяет после первого попадания задеть ещё двух врагов.<br><b>Важно:</b> один и тот же враг не получает повторный урон от того же пролёта.',
   'shape.chain':'<b>Когда срабатывает:</b> после попадания снаряда по врагу.<br><b>Эффект:</b> снаряд прыгает к указанному числу других ближайших целей.<br><b>Важно:</b> без «ЭКО-ОТСКОКОВ» каждый следующий прыжок теряет 25% урона.',
   'shape.homing':'<b>Что меняет:</b> силу поворота летящего снаряда к ближайшему врагу.<br><b>Пример:</b> при большем значении стрела или сфера быстрее корректирует траекторию и реже пролетает мимо.<br><b>Не добавляет:</b> урон, скорость полёта или дальность.',
@@ -6802,8 +6868,8 @@ const SKILL_TIPS = {
   'shape.proj_size':'<b>Что меняет:</b> визуальный и фактический радиус снаряда.<br><b>Эффект:</b> крупным снарядом проще попасть по цели; у сфер увеличивается область попадания.<br><b>Не влияет:</b> на урон и радиус взрыва — для взрыва нужен «Радиус области действия».',
   'shape.aoe_radius':'<b>Что меняет:</b> радиус взрывов, волн, луж и других эффектов по площади.<br><b>Пример:</b> +25% превращает радиус 100 в 125, а площадь покрытия становится заметно больше.<br><b>Не увеличивает:</b> размер обычной стрелы и дальность её полёта.',
   'shape.cleave_arc':'<b>Что меняет:</b> угол дугового удара клинком.<br><b>Эффект:</b> за один взмах можно задеть больше врагов, стоящих перед героем.<br><b>Не увеличивает:</b> дальность удара и урон по одной цели.',
-  'shape.explode_on_kill':'<b>Когда срабатывает:</b> после смерти врага от вашей атаки или эффекта.<br><b>Эффект:</b> с указанным шансом труп даёт чумный взрыв малого радиуса и заражает всех задетых врагов.<br><b>Чума:</b> ровно 3 секунды; на 1-й, 2-й и 3-й секунде снимает 15% от <b>текущего</b> HP цели. Не наносит мгновенный прямой урон.<br><b>Предел:</b> при 100% каждый труп вызывает чуму.',
-  'shape.explode_mega':'<b>Требование:</b> открывается при 100% обычных чумных взрывов.<br><b>Когда срабатывает:</b> один из чумных взрывов становится мега-версией.<br><b>Эффект:</b> радиус заражения вдвое больше; сама чума остаётся прежней — 15% текущего HP в секунду в течение 3 секунд.',
+  'shape.explode_on_kill':'<b>Когда срабатывает:</b> после смерти врага от вашей атаки или эффекта.<br><b>Эффект:</b> с указанным шансом труп даёт чумный взрыв малого радиуса и заражает всех задетых врагов.<br><b>Чума:</b> ровно 3 секунды; на 1-й, 2-й и 3-й секунде снимает 15% от <b>текущего</b> HP цели. Не наносит мгновенный прямой урон.<br><b>Диапазон:</b> каждая карточка даёт целые 3–7%.<br><b>Предел:</b> 25%; последняя карточка обрезается до остатка и затем уходит из пула.',
+  'shape.explode_mega':'<b>Требование:</b> открывается при 25% обычных чумных взрывов.<br><b>Когда срабатывает:</b> один из чумных взрывов становится мега-версией.<br><b>Эффект:</b> радиус заражения вдвое больше; сама чума остаётся прежней — 15% текущего HP в секунду в течение 3 секунд.',
   'shape.double_hit':'<b>Когда срабатывает:</b> при вашем успешном попадании.<br><b>Эффект:</b> с указанным шансом создаётся второе попадание по той же цели с силой 60% исходного.<br><b>Диапазон:</b> каждая карточка даёт случайно 5–15%.<br><b>Предел:</b> 25%; последняя карточка обрезается до остатка.',
   'shape.deadly_hit':'<b>Требование:</b> достигнуть предела 25% шанса двойного попадания.<br><b>Когда срабатывает:</b> при каждом фактическом ударе героя или свиты с шансом 1%.<br><b>Эффект:</b> отдельно снимает 25% от текущего HP цели после обычного урона.<br><b>Не срабатывает:</b> от DoT, чумы и луж.',
   'shape.shotgun':'<b>Требование:</b> не менее 5 дополнительных снарядов.<br><b>Эффект:</b> весь залп летит плотным пучком, а не широким веером.<br><b>Практически:</b> гораздо сильнее по одной крупной цели, но хуже покрывает толпу.',
@@ -6834,7 +6900,7 @@ function detailedSkillTip(m, card){
   if (m.id === 'key.death_lord') return '<b>Только для Некроманта.</b><br><b>Эффект:</b> 0,1% всего фактически нанесённого свитой урона восстанавливает здоровье героя.<br><b>Учитывает:</b> удары всех приспешников, их дополнительные атаки, негативные эффекты, взрыв при смерти и классовые лужи.<br><b>Пример:</b> 10 000 реально нанесённого урона возвращают 10 HP.';
   if (m.id === 'key.bone_challenge') return '<b>Только для Некроманта.</b><br><b>Шанс:</b> 1% при каждом прямом ударе свиты.<br><b>Эффект:</b> атакованный монстр переключается на ударившего приспешника и преследует его, пока тот жив. После смерти приспешника агро возвращается к обычному выбору цели.';
   if (m.id === 'cond.vs_low_hp') return '<b>Условие:</b> цель имеет меньше 35% своего максимального здоровья.<br><b>Эффект:</b> все ваши подходящие попадания по ней получают этот процент урона.<br><b>Практически:</b> помогает быстрее добивать раненых врагов.';
-  if (m.id === 'cond.vs_full_hp') return '<b>Условие:</b> цель ещё не получила урон и находится на полном HP.<br><b>Эффект:</b> первый удар по ней получает этот процент урона.<br><b>Важно:</b> после первого попадания бонус для этой цели пропадает.';
+  if (m.id === 'cond.vs_full_hp') return '<b>Условие:</b> цель ещё не получила урон и находится на полном HP.<br><b>Эффект:</b> первый удар по ней получает этот процент урона.<br><b>Пример:</b> без других бонусов +30% превращает удар на 100 в 130 урона.<br><b>Важно:</b> после первого попадания бонус для этой цели пропадает.';
   if (m.id === 'cond.vs_boss') return '<b>Условие:</b> цель является элитным врагом или боссом.<br><b>Эффект:</b> ваши попадания по такой цели получают указанный процент урона.<br><b>Не действует:</b> на обычных монстров.';
   if (m.id === 'cond.while_moving') return '<b>Условие:</b> герой в данный момент движется клавишами или мышью.<br><b>Эффект:</b> пока есть движение, атаки получают этот процент урона.<br><b>Важно:</b> остановились — бонус сразу исчезает.';
   if (m.id === 'cond.while_still') return '<b>Условие:</b> герой стоит на месте.<br><b>Эффект:</b> атаки получают этот процент урона, пока персонаж не двигается.<br><b>Цена:</b> любое движение сразу отключает бонус.';
@@ -6843,12 +6909,12 @@ function detailedSkillTip(m, card){
   if (m.id === 'cond.recently_killed') return '<b>Когда срабатывает:</b> сразу после убийства врага.<br><b>Эффект:</b> на 3 секунды ваш урон получает указанный процент бонуса.<br><b>Обновление:</b> новое убийство снова запускает трёхсекундный таймер.';
   if (m.id === 'cond.close_range') return '<b>Условие:</b> цель находится близко к герою.<br><b>Эффект:</b> попадание по ней получает указанный процент урона.<br><b>Практически:</b> особенно полезно для ближнего боя и плотной толпы.';
   if (m.id === 'cond.long_range') return '<b>Условие:</b> цель находится далеко от героя.<br><b>Эффект:</b> попадание по ней получает указанный процент урона.<br><b>Практически:</b> лучник и маг чаще используют этот бонус на подходе врагов.';
-  if (/^dt\.(fire|cold|lightning|poison)\.flat$/.test(m.id)) return '<b>Что меняет:</b> добавляет <b>' + shown + '</b> плоского урона соответствующей стихии к каждому подходящему попаданию.<br><b>Как считается:</b> прибавляется к базовому урону до процентных усилений этой стихии.<br><b>Важно:</b> не повышает шанс наложить её негативный эффект.';
-  if (/^dt\.(fire|cold|lightning|poison)\.inc$/.test(m.id)) return '<b>Что меняет:</b> усиливает весь урон соответствующей стихии на <b>' + shown + '</b>.<br><b>Влияет:</b> на прямой урон стихии и на её подходящие эффекты урона со временем.<br><b>Не влияет:</b> на шанс наложения статуса и его длительность.';
-  if (m.id === 'ail.ignite.chance') return '<b>Когда проверяется:</b> при каждом вашем подходящем попадании.<br><b>Эффект:</b> с этим шансом цель получает поджог; горение наносит урон по площади вокруг неё.<br><b>Важно:</b> несколько проверок не гарантируют поджог, а при 100% он накладывается каждым попаданием.';
-  if (m.id === 'ail.chill.chance') return '<b>Когда проверяется:</b> при каждом подходящем попадании.<br><b>Эффект:</b> цель замедляется на 35% и получает на 25% больше урона; соседние враги рядом с ней тоже замедляются.<br><b>Важно:</b> это шанс наложения, а не величина самого замедления.';
-  if (m.id === 'ail.shock.chance') return '<b>Когда проверяется:</b> при каждом подходящем попадании.<br><b>Эффект:</b> с указанным шансом из цели выходит разряд: цепная молния бьёт до 20 ближайших врагов в радиусе, нанося каждому 20% силы удара. Основная цель также получает Шок и начинает принимать на 30% больше урона.<br><b>Важно:</b> карточка повышает шанс разряда, но не сам урон цепной молнии и не множитель Шока.';
-  if (m.id === 'ail.poison.chance') return '<b>Когда проверяется:</b> при каждом подходящем попадании.<br><b>Эффект:</b> с этим шансом накладывается один стак яда; стаки складываются и каждый наносит урон отдельно.<br><b>Важно:</b> яд не расходует время боя и не мешает накладывать новые стаки.';
+  if (/^dt\.(fire|cold|lightning|poison)\.flat$/.test(m.id)) return '<b>Условие появления:</b> сначала нужно взять хотя бы 1% шанса соответствующего статуса.<br><b>Что меняет:</b> добавляет <b>' + shown + '</b> плоского урона стихии к каждому подходящему попаданию.<br><b>Важно:</b> открытие только добавляет редкую синюю карточку в случайный пул и не гарантирует её в следующей раздаче.';
+  if (/^dt\.(fire|cold|lightning|poison)\.inc$/.test(m.id)) return '<b>Условие появления:</b> сначала нужно взять хотя бы 1% шанса соответствующего статуса.<br><b>Что меняет:</b> усиливает весь урон этой стихии на <b>' + shown + '</b>.<br><b>Важно:</b> обычная карточка лишь открывается в случайном пуле и не выдаётся гарантированно.';
+  if (m.id === 'ail.ignite.chance') return '<b>Когда проверяется:</b> при каждом подходящем попадании.<br><b>Эффект:</b> поджог наносит 20% полного удара в секунду в течение 3 секунд.<br><b>Предел:</b> одна карточка даёт 1–5 процентных пунктов; суммарный шанс не превышает 25%.';
+  if (m.id === 'ail.chill.chance') return '<b>Когда проверяется:</b> при каждом подходящем попадании.<br><b>Эффект на 0,5 сек:</b> −15% скорости цели, +10% входящего урона и отдельный урон в размере 10% атаки; соседи замедляются на 5%.<br><b>Предел:</b> одна карточка даёт 1–5 п.п.; суммарный шанс не превышает 25%.';
+  if (m.id === 'ail.shock.chance') return '<b>Когда проверяется:</b> при каждом подходящем попадании.<br><b>Эффект:</b> Шок на 1 секунду даёт цели +10% входящего урона; базовый разряд бьёт до 5 соседей на 15% удара.<br><b>Предел:</b> одна карточка даёт 1–5 п.п.; суммарный шанс не превышает 25%. На потолке открывается «ТЕСЛА».';
+  if (m.id === 'ail.poison.chance') return '<b>Когда проверяется:</b> при каждом подходящем попадании.<br><b>Эффект:</b> яд наносит 15% полного удара в секунду в течение 4 секунд и стакается.<br><b>Предел:</b> одна карточка даёт 1–5 п.п.; суммарный шанс не превышает 25%.';
   if (m.id === 'cc.knockback') return '<b>Когда проверяется:</b> при каждом вашем попадании.<br><b>Эффект:</b> с этим шансом враг отбрасывается от героя.<br><b>Сопротивление:</b> сила толчка по Бегунам снижена на 30%, по любой элите — на 50%, по боссам — на 90%.<br><b>Важно:</b> при 100% каждое подходящее попадание отбрасывает; тогда открывается «ГОЛОВОКРУЖЕНИЕ».';
   if (m.id === 'cc.stun_chance') return '<b>Когда проверяется:</b> при каждом вашем попадании.<br><b>Эффект:</b> с этим шансом враг полностью перестаёт двигаться и атаковать на время оглушения.<br><b>Важно:</b> эта карточка повышает шанс, а длительность меняет «Длительность всех эффектов».';
   if (m.id === 'cc.slow') return '<b>Что меняет:</b> усиливает величину замедления, которое вы накладываете.<br><b>Пример:</b> более сильное замедление сильнее уменьшает скорость врагов, но не меняет шанс его наложения.<br><b>Не влияет:</b> на длительность контроля и урон.';
@@ -6857,7 +6923,7 @@ function detailedSkillTip(m, card){
   if (m.id === 'loot.pickup_radius') return '<b>Что меняет:</b> увеличивает радиус, в котором герой автоматически подбирает опыт и золото.<br><b>Практически:</b> не нужно подходить вплотную к каждому кристаллу.<br><b>Не притягивает:</b> предметы из-за стен или на любом расстоянии; для этого нужна «Притягивание лута».';
   if (m.id === 'loot.magnet') return '<b>Что меняет:</b> лут и без этого свойства постепенно подтягивается к герою, а эта карточка <b>значительно ускоряет</b> его притягивание.<br><b>Практически:</b> опыт и золото быстрее догоняют персонажа и не остаются далеко позади во время движения.<br><b>Сочетается:</b> с увеличением радиуса автоподбора — тот определяет, с какого расстояния лут начнёт двигаться к вам.';
   if (m.nt) return '<b>Как работает:</b> ' + m.nt + '<br><b>Длительность:</b> свойство остаётся активным до конца текущего забега.<br><b>Важно:</b> повторно эта уникальная карточка не усиливается.';
-  if (m.kind === 'chance') return '<b>Что означает число:</b> это независимый шанс при каждом подходящем событии.<br><b>Пример:</b> ' + shown + ' означает, что примерно столько раз из 100 эффект сработает.<br><b>Важно:</b> шанс не гарантирует срабатывание по счёту и обычно ограничен 100%.';
+  if (m.kind === 'chance') return '<b>Что означает число:</b> это независимый шанс при каждом подходящем событии.<br><b>Пример:</b> ' + shown + ' означает, что примерно столько раз из 100 эффект сработает.<br><b>Важно:</b> шанс не гарантирует срабатывание по счёту; точный потолок указан в описании ветки.';
   if (m.kind === 'flag') return '<b>Эффект:</b> открывает это постоянное свойство до конца забега.<br><b>Когда работает:</b> условия и детали указаны в названии и категории карточки.<br><b>Важно:</b> повторный выбор той же карточки не усиливает свойство.';
   if (m.kind === 'flat') return '<b>Что меняет:</b> добавляет <b>' + shown + '</b> напрямую к этому параметру.<br><b>Как считается:</b> плоское значение прибавляется к базе до процентных усилений.<br><b>Важно:</b> это не процент — эффект одинаковый при любом текущем значении.';
   if (m.kind === 'more') return '<b>Что меняет:</b> умножает итоговый параметр на отдельный множитель <b>' + shown + '</b>.<br><b>Важно:</b> этот тип применяется после обычных процентов, поэтому несколько таких бонусов перемножаются.<br><b>Не путать:</b> это не обычное сложение процентов.';
@@ -6987,7 +7053,8 @@ function rollModValue(m, random=Math.random){
   else if (m.int) v = Math.floor(m.r[0] + random()*(m.r[1]-m.r[0]+1));
   else v = m.r[0] + random()*(m.r[1]-m.r[0]);
   if (m.cap !== undefined){
-    const e = G.bag.s[m.stat], current = e ? e.flat : 0;
+    const e = G.bag.s[m.stat];
+    const current = !e ? 0 : m.kind === 'inc' ? e.inc : m.kind === 'more' ? (e.more-1)*100 : e.flat;
     v = Math.min(v, Math.max(0, m.cap-current));
   }
   return v;
@@ -7083,7 +7150,7 @@ function renderSheet(){
       // Радиусы показываем числами: множитель ×1.40 ничего не говорит о том,
       // достанет ли молния до соседней кучи
       r('Радиус чумы / сфера', Math.round(PLAGUE_RADIUS*D.aoeR*D.plagueRadius) + ' / ' + Math.round((G.weapon.aoe||0)*D.aoeR)) +
-      r('Разлёт молний', Math.round(D.shockR) + ' (до ' + SHOCK_TARGETS + ' целей)') +
+      r('Разлёт молний', Math.round(D.shockR) + ' (до ' + shockTargets() + ' целей · ' + Math.round(shockShare()*100) + '% удара)') +
       (D.inferno ? r('Перекидывание поджога', Math.round(D.infernoR)) : '') +
       (b.has('slowAura') ? r('Аура замедления', Math.round(D.slowAuraR)) : '') +
       (D.orbitN ? r('Круговые орбы', D.orbitN + ' / 10 · ' + Math.round(avgHit()*0.15) + ' за касание') : '') +

@@ -85,6 +85,22 @@ console.log('НА УДАРЕ');
      off.toFixed(1) + ' \u2192 ' + on.toFixed(1)); }
 
 console.log('ДРОП');
+{ const c = loadGame('./PolyGrind.html'), B = c.__api.DROP_BALANCE;
+  ok('частота предметов ×0,5, книг и тотемов ×1/3',
+    Math.abs(B.itemScale-.5)<1e-9 && Math.abs(B.bookScale-1/3)<1e-9 && Math.abs(B.totemScale-1/3)<1e-9); }
+{ const dropsAt = value => {
+    let roll=0.99; const c=loadGame('./PolyGrind.html',{random:()=>roll}); c.newGame('bow','keys');
+    roll=value; c.__api.G.orbs.length=0; c.tryDropBook({kind:'norm',x:0,y:0});
+    return c.__api.G.orbs.length;
+  };
+  ok('общий шанс рядового снижен с 0,4% до 0,1533%', dropsAt(.0015)===1 && dropsAt(.0016)===0); }
+{ const dropsAt = value => {
+    let roll=0.99; const c=loadGame('./PolyGrind.html',{random:()=>roll}); c.newGame('bow','keys');
+    const G=c.__api.G; for (const k of Object.keys(c.__api.AMULETS)) G.amu[k]=true;
+    G.items={}; G.totems={}; G.orbs.length=0; roll=value; c.tryDropBook({kind:'norm',x:0,y:0});
+    return G.orbs.length;
+  };
+  ok('после исчерпания предметов книги сохраняют нерф ×1/3', dropsAt(.0013)===1 && dropsAt(.0014)===0); }
 { const d = dropSample([], {}, 8000);
   ok('без книг тотемы не выпадают', d.tot === 0); }
 { const d = dropSample(['fire'], {}, 6000);
@@ -100,7 +116,7 @@ console.log('ДРОП');
   ok('книга крови открывает только тотем крови', d.seen.size === 1 && d.seen.has('blood'),
      'в пуле: ' + [...d.seen].join(', ')); }
 { const d = dropSample(['fire','cold','poison','bleed'], {}, 40000);
-  ok('доля открытых тотемов среди находок ~25%', Math.abs(d.tot/d.n - 0.25) < 0.02,
+  ok('после нерфа доля открытых тотемов среди находок ~21,7%', Math.abs(d.tot/d.n - 5/23) < 0.02,
      'тотемы ' + (d.tot/d.n*100).toFixed(1) + '% · предметы ' + (d.amu/d.n*100).toFixed(1) + '% · книги ' + (d.book/d.n*100).toFixed(1) + '%'); }
 { const d = dropSample(['fire','cold','poison','bleed'], {fire:4, freeze:4, poison:4, blood:4}, 8000);
   ok('великие тотемы больше не выпадают', d.tot === 0); }

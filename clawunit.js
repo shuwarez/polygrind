@@ -69,7 +69,7 @@ function foe(o, dx, dy){
   for (let i=0;i<5;i++) o.c.minionHit(e, m1);
   ok('счётчик у каждого приспешника свой', m1.hitN === 5 && m2.hitN === 0,
      'первый ' + m1.hitN + ', второй ' + m2.hitN); }
-{ const o = mk([['minClaws',1],['igniteCh',100]]);
+{ const o = mk([['minClaws',1],['igniteCh',25]]);
   const e = foe(o); o.m.x = e.x; o.m.y = e.y;
   let procs = 0;
   for (let i=0;i<1200;i++){
@@ -77,9 +77,9 @@ function foe(o, dx, dy){
     o.c.minionHit(e, o.m);
     if (e.dots.fire.dps > 0) procs++;
   }
-  const rate = procs/1200; // два независимых броска по 25%: 1 - 0.75² = 43.75%
-  ok('добавочный удар несёт эффекты', rate > 0.36 && rate < 0.51,
-     Math.round(rate*100) + '% при цели 43.8%'); }
+  const rate = procs/1200; // два броска по 6,25%: 1 - 0,9375² = 12,1%
+  ok('добавочный удар несёт эффекты', rate > 0.07 && rate < 0.18,
+     Math.round(rate*100) + '% при цели 12,1%'); }
 { const o = mk([]);
   const e = foe(o); o.m.x = e.x; o.m.y = e.y;
   for (let i=0;i<12;i++) o.c.minionHit(e, o.m);

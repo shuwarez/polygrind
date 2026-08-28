@@ -50,9 +50,19 @@ console.log('РИТМ БОЯ');
   const x0 = o.p.x; o.c.update(DT); const fast = o.p.x - x0;
   const o2 = mk([]); o2.G.keys['d'] = true; const x1 = o2.p.x; o2.c.update(DT);
   ok('паника: +60% при малом здоровье', Math.abs(fast/(o2.p.x-x1) - 1.6) < 0.05); }
-{ const o = mk('sprint'); const e = foe(o,9e5,0);
+{ const o = mk([], [['spdKill',1,'flag']]), base=o.D.mspd, e = foe(o,9e5,0);
+  o.c.killEnemy(e, o.G.enemies.indexOf(e)); const active=o.D.mspd;
+  o.c.update(0.81);
+  ok('карточка убийства: сразу +25% на 0,8 сек',
+    Math.abs(active/base-1.25)<1e-9 && o.p.spdKill===0 && Math.abs(o.D.mspd-base)<1e-9); }
+{ const o = mk('sprint'), base=o.D.mspd, e = foe(o,9e5,0);
+  o.c.killEnemy(e, o.G.enemies.indexOf(e)); const active=o.D.mspd;
+  o.c.update(2.01);
+  ok('последний рывок: сразу +40% на 2 сек',
+    Math.abs(active/base-1.40)<1e-9 && o.p.sprintT===0 && Math.abs(o.D.mspd-base)<1e-9); }
+{ const o = mk('sprint', [['spdKill',1,'flag']]), base=o.D.mspd, e = foe(o,9e5,0);
   o.c.killEnemy(e, o.G.enemies.indexOf(e));
-  ok('последний рывок: разгон после убийства', o.p.spdKill > 0); }
+  ok('карточка и Последний рывок работают независимо', Math.abs(o.D.mspd/base-1.75)<1e-9); }
 
 console.log('РЕАКЦИЯ И ДОБИВАНИЕ');
 { const o = mk('riposte'); const e = foe(o,40,0);
@@ -87,10 +97,11 @@ console.log('СТИХИИ И КРИТЫ');
   const without = avgHit(o2, e2, 600);
   ok('триединство: крит без броска', withT > without*1.4,
      Math.round(without) + ' \u2192 ' + Math.round(withT)); }
-{ const o = mk('overload', [['igniteCh',100]]);
+{ const o = mk('overload', [['igniteCh',25]]);
   const e = foe(o,40,0); e.ail.shock = 3;
   const other = foe(o,80,0);
-  const h = other.hp; o.c.damage(e, {});
+  const h = other.hp;
+  for (let i=0;i<200 && other.hp===h;i++) o.c.damage(e, {});
   ok('перегрузка: разряд по округе', other.hp < h, 'соседу ' + Math.round(h-other.hp)); }
 { const o = mk('critmass', [['critCh',100]]);
   const e = foe(o,40,0), other = foe(o,40,40);

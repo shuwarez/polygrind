@@ -46,7 +46,7 @@ function foe(o, dx, dy){
      Math.abs((70*b.D.aoeR)/(70*a.D.aoeR) - 2) < 0.01,
      Math.round(70*a.D.aoeR) + ' \u2192 ' + Math.round(70*b.D.aoeR)); }
 
-{ const o = mk([['minDmg',50,'inc'],['minFrenzy',1],['igniteCh',100]]);
+{ const o = mk([['minDmg',50,'inc'],['minFrenzy',1],['igniteCh',25]]);
   const tgt = foe(o, 40, 0), near = foe(o, 40, 50);
   o.m.x = tgt.x; o.m.y = tgt.y;
   let procs = 0;
@@ -56,7 +56,7 @@ function foe(o, dx, dy){
     if (near.dots.fire.dps > 0) procs++;
   }
   const rate = procs/600;
-  ok('взрыв разносит эффекты с шансом свиты', rate > 0.17 && rate < 0.33,
+  ok('взрыв разносит эффекты с шансом свиты', rate > 0.02 && rate < 0.11,
      Math.round(rate*100) + '%'); }
 
 { // урон взрыва равен удару
