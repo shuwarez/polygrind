@@ -149,10 +149,16 @@ ok('все четырнадцать листов вместе весят мен�
   const G=c.__api.G, D=c.__api.D, p=G.player, e=c.spawnEnemy('boss','vampire');
   D.dodge=D.block=D.armor=D.drFlat=D.dr=D.drShop=D.normalDr=D.majorDr=0;
   e.x=-200; e.y=0; p.x=80; p.y=20; e.hp=e.maxHp*0.25;
-  c.tickBossSkill(e,3.01); const mark={x:e.bossT.markX,y:e.bossT.markY}; p.x=400; p.y=400;
   c.tickBossSkill(e,2.01);
+  ok('Vampire Lord готовит крест вдвое быстрее — ровно 1 секунду', e.bossT.markWarn===1);
+  const mark={x:e.bossT.markX,y:e.bossT.markY}; p.x=400; p.y=400;
+  c.tickBossSkill(e,1.01);
   ok('Vampire Lord фиксирует позицию в момент Кровавой метки', mark.x===80 && mark.y===20 && e.x===80 && e.y===20);
   ok('уклонение от зафиксированной позиции не лечит Вампира', Math.abs(e.hp-e.maxHp*0.25)<0.001);
+  const exactCooldown=e.bossT.markCd===2; c.tickBossSkill(e,1.99);
+  const before=e.bossT.markWarn||0; c.tickBossSkill(e,0.02);
+  ok('между крестами пауза 2 секунды, затем начинается новая метка',
+    exactCooldown && before===0 && e.bossT.markWarn===1);
   p.x=0; p.y=0; p.hp=D.life; p.inv=0; e.x=-100; e.y=0; e.hp=e.maxHp*0.25;
   e.bossT={markWarn:0.01,markX:0,markY:0}; c.tickBossSkill(e,0.02);
   ok('крестовой рывок наносит 30% max HP', Math.abs(p.hp-D.life*0.70)<0.001);
@@ -173,13 +179,21 @@ ok('все четырнадцать листов вместе весят мен�
   ok('Dread Minotaur — редкий босс', c.bossType(e).rare===true);
   e.bossT={}; ok('защита Минотавра постоянно срезает 80% урона', Math.abs(c.mitigate(e,100)-20)<0.001);
   e.bossT.vulnerable=1; ok('после промаха Минотавр получает +40% входящего урона', Math.abs(c.mitigate(e,100)-140)<0.001);
+  e.bossT={chargeCd:0}; c.tickBossSkill(e,0.01);
+  ok('подготовка натиска ускорена вдвое до 0,45 сек', Math.abs(e.bossT.chargeWarn-0.45)<1e-9);
+  e.x=0; e.y=0; e.bossT={chargeLeft:1000,chargeA:0,chargeHit:true}; c.tickBossSkill(e,0.1);
+  ok('скорость натиска равна 2800 ед/с', Math.abs(e.x-280)<1e-9 && Math.abs(e.bossT.chargeLeft-720)<1e-9,
+    e.x.toFixed(0)+' ед за 0,1 сек');
   e.x=0; e.y=0; G.player.x=0; G.player.y=500; e.bossT={chargeWarn:0.01,chargeA:0};
-  c.tickBossSkill(e,0.02); c.tickBossSkill(e,5);
-  ok('натиск идёт до края арены и промах открывает окно на 3 сек',
-    Math.abs(e.x-(1500-e.r))<0.01 && e.bossT.vulnerable===3 && e.bossT.crash===3);
-  G.eshots.length=0; e.bossT={quake:0,chargeCd:99}; c.tickBossSkill(e,0.01);
-  const waves=G.eshots.filter(s=>s.shotType==='quake');
-  ok('Axe Quake выпускает три волны по 40% max HP', waves.length===3 && waves.every(s=>s.maxHpPct===0.40));
+  c.tickBossSkill(e,0.02); c.tickBossSkill(e,1);
+  ok('после натиска Минотавр уязвим и неподвижен 1,2 сек',
+    Math.abs(e.x-(1500-e.r))<0.01 && e.bossT.vulnerable===1.2 && e.bossT.crash===1.2 && e.bossT.spearsPending===true);
+  G.eshots.length=0; c.tickBossSkill(e,1.2); c.tickBossSkill(e,0.01);
+  const spears=G.eshots.filter(s=>s.shotType==='minotaurSpear');
+  ok('после уязвимости летят три копья по 15% max HP',
+    spears.length===3 && spears.every(s=>s.maxHpPct===0.15));
+  c.tickBossSkill(e,1.49); const before=e.bossT.chargeWarn||0; c.tickBossSkill(e,0.02);
+  ok('через 1,5 секунды после копий начинается новый натиск', before===0 && Math.abs(e.bossT.chargeWarn-0.45)<1e-9);
   G.orbs.length=0; c.killEnemy(e,G.enemies.indexOf(e));
   ok('Dread Minotaur гарантирует две случайные находки', G.orbs.filter(o=>o.book||o.amu||o.totem).length===2); }
 

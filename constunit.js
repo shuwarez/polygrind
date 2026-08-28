@@ -79,6 +79,16 @@ ok('экран рисует шесть карточек и десять узло
   (html.match(/<article class="const-card"/g)||[]).length===6 && (html.match(/<i class="const-node/g)||[]).length===60);
 cs.kills.runner=100; c.constellationScreen(()=>{}); html=c.document.getElementById('ov').innerHTML;
 ok('готовый ранг показывает кнопку открытия', html.includes('data-const-id="runner"') && html.includes('>ОТКРЫТЬ РАНГ</button>'));
+{
+  cs.ranks.runner=0; cs.kills.runner=100;
+  const originalQuery=c.document.querySelector.bind(c.document), before={scrollTop:437}, after={scrollTop:0};
+  let reads=0;
+  c.document.querySelector=selector => selector==='#constellations' ? (reads++===0 ? before : after) : originalQuery(selector);
+  const unlocked=c.constellationUnlock('runner',()=>{});
+  c.document.querySelector=originalQuery;
+  ok('прокачка сохраняет позицию списка созвездий', unlocked && after.scrollTop===437,
+    after.scrollTop+' / 437');
+}
 cs.ranks.runner=10; c.constellationScreen(()=>{}); html=c.document.getElementById('ov').innerHTML;
 ok('максимальный ранг показывает полный бонус', html.includes('СОЗВЕЗДИЕ ЗАВЕРШЕНО · +50%'));
 

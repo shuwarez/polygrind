@@ -35,6 +35,22 @@ for (const [id,nm] of [['destroyer','Разрушитель'],['multiplier','М�
   ok('карточка дополнительных снарядов исключена из пула Мага',
      JSON.stringify(mod.wep)==='["proj"]' && mod.noMin===true,
      'доступ: ' + JSON.stringify(mod.wep)); }
+{ const c=loadGame('./PolyGrind.html');
+  const mod=c.__api.MODS.find(m=>m.id==='shape.proj_size');
+  ok('карточка размера снарядов совместима только с Магом',
+     JSON.stringify(mod.wep)==='["orb"]' && mod.nt==='только для Мага',
+     'доступ: ' + JSON.stringify(mod.wep)); }
+{ let seed=0x51a2b3c4;
+  const random=()=>((seed=(Math.imul(seed,1664525)+1013904223)>>>0)/4294967296);
+  const seen={};
+  for (const cls of ['wand','bow','necro','blade']){
+    const c=loadGame('./PolyGrind.html',{random}); c.newGame(cls,'keys',null);
+    seen[cls]=false;
+    for(let i=0;i<300;i++) if(c.rollCards().some(m=>m.id==='shape.proj_size')) seen[cls]=true;
+  }
+  ok('в раздачах размер снарядов появляется только у Мага',
+     seen.wand && !seen.bow && !seen.necro && !seen.blade,
+     JSON.stringify(seen)); }
 { const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys','hunter');
   c.__api.G.lvl=20; c.recalc();
   ok('общий бонус не распространяется на другие классы', c.__api.D.projN===1,

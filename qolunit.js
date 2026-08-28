@@ -2,6 +2,25 @@
 const {loadGame} = require('./sim');
 const ok = (nm, cond, det) => console.log((cond ? '  ✓ ' : '  ✗ ') + nm.padEnd(46) + (det || ''));
 
+{ const c = loadGame('./PolyGrind.html'); c.newGame('bow','keys');
+  const G=c.__api.G, base=c.__api.D.pickup;
+  ok('карточка радиуса автоподбора удалена',
+    !c.__api.MODS.some(m=>m.id==='loot.pickup_radius' || m.stat==='pickup'));
+  ok('карточка притягивания лута удалена',
+    !c.__api.MODS.some(m=>m.id==='loot.magnet' || m.stat==='magnet'));
+  G.bag.add('pickup','inc',999); c.recalc();
+  ok('старый стат карточки больше не влияет на героя', c.__api.D.pickup===base,
+     base+' → '+c.__api.D.pickup); }
+
+{ const c = loadGame('./PolyGrind.html'); c.newGame('bow','keys');
+  const G=c.__api.G, p=G.player;
+  G.enemies.length=0; G.spawnQueue=1; G.spawnT=999;
+  const orb={x:p.x+500,y:p.y,v:1}; G.orbs=[orb];
+  G.bag.add('magnet','flag',1); c.recalc();
+  const before=orb.x; c.update(0.1); const moved=before-orb.x;
+  ok('старый флаг magnet больше не ускоряет притягивание', Math.abs(moved-7.5)<0.01,
+    moved.toFixed(1)+' единицы за 0,1 сек'); }
+
 { const c = loadGame('./PolyGrind.html');
   c.__api.STORE.data.shop.vacuum = 10;
   c.newGame('bow', 'keys');

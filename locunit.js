@@ -24,9 +24,9 @@ const html = fs.readFileSync(file, 'utf8');
 ok('выбор языка сохраняется отдельно от мета-прогресса', html.includes("polygrind_language") && html.includes('localStorage.setItem(LANGUAGE_KEY'));
 ok('английские подсказки карточек не используют русский подробный текст', html.includes("LANGUAGE === 'en') return englishSkillTip"));
 const fullHp = c.__api.MODS.find(m => m.id === 'cond.vs_full_hp');
-ok('карточка урона по полному HP содержит локализованный числовой пример',
-  fullHp.nt.includes('+30%') && fullHp.nt.includes('100') && fullHp.nt.includes('130') &&
-  !/[А-Яа-яЁё]/.test(c.tr(fullHp.nt)));
+ok('карточка урона по полному HP содержит локализованный диапазон и пример',
+  fullHp.nt.includes('7–12%') && fullHp.tip.includes('100 в 109') &&
+  !/[А-Яа-яЁё]/.test(c.tr(fullHp.nt)) && !/[А-Яа-яЁё]/.test(c.tr(fullHp.tip)));
 
 console.log(JSON.stringify({n, fail}));
 process.exitCode = fail ? 1 : 0;

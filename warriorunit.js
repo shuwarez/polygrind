@@ -21,6 +21,20 @@ function fixedDamage(o, marked){
   D.incAll=0; D.moreAll=1; D.critCh=0; D.superCh=0;
   const hp=e.hp; o.c.damage(e, marked?{warriorMelee:true}:{}); return hp-e.hp;
 }
+function orbitHit({subclass=null,lvl=1,inc=0,more=1,element=0,crit=0,double=0,ignite=0}={}){
+  const c=loadGame('./PolyGrind.html',{random:()=>0}); c.newGame('blade','keys',subclass);
+  const G=c.__api.G, D=c.__api.D, p=G.player;
+  G.lvl=lvl; G.bag.add('orbit','flat',1); c.recalc();
+  G.enemies.length=0; G.spawnQueue=0; G.packs.length=0; G.portal=null;
+  p.x=p.y=0; G.orbitA=0;
+  D.baseMin=D.baseMax=100; D.elem={fire:element,cold:0,lit:0,poi:0};
+  D.incAll=inc; D.moreAll=more; D.critCh=crit; D.critMul=200; D.superCh=0;
+  D.dblHit=double; D.deadlyHit=false; D.igniteCh=ignite;
+  D.chillCh=D.shockCh=D.poiCh=D.knock=0; D.ailEff=D.ailDur=1;
+  const e=foe({c,G,D,p}); Object.assign(e,c.orbitPos(0)); e.orbCd=0;
+  const hp=e.hp; c.updateOrbits(0);
+  return {damage:hp-e.hp, e};
+}
 
 {
   const c=loadGame('./PolyGrind.html'), s=c.__api.SUBCLASSES.blade;
@@ -28,6 +42,47 @@ function fixedDamage(o, marked){
   const html=fs.readFileSync('./PolyGrind.html','utf8');
   ok('Воин возвращён в список игровых классов', html.includes("const PLAYABLE_CLASSES = ['bow','wand','necro','blade']"));
   ok('у новых строк есть английские пары', c.__api.localizationMissing().length===0);
+}
+
+{
+  const c=loadGame('./PolyGrind.html'), card=c.__api.MODS.find(x=>x.id==='shape.orbit');
+  ok('Круговой орб остаётся синим и доступен только Воину', card.rar===1 && card.wep.length===1 && card.wep[0]==='melee' && /25%/.test(card.nt));
+  let leaked=false;
+  for (const cls of ['bow','wand','necro']){
+    c.newGame(cls,'keys',null);
+    for (let i=0;i<200;i++) if (c.rollCards().some(x=>x.id==='shape.orbit')) leaked=true;
+  }
+  ok('другим трём классам орб не попадает в раздачу', !leaked);
+
+  const plain=orbitHit();
+  ok('касание орба наносит ровно 25% базовой автоатаки', Math.abs(plain.damage-25)<1e-9, plain.damage+' урона');
+  const scaled=orbitHit({subclass:'berserker',lvl:20,inc:40,more:1.5,element:40});
+  ok('орб наследует стихии, общие и классовые модификаторы', Math.abs(scaled.damage-84)<1e-9, scaled.damage+' урона');
+  const procs=orbitHit({crit:100,double:100,ignite:100});
+  ok('орб бросает крит, двойное попадание и шанс статуса', Math.abs(procs.damage-80)<1e-9 && procs.e.dots.fire.dps>0,
+     procs.damage+' урона · поджог '+procs.e.dots.fire.dps.toFixed(1));
+}
+
+{
+  const c=loadGame('./PolyGrind.html'), card=c.__api.MODS.find(x=>x.id==='trig.on_damaged');
+  ok('Ответный удар доступен только оружию Воина',
+    card.kind==='flag' && card.stat==='retal' && card.wep.length===1 && card.wep[0]==='melee');
+  let leaked=false;
+  for (const cls of ['bow','wand','necro']){
+    c.newGame(cls,'keys',null);
+    for (let i=0;i<200;i++) if (c.rollCards().some(x=>x.id==='trig.on_damaged')) leaked=true;
+  }
+  ok('другим трём классам Ответный удар не попадает в раздачу', !leaked);
+}
+
+{
+  const c=loadGame('./PolyGrind.html'), card=c.__api.MODS.find(x=>x.id==='cond.long_range');
+  ok('Урон издалека ограничен дальними типами оружия',
+    card.wep.length===2 && card.wep.includes('proj') && card.wep.includes('orb') && !card.wep.includes('melee'));
+  c.newGame('blade','keys',null);
+  let leaked=false;
+  for (let i=0;i<500;i++) if (c.rollCards().some(x=>x.id==='cond.long_range')) leaked=true;
+  ok('Воину Урон издалека не попадает в раздачу', !leaked);
 }
 
 {

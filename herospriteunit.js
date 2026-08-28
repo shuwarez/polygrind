@@ -27,6 +27,21 @@ ok('рендер использует только один ряд ходьбы 
 ok('превью меню берёт один кадр без копии PNG',
   html.includes("heroPreviewHTML(spriteKey, 'class-sprite')") && html.includes('background-size:400% 100%'));
 
+{
+  const c=loadGame('./PolyGrind.html'); c.startScreen();
+  const menu=c.document.getElementById('ov').innerHTML;
+  ok('меню показывает четыре чистые карточки героев без ID и стартового урона',
+    (menu.match(/class="card class-card"/g)||[]).length===4 && !menu.includes('wpn.') &&
+    !menu.includes('<div class="cat">') && !menu.includes('<div class="vl">'));
+}
+ok('в карточке сначала название, затем крупная модель и короткое описание',
+  html.includes("'<div class=\"nm\">' + w.nm + '</div>' +\n        heroPreviewHTML(spriteKey, 'class-sprite') +\n        '<div class=\"nt\">' + w.desc + '</div>'"));
+ok('название, модель и описание героя центрируются стилями витрины',
+  /\.card\.class-card\{[^}]*align-items:center;[^}]*text-align:center/.test(html) &&
+  /\.class-card \.class-sprite\{position:relative;width:150px;height:150px/.test(html));
+ok('описания классов короткие и не содержат внутренних имён параметров',
+  Object.values(loadGame('./PolyGrind.html').__api.WEAPONS).every(w=>w.desc.length<110 && !/wpn\.|min\.\*/.test(w.desc)));
+
 function game(key){
   const c=loadGame('./PolyGrind.html'); c.newGame(key,'keys');
   const G=c.__api.G; G.pending=0; G.spawnQueue=0; G.enemies.length=0;

@@ -29,6 +29,7 @@ const procRate = (o, reset, active, n=600) => {
 };
 const quarter = v => v > 0.17 && v < 0.33;
 const quarterOfCap = v => v > 0.02 && v < 0.11;
+const quarterOfStunCap = v => v > 0.07 && v < 0.18;
 
 console.log('СТАТУСЫ ОТ УДАРА СВИТЫ');
 { const o = mk([['igniteCh',25]]);
@@ -49,7 +50,7 @@ console.log('СТАТУСЫ ОТ УДАРА СВИТЫ');
   ok('яд: 25% хозяина → около 6,25%', quarterOfCap(r), Math.round(r*100) + '%'); }
 { const o = mk([['stun',100]]);
   const r = procRate(o, ()=>{ o.e.ail.stun=0; }, ()=>o.e.ail.stun>0);
-  ok('оглушение: 100% хозяина → около 25%', quarter(r), Math.round(r*100) + '%'); }
+  ok('оглушение: потолок 50% хозяина → около 12,5% у свиты', quarterOfStunCap(r), Math.round(r*100) + '%'); }
 { const impulse = (typeKey, kind) => {
     const o = mk([['knock',100]]);
     o.e.typeKey = typeKey; o.e.kind = kind;
