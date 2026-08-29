@@ -76,6 +76,25 @@ function orbitHit({subclass=null,lvl=1,inc=0,more=1,element=0,crit=0,double=0,ig
 }
 
 {
+  const c=loadGame('./PolyGrind.html'), thorns=c.__api.MODS.find(x=>x.id==='dmg.thorns'),
+    reflect=c.__api.MODS.find(x=>x.id==='dmg.reflect');
+  ok('Шипы и Отражение ограничены оружием Воина',
+    thorns.wep.length===1 && thorns.wep[0]==='melee' &&
+    reflect.wep.length===1 && reflect.wep[0]==='melee' &&
+    c.allowedClassesForMod(thorns).join(',')==='blade' && c.allowedClassesForMod(reflect).join(',')==='blade');
+}
+
+{
+  const c=loadGame('./PolyGrind.html');
+  c.newGame('bow','keys'); c.__api.G.bag.add('thorns','flat',50); c.__api.G.bag.add('reflect','flat',35); c.recalc();
+  const ranged=[c.__api.D.thorns,c.__api.D.reflect];
+  c.newGame('blade','keys'); c.__api.G.bag.add('thorns','flat',50); c.__api.G.bag.add('reflect','flat',35); c.recalc();
+  ok('механика обнуляется другим классам и сохраняется Воину',
+    ranged[0]===0 && ranged[1]===0 && c.__api.D.thorns===40 && c.__api.D.reflect===35,
+    'Лучник '+ranged.join('/')+' · Воин '+c.__api.D.thorns+'/'+c.__api.D.reflect);
+}
+
+{
   const c=loadGame('./PolyGrind.html'), card=c.__api.MODS.find(x=>x.id==='cond.long_range');
   ok('Урон издалека ограничен дальними типами оружия',
     card.wep.length===2 && card.wep.includes('proj') && card.wep.includes('orb') && !card.wep.includes('melee'));

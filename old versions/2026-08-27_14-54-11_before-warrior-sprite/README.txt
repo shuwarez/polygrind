@@ -1,1 +1,0 @@
-Saved: 2026-08-27 14:54:11 +03:00 Before changes: embed the supplied 48x48 Warrior sprite and rename visible Blade labels to Warrior. Internal key blade remains unchanged for compatibility. Source PNG SHA256: 1E84968E35AC49C88A3C0D883E4A09B0DB2003E420C36846CEBCED52BE6895D6

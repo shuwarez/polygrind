@@ -2,8 +2,20 @@
 const {loadGame} = require('./sim');
 const DT = 1/60;
 const ok = (nm, cond, det) => console.log((cond?'  \u2713 ':'  \u2717 ') + nm.padEnd(46) + (det||''));
-function mk(amus){
-  const c = loadGame('./PolyGrind.html');
+/* Небольшой seeded RNG делает проверки дропа воспроизводимыми. Раньше тест
+   создавал 1600 VM и надеялся, что среднее случайных монет попадёт в допуск. */
+function seededRng(seed){
+  let state = seed >>> 0;
+  return () => {
+    state = (state + 0x6D2B79F5) >>> 0;
+    let z = state;
+    z = Math.imul(z ^ (z >>> 15), z | 1);
+    z ^= z + Math.imul(z ^ (z >>> 7), z | 61);
+    return ((z ^ (z >>> 14)) >>> 0) / 4294967296;
+  };
+}
+function mk(amus, random){
+  const c = loadGame('./PolyGrind.html', random ? {random} : undefined);
   c.newGame('necro','keys');
   const G = c.__api.G;
   G.lvl = 25;
@@ -58,15 +70,22 @@ console.log('ПРОЧЕЕ');
     o.c.minionShot(m, e, null); const s = G.shots[0]; return Math.hypot(s.vx,s.vy)*s.life; };
   ok('дальность выстрела не изменилась', Math.abs(rng(a) - rng(b)) < 1,
      Math.round(rng(a)) + ' и ' + Math.round(rng(b))); }
-{ const gold = (amu, kind) => {
-    const o = mk(amu); o.G.orbs.length = 0;
-    const e = foe(o, kind);
-    o.c.killEnemy(e, o.G.enemies.indexOf(e));
-    return o.G.orbs.filter(x=>x.gold).reduce((s,x)=>s+x.v,0);
+{ const gold = (amu, kind, seed) => {
+    const o = mk(amu, seededRng(seed));
+    let sum = 0;
+    // Один VM на вариант, но достаточно бросков, чтобы проверить округление.
+    // Парные варианты получают один seed и потому видят один поток случайности.
+    for (let i=0; i<64; i++){
+      o.G.orbs.length = 0;
+      const e = foe(o, kind);
+      o.c.killEnemy(e, o.G.enemies.indexOf(e));
+      sum += o.G.orbs.filter(x=>x.gold).reduce((s,x)=>s+x.v,0);
+    }
+    return sum;
   };
-  const runs = (amu, kind) => { let s = 0; for (let i=0;i<400;i++) s += gold(amu, kind); return s/400; };
-  const a = runs([], 'elite'), b = runs('goldbag', 'elite');
-  const an = runs([], 'norm'), bn = runs('goldbag', 'norm');
+  const seed = 0x504F4C59;
+  const a = gold([], 'elite', seed), b = gold('goldbag', 'elite', seed);
+  const an = gold([], 'norm', seed), bn = gold('goldbag', 'norm', seed);
   ok('мешок золота: +50% с элиты', Math.abs(b/a - 1.5) < 0.06, Math.round(a) + ' \u2192 ' + Math.round(b));
   ok('с рядовых надбавки нет', Math.abs(bn/an - 1) < 0.06, Math.round(an) + ' и ' + Math.round(bn)); }
 { const xp = (amu, kind) => {

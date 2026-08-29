@@ -17,6 +17,18 @@ function defense(normalDr=0){
   c.recalc();
   return {c,G,D:c.__api.D,m:c.__api.MODS.find(x=>x.id==='def.normal_reduction')};
 }
+function critWave(primaryHp=1000){
+  const c=loadGame('./PolyGrind.html',{random:()=>0}); c.newGame('bow','keys');
+  const G=c.__api.G, D=c.__api.D;
+  G.enemies.length=0; G.packs.length=0;
+  G.bag.add('critWave','flag',1); G.bag.add('critCh','flat',95); c.recalc();
+  D.baseMin=D.baseMax=100; D.elem.fire=D.elem.cold=D.elem.lit=D.elem.poi=0;
+  const enemy=(hp=1000)=>{
+    const e=c.spawnEnemy(); e.x=e.y=0; e.kind='norm'; e.armor=0; e.bulwark=0;
+    e.pack=null; e.bossId=''; e.maxHp=1000; e.hp=hp; return e;
+  };
+  return {c,G,D,primary:enemy(primaryHp),enemy};
+}
 
 console.log('Надёжный удар');
 { const o=build();
@@ -40,9 +52,63 @@ console.log('Надёжный удар');
 { const o=build(), crit=o.c.__api.MODS.find(x=>x.id==='crit.multi');
   ok('синий множитель критического урона даёт от 2 до 7 к модификатору',
     crit.rar===1 && crit.r[0]===2 && crit.r[1]===7); }
+
+console.log('Ударная волна при крите');
+{ const o=critWave(), nearby=o.enemy();
+  o.c.damage(o.primary,{noDouble:true});
+  ok('волна равна 20% прошедшего крита и не бьёт основную цель',
+    near(1000-o.primary.hp,150) && near(1000-nearby.hp,30),
+    'основная: '+(1000-o.primary.hp).toFixed(0)+' · сосед: '+(1000-nearby.hp).toFixed(0)); }
+{ const o=critWave(40), nearby=o.enemy();
+  o.c.damage(o.primary,{noDouble:true});
+  ok('переполнение HP не раздувает базу волны', near(1000-nearby.hp,8),
+    '40 фактически → '+(1000-nearby.hp).toFixed(0)+' волной'); }
+{ const o=critWave(), armored=o.enemy(), bulwark=o.enemy(), minotaur=o.enemy();
+  armored.armor=60; bulwark.bulwark=30;
+  minotaur.kind='boss'; minotaur.bossId='minotaur'; minotaur.bossT={vulnerable:0};
+  o.c.damage(o.primary,{noDouble:true});
+  ok('броня, панцирь и защита Минотавра режут волну отдельно',
+    near(1000-armored.hp,15) && near(1000-bulwark.hp,15) && near(1000-minotaur.hp,6),
+    'броня '+(1000-armored.hp).toFixed(0)+' · панцирь '+(1000-bulwark.hp).toFixed(0)+' · Минотавр '+(1000-minotaur.hp).toFixed(0)); }
+{ const o=critWave(), a=o.enemy(), b=o.enemy();
+  const linked=o.c.__api.PACKS.find(x=>x.id==='linked');
+  const pack={aff:[linked],members:[a,b],role:{}}; a.pack=b.pack=pack;
+  o.c.damage(o.primary,{noDouble:true});
+  ok('защита связанной пачки применяется к каждой цели волны',
+    near(1000-a.hp,21) && near(1000-b.hp,21),
+    (1000-a.hp).toFixed(0)+' / '+(1000-b.hp).toFixed(0)); }
+{ const o=build(), m=o.c.__api.MODS.find(x=>x.id==='crit.on_crit_shockwave');
+  o.c.setLanguage('ru'); const tip=o.c.detailedSkillTip(m,{m,val:'свойство'});
+  ok('описание фиксирует 20%, исключение цели и отдельную защиту',
+    m.kind==='flag' && m.rar===2 && tip.includes('20%') && tip.includes('первоначальная цель исключается') &&
+    tip.includes('броню, панцирь, защиту пачки') && tip.includes('особую защиту босса')); }
 { const o=build(), speed=o.c.__api.MODS.find(x=>x.id==='spd.attack');
   ok('карточка скорости атаки даёт не меньше 5% и не больше 10%',
     speed.r[0]===5 && speed.r[1]===10); }
+{ const o=build(), m=o.c.__api.MODS.find(x=>x.id==='dmg.projectile');
+  ok('урон снарядов даёт целые 5–10% без потолка',
+    m.r[0]===5 && m.r[1]===10 && m.int===true && m.cap===undefined && !m.hide &&
+    m.nt.includes('5–10%') && m.nt.includes('без потолка')); }
+{ const o=build(), m=o.c.__api.MODS.find(x=>x.id==='dmg.projectile');
+  ok('бросок урона снарядов достигает обеих границ',
+    o.c.rollModValue(m,()=>0)===5 && o.c.rollModValue(m,()=>0.999999)===10); }
+{ const o=build(); o.c.setLanguage('ru'); o.G.bag.add('dmgProj','inc',137); o.c.recalc();
+  const m=o.c.__api.MODS.find(x=>x.id==='dmg.projectile'), tip=o.c.detailedSkillTip(m,{m,v:8,val:'+8%'});
+  ok('накопленный урон снарядов не ограничивается, тултип объясняет сложение',
+    o.D.incAll===137 && tip.includes('5% до 10%') && tip.includes('без потолка') && tip.includes('6% + 9% = +15%'));
+}
+{ const o=build('wand'), m=o.c.__api.MODS.find(x=>x.id==='dmg.aoe');
+  ok('урон по площади даёт целые 7–13% без потолка',
+    m.r[0]===7 && m.r[1]===13 && m.int===true && m.cap===undefined && !m.hide &&
+    m.wep.length===1 && m.wep[0]==='orb' && m.nt.includes('7–13%') && m.nt.includes('без потолка')); }
+{ const o=build('wand'), m=o.c.__api.MODS.find(x=>x.id==='dmg.aoe');
+  ok('бросок урона по площади достигает обеих границ',
+    o.c.rollModValue(m,()=>0)===7 && o.c.rollModValue(m,()=>0.999999)===13); }
+{ const o=build('wand'); o.c.setLanguage('ru'); o.G.bag.add('dmgAoe','inc',137); o.c.recalc();
+  const m=o.c.__api.MODS.find(x=>x.id==='dmg.aoe'), tip=o.c.detailedSkillTip(m,{m,v:10,val:'+10%'});
+  ok('накопленный урон по площади не ограничивается, тултип объясняет сложение',
+    o.D.incAll===137 && tip.includes('7% до 13%') && tip.includes('без потолка') && tip.includes('8% + 12% = +20%'));
+}
 { const o=build(), boss=o.c.__api.MODS.find(x=>x.id==='cond.vs_boss');
   ok('урон по боссам и элите даёт 5–15% за карточку',
     boss.r[0]===5 && boss.r[1]===15 && boss.nt.includes('5–15%')); }
@@ -50,8 +116,8 @@ console.log('Надёжный удар');
   ok('бросок урона по боссам достигает обеих границ',
     o.c.rollModValue(boss,()=>0)===5 && o.c.rollModValue(boss,()=>1)===15); }
 { const o=build(), blast=o.c.__api.MODS.find(x=>x.id==='trig.on_kill');
-  ok('Взрыв при убийстве переведён в фиолетовую редкость',
-    blast.kind==='flag' && blast.rar===2 && blast.stat==='novaKill'); }
+  ok('Взрыв при убийстве остаётся фиолетовым, но теперь накапливает шанс',
+    blast.kind==='chance' && blast.rar===2 && blast.stat==='novaKill' && blast.r[0]===6 && blast.r[1]===12 && blast.cap===50); }
 
 console.log('Урон при стоянии на месте');
 { const o=build(), m=o.c.__api.MODS.find(x=>x.id==='cond.while_still');

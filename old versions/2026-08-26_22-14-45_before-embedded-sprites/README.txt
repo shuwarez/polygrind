@@ -1,1 +1,0 @@
-Saved: 2026-08-26 22:14:45 +03:00 Before changes: embedded the replacement 48x48 pixel sprites into PolyGrind.html and removed the external assets folder. This snapshot also contains the previous external assets folder.

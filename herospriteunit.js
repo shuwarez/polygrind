@@ -35,7 +35,7 @@ ok('превью меню берёт один кадр без копии PNG',
     !menu.includes('<div class="cat">') && !menu.includes('<div class="vl">'));
 }
 ok('в карточке сначала название, затем крупная модель и короткое описание',
-  html.includes("'<div class=\"nm\">' + w.nm + '</div>' +\n        heroPreviewHTML(spriteKey, 'class-sprite') +\n        '<div class=\"nt\">' + w.desc + '</div>'"));
+  /'<div class="nm">' \+ w\.nm \+ '<\/div>' \+\s*heroPreviewHTML\(spriteKey, 'class-sprite'\) \+\s*'<div class="nt">' \+ w\.desc \+ '<\/div>'/.test(html));
 ok('название, модель и описание героя центрируются стилями витрины',
   /\.card\.class-card\{[^}]*align-items:center;[^}]*text-align:center/.test(html) &&
   /\.class-card \.class-sprite\{position:relative;width:150px;height:150px/.test(html));

@@ -1,7 +1,8 @@
 /* Прогон всей регрессии одной командой: node run-all.js
    Ожидаемые числа зафиксированы — если счёт разошёлся, что-то сломано. */
-const {execSync} = require('child_process');
+const {spawn} = require('child_process');
 const fs = require('fs');
+const os = require('os');
 
 /* Проверка комплектности до запуска: если набора нет на диске, честно сказать
    какого именно, а не падать на первом же execSync с невнятной ошибкой. */
@@ -14,9 +15,14 @@ const SUITES = [
   ['itemunit',    18, 'перчатки, ботинки, кольца, реликвии'],
   ['it2unit',     31, 'вторая волна предметов: 24 штуки и ускорения после убийства'],
   ['it3unit',     15, 'талисманы разгона, стрела, мешки'],
-  ['shopunit',    20, 'покупка, сохранение прокрутки, полный возврат одного/всех бонусов и наследование свитой'],
+  ['shopunit',    34, 'цены защиты, потолок брони, удалённые механики, миграция, возвраты, прокрутка и наследование свитой'],
   ['scaleunit',    2, 'рост урона и скорость врагов'],
-  ['reliableunit',49, 'баланс карточек: урон, защита, оглушение и уникальное добивание'],
+  ['reliableunit',60, 'баланс карточек: урон, критическая волна, защита, оглушение и добивание'],
+  ['novakillunit',12, 'взрыв при убийстве: шанс, защита цели, красное усиление, отбрасывание и цепь'],
+  ['overpressureunit',17, 'синее Сверхдавление: источники взрывов, +5% за цель и потолок +25%'],
+  ['arcaneunit',   17, 'синяя Арканная иллюзия: пул Мага, 20–30%, потолок и притяжение сфер'],
+  ['classiconunit',16, 'классовые пиктограммы карточек: точный пул, SVG, локализация и доступность'],
+  ['slowunit',     15, 'урон по замедленным и синий Холодный раскол: источники, условия, радиус и длительность'],
   ['tooltipimpactunit',26, 'динамические подсказки: расчёты и сохраняемый переключатель в меню уровня'],
   ['ricochetunit',10, 'синий Осколочный рикошет: потолок, 45% урона, цели и запрет рекурсии'],
   ['elementunit', 20, 'стихии: потолок 25%, gated-урон, ослабленные статусы и ТЕСЛА'],
@@ -27,7 +33,7 @@ const SUITES = [
   ['layerunit',     13, 'фиксированные Canvas-слои: телеграфы, персонажи, HUD, combat text и виньетка'],
   ['telegraphunit', 20, 'единые телеграфы: три последствия, четыре формы, тайминги и следы'],
   ['bosshudunit',   33, 'компактный Canvas Boss HUD: от одного до четырёх боссов, delayed HP, rare и маркеры'],
-  ['bossfloorunit', 60, 'босс-этажи X3/X6/X9/X0: формулы, аффиксы, позиции, призывы и завершение'],
+  ['bossfloorunit', 61, 'босс-этажи X3/X6/X9/X0: формулы, аффиксы, позиции, урон волны, призывы и завершение'],
   ['spawnmenuunit',52, 'Spawn Menu: обычные, 12 отдельных элит, пачка, боссы и progression'],
   ['totunit',     18, 'тотемы: ранги, книги-условия и дроп'],
   ['minallunit',  44, 'свита: урон, эффекты, Лорд Смерти, Костяной вызов и естественная смерть'],
@@ -37,7 +43,7 @@ const SUITES = [
   ['clawunit',     9, 'резкие когти и вихрь когтей'],
   ['bb2unit',     11, 'кровавая баня и кипящая кровь'],
   ['b7unit',      16, 'ужасающий вампир, щит, классовое ограничение и книга крови'],
-  ['constunit',    28, 'созвездия: счётчики, награды, сохранение прокрутки и анимированные актуальные спрайты'],
+  ['constunit',    32, 'созвездия: счётчики, сброс бонусов, награды, прокрутка и анимированные актуальные спрайты'],
   ['doubleunit',   14, 'двойное попадание и чумный взрыв: потолки, анлоки и урон'],
   ['graveunit',     7, 'кладбище: миграция, последние 10 смертей и полная сводка'],
   ['spriteunit',    18, 'PNG-враги и снаряды Призмы/Лучника/Мага: кадры, маршруты, масштаб и палитра'],
@@ -45,8 +51,8 @@ const SUITES = [
   ['locunit',       9, 'локализация: EN по умолчанию, полнота каталогов, примеры и CSS-флаги'],
   ['bladeunit',    11, 'Воин: спрайт и круговая волна каждого третьего взмаха'],
   ['herospriteunit',25, 'герои: листы 32 px, движение и центрированная витрина выбора класса'],
-  ['warriorunit',  29, 'три подкласса Воина и классовые ограничения его пула'],
-  ['mageunit',      10, 'три подкласса Мага: рост снарядов и эксклюзивный размер магических сфер'],
+  ['warriorunit',  31, 'три подкласса Воина и классовые ограничения его пула'],
+  ['mageunit',      17, 'три подкласса Мага: рост снарядов, отложенные мини-сферы и обновлённый классовый пул'],
 ];
 const missing = CORE.concat(SUITES.map(x => x[0] + '.js')).filter(f => !fs.existsSync(f));
 if (missing.length){
@@ -58,17 +64,58 @@ if (missing.length){
   process.exit(2);
 }
 
-let bad = 0, total = 0;
-const node = JSON.stringify(process.execPath); // тот же runtime, даже если `node` отсутствует в PATH
-for (const [file, want, what] of SUITES){
-  const out = execSync(node + ' ' + JSON.stringify(file + '.js'), {encoding:'utf8'});
-  const got = (out.match(/\u2713/g) || []).length;
-  const fail = (out.match(/\u2717/g) || []).length;
-  total += got;
-  const okk = got === want && fail === 0;
-  if (!okk){ bad++; console.log(out); }
-  console.log((okk ? '  OK   ' : '  FAIL ') + file.padEnd(13) + got + '/' + want + '   ' + what);
+/* Каждый suite уже изолирован в отдельном процессе и загружает собственный VM,
+   поэтому их безопасно выполнять параллельно. Ограниченный пул не устраивает
+   всплеск из сорока процессов и сохраняет порядок итогового отчёта. */
+const available = typeof os.availableParallelism === 'function' ? os.availableParallelism() : os.cpus().length;
+const requested = Number.parseInt(process.env.RUN_ALL_JOBS || '', 10);
+const jobs = Math.max(1, Math.min(SUITES.length,
+  Number.isFinite(requested) && requested > 0 ? requested : Math.min(8, available)));
+
+function runFile(file){
+  return new Promise(resolve => {
+    const child = spawn(process.execPath, [file], {stdio:['ignore', 'pipe', 'pipe']});
+    let stdout = '', stderr = '';
+    child.stdout.setEncoding('utf8'); child.stderr.setEncoding('utf8');
+    child.stdout.on('data', chunk => { stdout += chunk; });
+    child.stderr.on('data', chunk => { stderr += chunk; });
+    child.on('error', error => resolve({stdout, stderr:stderr + error.stack + '\n', code:-1}));
+    child.on('close', code => resolve({stdout, stderr, code}));
+  });
 }
-console.log('\nвсего проверок: ' + total + (bad ? '   ПРОВАЛОВ: ' + bad : '   всё зелёное'));
-try { console.log(execSync(node + ' "orderscan.js"', {encoding:'utf8'}).trim()); } catch(e){}
-process.exit(bad ? 1 : 0);
+
+async function main(){
+  const results = new Array(SUITES.length);
+  let next = 0;
+  const workers = Array.from({length:jobs}, async () => {
+    while (true){
+      const index = next++;
+      if (index >= SUITES.length) return;
+      results[index] = await runFile(SUITES[index][0] + '.js');
+    }
+  });
+  const orderScanPromise = runFile('orderscan.js');
+  await Promise.all(workers);
+
+  let bad = 0, total = 0;
+  for (let i=0; i<SUITES.length; i++){
+    const [file, want, what] = SUITES[i];
+    const {stdout, stderr, code} = results[i];
+    const got = (stdout.match(/\u2713/g) || []).length;
+    const fail = (stdout.match(/\u2717/g) || []).length;
+    total += got;
+    const okk = got === want && fail === 0 && code === 0;
+    if (!okk){
+      bad++;
+      if (stdout) process.stdout.write(stdout.endsWith('\n') ? stdout : stdout + '\n');
+      if (stderr) process.stderr.write(stderr.endsWith('\n') ? stderr : stderr + '\n');
+    }
+    console.log((okk ? '  OK   ' : '  FAIL ') + file.padEnd(13) + got + '/' + want + '   ' + what);
+  }
+  console.log('\nвсего проверок: ' + total + (bad ? '   ПРОВАЛОВ: ' + bad : '   всё зелёное') + '   jobs=' + jobs);
+  const orderScan = await orderScanPromise;
+  if (orderScan.stdout.trim()) console.log(orderScan.stdout.trim());
+  if (orderScan.stderr.trim()) console.error(orderScan.stderr.trim());
+  process.exitCode = bad ? 1 : 0;
+}
+main().catch(error => { console.error(error); process.exitCode = 1; });

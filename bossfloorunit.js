@@ -90,6 +90,14 @@ const expected=[
   ok('аффикс «Зов» продолжает призывать миньонов на X0',G.enemies.length===before+3,String(G.enemies.length-before));
 }
 
+{ const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys'); const G=c.__api.G;
+  const boss=c.spawnEnemy('boss','lich'), wave=c.__api.AFFIXES.find(a=>a.id==='wave');
+  G.fx.length=0; boss.affT.wave=0; wave.tick(boss,0.01,G.player,200);
+  const fx=G.fx.find(f=>f.t==='wave');
+  ok('общий урон аффикса «Ударная волна» снижен вдвое',
+    fx && fx.dmg===100,fx ? fx.dmg+' из 200' : 'волна не создана');
+}
+
 for(const floor of [6,9]){
   const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys'); const G=c.__api.G;
   G.floor=floor; c.buildFloor(); G.spawnQueue=0;

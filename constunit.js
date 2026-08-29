@@ -92,6 +92,25 @@ ok('готовый ранг показывает кнопку открытия',
 cs.ranks.runner=10; c.constellationScreen(()=>{}); html=c.document.getElementById('ov').innerHTML;
 ok('максимальный ранг показывает полный бонус', html.includes('СОЗВЕЗДИЕ ЗАВЕРШЕНО · +50%'));
 
+{
+  const savedKills=Object.fromEntries(ids.map((id,i)=>[id,(i+1)*1000]));
+  const savedRanks={runner:3,blob:2,tank:1,shooter:4,elite:2,boss:5};
+  Object.assign(cs.kills,savedKills); Object.assign(cs.ranks,savedRanks);
+  const beforeGold=S.data.gold, beforeShop=JSON.stringify(S.data.shop);
+  const removed=c.constellationResetBonuses(()=>{});
+  ok('убрать бонусы возвращает число снятых узлов и обнуляет ранги',
+    removed===17 && ids.every(id=>cs.ranks[id]===0), removed+' узлов');
+  ok('сброс бонусов сохраняет убийства и остальную мета-прогрессию',
+    ids.every(id=>cs.kills[id]===savedKills[id]) && S.data.gold===beforeGold && JSON.stringify(S.data.shop)===beforeShop);
+  ok('сохранённые убийства позволяют сразу открыть бонус заново',
+    c.constellationUnlock('runner',()=>{}) && cs.ranks.runner===1 && cs.kills.runner===savedKills.runner);
+}
+for (const id of ids) cs.ranks[id]=0;
+c.constellationScreen(()=>{}); html=c.document.getElementById('ov').innerHTML;
+ok('dev-кнопка видна и отключается без активных бонусов',
+  html.includes('id="constreset" disabled') && html.includes('>УБРАТЬ БОНУСЫ</button>') &&
+  html.includes('Убийства сохранятся — доступные узлы можно открыть заново.'));
+
 const constellationPng = key => {
   const m=source.match(new RegExp(key+":'data:image/png;base64,([^']+)'"));
   const b=m ? Buffer.from(m[1],'base64') : Buffer.alloc(0);

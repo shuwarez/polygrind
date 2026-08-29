@@ -1,2 +1,13 @@
 __pycache__/
 *.py[cod]
+
+# Локальные обязательные снимки разработки. Никогда не добавлять в Git/GitHub.
+/old versions/
+/old_versions/
+
+# Локальная среда сборки и PNG-превью Excel-артефактов. В Git хранится только итоговый .xlsx.
+/.artifact-work/
+/outputs/*/previews/
+/outputs/*/*-previews/
+/outputs/**/*.inspect.ndjson
+/outputs/**/~$*.xlsx

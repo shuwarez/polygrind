@@ -69,7 +69,7 @@ ok('все четырнадцать листов вместе весят мен�
   ok('смерть Мерзости оставляет кислоту радиусом 135 на 10 сек',
     G.bossPools.length===1 && G.bossPools[0].r===135 && G.bossPools[0].life===10);
   G.enemies.length=0; G.spawnQueue=0; p.x=G.bossPools[0].x; p.y=G.bossPools[0].y; p.hp=D.life;
-  D.dodge=0; D.block=0; D.armor=0; D.drFlat=0; D.dr=0; D.drShop=0;
+  D.dodge=0; D.armor=0; D.drFlat=0; D.drShop=0;
   D.normalDr=0; D.majorDr=0; p.inv=0;
   c.update(1);
   ok('кислота тикает раз в секунду на 10% max HP', Math.abs(p.hp-D.life*0.9)<0.001); }
@@ -147,7 +147,7 @@ ok('все четырнадцать листов вместе весят мен�
 
 { const c=loadGame('./PolyGrind.html',{random:()=>0.99}); c.newGame('bow','keys');
   const G=c.__api.G, D=c.__api.D, p=G.player, e=c.spawnEnemy('boss','vampire');
-  D.dodge=D.block=D.armor=D.drFlat=D.dr=D.drShop=D.normalDr=D.majorDr=0;
+  D.dodge=D.armor=D.drFlat=D.drShop=D.normalDr=D.majorDr=0;
   e.x=-200; e.y=0; p.x=80; p.y=20; e.hp=e.maxHp*0.25;
   c.tickBossSkill(e,2.01);
   ok('Vampire Lord готовит крест вдвое быстрее — ровно 1 секунду', e.bossT.markWarn===1);
@@ -166,7 +166,7 @@ ok('все четырнадцать листов вместе весят мен�
 
 { const c=loadGame('./PolyGrind.html',{random:()=>0.5}); c.newGame('bow','keys');
   const G=c.__api.G, D=c.__api.D, p=G.player, e=c.spawnEnemy('boss','voidwrath');
-  D.dodge=D.block=D.armor=D.drFlat=D.dr=D.drShop=D.normalDr=D.majorDr=0;
+  D.dodge=D.armor=D.drFlat=D.drShop=D.normalDr=D.majorDr=0;
   p.x=0; p.y=0; p.hp=D.life; p.inv=0; e.bossT={riftCd:0}; c.tickBossSkill(e,0.01);
   ok('Void Wrath создаёт от трёх до пяти разломов', e.bossT.rifts.length>=3 && e.bossT.rifts.length<=5);
   e.bossT.rifts=[{x:0,y:0,r:52,warn:0.01},{x:200,y:0,r:52,warn:0.01},{x:-200,y:0,r:52,warn:0.01}];
@@ -199,7 +199,7 @@ ok('все четырнадцать листов вместе весят мен�
 
 { const c=loadGame('./PolyGrind.html',{random:()=>0.99}); c.newGame('bow','keys');
   const G=c.__api.G, D=c.__api.D, p=G.player, e=c.spawnEnemy('boss','seraph');
-  D.dodge=D.block=D.armor=D.drFlat=D.dr=D.drShop=D.normalDr=D.majorDr=0;
+  D.dodge=D.armor=D.drFlat=D.drShop=D.normalDr=D.majorDr=0;
   p.x=10; p.y=20; p.hp=D.life; p.inv=0; e.bossT={judgeCd:0}; c.tickBossSkill(e,0.01);
   ok('Fallen Seraph начинает серию из трёх отмеченных лучей', e.bossT.judgeLeft===3 && e.bossT.judgeWarn>0);
   c.tickBossSkill(e,0.81);
@@ -216,7 +216,7 @@ ok('все четырнадцать листов вместе весят мен�
 
 { const c=loadGame('./PolyGrind.html',{random:()=>0.99}); c.newGame('bow','keys');
   const G=c.__api.G, D=c.__api.D, p=G.player, e=c.spawnEnemy('boss','demonqueen');
-  D.dodge=D.block=D.armor=D.drFlat=D.dr=D.drShop=D.normalDr=D.majorDr=0;
+  D.dodge=D.armor=D.drFlat=D.drShop=D.normalDr=D.majorDr=0;
   e.x=-200; e.y=0; p.x=40; p.y=50; p.hp=D.life; e.bossT={leapCd:0}; c.tickBossSkill(e,0.01);
   ok('Demon Queen исчезает и фиксирует круг на секунду', e.bossT.hidden && e.bossT.leapX===40 && e.bossT.leapY===50);
   p.x=400; p.y=400; c.tickBossSkill(e,1.01);

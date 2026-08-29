@@ -2,8 +2,21 @@
 const {loadGame} = require('./sim');
 const DT = 1/60;
 const ok = (nm, cond, det) => console.log((cond?'  \u2713 ':'  \u2717 ') + nm.padEnd(48) + (det||''));
+/* Все случайные углы, криты и статусы должны повторяться между прогонами.
+   Раньше сосед у края взрыва иногда оказывался снаружи из-за случайного угла
+   телепорта, отчего полный параллельный прогон редко давал 11/12. */
+function seededRng(seed){
+  let state = seed >>> 0;
+  return () => {
+    state = (state + 0x6D2B79F5) >>> 0;
+    let z = state;
+    z = Math.imul(z ^ (z >>> 15), z | 1);
+    z ^= z + Math.imul(z ^ (z >>> 7), z | 61);
+    return ((z ^ (z >>> 14)) >>> 0) / 4294967296;
+  };
+}
 function mk(mods){
-  const c = loadGame('./PolyGrind.html');
+  const c = loadGame('./PolyGrind.html', {random:seededRng(0xB11A57)});
   c.newGame('necro','keys');
   const G = c.__api.G;
   G.lvl = 25;

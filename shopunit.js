@@ -31,17 +31,33 @@ for (const rank of [1, 5]){
 { const r = c.__api.SHOP.find(x => x.id === 'regen');
   ok('регенерация: потолок 50 HP/сек', !!r && r.max === 50 && r.fmt(r.max) === '+50 HP/сек',
      r ? r.fmt(r.max) : 'товар не найден');
-  ok('регенерация: базовая цена удвоена', !!r && r.base === 3000 && c.shopCost(r,0) === 3000,
+  ok('регенерация: цена повышена на 10%', !!r && r.base === 3300 && c.shopCost(r,0) === 3300,
      r ? c.shopCost(r,0).toLocaleString('ru-RU') + ' золота' : 'товар не найден');
   c.__api.STORE.data.shop.regen = 49;
   const batch = c.shopBatch(r, 10);
   ok('пакетная покупка останавливается на 50', batch.cnt === 1,
      'доступно уровней: ' + batch.cnt); }
 
+{ const armor = c.__api.SHOP.find(x => x.id === 'armor');
+  ok('броня: магазинный потолок 30', !!armor && armor.max === 30 && armor.fmt(armor.max) === '+30',
+     armor ? 'потолок ' + armor.max : 'товар не найден');
+  ok('броня: базовая цена утроена', !!armor && armor.base === 3600 && armor.grow === 1.04 &&
+     c.shopCost(armor, 0) === 3600,
+     armor ? c.shopCost(armor,0).toLocaleString('ru-RU') + ' золота за первый ранг' : 'товар не найден');
+  c.__api.STORE.data.shop.armor = 29;
+  const batch = c.shopBatch(armor, 10);
+  ok('пакетная покупка брони останавливается на 30', batch.cnt === 1,
+     'доступно уровней: ' + batch.cnt); }
+
 { const legacy = loadGame('./PolyGrind.html');
   legacy.__api.STORE.data.shop.regen = 100; legacy.newGame('bow','keys');
   ok('старое сохранение не превышает новый потолок', legacy.__api.D.regen === 50,
      legacy.__api.D.regen.toFixed(0) + ' HP/сек'); }
+
+{ const legacyArmor = loadGame('./PolyGrind.html');
+  legacyArmor.__api.STORE.data.shop.armor = 200; legacyArmor.newGame('bow','keys');
+  ok('старая броня не превышает новый потолок', legacyArmor.__api.D.armor === 30,
+     legacyArmor.__api.D.armor.toFixed(0) + ' брони'); }
 
 { const refund = loadGame('./PolyGrind.html'), item = refund.__api.SHOP.find(x => x.id === 'armor');
   refund.__api.STORE.data.shop.armor = 3;
@@ -87,3 +103,39 @@ for (const rank of [1, 5]){
 { const html=fs.readFileSync('./PolyGrind.html','utf8');
   ok('интерфейс содержит полный возврат бонуса и всего магазина',
     /class="refund-all"[\s\S]*?ВСЁ/.test(html) && /id="shoprefundall"[\s\S]*?ВЕРНУТЬ ВСЕ ПОКУПКИ/.test(html)); }
+
+{ const shop=c.__api.SHOP;
+  ok('блок полностью удалён из каталога', !shop.some(x=>x.id==='block'));
+  ok('общее снижение урона удалено из каталога', !shop.some(x=>x.id==='dr'));
+  const dodge=shop.find(x=>x.id==='dodge');
+  ok('уворот подорожал ровно на 20%', !!dodge && dodge.base===4200 && c.shopCost(dodge,0)===4200,
+    dodge ? dodge.base.toLocaleString('ru-RU')+' золота' : 'товар не найден');
+  const shell=shop.find(x=>x.id==='drFlat');
+  ok('«Панцирь от роя»: потолок 100', !!shell && shell.max===100,
+    shell ? 'потолок '+shell.max : 'товар не найден');
+  ok('«Панцирь от роя»: супер дешёвая кривая', !!shell && shell.base===250 && shell.grow===1.03 &&
+    shop.filter(x=>x.cat==='defense' && x.id!=='drFlat').every(x=>c.shopCost(shell,0)<c.shopCost(x,0)),
+    shell ? c.shopCost(shell,0).toLocaleString('ru-RU')+' золота за первый ранг' : 'товар не найден'); }
+
+{ const defense=loadGame('./PolyGrind.html');
+  defense.__api.STORE.data.shop={drFlat:100,block:60,dr:60};
+  defense.newGame('bow','keys');
+  ok('старые блок и снижение урона не дают характеристик', !('block' in defense.__api.D) && !('dr' in defense.__api.D));
+  ok('100 рангов панциря входят в новый забег', defense.__api.D.drFlat===100,
+    '−'+defense.__api.D.drFlat+' с каждого попадания'); }
+
+{ const legacy=loadGame('./PolyGrind.html');
+  const oldDr={base:3000,grow:1.075}, oldBlock={base:2500,grow:1.07};
+  const expected=[0,1,2].reduce((s,i)=>s+legacy.shopCost(oldDr,i),0)+
+    [0,1].reduce((s,i)=>s+legacy.shopCost(oldBlock,i),0);
+  legacy.__api.STORE.data.gold=100;
+  legacy.__api.STORE.data.spent=expected+50;
+  legacy.__api.STORE.data.shop={dr:3,block:2,armor:1};
+  legacy.__api.STORE.save();
+  ok('старые покупки удалённых защит возвращаются золотом', legacy.__api.STORE.data.gold===100+expected &&
+    legacy.__api.STORE.data.spent===50, '+'+expected.toLocaleString('ru-RU')+' золота');
+  ok('миграция удаляет только блок и общее снижение', !('dr' in legacy.__api.STORE.data.shop) &&
+    !('block' in legacy.__api.STORE.data.shop) && legacy.__api.STORE.data.shop.armor===1);
+  const gold=legacy.__api.STORE.data.gold;
+  legacy.__api.STORE.save();
+  ok('повторная миграция не выдаёт золото снова', legacy.__api.STORE.data.gold===gold); }
