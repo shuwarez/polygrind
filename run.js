@@ -4,7 +4,7 @@
 const {loadGame, DT} = require('./sim');
 
 const COMMON_GOOD = new Set(['dmg','aspd','life','armor','mspd','critCh','critMul','dblHit','deadlyHit',
-  'onHit','onKill','regen','dr','drFlat','block','dodge','normalDr','majorDr','cheat','recoup']);
+  'onHit','onKill','regen','dr','drFlat','block','dodge','normalDr','majorDr','cheat']);
 const RANGED_GOOD = new Set(['dmgProj','projN','pierce','chain','ricochet','projSize','projSpd','far','homing']);
 const BLADE_GOOD = new Set(['dmgMelee','arc','close','perNear','knock','stun','dizzy','phasing','thorns','reflect']);
 const NECRO_GOOD = new Set(['minDmg','minAspd','minLife','minSpd','minCrit','minCount','minTier','minInherit',

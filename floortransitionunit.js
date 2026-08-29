@@ -38,6 +38,26 @@ const fresh = () => loadGame('./PolyGrind.html', {random:() => 0.5});
   ok('автосбор показывает одну сводку всех находок', G.paused === true && G.floorFinds.length === 4 &&
     ov.innerHTML.includes('ДОБЫЧА ЭТАЖА') && ov.innerHTML.includes('ЧЁРНОЕ ЗЕРКАЛО') && ov.innerHTML.includes('КНИГА ОГНЯ'));
   ok('сводка не теряет тотем и повторную книгу', ov.innerHTML.includes('ТОТЕМ ОГНЯ') && ov.innerHTML.includes('тир 2'));
+  ok('каждая находка сохраняет полное описание',
+    G.floorFinds.every(f => typeof f.tip === 'string' && f.tip.length > 20));
+  const mirrorFind = G.floorFinds.find(f => f.name === c.__api.AMULETS.mirror.nm);
+  ok('амулет берёт каноническое описание из каталога',
+    mirrorFind && mirrorFind.tip === c.__api.AMULETS.mirror.nt);
+  const fireFinds = G.floorFinds.filter(f => f.name === c.__api.BOOKS.fire.nm);
+  const totemFind = G.floorFinds.find(f => f.detail.startsWith('ТОТЕМ'));
+  ok('книга и тотем показывают фактическую силу находки',
+    fireFinds.length === 2 && fireFinds[1].tip.includes(String(G.items.fire.val)) &&
+    totemFind && totemFind.tip.includes('+2%'));
+  ok('строки добычи доступны с клавиатуры',
+    (ov.innerHTML.match(/data-floor-find=/g) || []).length === 4 && ov.innerHTML.includes('tabindex="0"'));
+  const summarySource = c.showFloorFindSummary.toString();
+  ok('подсказка привязана к наведению и фокусу',
+    summarySource.includes('el.onmouseenter') && summarySource.includes('el.onfocus') && summarySource.includes('el.onblur'));
+  c.innerWidth=1280; c.innerHeight=720;
+  c.showFloorFindTip({clientX:100,clientY:100}, mirrorFind, null);
+  ok('всплывающая панель выводит имя, тип и эффект предмета',
+    ov.style.display === 'block' && ov.innerHTML.includes(mirrorFind.name) && ov.innerHTML.includes(mirrorFind.detail) &&
+    ov.innerHTML.includes(mirrorFind.tip));
   c.document.querySelector('#findok').onclick();
   ok('закрытие сводки очищает очередь и возвращает игру', G.paused === false && G.floorFinds.length === 0);
 

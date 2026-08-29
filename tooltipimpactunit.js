@@ -40,6 +40,14 @@ const row = (data,key) => data.rows.find(x=>x.key===key);
   ok('крит показывает шанс 5% → 11% и рост среднего удара', chance && chance.before===5 && chance.after===11 && row(data,'hit').after>row(data,'hit').before,
     chance.before+'% → '+chance.after+'%'); }
 
+{ const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys'); c.setLanguage('ru');
+  c.__api.G.bag.add('critCh','flat',5); c.recalc();
+  const x=card(c,'crit.chance_inc',40), html=c.cardInlineExample(x.m,x);
+  ok('процентный крит прямо на карточке показывает текущий шанс, бонус и итог',
+    html.includes('10% крита +40% = 14% крита') && html.includes('ПРИМЕР'));
+  ok('встроенный пример выводится только на процентной карточке крита',
+    c.cardInlineExample(card(c,'crit.chance_flat',6).m,card(c,'crit.chance_flat',6))===''); }
+
 { const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys');
   const x=card(c,'cond.vs_low_hp',5); c.__api.G.bag.add('vsLow','inc',10);
   const data=c.cardImpactData(x.m,x), r=row(data,'conditionalHit');

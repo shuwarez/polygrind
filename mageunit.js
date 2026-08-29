@@ -107,3 +107,86 @@ for (const [id,nm] of [['destroyer','Разрушитель'],['multiplier','М�
   c.__api.G.lvl=20; c.recalc();
   ok('общий бонус не распространяется на другие классы', c.__api.D.projN===1,
      c.__api.D.projN + ' снаряд у Лучника без карточек'); }
+
+console.log('НОВЫЕ ВЕТКИ МАГА');
+function arena(random=()=>0.99){
+  const c=loadGame('./PolyGrind.html',{random}); c.newGame('wand','keys','elementalist');
+  const G=c.__api.G;
+  G.enemies.length=0; G.spawnQueue=0; G.packs.length=0; G.shots.length=0; G.fx.length=0; G.arcaneTraces.length=0;
+  return {c,G,get D(){return c.__api.D}};
+}
+function add(o,stat,kind,value){ o.G.bag.add(stat,kind,value); o.c.recalc(); }
+function foe(o,x,y){
+  const e=o.c.spawnEnemy(); e.maxHp=e.hp=1e9; e.spd=0; e.dmg=0; e.x=x; e.y=y; return e;
+}
+function orbAt(o,x=0,y=0,travel=0,attackMul=1){
+  return {x,y,travel,attackMul,aoeScale:1,orb:true};
+}
+
+{ const c=loadGame('./PolyGrind.html'), ids=['mage.blast_heart','mage.elemental_explosion','mage.residual_arcana','mage.overheated_orb','mage.remote_detonation'];
+  const mods=ids.map(id=>c.__api.MODS.find(m=>m.id===id));
+  ok('каталог содержит все пять новых карточек Мага', mods.every(Boolean) && mods.every(m=>m.wep[0]==='orb' && m.noMin));
+  ok('четыре базовые карты обычные, Элементальный взрыв красный',
+     mods.filter(m=>m.id!=='mage.elemental_explosion').every(m=>!m.rar) && mods[1].rar===2 && mods[1].unlock===true); }
+{ const o=arena(), red=o.c.__api.MODS.find(m=>m.id==='mage.elemental_explosion');
+  add(o,'blastHeart','inc',49); const before=red.show(); add(o,'blastHeart','inc',1); const at=red.show();
+  ok('Элементальный взрыв открывается ровно на 50% Сердца', !before && at, '49% → 50%'); }
+{ const o=arena(), radius=o.G.weapon.aoe*o.D.aoeR;
+  add(o,'blastHeart','inc',50);
+  const inner=foe(o,radius*0.25,0), outer=foe(o,radius*0.75,0);
+  o.c.explodePlayerOrb(orbAt(o));
+  const di=1e9-inner.hp, dout=1e9-outer.hp;
+  ok('Сердце усиливает только внутреннюю половину взрыва', Math.abs(di/dout-1.5)<1e-6,
+     (di/dout).toFixed(2)+'×'); }
+{ const plain=arena(), heart=arena(); add(heart,'blastHeart','inc',80);
+  const ep=foe(plain,0,0), eh=foe(heart,0,0);
+  plain.c.damage(ep,{mul:1}); heart.c.damage(eh,{mul:1});
+  ok('Сердце взрыва не усиливает прямое попадание', Math.abs(ep.hp-eh.hp)<1e-9); }
+{ const base=arena(()=>0.15), red=arena(()=>0.15);
+  for (const o of [base,red]) for (const stat of ['igniteCh','chillCh','shockCh','poiCh']) add(o,stat,'flat',10);
+  add(red,'elementalExplosion','flag',1);
+  const eb=foe(base,0,0), er=foe(red,0,0);
+  base.c.explodePlayerOrb(orbAt(base)); red.c.explodePlayerOrb(orbAt(red));
+  const active=e=>e.dots.fire.dps>0 && e.ail.chill>0 && e.ail.shock>0 && e.dots.poison.dps>0;
+  ok('Элементальный взрыв удваивает четыре текущих шанса только у взрыва', !active(eb) && active(er)); }
+{ const o=arena(); add(o,'residualArcana','inc',10);
+  const e=foe(o,0,0); o.c.explodePlayerOrb(orbAt(o)); const trace=o.G.arcaneTraces[0];
+  ok('Остаточная аркана создаёт след на 0,5 сек с долей урона сферы',
+     trace && trace.life===0.5 && Math.abs(trace.dmg-o.c.avgHit()*0.10)<1e-9 && trace.hitSet.includes(e));
+  const hp=e.hp; o.c.tickArcaneTraces(0.1); o.c.tickArcaneTraces(0.1);
+  ok('один след не наносит одной цели повторный тик', e.hp===hp);
+  const late=foe(o,trace.r+100,0), before=late.hp; late.x=trace.r*0.5; o.c.tickArcaneTraces(0.1); const once=before-late.hp;
+  late.x=trace.r+100; o.c.tickArcaneTraces(0.05); late.x=0; o.c.tickArcaneTraces(0.05);
+  ok('вошедший в след враг получает ровно один отложенный тик', Math.abs(once-trace.dmg)<1e-6 && Math.abs((before-late.hp)-once)<1e-6);
+  o.c.tickArcaneTraces(0.2);
+  ok('след удаляется после суммарных 0,5 секунды', o.G.arcaneTraces.length===0); }
+{ const two=arena(); add(two,'overheatedOrb','inc',10); const r=two.G.weapon.aoe*two.D.aoeR;
+  foe(two,r*0.2,0); foe(two,-r*0.2,0); two.c.explodePlayerOrb(orbAt(two));
+  ok('два врага не запускают Перегретую сферу', two.G.player.overheatedPct===0 && two.G.player.overheatedT===0); }
+{ const o=arena(); add(o,'overheatedOrb','inc',10); const base=o.D.aspd, r=o.G.weapon.aoe*o.D.aoeR;
+  foe(o,r*0.2,0); foe(o,-r*0.2,0); foe(o,0,r*0.2); o.c.explodePlayerOrb(orbAt(o));
+  ok('три врага дают карточный бонус на 1,5 секунды', o.G.player.overheatedPct===10 && o.G.player.overheatedT===1.5 && Math.abs(o.D.aspd/base-1.1)<1e-9);
+  o.G.player.overheatedT=0.2; o.c.explodePlayerOrb(orbAt(o));
+  ok('повторный взрыв складывает скорость и обновляет, не прибавляет таймер', o.G.player.overheatedPct===20 && o.G.player.overheatedT===1.5);
+  for(let i=0;i<40;i++) o.c.triggerOverheatedOrb();
+  ok('боевой стек Перегретой сферы ограничен +300%', o.G.player.overheatedPct===300);
+  o.G.enemies.length=0; o.G.shots.length=0; o.c.update(1.5);
+  ok('по окончании таймера стек и множитель скорости сбрасываются', o.G.player.overheatedPct===0 && o.G.player.overheatedT===0 && Math.abs(o.D.aspd-base)<1e-9); }
+{ const near=arena(), far=arena(); add(near,'remoteBlast','inc',20); add(far,'remoteBlast','inc',20);
+  const en=foe(near,0,0), ef=foe(far,0,0);
+  near.c.explodePlayerOrb(orbAt(near,0,0,250)); far.c.explodePlayerOrb(orbAt(far,0,0,250.001));
+  const dn=1e9-en.hp, df=1e9-ef.hp;
+  ok('Дальний подрыв и фиолетовая отрисовка делят строгую границу «больше 250»',
+     !near.c.remoteOrbActive(orbAt(near,0,0,250)) && far.c.remoteOrbActive(orbAt(far,0,0,250.001)) && Math.abs(df/dn-1.2)<1e-6,
+     (df/dn).toFixed(2)+'×'); }
+{ const o=arena(), farOrb=orbAt(o,0,0,400);
+  ok('без Дальнего подрыва даже дальняя сфера остаётся синей',
+     o.D.remoteBlast===0 && !o.c.remoteOrbActive(farOrb)); }
+{ const o=arena(); o.G.player.aim=0; o.c.attack(); const s=o.G.shots[0], speed=Math.hypot(s.vx,s.vy); o.c.update(0.2);
+  ok('сфера накапливает фактически пройденный путь', Math.abs(s.travel-speed*0.2)<1e-6, s.travel.toFixed(1)); }
+{ const o=mage('multiplier',1), p=o.G.player; p.aim=0; o.G.shots.length=0; o.G.enemies.length=0; o.G.spawnQueue=0;
+  const oldRandom=o.c.Math.random; o.c.Math.random=()=>0; o.c.attack(); o.c.Math.random=oldRandom;
+  const parent=o.G.shots.find(s=>!s.miniOrb); parent.travel=400; o.c.update(0.1);
+  const mini=o.G.shots.find(s=>s.miniOrb);
+  ok('мини-сфера начинает собственный счётчик дистанции с нуля', mini && mini.travel>0 && mini.travel<250 && parent.travel>400,
+     mini && mini.travel.toFixed(1)); }

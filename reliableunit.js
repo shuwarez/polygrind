@@ -52,6 +52,9 @@ console.log('Надёжный удар');
 { const o=build(), crit=o.c.__api.MODS.find(x=>x.id==='crit.multi');
   ok('синий множитель критического урона даёт от 2 до 7 к модификатору',
     crit.rar===1 && crit.r[0]===2 && crit.r[1]===7); }
+{ const o=build(), crit=o.c.__api.MODS.find(x=>x.id==='crit.chance_flat');
+  ok('плоский шанс крита переведён в синий тир без смены диапазона',
+    crit.rar===1 && crit.kind==='flat' && crit.stat==='critCh' && crit.r[0]===4 && crit.r[1]===8); }
 
 console.log('Ударная волна при крите');
 { const o=critWave(), nearby=o.enemy();
@@ -88,14 +91,16 @@ console.log('Ударная волна при крите');
 { const o=build(), m=o.c.__api.MODS.find(x=>x.id==='dmg.projectile');
   ok('урон снарядов даёт целые 5–10% без потолка',
     m.r[0]===5 && m.r[1]===10 && m.int===true && m.cap===undefined && !m.hide &&
-    m.nt.includes('5–10%') && m.nt.includes('без потолка')); }
+    m.wep.length===1 && m.wep[0]==='proj' && m.noMin===true &&
+    m.nt.includes('Только для Лучника') && m.nt.includes('5–10%') && m.nt.includes('без потолка')); }
 { const o=build(), m=o.c.__api.MODS.find(x=>x.id==='dmg.projectile');
   ok('бросок урона снарядов достигает обеих границ',
     o.c.rollModValue(m,()=>0)===5 && o.c.rollModValue(m,()=>0.999999)===10); }
 { const o=build(); o.c.setLanguage('ru'); o.G.bag.add('dmgProj','inc',137); o.c.recalc();
   const m=o.c.__api.MODS.find(x=>x.id==='dmg.projectile'), tip=o.c.detailedSkillTip(m,{m,v:8,val:'+8%'});
   ok('накопленный урон снарядов не ограничивается, тултип объясняет сложение',
-    o.D.incAll===137 && tip.includes('5% до 10%') && tip.includes('без потолка') && tip.includes('6% + 9% = +15%'));
+    o.D.incAll===137 && tip.includes('только Лучнику') && tip.includes('5% до 10%') &&
+    tip.includes('без потолка') && tip.includes('6% + 9% = +15%'));
 }
 { const o=build('wand'), m=o.c.__api.MODS.find(x=>x.id==='dmg.aoe');
   ok('урон по площади даёт целые 7–13% без потолка',
@@ -131,10 +136,28 @@ console.log('Урон при стоянии на месте');
   o.G.player.stillT=0.61; const active=o.c.conditionalInc(e,{});
   ok('после 0,6 секунды весь накопленный бонус работает без потолка', early===0 && active===137,
     '0,60 сек: +'+early+'% · 0,61 сек: +'+active+'%'); }
+{ const o=build(); o.c.setLanguage('ru'); o.G.bag.add('whStill','inc',27); o.c.recalc();
+  o.G.player.stillT=0.6; const early=o.c.activeCombatBuffs(o.G.player,0);
+  o.G.player.stillT=0.61; const active=o.c.activeCombatBuffs(o.G.player,0);
+  o.G.player.moving=true; o.G.player.stillT=0; const moving=o.c.activeCombatBuffs(o.G.player,0);
+  ok('HUD показывает итоговый бонус только пока стойка действительно активна',
+    early.length===0 && active.includes('Стоит на месте - +27% урона') && moving.length===0); }
 { const o=build(); o.c.setLanguage('ru');
   const m=o.c.__api.MODS.find(x=>x.id==='cond.while_still'), tip=o.c.detailedSkillTip(m,{m,val:'+12%'});
   ok('тултип объясняет задержку, диапазон и сложение',
     tip.includes('0,6 секунды') && tip.includes('10–15%') && tip.includes('без потолка') && tip.includes('11% + 14% = +25%')); }
+
+console.log('Урон за врагов рядом');
+{ const o=build(); o.c.setLanguage('ru'); o.G.enemies.length=0; o.G.bag.add('perNear','inc',6.496);
+  for(let i=0;i<9;i++){ const e=o.c.spawnEnemy(); e.x=o.G.player.x+100+i; e.y=o.G.player.y; }
+  const edge=o.c.spawnEnemy(); edge.x=o.G.player.x+220; edge.y=o.G.player.y;
+  const dead=o.c.spawnEnemy(); dead.x=o.G.player.x+50; dead.y=o.G.player.y; dead.dead=true;
+  const count=o.c.nearbyDamageEnemyCount(o.G.player), active=o.c.activeCombatBuffs(o.G.player,0);
+  for(const e of o.G.enemies) e.x=o.G.player.x+300;
+  const empty=o.c.activeCombatBuffs(o.G.player,0);
+  ok('HUD показывает текущий бонус, учитывает максимум 8 живых целей и исчезает без них',
+    count===8 && active.includes('Враги рядом +52% урона') && !empty.some(x=>x.includes('Враги рядом')),
+    count+' целей · +'+Math.round(count*6.496)+'%'); }
 
 console.log('Урон в движении');
 { const o=build(), m=o.c.__api.MODS.find(x=>x.id==='cond.while_moving');
@@ -148,6 +171,11 @@ console.log('Урон в движении');
   o.G.player.moving=true; const moving=o.c.conditionalInc(e,{});
   ok('в движении весь накопленный бонус работает без потолка', stopped===0 && moving===137,
     'стоим: +'+stopped+'% · движемся: +'+moving+'%'); }
+{ const o=build(); o.c.setLanguage('ru'); o.G.bag.add('whMove','inc',23);
+  o.G.player.moving=false; const stopped=o.c.activeCombatBuffs(o.G.player,0,0);
+  o.G.player.moving=true; const moving=o.c.activeCombatBuffs(o.G.player,0,0);
+  ok('HUD показывает суммарный бонус только во время движения',
+    !stopped.some(x=>x.includes('В движении')) && moving.includes('В движении - урон +23%')); }
 { const o=build(); o.c.setLanguage('ru');
   const m=o.c.__api.MODS.find(x=>x.id==='cond.while_moving'), tip=o.c.detailedSkillTip(m,{m,val:'+9%'});
   ok('тултип объясняет условие, диапазон и сложение',
@@ -215,6 +243,28 @@ console.log('Урон после недавнего убийства');
   ok('повторное убийство обновляет таймер и тултип это объясняет', p.killT===1 &&
     m.tip.includes('3–7%') && m.tip.includes('без потолка') &&
     m.tip.includes('4% + 6% = +10%') && m.tip.includes('длительности не складываются')); }
+{ const o=build(); o.c.setLanguage('ru'); o.G.bag.add('afterKill','inc',17);
+  o.G.player.killT=0; const idle=o.c.activeCombatBuffs(o.G.player,0,0);
+  o.G.player.killT=1; const active=o.c.activeCombatBuffs(o.G.player,0,0);
+  o.G.player.killT=0; const expired=o.c.activeCombatBuffs(o.G.player,0,0);
+  ok('HUD показывает суммарный бонус только в течение эффекта недавнего убийства',
+    !idle.some(x=>x.includes('Недавнее убийство')) &&
+    active.some(x=>x.includes('Недавнее убийство - урон +17%')) &&
+    !expired.some(x=>x.includes('Недавнее убийство'))); }
+{ const o=build(); o.G.bag.add('afterKill','inc',17); o.G.player.killT=0.64;
+  o.c.setLanguage('ru'); const ru=o.c.activeCombatBuffs(o.G.player,0,0).find(x=>x.includes('Недавнее убийство'));
+  o.c.setLanguage('en'); const en=o.c.activeCombatBuffs(o.G.player,0,0).find(x=>x.includes('Recent Kill'));
+  ok('HUD показывает оставшуюся длительность эффекта с десятыми секунды',
+    ru.includes('0,6 с осталось') && en.includes('0.6 s remaining'),ru+' · '+en); }
+
+console.log('Урон за время боя');
+{ const o=build(); o.c.setLanguage('ru'); o.G.bag.add('ramp','inc',2.75);
+  o.G.player.combatT=0; const idle=o.c.activeCombatBuffs(o.G.player,0,0);
+  o.G.player.combatT=4; const active=o.c.activeCombatBuffs(o.G.player,0,0);
+  o.G.player.combatT=20; const capped=o.c.activeCombatBuffs(o.G.player,0,0);
+  ok('HUD показывает текущий разгон только в бою и ограничивает его на +40%',
+    !idle.some(x=>x.includes('Идёт бой')) && active.includes('Идёт бой - урон +11%') &&
+    capped.includes('Идёт бой - урон +40%')); }
 
 console.log('Уникальное добивание');
 { const o=build(), m=o.c.__api.MODS.find(x=>x.id==='dmg.execute');

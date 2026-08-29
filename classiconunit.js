@@ -23,12 +23,16 @@ ok('шипы помечены только мечом Воина',
   keys('dmg.thorns').join(',') === 'blade', keys('dmg.thorns').join(','));
 ok('Арканная иллюзия помечена только жезлом Мага',
   keys('shape.arcane_illusion').join(',') === 'wand', keys('shape.arcane_illusion').join(','));
+ok('Радиус области действия доступен только Магу',
+  keys('shape.aoe_radius').join(',') === 'wand', keys('shape.aoe_radius').join(','));
 ok('карточка свиты помечена только черепом Некроманта',
   keys('min.damage').join(',') === 'necro', keys('min.damage').join(','));
+ok('чумной взрыв трупа доступен только Некроманту',
+  keys('shape.explode_on_kill').join(',') === 'necro', keys('shape.explode_on_kill').join(','));
 ok('дополнительный снаряд с noMin помечен только луком Лучника',
   keys('shape.proj_count').join(',') === 'bow', keys('shape.proj_count').join(','));
-ok('урон снарядов честно показывает Лучника, Мага и Некроманта',
-  keys('dmg.projectile').join(',') === 'bow,wand,necro', keys('dmg.projectile').join(','));
+ok('урон снарядов помечен только луком Лучника',
+  keys('dmg.projectile').join(',') === 'bow', keys('dmg.projectile').join(','));
 ok('noMin-карточка без wep показывает всех, кроме Некроманта',
   keys('cond.while_still').join(',') === 'blade,bow,wand', keys('cond.while_still').join(','));
 

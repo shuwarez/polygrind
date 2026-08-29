@@ -65,7 +65,7 @@ console.log('Урон по замедленным');
 console.log('Холодный раскол');
 { const o=sourceBuild('chill');
   ok('Холодный раскол — синяя одноразовая карточка-флаг',
-    o.shatter.nm==='ХОЛОДНЫЙ РАСКОЛ' && o.shatter.kind==='flag' && o.shatter.rar===1 && o.shatter.stat==='coldShatter'); }
+    o.shatter.nm==='Холодный раскол' && o.shatter.kind==='flag' && o.shatter.rar===1 && o.shatter.stat==='coldShatter'); }
 { const o=sourceBuild('chill'); o.G.picks.push({id:o.shatter.id});
   let repeated=false; for(let i=0;i<100;i++) if(o.c.rollCards().some(x=>x.id===o.shatter.id)){ repeated=true; break; }
   ok('после выбора Холодный раскол больше не выпадает',!repeated); }

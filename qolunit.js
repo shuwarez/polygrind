@@ -8,9 +8,43 @@ const ok = (nm, cond, det) => console.log((cond ? '  ✓ ' : '  ✗ ') + nm.padE
     !c.__api.MODS.some(m=>m.id==='loot.pickup_radius' || m.stat==='pickup'));
   ok('карточка притягивания лута удалена',
     !c.__api.MODS.some(m=>m.id==='loot.magnet' || m.stat==='magnet'));
+  ok('карточка урона при малом здоровье удалена',
+    !c.__api.MODS.some(m=>m.id==='cond.while_low_hp' || m.stat==='whLow'));
+  ok('карточка возврата полученного урона удалена',
+    !c.__api.MODS.some(m=>m.id==='def.recoup' || m.stat==='recoup'));
+  ok('карточки урона вблизи и издалека удалены',
+    !c.__api.MODS.some(m=>m.id==='cond.close_range' || m.id==='cond.long_range' || m.stat==='close' || m.stat==='far'));
   G.bag.add('pickup','inc',999); c.recalc();
   ok('старый стат карточки больше не влияет на героя', c.__api.D.pickup===base,
      base+' → '+c.__api.D.pickup); }
+
+{ const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys');
+  const G=c.__api.G,D=c.__api.D,p=G.player; G.enemies.length=0;G.spawnQueue=0;G.packs.length=0;
+  G.bag.add('whLow','inc',999);c.recalc();
+  D.baseMin=D.baseMax=100;D.elem={fire:0,cold:0,lit:0,poi:0};D.incAll=0;D.moreAll=1;D.critCh=D.superCh=D.dblHit=0;
+  const e=c.spawnEnemy();e.maxHp=e.hp=1e9;e.armor=0;e.ward=null;e.bulwark=0;e.kind='norm';p.hp=D.life*0.2;
+  const hp=e.hp;c.damage(e,{});
+  ok('старый стат whLow больше не влияет на урон',Math.abs((hp-e.hp)-100)<1e-9,(hp-e.hp)+' урона'); }
+
+{ const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys');
+  const G=c.__api.G,D=c.__api.D,p=G.player; G.enemies.length=0;G.spawnQueue=0;G.packs.length=0;
+  G.bag.add('close','inc',999);G.bag.add('far','inc',999);c.recalc();
+  D.baseMin=D.baseMax=100;D.elem={fire:0,cold:0,lit:0,poi:0};D.incAll=0;D.moreAll=1;D.critCh=D.superCh=D.dblHit=0;
+  const near=c.spawnEnemy();near.maxHp=near.hp=1e9;near.armor=0;near.ward=null;near.bulwark=0;near.kind='norm';near.x=p.x+20;near.y=p.y;
+  const nearHp=near.hp;c.damage(near,{});
+  const far=c.spawnEnemy();far.maxHp=far.hp=1e9;far.armor=0;far.ward=null;far.bulwark=0;far.kind='norm';far.x=p.x+500;far.y=p.y;
+  const farHp=far.hp;c.damage(far,{});
+  const nearDmg=nearHp-near.hp,farDmg=farHp-far.hp;
+  ok('старые статы close/far больше не влияют на урон',
+    Math.abs(nearDmg-100)<1e-9&&Math.abs(farDmg-100)<1e-9,
+    'вблизи '+nearDmg+' · издалека '+farDmg); }
+
+{ const c=loadGame('./PolyGrind.html');c.newGame('bow','keys');
+  const G=c.__api.G,D=c.__api.D,p=G.player;G.enemies.length=0;G.spawnQueue=0;G.packs.length=0;
+  G.bag.add('recoup','flat',100);c.recalc();D.dodge=0;D.armor=0;p.hp=D.life;
+  c.hurt(10,false,false,'ТЕСТ','norm');const afterHit=p.hp;c.update(1);
+  ok('старый стат recoup больше не накапливает и не лечит',p.recoup===undefined&&p.hp===afterHit,
+    afterHit.toFixed(1)+' HP'); }
 
 { const c = loadGame('./PolyGrind.html'); c.newGame('bow','keys');
   const G=c.__api.G, p=G.player;
@@ -129,3 +163,49 @@ const ok = (nm, cond, det) => console.log((cond ? '  ✓ ' : '  ✗ ') + nm.padE
   ok('служебные C/V/L/P тоже не зависят от раскладки',
     c.inputKey({code:'KeyC',key:'с'})==='c' && c.inputKey({code:'KeyV',key:'м'})==='v' &&
     c.inputKey({code:'KeyL',key:'д'})==='l' && c.inputKey({code:'KeyP',key:'з'})==='p'); }
+
+{ const c = loadGame('./PolyGrind.html'); c.newGame('bow', 'keys');
+  const G=c.__api.G, mods=['dmg.flat_all','dmg.inc_all','life.on_kill','dmg.more_all']
+    .map(id=>c.__api.MODS.find(m=>m.id===id));
+  const cards=mods.map((m,i)=>({m,v:i+1,val:'+'+(i+1)}));
+  const event=(code,repeat=false)=>({code,key:'?',repeat,prevented:false,preventDefault(){this.prevented=true;}});
+  ok('цифры 1–4 распознаются сверху и на цифровом блоке',
+    c.inputKey({code:'Digit1',key:'!'})==='1' && c.inputKey({code:'Digit4',key:';'})==='4' &&
+    c.inputKey({code:'Numpad1',key:'End'})==='1' && c.inputKey({code:'Numpad4',key:'ArrowLeft'})==='4');
+  G.pending=1; G.levelUpCards=cards.slice(0,3);
+  const before=G.picks.length, fourth=event('Digit4'); c.handleGameKeyDown(fourth);
+  ok('клавиша 4 не выбирает карту в трёхкарточном ролле',
+    fourth.prevented && G.pending===1 && G.picks.length===before);
+  const second=event('Digit2'); c.handleGameKeyDown(second);
+  ok('клавиша 2 выбирает вторую карточку повышения уровня',
+    second.prevented && G.pending===0 && G.picks.length===before+1 && G.picks.at(-1).id===mods[1].id); }
+
+{ const c = loadGame('./PolyGrind.html'); c.newGame('bow', 'keys');
+  const G=c.__api.G, mods=['dmg.flat_all','dmg.inc_all','life.on_kill','dmg.more_all']
+    .map(id=>c.__api.MODS.find(m=>m.id===id));
+  G.pending=1; G.levelUpCards=mods.map((m,i)=>({m,v:i+1,val:'+'+(i+1)}));
+  const repeated={code:'Numpad4',key:'4',repeat:true,preventDefault(){}};
+  c.handleGameKeyDown(repeated);
+  const heldIgnored=G.pending===1 && G.picks.length===0;
+  c.handleGameKeyDown({code:'Numpad4',key:'4',repeat:false,preventDefault(){}});
+  ok('удержание игнорируется, одиночная 4 выбирает четвёртую карту',
+    heldIgnored && G.pending===0 && G.picks.length===1 && G.picks[0].id===mods[3].id); }
+
+{ const c = loadGame('./PolyGrind.html'); c.newGame('bow', 'keys');
+  const G=c.__api.G, p=G.player;
+  const event=(repeat=false)=>({code:'Space',key:' ',repeat,prevented:false,preventDefault(){this.prevented=true;}});
+  G.pending=1; G.rerolls=1; c.showLevelUp();
+  const oldCards=G.levelUpCards, oldPicks=G.picks.length, oldDash=p.dashN, space=event();
+  c.handleGameKeyDown(space);
+  ok('пробел перебрасывает карточки активного повышения уровня',
+    space.prevented && G.rerolls===0 && G.pending===1 && G.picks.length===oldPicks &&
+    Array.isArray(G.levelUpCards) && G.levelUpCards!==oldCards && p.dashN===oldDash);
+
+  G.rerolls=1;
+  const heldCards=G.levelUpCards, held=event(true); c.handleGameKeyDown(held);
+  const heldIgnored=held.prevented && G.rerolls===1 && G.levelUpCards===heldCards && p.dashN===oldDash;
+  G.rerolls=0;
+  const emptyCards=G.levelUpCards, empty=event(); c.handleGameKeyDown(empty);
+  ok('удержание и нулевой запас не тратят переброс и не запускают рывок',
+    heldIgnored && empty.prevented && G.rerolls===0 && G.levelUpCards===emptyCards &&
+    G.pending===1 && p.dashN===oldDash); }

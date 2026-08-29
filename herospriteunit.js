@@ -27,12 +27,44 @@ ok('рендер использует только один ряд ходьбы 
 ok('превью меню берёт один кадр без копии PNG',
   html.includes("heroPreviewHTML(spriteKey, 'class-sprite')") && html.includes('background-size:400% 100%'));
 
+const logoMatch=html.match(/GRIM_GRIND_LOGO_STRIP\.src = 'data:image\/png;base64,([^']+)'/);
+const logoPng=logoMatch && Buffer.from(logoMatch[1],'base64');
+const logoHash=logoPng && crypto.createHash('sha256').update(logoPng).digest('hex').toUpperCase();
+const torchMatch=html.match(/GRIM_GRIND_TORCH_STRIP\.src = 'data:image\/png;base64,([^']+)'/);
+const torchPng=torchMatch && Buffer.from(torchMatch[1],'base64');
+const torchHash=torchPng && crypto.createHash('sha256').update(torchPng).digest('hex').toUpperCase();
+ok('официальное имя Grim Grind стоит в title и доступном имени логотипа',
+  html.includes('<title>Grim Grind</title>') && html.includes('aria-label="Grim Grind"') &&
+  !html.includes("fillText('PolyGrind'"));
+ok('оптимизированный прозрачный лист нового логотипа встроен в HTML',
+  !!logoPng && logoPng.length===40839 && logoHash==='21FB0262A2354AAFB9B130BAA5B536568440DEE575D63C83A1328C5AFE164E78',
+  (logoPng?logoPng.length:0)+' Б · '+(logoHash||'нет'));
+ok('лист логотипа сжат до 2048×96 и восьми кадров 256×96',
+  !!logoPng && logoPng.readUInt32BE(16)===2048 && logoPng.readUInt32BE(20)===96 &&
+  html.includes("{w:256,h:96,count:8,fps:5}"));
+ok('лист факела сжат до 576×192, прозрачен и встроен один раз',
+  !!torchPng && torchPng.length===13258 && torchHash==='2F5287E95CA859D0943AF19EB7FD382C3FBEF4940827D82AF08A9F3108BB9233' &&
+  torchPng.readUInt32BE(16)===576 && torchPng.readUInt32BE(20)===192 &&
+  html.includes("{w:72,h:192,count:8,fps:8}"),
+  (torchPng?torchPng.length:0)+' Б · '+(torchHash||'нет'));
+ok('меню анимирует логотип и два зеркальных факела без внешних ассетов',
+  html.includes('Math.floor(tm*GRIM_GRIND_LOGO_FRAME.fps) % GRIM_GRIND_LOGO_FRAME.count') &&
+  html.includes('Math.floor(tm*GRIM_GRIND_TORCH_FRAME.fps) % GRIM_GRIND_TORCH_FRAME.count') &&
+  html.includes('drawBrandTitle(t);') && html.includes('drawBrandTorches(t);') &&
+  html.includes('id="brandtorchl"') && html.includes('id="brandtorchr"') &&
+  html.includes('#brandtorchr{transform:scaleX(-1)}'));
+ok('системное отключение анимаций оставляет первые кадры вывески',
+  html.includes("matchMedia('(prefers-reduced-motion: reduce)').matches") &&
+  (html.match(/const frame = reducedMenuMotion\(\) \? 0 :/g)||[]).length===2);
+
 {
   const c=loadGame('./PolyGrind.html'); c.startScreen();
   const menu=c.document.getElementById('ov').innerHTML;
-  ok('меню показывает четыре чистые карточки героев без ID и стартового урона',
+  ok('меню показывает четыре чистые карточки без служебных пояснений',
     (menu.match(/class="card class-card"/g)||[]).length===4 && !menu.includes('wpn.') &&
-    !menu.includes('<div class="cat">') && !menu.includes('<div class="vl">'));
+    !menu.includes('<div class="cat">') && !menu.includes('<div class="vl">') &&
+    !menu.includes('choose one of four classes') && !menu.includes('Each level-up offers a choice of') &&
+    !menu.includes('flat values add together'));
 }
 ok('в карточке сначала название, затем крупная модель и короткое описание',
   /'<div class="nm">' \+ w\.nm \+ '<\/div>' \+\s*heroPreviewHTML\(spriteKey, 'class-sprite'\) \+\s*'<div class="nt">' \+ w\.desc \+ '<\/div>'/.test(html));

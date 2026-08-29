@@ -210,6 +210,68 @@ def remove_baked_checker(source: Image.Image) -> Image.Image:
     return rgba
 
 
+def remove_logo_checker(source: Image.Image) -> Image.Image:
+    """Превратить светлую нарисованную шахматку логотипа в настоящую альфу.
+
+    Тёмный металл и насыщенные огненные оттенки всегда остаются непрозрачными.
+    Только нейтральные светлые пиксели считаются подложкой; промежуточные серые
+    пиксели получают мягкую альфу, чтобы после очистки не осталось белого ореола.
+    """
+    rgba = source.convert("RGBA")
+    alpha = bytearray()
+    for red, green, blue, _ in rgba.get_flattened_data():
+        low, high = min(red, green, blue), max(red, green, blue)
+        chroma = high - low
+        if chroma > 18 or low <= 180:
+            value = 255
+        elif low >= 235:
+            value = 0
+        else:
+            value = round((235 - low) / 55 * 255)
+        alpha.append(value)
+    rgba.putalpha(Image.frombytes("L", rgba.size, bytes(alpha)))
+    return rgba
+
+
+def compact_horizontal_sheet(source: Image.Image, count: int,
+                             frame_size: tuple[int, int]) -> Image.Image:
+    """Упаковать равноширинные кадры с общим масштабом и привязкой к низу."""
+    frames: list[Image.Image] = []
+    boxes: list[tuple[int, int, int, int]] = []
+    for index in range(count):
+        x0 = round(index * source.width / count)
+        x1 = round((index + 1) * source.width / count)
+        frame = source.crop((x0, 0, x1, source.height)).convert("RGBA")
+        box = frame.getchannel("A").point(lambda value: 255 if value >= 16 else 0).getbbox()
+        if not box:
+            raise SystemExit(f"Пустой кадр меню: {index}")
+        frames.append(frame)
+        boxes.append(box)
+    max_width = max(box[2] - box[0] for box in boxes)
+    max_height = max(box[3] - box[1] for box in boxes)
+    ratio = min((frame_size[0] - 4) / max_width, (frame_size[1] - 4) / max_height, 1)
+    sheet = Image.new("RGBA", (frame_size[0] * count, frame_size[1]))
+    for index, (frame, box) in enumerate(zip(frames, boxes)):
+        crop = frame.crop(box)
+        size = (max(1, round(crop.width * ratio)), max(1, round(crop.height * ratio)))
+        if size != crop.size:
+            crop = crop.resize(size, Image.Resampling.LANCZOS)
+        x = index * frame_size[0] + (frame_size[0] - size[0]) // 2
+        y = frame_size[1] - 2 - size[1]
+        sheet.alpha_composite(crop, (x, y))
+    return sheet
+
+
+def menu_logo_sheet(path: Path) -> bytes:
+    source = remove_logo_checker(Image.open(path))
+    return indexed_png(compact_horizontal_sheet(source, 8, (256, 96)))
+
+
+def menu_torch_sheet(path: Path) -> bytes:
+    source = Image.open(path).convert("RGBA")
+    return indexed_png(compact_horizontal_sheet(source, 8, (72, 192)))
+
+
 def elite_variant_sheet(path: Path) -> bytes:
     """Четыре кадра элитной разновидности → компактный лист 192×48."""
     source = remove_baked_checker(Image.open(path))
@@ -318,6 +380,12 @@ def main() -> None:
     parser.add_argument("--forgotten-guard", type=Path)
     parser.add_argument("--abyssal-warden", type=Path)
     parser.add_argument("--acid-carrier", type=Path)
+    parser.add_argument("--menu-logo", type=Path)
+    parser.add_argument("--menu-torch", type=Path)
+    parser.add_argument("--build-menu-assets", action="store_true",
+                        help="записать компактные прозрачные листы логотипа и факела в outputs")
+    parser.add_argument("--install-menu-assets", action="store_true",
+                        help="собрать листы меню и встроить их data URI в автономный HTML")
     parser.add_argument("--emit-shooter-base64", action="store_true",
                         help="вывести JSON двух оптимизированных data payload без изменения HTML")
     parser.add_argument("--emit-player-projectile-base64", action="store_true",
@@ -335,6 +403,38 @@ def main() -> None:
     parser.add_argument("--install-elite-ranged-tank", action="store_true",
                         help="добавить шесть ranged/tank разновидностей элиты в автономный HTML")
     args = parser.parse_args()
+
+    if args.build_menu_assets or args.install_menu_assets:
+        if not args.menu_logo or not args.menu_torch:
+            parser.error("ассеты меню требуют --menu-logo и --menu-torch")
+        generated = {
+            "logo": menu_logo_sheet(args.menu_logo),
+            "torch": menu_torch_sheet(args.menu_torch),
+        }
+        output_dir = ROOT / "outputs"
+        output_dir.mkdir(exist_ok=True)
+        paths = {
+            "logo": output_dir / "grim-grind-title-spritesheet-optimized.png",
+            "torch": output_dir / "grim-grind-torch-spritesheet-optimized.png",
+        }
+        for key, path in paths.items():
+            path.write_bytes(generated[key])
+        if args.install_menu_assets:
+            html = HTML.read_text(encoding="utf-8")
+            for key, js_name in (("logo", "GRIM_GRIND_LOGO_STRIP"),
+                                 ("torch", "GRIM_GRIND_TORCH_STRIP")):
+                pattern = rf"({js_name}\.src = 'data:image/png;base64,)[^']+(')"
+                value = base64.b64encode(generated[key]).decode("ascii")
+                html, count = re.subn(pattern, rf"\g<1>{value}\2", html, count=1)
+                if count != 1:
+                    raise SystemExit(f"{js_name}: ожидалась одна замена, получено {count}")
+            HTML.write_text(html, encoding="utf-8", newline="\n")
+        print(json.dumps({
+            key: {"path": str(paths[key]), "bytes": len(data),
+                  "size": Image.open(io.BytesIO(data)).size}
+            for key, data in generated.items()
+        }, separators=(",", ":")))
+        return
 
     elite_sources = {
         "frostWolf": args.ice_wolf,

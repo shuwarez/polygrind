@@ -96,5 +96,5 @@ function healing(G){ return G.fx.find(f=>f.t==='healNum'); }
   ok('барьер Воина не скрывает отдельный щит вампира', txt.includes('+7 barrier') && txt.includes('(+5 shield)'), txt); }
 
 { const html=fs.readFileSync('./PolyGrind.html','utf8');
-  ok('мини-бар рисует голубой сегмент по доле барьера', /barrier=clamp\(\(p\.barrier\|\|0\)\/D\.life/.test(html) &&
+  ok('мини-бар рисует голубой сегмент по сумме барьеров', /barrier=clamp\(totalPlayerBarrier\(p\)\/D\.life/.test(html) &&
     /fillStyle='#5ec2e0'.*w\*barrier,2/.test(html)); }

@@ -33,6 +33,16 @@ console.log('РИТМ БОЯ');
   o.p.moveT = 0; const a = o.c.conditionalInc(e, {});
   o.p.moveT = 20; const b = o.c.conditionalInc(e, {});
   ok('разгон: +40% на пределе', b-a === 40, '+' + (b-a) + '% за 20 сек бега'); }
+{ const o=mk('momentum');
+  o.p.moveT=1.99; const early=o.c.activeCombatBuffs(o.p,0,0);
+  o.p.moveT=6.2; o.c.setLanguage('ru'); const ru=o.c.activeCombatBuffs(o.p,0,0);
+  o.p.moveT=30; const capped=o.c.activeCombatBuffs(o.p,0,0);
+  o.c.setLanguage('en'); o.p.moveT=2; const en=o.c.activeCombatBuffs(o.p,0,0);
+  o.p.moveT=0; const stopped=o.c.activeCombatBuffs(o.p,0,0);
+  ok('разгон: HUD повторяет ступени, потолок и сброс',
+    !early.some(x=>x.includes('Разгон')) && ru.includes('Разгон +12% урона') &&
+    capped.includes('Разгон +40% урона') && en.includes('Momentum +4% damage') &&
+    !stopped.some(x=>x.includes('Momentum'))); }
 { const o = mk('siege'); const e = foe(o,40,0);
   o.p.stillT = 0; const a = o.c.conditionalInc(e, {});
   o.p.stillT = 2; const b = o.c.conditionalInc(e, {});
@@ -55,6 +65,16 @@ console.log('РИТМ БОЯ');
   o.c.update(0.81);
   ok('карточка убийства: сразу +25% на 0,8 сек',
     Math.abs(active/base-1.25)<1e-9 && o.p.spdKill===0 && Math.abs(o.D.mspd-base)<1e-9); }
+{ const o = mk([], [['spdKill',1,'flag']]), e = foe(o,9e5,0);
+  const idle=o.c.activeCombatBuffs(o.p,0,0); o.c.killEnemy(e,o.G.enemies.indexOf(e));
+  o.p.spdKill=0.76; o.c.setLanguage('ru'); const ru=o.c.activeCombatBuffs(o.p,0,0);
+  o.c.setLanguage('en'); const en=o.c.activeCombatBuffs(o.p,0,0); o.p.spdKill=0;
+  const expired=o.c.activeCombatBuffs(o.p,0,0);
+  ok('карточка убийства: HUD показывает бонус и оставшееся время',
+    !idle.some(x=>x.includes('Недавнее убийство')) &&
+    ru.includes('Недавнее убийство +25% скорости - 0.8 секунд') &&
+    en.includes('Recent Kill +25% Speed - 0.8 seconds') &&
+    !expired.some(x=>x.includes('Recent Kill'))); }
 { const o = mk('sprint'), base=o.D.mspd, e = foe(o,9e5,0);
   o.c.killEnemy(e, o.G.enemies.indexOf(e)); const active=o.D.mspd;
   o.c.update(2.01);
@@ -119,6 +139,14 @@ console.log('СТИХИИ И КРИТЫ');
     if (o.G.fx.some(f=>f.t==='num'&&f.crit)) crits++; o.G.fx.length = 0; }
   ok('критический прицел: +25% шанса', crits/3000 > 0.20 && crits/3000 < 0.32,
      (crits/30).toFixed(1) + '% критов'); }
+{ const o = mk('critaim');
+  o.p.stillT=1; const early=o.c.activeCombatBuffs(o.p,0,0);
+  o.p.stillT=1.01; o.c.setLanguage('ru'); const ru=o.c.activeCombatBuffs(o.p,0,0);
+  o.c.setLanguage('en'); const en=o.c.activeCombatBuffs(o.p,0,0);
+  ok('критический прицел: HUD появляется только после секунды неподвижности',
+    !early.some(x=>x.includes('Критический прицел')) &&
+    ru.includes('Критический прицел - +25% к шансу критического удара') &&
+    en.includes('Critical Aim - +25% Critical Hit Chance')); }
 
 console.log('ЗАЩИТА');
 { const o = mk('fullplate');

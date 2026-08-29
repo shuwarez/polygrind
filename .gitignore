@@ -5,9 +5,15 @@ __pycache__/
 /old versions/
 /old_versions/
 
-# Локальная среда сборки и PNG-превью Excel-артефактов. В Git хранится только итоговый .xlsx.
+# Локальная среда сборки, концепты и PNG-превью артефактов. Идеи не публикуются.
 /.artifact-work/
 /outputs/*/previews/
 /outputs/*/*-previews/
 /outputs/**/*.inspect.ndjson
 /outputs/**/~$*.xlsx
+/outputs/**/*_IDEAS.xlsx
+/outputs/grim-grind-title-spritesheet-concept.png
+/outputs/grim-grind-title-spritesheet-wide.png
+/outputs/grim-grind-torch-spritesheet-8f.png
+/outputs/grim-grind-title-spritesheet-optimized.png
+/outputs/grim-grind-torch-spritesheet-optimized.png

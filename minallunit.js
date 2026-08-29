@@ -81,14 +81,18 @@ console.log('СТАТУСЫ ОТ УДАРА СВИТЫ');
 
 console.log('БАЛАНС ВСЕЙ СВИТЫ');
 { const o = mk([]);
+  // Сравниваем один и тот же детерминированный удар: две независимые случайные
+  // выборки базы и критов давали ложный разброс отношения вплоть до 0.57.
+  o.D.baseMin=o.D.baseMax=100; o.D.elem={fire:0,cold:0,lit:0,poi:0};
+  o.D.incAll=0; o.D.moreAll=1; o.D.critCh=o.D.minCrit=o.D.superCh=o.D.dblHit=0;
   const avg = minion => {
     let sum = 0;
-    for (let i=0;i<1800;i++){
+    for (let i=0;i<20;i++){
       const hp = o.e.hp;
       o.c.damage(o.e, {mul:o.D.minDmgMul, minion:minion ? o.m : null, noDouble:true});
       sum += hp-o.e.hp;
     }
-    return sum/1800;
+    return sum/20;
   };
   const ownerPath = avg(false), minionPath = avg(true);
   ok('весь прямой урон свиты уменьшен на 50%', Math.abs(minionPath/ownerPath-0.5) < 0.03,
@@ -119,6 +123,37 @@ console.log('БАЛАНС ВСЕЙ СВИТЫ');
   }
   ok('голем крови: врождённое отбрасывание с шансом 25%', procs > 102 && procs < 198 && Math.abs(force-200)<0.01,
      Math.round(procs/6) + '% · сила ' + force.toFixed(0)); }
+
+console.log('ПОЛЕ КОСТЕЙ');
+{ const c = loadGame('./PolyGrind.html');
+  const m = c.__api.MODS.find(x=>x.id==='min.bone_field');
+  ok('обычная бесконечная ветка доступна только Некроманту', !!m && m.kind==='inc' && m.stat==='boneField' &&
+     m.r[0]===2 && m.r[1]===4 && m.int===true && m.rar===undefined && m.cap===undefined &&
+     c.allowedClassesForMod(m).join(',')==='necro'); }
+{ const o = mk([['boneField',4,'inc']]);
+  o.G.corpses=[{x:o.p.x+400,y:o.p.y,life:10}]; const edge=o.c.nearbyBoneFieldCorpseCount();
+  o.G.corpses=[{x:o.p.x+401,y:o.p.y,life:10}]; const outside=o.c.nearbyBoneFieldCorpseCount();
+  o.G.corpses=Array.from({length:16},()=>({x:o.p.x+10,y:o.p.y,life:10})); const capped=o.c.nearbyBoneFieldCorpseCount();
+  ok('радиус 400 включителен, максимум — 15 трупов', edge===1 && outside===0 && capped===15,
+     'граница '+edge+' · снаружи '+outside+' · потолок '+capped); }
+{ const o = mk([['boneField',4,'inc']]);
+  o.D.baseMin=o.D.baseMax=100; o.D.elem={fire:0,cold:0,lit:0,poi:0};
+  o.D.incAll=0; o.D.moreAll=1; o.D.critCh=o.D.minCrit=o.D.superCh=o.D.dblHit=0;
+  o.e.kind='norm'; o.e.armor=0; o.e.ward=null; o.e.bulwark=0; o.e.pack=null;
+  const strike=()=>{ const hp=o.e.hp; o.c.minionHit(o.e,o.m); return hp-o.e.hp; };
+  o.G.corpses=[]; const base=strike();
+  o.G.corpses=Array.from({length:15},()=>({x:o.p.x+20,y:o.p.y,life:10})); const boosted=strike();
+  o.G.corpses=Array.from({length:16},()=>({x:o.p.x+20,y:o.p.y,life:10})); const capped=strike();
+  o.G.corpses=Array.from({length:15},()=>({x:o.p.x+401,y:o.p.y,life:10})); const far=strike();
+  ok('15 трупов по 4% дают свите ровно +60% урона', Math.abs(boosted/base-1.6)<1e-6 &&
+     Math.abs(capped-boosted)<1e-6 && Math.abs(far-base)<1e-6,
+     base.toFixed(1)+' → '+boosted.toFixed(1)+' · 16-й '+capped.toFixed(1)); }
+{ const o = mk([['boneField',4,'inc']]); o.c.setLanguage('ru');
+  o.G.corpses=Array.from({length:3},()=>({x:o.p.x+20,y:o.p.y,life:10}));
+  const active=o.c.activeCombatBuffs(o.p,0,0).find(x=>x.startsWith('Поле костей'));
+  o.G.corpses=[]; const empty=o.c.activeCombatBuffs(o.p,0,0).find(x=>x.startsWith('Поле костей'));
+  ok('HUD показывает текущий бонус, включая нулевой', active==='Поле костей +12% урона свиты' &&
+     empty==='Поле костей +0% урона свиты', (active||'нет')+' · '+(empty||'нет')); }
 
 console.log('ЕСТЕСТВЕННАЯ СМЕРТЬ СВИТЫ');
 { const c = loadGame('./PolyGrind.html'); c.newGame('necro','keys');
