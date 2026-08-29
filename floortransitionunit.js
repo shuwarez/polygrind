@@ -50,6 +50,8 @@ const fresh = () => loadGame('./PolyGrind.html', {random:() => 0.5});
     totemFind && totemFind.tip.includes('+2%'));
   ok('строки добычи доступны с клавиатуры',
     (ov.innerHTML.match(/data-floor-find=/g) || []).length === 4 && ov.innerHTML.includes('tabindex="0"'));
+  ok('кнопка сводки показывает доступное закрытие пробелом',
+    ov.innerHTML.includes('aria-keyshortcuts="Space"') && ov.innerHTML.includes('<kbd>ПРОБЕЛ</kbd>'));
   const summarySource = c.showFloorFindSummary.toString();
   ok('подсказка привязана к наведению и фокусу',
     summarySource.includes('el.onmouseenter') && summarySource.includes('el.onfocus') && summarySource.includes('el.onblur'));
@@ -58,8 +60,10 @@ const fresh = () => loadGame('./PolyGrind.html', {random:() => 0.5});
   ok('всплывающая панель выводит имя, тип и эффект предмета',
     ov.style.display === 'block' && ov.innerHTML.includes(mirrorFind.name) && ov.innerHTML.includes(mirrorFind.detail) &&
     ov.innerHTML.includes(mirrorFind.tip));
-  c.document.querySelector('#findok').onclick();
-  ok('закрытие сводки очищает очередь и возвращает игру', G.paused === false && G.floorFinds.length === 0);
+  const dashBefore=G.player.dashN; let prevented=false;
+  c.handleGameKeyDown({code:'Space',key:' ',repeat:false,preventDefault(){prevented=true;}});
+  ok('пробел закрывает сводку без рывка и возвращает игру',
+    prevented && G.paused === false && G.floorFinds.length === 0 && G.player.dashN===dashBefore);
 
   const floor = G.floor;
   p.x = G.portal.x; p.y = G.portal.y; p.dash = 0.2; G.portal.t = 1;

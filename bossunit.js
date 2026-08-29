@@ -13,6 +13,33 @@ const embeddedPng = key => {
 };
 const pngInfo = b => b.length < 26 ? {w:0,h:0,color:-1} :
   ({w:b.readUInt32BE(16),h:b.readUInt32BE(20),color:b[25]});
+const slimeMatch=html.match(/PLAGUE_SLIME_PROJECTILE_DATA\s*=\s*'data:image\/png;base64,([^']+)'/);
+const slimeBytes=slimeMatch ? Buffer.from(slimeMatch[1],'base64') : Buffer.alloc(0);
+const slimePng=pngInfo(slimeBytes);
+const emeraldMatch=html.match(/EMERALD_ORB_PROJECTILE_DATA\s*=\s*'data:image\/png;base64,([^']+)'/);
+const emeraldBytes=emeraldMatch ? Buffer.from(emeraldMatch[1],'base64') : Buffer.alloc(0);
+const emeraldPng=pngInfo(emeraldBytes);
+const greedSpearMatch=html.match(/GREED_SPEAR_PROJECTILE_DATA\s*=\s*'data:image\/png;base64,([^']+)'/);
+const greedSpearBytes=greedSpearMatch ? Buffer.from(greedSpearMatch[1],'base64') : Buffer.alloc(0);
+const greedSpearPng=pngInfo(greedSpearBytes);
+const axeMatch=html.match(/EXECUTIONER_AXE_PROJECTILE_DATA\s*=\s*'data:image\/png;base64,([^']+)'/);
+const axeBytes=axeMatch ? Buffer.from(axeMatch[1],'base64') : Buffer.alloc(0);
+const axePng=pngInfo(axeBytes);
+const minotaurSpearMatch=html.match(/MINOTAUR_SPEAR_PROJECTILE_DATA\s*=\s*'data:image\/png;base64,([^']+)'/);
+const minotaurSpearBytes=minotaurSpearMatch ? Buffer.from(minotaurSpearMatch[1],'base64') : Buffer.alloc(0);
+const minotaurSpearPng=pngInfo(minotaurSpearBytes);
+const holySpearMatch=html.match(/SERAPH_HOLY_SPEAR_DATA\s*=\s*'data:image\/png;base64,([^']+)'/);
+const holySpearBytes=holySpearMatch ? Buffer.from(holySpearMatch[1],'base64') : Buffer.alloc(0);
+const holySpearPng=pngInfo(holySpearBytes);
+const demonBlobMatch=html.match(/DEMON_QUEEN_BLOB_DATA\s*=\s*'data:image\/png;base64,([^']+)'/);
+const demonBlobBytes=demonBlobMatch ? Buffer.from(demonBlobMatch[1],'base64') : Buffer.alloc(0);
+const demonBlobPng=pngInfo(demonBlobBytes);
+const matriarchPlagueMatch=html.match(/MATRIARCH_PLAGUE_PROJECTILE_DATA\s*=\s*'data:image\/png;base64,([^']+)'/);
+const matriarchPlagueBytes=matriarchPlagueMatch ? Buffer.from(matriarchPlagueMatch[1],'base64') : Buffer.alloc(0);
+const matriarchPlaguePng=pngInfo(matriarchPlagueBytes);
+const voidRiftMatch=html.match(/VOID_GROUND_RIFT_DATA\s*=\s*'data:image\/png;base64,([^']+)'/);
+const voidRiftBytes=voidRiftMatch ? Buffer.from(voidRiftMatch[1],'base64') : Buffer.alloc(0);
+const voidRiftPng=pngInfo(voidRiftBytes);
 
 const bossIds=['lich','goat','plague','greed','executioner','tyrant','grave','behemoth',
   'vampire','voidwrath','minotaur','seraph','matriarch','demonqueen'];
@@ -22,6 +49,33 @@ ok('листы оптимизированы до 256×96 и 16-цветной п
   sheets.every(b => {const p=pngInfo(b); return p.w===256 && p.h===96 && p.color===3;}));
 ok('все четырнадцать листов вместе весят меньше 90 КБ', sheets.reduce((s,b)=>s+b.length,0)<90000,
   sheets.reduce((s,b)=>s+b.length,0)+' байт');
+ok('сгусток Мерзости — индексированный лист 80×20 в бюджете 1 КБ',
+  slimePng.w===80 && slimePng.h===20 && slimePng.color===3 && slimeBytes.length<1024,
+  slimeBytes.length+' байт');
+ok('Изумрудная сфера — индексированный лист 128×32 в бюджете 2 КБ',
+  emeraldPng.w===128 && emeraldPng.h===32 && emeraldPng.color===3 && emeraldBytes.length<2048,
+  emeraldBytes.length+' байт');
+ok('Копьё жадности — индексированный лист 256×20 в бюджете 2 КБ',
+  greedSpearPng.w===256 && greedSpearPng.h===20 && greedSpearPng.color===3 && greedSpearBytes.length<2048,
+  greedSpearBytes.length+' байт');
+ok('топор Палача — индексированный лист 448×56 в бюджете 5 КБ',
+  axePng.w===448 && axePng.h===56 && axePng.color===3 && axeBytes.length<5120,
+  axeBytes.length+' байт');
+ok('копьё Минотавра — индексированный лист 256×20 в бюджете 1,5 КБ',
+  minotaurSpearPng.w===256 && minotaurSpearPng.h===20 && minotaurSpearPng.color===3 && minotaurSpearBytes.length<1536,
+  minotaurSpearBytes.length+' байт');
+ok('Святое Копьё — индексированный лист 384×32 в бюджете 4 КБ',
+  holySpearPng.w===384 && holySpearPng.h===32 && holySpearPng.color===3 && holySpearBytes.length<4096,
+  holySpearBytes.length+' байт');
+ok('Демонический сгусток — индексированный лист 128×32 в бюджете 2 КБ',
+  demonBlobPng.w===128 && demonBlobPng.h===32 && demonBlobPng.color===3 && demonBlobBytes.length<2048,
+  demonBlobBytes.length+' байт');
+ok('Чумной снаряд Матриархии — индексированный лист 128×32 в бюджете 2 КБ',
+  matriarchPlaguePng.w===128 && matriarchPlaguePng.h===32 && matriarchPlaguePng.color===3 && matriarchPlagueBytes.length<2048,
+  matriarchPlagueBytes.length+' байт');
+ok('наземный Разлом Пустоты — индексированный лист 256×64 в бюджете 5 КБ',
+  voidRiftPng.w===256 && voidRiftPng.h===64 && voidRiftPng.color===3 && voidRiftBytes.length<5120,
+  voidRiftBytes.length+' байт');
 
 { const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys');
   const bosses=bossIds.map(id=>c.spawnEnemy('boss',id));
@@ -47,7 +101,18 @@ ok('все четырнадцать листов вместе весят мен�
   c.tickBossSkill(e,1.99); const early=G.eshots.length; c.tickBossSkill(e,0.02);
   const s=G.eshots[0];
   ok('Лич стреляет не раньше двух секунд', early===0 && G.eshots.length===1);
-  ok('сфера Лича размером с игрока и несёт 15% max HP', s.r===p.r && s.maxHpPct===0.15); }
+  ok('сфера Лича размером с игрока и несёт 15% max HP', s.r===p.r && s.maxHpPct===0.15);
+  const emeraldFrames=[];
+  for (const t of [0,0.1,0.2,0.3]){ G.time=t; emeraldFrames.push(c.enemyProjectileSpriteFrame(s).index); }
+  ok('Изумрудная сфера проигрывает все четыре кадра общим циклом', emeraldFrames.join(',')==='0,1,2,3');
+  G.enemies=[e]; G.spawnQueue=1; e.aff=[]; e.spd=0; p.hp=c.__api.D.life; p.inv=0;
+  c.__api.D.dodge=c.__api.D.armor=c.__api.D.drFlat=c.__api.D.drShop=0;
+  c.__api.D.normalDr=c.__api.D.majorDr=0; c.update(0.8);
+  ok('попадание Изумрудной сферы замедляет на 50% ровно на секунду',
+    p.bossSlowT===1 && p.bossSlowMul===0.5, p.bossSlowT.toFixed(1)+' сек · ×'+p.bossSlowMul);
+  G.keys.d=true; const slowedX=p.x; c.update(0.1); G.keys.d=false;
+  ok('Изумрудная сфера действительно уменьшает скорость движения вдвое',
+    Math.abs((p.x-slowedX)-c.__api.D.mspd*0.5*0.1)<0.01, (p.x-slowedX).toFixed(2)+' за 0.1 сек'); }
 
 { const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys');
   const G=c.__api.G, D=c.__api.D, p=G.player, e=c.spawnEnemy('boss','goat');
@@ -62,9 +127,20 @@ ok('все четырнадцать листов вместе весят мен�
 
 { const c=loadGame('./PolyGrind.html',{random:()=>0.99}); c.newGame('bow','keys');
   const G=c.__api.G, D=c.__api.D, p=G.player, e=c.spawnEnemy('boss','plague');
-  G.eshots.length=0; e.x=-150; e.y=0; p.x=0; p.y=0;
+  G.enemies=[e]; G.spawnQueue=1; G.eshots.length=0; e.aff=[]; e.spd=0;
+  e.x=-150; e.y=0; p.x=0; p.y=0;
   c.tickBossSkill(e,1);
   ok('Мерзость плюётся раз в секунду на 7.5% max HP', G.eshots.length===1 && G.eshots[0].maxHpPct===0.075);
+  const slimeFrames=[];
+  for (const t of [0,0.1,0.2,0.3]){ G.time=t; slimeFrames.push(c.enemyProjectileSpriteFrame(G.eshots[0]).index); }
+  ok('сгусток проигрывает все четыре кадра общим циклом', slimeFrames.join(',')==='0,1,2,3');
+  D.dodge=D.armor=D.drFlat=D.drShop=D.normalDr=D.majorDr=0; p.inv=0; p.hp=D.life;
+  c.update(0.55);
+  ok('попадание сгустка замедляет игрока на 50% ровно на секунду',
+    p.bossSlowT===1 && p.bossSlowMul===0.5, p.bossSlowT.toFixed(1)+' сек · ×'+p.bossSlowMul);
+  G.keys.d=true; const slowedX=p.x; c.update(0.1); G.keys.d=false;
+  ok('сгусток действительно уменьшает скорость движения вдвое',
+    Math.abs((p.x-slowedX)-D.mspd*0.5*0.1)<0.01, (p.x-slowedX).toFixed(2)+' за 0.1 сек');
   c.killEnemy(e,G.enemies.indexOf(e));
   ok('смерть Мерзости оставляет кислоту радиусом 135 на 10 сек',
     G.bossPools.length===1 && G.bossPools[0].r===135 && G.bossPools[0].life===10);
@@ -84,6 +160,9 @@ ok('все четырнадцать листов вместе весят мен�
   const spear=G.eshots.find(s=>s.shotType==='spear');
   ok('копьё летит вдвое медленнее игрока и наносит 50% max HP', spear &&
     Math.abs(Math.hypot(spear.vx,spear.vy)-D.mspd*0.5)<0.001 && spear.maxHpPct===0.50);
+  const spearFrames=[];
+  for (const t of [0,0.1,0.2,0.3]){ G.time=t; spearFrames.push(c.enemyProjectileSpriteFrame(spear).index); }
+  ok('Копьё жадности проигрывает все четыре кадра общим циклом', spearFrames.join(',')==='0,1,2,3');
   G.orbs.length=0; c.killEnemy(e,G.enemies.indexOf(e));
   const finds=G.orbs.filter(o=>o.book||o.amu||o.totem);
   ok('Greed Boss гарантированно оставляет ровно две находки', finds.length===2, finds.length+' находки'); }
@@ -97,6 +176,9 @@ ok('все четырнадцать листов вместе весят мен�
   ok('King of Execution бросает топор раз в 3 секунды', early===0 && axe && axe.shotType==='axe');
   ok('топор запоминает точку броска, радиус 30 и урон 35% max HP',
     axe.targetX===180 && axe.targetY===0 && axe.r===30 && axe.maxHpPct===0.35);
+  const axeFrames=[0,1,2,3,4,5,6,7].map(i =>
+    c.enemyProjectileSpriteFrame({...axe,spin:i*Math.PI/4+1e-6}).index);
+  ok('угол вращения топора выбирает все восемь фаз листа', axeFrames.join(',')==='0,1,2,3,4,5,6,7');
   c.update(0.5);
   ok('касание топора наносит 35% и замедляет на 1.5 секунды',
     Math.abs(p.hp-D.life*0.65)<0.001 && p.bossSlowT===1.5,
@@ -172,7 +254,10 @@ ok('все четырнадцать листов вместе весят мен�
   e.bossT.rifts=[{x:0,y:0,r:52,warn:0.01},{x:200,y:0,r:52,warn:0.01},{x:-200,y:0,r:52,warn:0.01}];
   c.tickBossSkill(e,0.02);
   ok('взрыв Разлома Пустоты наносит 40% max HP только один раз', Math.abs(p.hp-D.life*0.60)<0.001);
-  ok('Разлом замедляет на 60% ровно на секунду', p.bossSlowT===1 && p.bossSlowMul===0.40); }
+  ok('Разлом замедляет на 60% ровно на секунду', p.bossSlowT===1 && p.bossSlowMul===0.40);
+  ok('каждый наземный разлом завершает четырёхкадровая вспышка',
+    G.fx.filter(f=>f.t==='voidRiftBurst' && f.max===0.20).length===3 &&
+    /VOID_GROUND_RIFT_FRAMES\s*=\s*\[0,1,2,3\]/.test(html)); }
 
 { const c=loadGame('./PolyGrind.html',{random:()=>0.99}); c.newGame('bow','keys');
   const G=c.__api.G, e=c.spawnEnemy('boss','minotaur'); e.armor=0;
@@ -192,6 +277,9 @@ ok('все четырнадцать листов вместе весят мен�
   const spears=G.eshots.filter(s=>s.shotType==='minotaurSpear');
   ok('после уязвимости летят три копья по 15% max HP',
     spears.length===3 && spears.every(s=>s.maxHpPct===0.15));
+  const spearFrames=[];
+  for (const t of [0,0.1,0.2,0.3]){ G.time=t; spearFrames.push(c.enemyProjectileSpriteFrame(spears[0]).index); }
+  ok('Копьё Минотавра проигрывает все четыре кадра общим циклом', spearFrames.join(',')==='0,1,2,3');
   c.tickBossSkill(e,1.49); const before=e.bossT.chargeWarn||0; c.tickBossSkill(e,0.02);
   ok('через 1,5 секунды после копий начинается новый натиск', before===0 && Math.abs(e.bossT.chargeWarn-0.45)<1e-9);
   G.orbs.length=0; c.killEnemy(e,G.enemies.indexOf(e));
@@ -201,29 +289,36 @@ ok('все четырнадцать листов вместе весят мен�
   const G=c.__api.G, D=c.__api.D, p=G.player, e=c.spawnEnemy('boss','seraph');
   D.dodge=D.armor=D.drFlat=D.drShop=D.normalDr=D.majorDr=0;
   p.x=10; p.y=20; p.hp=D.life; p.inv=0; e.bossT={judgeCd:0}; c.tickBossSkill(e,0.01);
-  ok('Fallen Seraph начинает серию из трёх отмеченных лучей', e.bossT.judgeLeft===3 && e.bossT.judgeWarn>0);
+  ok('Fallen Seraph начинает серию из трёх отмеченных Святых Копий', e.bossT.judgeLeft===3 && e.bossT.judgeWarn>0);
   c.tickBossSkill(e,0.81);
-  ok('первый луч наносит 20% max HP', Math.abs(p.hp-D.life*0.80)<0.001);
+  ok('первое Святое Копьё наносит 20% max HP', Math.abs(p.hp-D.life*0.80)<0.001);
+  ok('удар создаёт четырёхкадровый эффект Святого Копья',
+    G.fx.some(f=>f.t==='holySpear' && f.max===0.38) && /SERAPH_HOLY_SPEAR_FRAMES\s*=\s*\[0,1,2,3\]/.test(html));
   p.inv=0; c.tickBossSkill(e,0.81); p.inv=0; c.tickBossSkill(e,0.81);
-  ok('Суд Падшего делает три удара и уходит в откат на 3 сек', e.bossT.judgeLeft===0 && e.bossT.judgeCd===3); }
+  ok('Святое Копьё делает три удара и уходит в откат на 3 сек', e.bossT.judgeLeft===0 && e.bossT.judgeCd===3); }
 
 { const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys');
   const G=c.__api.G, e=c.spawnEnemy('boss','matriarch'); G.enemies=[e]; e.x=0; e.y=0;
   c.tickBossSkill(e,1);
   const runners=G.enemies.filter(x=>x.summonedByMatriarch);
   ok('Plague Matriarch выплёвывает двух Бегунов каждую секунду', runners.length===2 && runners.every(x=>x.typeKey==='runner'));
-  ok('порождённые Бегуны не фармят опыт и предметы', runners.every(x=>x.noLoot && x.xp===0)); }
+  ok('порождённые Бегуны не фармят опыт и предметы', runners.every(x=>x.noLoot && x.xp===0));
+  ok('каждый призыв сопровождает четырёхкадровый Чумной снаряд',
+    G.fx.filter(f=>f.t==='matriarchPlagueProjectile' && f.max===0.32).length===2 &&
+    /MATRIARCH_PLAGUE_PROJECTILE_FRAMES\s*=\s*\[0,1,2,3\]/.test(html)); }
 
 { const c=loadGame('./PolyGrind.html',{random:()=>0.99}); c.newGame('bow','keys');
   const G=c.__api.G, D=c.__api.D, p=G.player, e=c.spawnEnemy('boss','demonqueen');
   D.dodge=D.armor=D.drFlat=D.drShop=D.normalDr=D.majorDr=0;
   e.x=-200; e.y=0; p.x=40; p.y=50; p.hp=D.life; e.bossT={leapCd:0}; c.tickBossSkill(e,0.01);
-  ok('Demon Queen исчезает и фиксирует круг на секунду', e.bossT.hidden && e.bossT.leapX===40 && e.bossT.leapY===50);
+  ok('Demon Queen становится сгустком и фиксирует круг на секунду', e.bossT.hidden && e.bossT.leapX===40 && e.bossT.leapY===50);
   p.x=400; p.y=400; c.tickBossSkill(e,1.01);
-  ok('прыжок приземляется в зафиксированную точку, а не преследует игрока', e.x===40 && e.y===50 && p.hp===D.life && !e.bossT.hidden);
+  ok('сгусток приземляется в зафиксированную точку, а не преследует игрока', e.x===40 && e.y===50 && p.hp===D.life && !e.bossT.hidden);
   p.x=0; p.y=0; p.hp=D.life; p.inv=0; e.bossT={hidden:true,leapWarn:0.01,leapX:0,leapY:0}; c.tickBossSkill(e,0.02);
-  ok('попадание Демонического прыжка наносит 35% max HP', Math.abs(p.hp-D.life*0.65)<0.001);
-  ok('прыжок замедляет на 50% на 2 секунды и уходит в откат на 5', p.bossSlowT===2 && p.bossSlowMul===0.5 && e.bossT.leapCd===5); }
+  ok('попадание Демонического сгустка наносит 35% max HP', Math.abs(p.hp-D.life*0.65)<0.001);
+  ok('приземление создаёт четырёхкадровый эффект Демонического сгустка',
+    G.fx.some(f=>f.t==='demonicBlob' && f.max===0.38) && /DEMON_QUEEN_BLOB_FRAMES\s*=\s*\[0,1,2,3\]/.test(html));
+  ok('сгусток замедляет на 50% на 2 секунды и уходит в откат на 5', p.bossSlowT===2 && p.bossSlowMul===0.5 && e.bossT.leapCd===5); }
 
 console.log(JSON.stringify({n,fail}));
 process.exitCode=fail?1:0;

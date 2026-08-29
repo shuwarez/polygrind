@@ -1,4 +1,5 @@
 /* Общий рост числа снарядов всех подклассов Мага. */
+const fs = require('fs');
 const {loadGame} = require('./sim');
 const ok = (nm, cond, det) => console.log((cond?'  \u2713 ':'  \u2717 ') + nm.padEnd(58) + (det||''));
 
@@ -74,8 +75,8 @@ for (const [id,nm] of [['destroyer','Разрушитель'],['multiplier','М�
     const e=c.spawnEnemy(); e.maxHp=e.hp=1e9; e.spd=0; e.dmg=0;
     e.x=p.x+100; e.y=p.y; shot.x=e.x; shot.y=e.y; shot.vx=shot.vy=0; G.fx.length=0;
     const before=e.hp; c.update(0);
-    const ring=G.fx.find(f=>f.t==='ring');
-    return {damage:before-e.hp,radius:ring&&ring.max,baseRadius:G.weapon.aoe*D.aoeR};
+    const blast=G.fx.find(f=>f.t==='mageOrbExplosion');
+    return {damage:before-e.hp,radius:blast&&blast.r,baseRadius:G.weapon.aoe*D.aoeR};
   };
   const normal=impact(false), mini=impact(true);
   ok('мини-сфера реально наносит 20% урона и взрывается на 60% радиуса',
@@ -112,7 +113,7 @@ console.log('НОВЫЕ ВЕТКИ МАГА');
 function arena(random=()=>0.99){
   const c=loadGame('./PolyGrind.html',{random}); c.newGame('wand','keys','elementalist');
   const G=c.__api.G;
-  G.enemies.length=0; G.spawnQueue=0; G.packs.length=0; G.shots.length=0; G.fx.length=0; G.arcaneTraces.length=0;
+  G.enemies.length=0; G.spawnQueue=0; G.packs.length=0; G.shots.length=0; G.fx.length=0; G.arcaneTraces.length=0; G.arcaneMines.length=0; G.repeatDetonations.length=0;
   return {c,G,get D(){return c.__api.D}};
 }
 function add(o,stat,kind,value){ o.G.bag.add(stat,kind,value); o.c.recalc(); }
@@ -120,14 +121,14 @@ function foe(o,x,y){
   const e=o.c.spawnEnemy(); e.maxHp=e.hp=1e9; e.spd=0; e.dmg=0; e.x=x; e.y=y; return e;
 }
 function orbAt(o,x=0,y=0,travel=0,attackMul=1){
-  return {x,y,travel,attackMul,aoeScale:1,orb:true};
+  return {x,y,travel,attackMul,aoeScale:1,orb:true,hitSet:[]};
 }
 
-{ const c=loadGame('./PolyGrind.html'), ids=['mage.blast_heart','mage.elemental_explosion','mage.residual_arcana','mage.overheated_orb','mage.remote_detonation'];
+{ const c=loadGame('./PolyGrind.html'), ids=['mage.blast_heart','mage.elemental_explosion','mage.residual_arcana','mage.overheated_orb','mage.remote_detonation','mage.arcane_mine','mage.repeat_detonation'];
   const mods=ids.map(id=>c.__api.MODS.find(m=>m.id===id));
-  ok('каталог содержит все пять новых карточек Мага', mods.every(Boolean) && mods.every(m=>m.wep[0]==='orb' && m.noMin));
-  ok('четыре базовые карты обычные, Элементальный взрыв красный',
-     mods.filter(m=>m.id!=='mage.elemental_explosion').every(m=>!m.rar) && mods[1].rar===2 && mods[1].unlock===true); }
+  ok('каталог содержит все семь новых карточек Мага', mods.every(Boolean) && mods.every(m=>m.wep[0]==='orb' && m.noMin));
+  ok('Мина и Повторная детонация — синие одноразовые, Элементальный взрыв — красный',
+     mods.slice(5).every(m=>m.rar===1 && m.kind==='flag' && m.r[0]===1 && m.r[1]===1) && mods[1].rar===2 && mods[1].unlock===true); }
 { const o=arena(), red=o.c.__api.MODS.find(m=>m.id==='mage.elemental_explosion');
   add(o,'blastHeart','inc',49); const before=red.show(); add(o,'blastHeart','inc',1); const at=red.show();
   ok('Элементальный взрыв открывается ровно на 50% Сердца', !before && at, '49% → 50%'); }
@@ -190,3 +191,103 @@ function orbAt(o,x=0,y=0,travel=0,attackMul=1){
   const mini=o.G.shots.find(s=>s.miniOrb);
   ok('мини-сфера начинает собственный счётчик дистанции с нуля', mini && mini.travel>0 && mini.travel<250 && parent.travel>400,
      mini && mini.travel.toFixed(1)); }
+
+console.log('АРКАННАЯ МИНА');
+{ const mageOnly=arena(), bow=loadGame('./PolyGrind.html');
+  add(mageOnly,'arcaneMine','flag',1); bow.newGame('bow','keys','hunter'); bow.__api.G.bag.add('arcaneMine','flag',1); bow.recalc();
+  ok('Арканная мина активируется только со сферой Мага', mageOnly.D.arcaneMine===true && bow.__api.D.arcaneMine===false); }
+{ const o=arena(); add(o,'arcaneMine','flag',1); o.G.player.aim=0; o.c.attack();
+  const shot=o.G.shots[0]; shot.x=140; shot.y=-30; shot.life=0; o.c.update(0);
+  const mine=o.G.arcaneMines[0];
+  ok('промахнувшаяся сфера оставляет мину ровно на 3 секунды',
+     mine && mine.x===140 && mine.y===-30 && mine.life===3 && o.G.shots.length===0,
+     mine && mine.life.toFixed(1)+' сек');
+  ok('мина фиксирует 45% обычного взрыва и тот же радиус',
+     Math.abs(mine.dmg-o.c.avgHit()*0.55*0.45)<1e-9 && Math.abs(mine.r-o.G.weapon.aoe*o.D.aoeR)<1e-9); }
+{ const o=arena(); add(o,'arcaneMine','flag',1); const e=foe(o,50,0);
+  o.G.player.aim=0; o.c.attack(); const shot=o.G.shots[0]; shot.x=e.x; shot.y=e.y; shot.vx=shot.vy=0; o.c.update(0);
+  ok('сфера, попавшая во врага, мину не оставляет', o.G.arcaneMines.length===0 && shot.hitSet.includes(e)); }
+{ const o=arena(); add(o,'arcaneMine','flag',1); const mine=o.c.plantArcaneMine(orbAt(o,20,25));
+  o.c.tickArcaneMines(2.99); const stays=o.G.arcaneMines.length===1 && mine.life>0;
+  o.c.tickArcaneMines(0.01);
+  ok('невостребованная мина исчезает через суммарные 3 секунды', stays && o.G.arcaneMines.length===0); }
+{ const o=arena(); add(o,'arcaneMine','flag',1); const mine=o.c.plantArcaneMine(orbAt(o));
+  const e=foe(o,mine.r*0.5,0); e.armor=60; const before=e.hp;
+  o.c.tickArcaneMines(0); const dealt=before-e.hp;
+  ok('первый вошедший враг взрывает мину один раз с учётом своей защиты',
+     o.G.arcaneMines.length===0 && Math.abs(dealt-mine.dmg*0.5)<1e-6 &&
+     o.G.fx.filter(f=>f.t==='arcaneMineExplosion').length===1 && !o.G.fx.some(f=>f.t==='ring'),
+     (dealt/mine.dmg*100).toFixed(0)+'% после 60 брони');
+  const hp=e.hp; o.c.tickArcaneMines(0);
+  ok('сработавшая мина не наносит повторный урон', e.hp===hp && o.G.arcaneMines.length===0); }
+{ const active=e=>e.dots.fire.dps>0 && e.ail.chill>0 && e.ail.shock>0 && e.dots.poison.dps>0;
+  const hit=arena(()=>0.05), miss=arena(()=>0.15), red=arena(()=>0.15);
+  for (const o of [hit,miss,red]){
+    add(o,'arcaneMine','flag',1);
+    for (const stat of ['igniteCh','chillCh','shockCh','poiCh']) add(o,stat,'flat',10);
+  }
+  add(red,'elementalExplosion','flag',1);
+  const eh=foe(hit,0,0), em=foe(miss,0,0), er=foe(red,0,0);
+  hit.c.detonateArcaneMine(hit.c.plantArcaneMine(orbAt(hit)));
+  miss.c.detonateArcaneMine(miss.c.plantArcaneMine(orbAt(miss)));
+  red.c.detonateArcaneMine(red.c.plantArcaneMine(orbAt(red)));
+  ok('мина использует обычные шансы четырёх стихий без красного удвоения',
+     active(eh) && !active(em) && !active(er)); }
+{ const o=mage('multiplier',1); o.G.enemies.length=0; o.G.spawnQueue=0; o.G.arcaneMines.length=0;
+  o.G.bag.add('arcaneMine','flag',1); o.c.recalc();
+  const mini=o.c.plantArcaneMine({x:0,y:0,orb:true,hitSet:[],attackMul:0.20,aoeScale:0.60});
+  ok('мини-сфера оставляет пропорционально ослабленную и уменьшенную мину',
+     mini && Math.abs(mini.dmg-o.c.avgHit()*0.20*0.55*0.45)<1e-9 && Math.abs(mini.r-o.G.weapon.aoe*o.D.aoeR*0.60)<1e-9,
+     '20% урона · 60% радиуса'); }
+
+console.log('ПОВТОРНАЯ ДЕТОНАЦИЯ');
+{ const mageOnly=arena(), plain=arena(), bow=loadGame('./PolyGrind.html');
+  add(mageOnly,'repeatDetonation','flag',1); bow.newGame('bow','keys','hunter'); bow.__api.G.bag.add('repeatDetonation','flag',1); bow.recalc();
+  plain.c.explodePlayerOrb(orbAt(plain));
+  ok('Повторная детонация активируется только картой и сферой Мага',
+     mageOnly.D.repeatDetonation===true && bow.__api.D.repeatDetonation===false && plain.G.repeatDetonations.length===0); }
+{ const o=arena(); add(o,'repeatDetonation','flag',1); const r=o.G.weapon.aoe*o.D.aoeR;
+  const e=foe(o,0,0), before=e.hp; o.c.explodePlayerOrb(orbAt(o));
+  const first=before-e.hp, blast=o.G.repeatDetonations[0];
+  ok('первый взрыв ставит задержку 0,25 сек и фиксирует радиус 70%',
+     blast && blast.life===0.25 && Math.abs(blast.r-r*0.70)<1e-9 && blast.hits.length===1 && Math.abs(blast.hits[0].dealt-first)<1e-6,
+     blast && blast.life.toFixed(2)+' сек · '+(blast.r/r*100).toFixed(0)+'%');
+  const hp=e.hp; o.c.tickRepeatDetonations(0.249);
+  ok('до границы 0,25 секунды второй урон не проходит', e.hp===hp && o.G.repeatDetonations.length===1);
+  o.c.tickRepeatDetonations(0.001001); const second=hp-e.hp;
+  ok('на границе второй взрыв наносит ровно 20% фактически снятого первым HP',
+     Math.abs(second-first*0.20)<1e-6 && o.G.repeatDetonations.length===0,
+     (second/first*100).toFixed(0)+'%');
+  const ring=o.G.fx.find(f=>f.t==='ring' && f.col==='#8f7dff');
+  ok('повторная детонация показывает отдельный взрыв правильного радиуса', ring && Math.abs(ring.max-r*0.70)<1e-9); }
+{ const o=arena(); add(o,'repeatDetonation','flag',1); add(o,'blastHeart','inc',100);
+  const r=o.G.weapon.aoe*o.D.aoeR, inner=foe(o,0,0), outer=foe(o,r*0.60,0);
+  const beforeInner=inner.hp,beforeOuter=outer.hp; o.c.explodePlayerOrb(orbAt(o));
+  const firstInner=beforeInner-inner.hp,firstOuter=beforeOuter-outer.hp, hpInner=inner.hp,hpOuter=outer.hp;
+  o.c.tickRepeatDetonations(0.25);
+  ok('каждая цель повторяет собственный фактический урон первого взрыва',
+     Math.abs((hpInner-inner.hp)-firstInner*0.20)<1e-6 && Math.abs((hpOuter-outer.hp)-firstOuter*0.20)<1e-6 && Math.abs(firstInner/firstOuter-2)<1e-6,
+     'центр '+(firstInner/firstOuter).toFixed(1)+'×'); }
+{ const o=arena(); add(o,'repeatDetonation','flag',1); const r=o.G.weapon.aoe*o.D.aoeR;
+  const leaving=foe(o,0,0); o.c.explodePlayerOrb(orbAt(o)); const hp=leaving.hp;
+  leaving.x=r*0.85+leaving.r; o.c.tickRepeatDetonations(0.25);
+  ok('цель за пределами уменьшенного радиуса не получает второй урон', leaving.hp===hp); }
+{ const o=arena(); add(o,'repeatDetonation','flag',1); const first=foe(o,0,0);
+  o.c.explodePlayerOrb(orbAt(o)); first.x=1000; const newcomer=foe(o,0,0), hp=newcomer.hp;
+  o.c.tickRepeatDetonations(0.25); o.c.tickRepeatDetonations(1);
+  ok('новая цель не получает чужой повторный урон, а третий взрыв не создаётся',
+     newcomer.hp===hp && o.G.repeatDetonations.length===0); }
+{ const html=fs.readFileSync('./PolyGrind.html','utf8');
+  const embedded=key=>Buffer.from(html.match(new RegExp("const "+key+" = 'data:image/png;base64,([^']+)'"))[1],'base64');
+  const mine=embedded('ARCANE_MINE_SPRITE_DATA'), blast=embedded('ARCANE_MINE_EXPLOSION_DATA');
+  const mineFile=fs.readFileSync('./outputs/mage-arcane-mine-optimized.png');
+  const blastFile=fs.readFileSync('./outputs/mage-arcane-mine-explosion-8f-optimized.png');
+  ok('оптимизированные ассеты мины встроены без потерь и лишних копий',
+     mine.equals(mineFile) && blast.equals(blastFile) && mine.length===486 && blast.length===4350 &&
+     mine.readUInt32BE(16)===32 && mine.readUInt32BE(20)===32 && blast.readUInt32BE(16)===512 && blast.readUInt32BE(20)===64,
+     mine.length+' Б + '+blast.length+' Б');
+  ok('маленькая мина статична, а восемь фаз взрыва масштабируются по диаметру AoE',
+     html.includes('const ARCANE_MINE_DRAW_SIZE = 24') && html.includes('Math.floor(progress*8)') &&
+     html.includes('const d=f.r*2') && html.includes('ARCANE_MINE_EXPLOSION_FRAMES[Math.min(7') &&
+     !html.includes('Math.floor(G.time*10)%8'));
+}

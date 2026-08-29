@@ -22,10 +22,11 @@ function arrowHit(o,age,{first=true}={}){
 }
 
 {
-  const o=setup(),mods=o.c.__api.MODS,ids=['archer.long_flight','archer.accelerated','archer.swift_arrows','archer.clean_trajectory','archer.elemental_pierce','archer.fletching'];
-  ok('в каталоге есть все шесть новых навыков Лучника',ids.every(id=>mods.some(m=>m.id===id)));
-  ok('все шесть навыков доступны только Лучнику',ids.every(id=>o.c.allowedClassesForMod(mods.find(m=>m.id===id)).join(',')==='bow'));
-  ok('обычные ветки не имеют потолка',ids.filter(id=>!id.includes('swift')&&!id.includes('elemental')).every(id=>mods.find(m=>m.id===id).cap===undefined));
+  const o=setup(),mods=o.c.__api.MODS,ids=['archer.long_flight','archer.accelerated','archer.swift_arrows','archer.clean_trajectory','archer.elemental_pierce','archer.fletching','archer.split_arrow','archer.return_shot','archer.hunter_mark'];
+  ok('в каталоге есть все девять новых навыков Лучника',ids.every(id=>mods.some(m=>m.id===id)));
+  ok('все девять навыков доступны только Лучнику',ids.every(id=>o.c.allowedClassesForMod(mods.find(m=>m.id===id)).join(',')==='bow'));
+  ok('числовые ветки не имеют потолка',ids.filter(id=>mods.find(m=>m.id===id).kind!=='flag').every(id=>mods.find(m=>m.id===id).cap===undefined));
+  ok('три новые синие карты одноразовые',ids.slice(-3).every(id=>{const m=mods.find(x=>x.id===id);return m.kind==='flag'&&m.rar===1;}));
   o.G.bag.add('acceleratedArrow','inc',50);o.G.bag.add('cleanTrajectory','inc',50);o.c.recalc();
   ok('Стремительные стрелы открываются на 50% разгона',mods.find(m=>m.id==='archer.swift_arrows').show());
   ok('Элементальное пробитие открывается на 50% траектории',mods.find(m=>m.id==='archer.elemental_pierce').show());
@@ -33,6 +34,85 @@ function arrowHit(o,age,{first=true}={}){
   const homing=mods.find(m=>m.id==='shape.homing');
   ok('обычная карточка Самонаведения удалена из пула Лучника',
     o.c.allowedClassesForMod(homing).join(',')==='wand',o.c.allowedClassesForMod(homing).join(','));
+}
+function fixed(o){o.D.baseMin=o.D.baseMax=100;o.D.elem={fire:0,cold:0,lit:0,poi:0};o.D.incAll=0;o.D.moreAll=1;o.D.critCh=o.D.superCh=o.D.dblHit=o.D.knock=0;return o;}
+
+{
+  const o=setup();o.G.bag.add('splitArrow','flag',1);o.c.recalc();fixed(o);
+  const first=foe(o,100,0);o.c.spawnPlayerShot(o.p,0,o.G.weapon,false);
+  const original=o.G.shots[0];original.x=first.x;original.y=first.y;original.vx=620;original.vy=0;original.a=0;o.c.update(0);
+  const shards=o.G.shots.filter(s=>s.splitShard);
+  ok('Раздвоенная стрела выпускает ровно два боковых снаряда под ±30°',
+    shards.length===2&&shards.every(s=>Math.abs(Math.abs(s.a)-Math.PI/6)<1e-9&&s.attackMul===0.22&&s.pierce===0&&s.chain===0),
+    shards.map(s=>(s.a*180/Math.PI).toFixed(0)+'°').join('/'));
+  const target=foe(o,200,0),shard=shards[0],hp=target.hp;o.G.shots=[shard];o.D.ricochet=3;
+  shard.x=target.x;shard.y=target.y;shard.vx=shard.vy=0;o.c.update(0);
+  ok('боковая стрела наносит 22% и не делится/не рикошетит повторно',
+    Math.abs((hp-target.hp)-22)<1e-9&&o.G.shots.length===0,hp-target.hp+' урона');
+}
+
+{
+  const o=setup();o.G.bag.add('returnShot','flag',1);o.c.recalc();const flags=[];
+  for(let i=0;i<13;i++){o.c.spawnPlayerShot(o.p,0,o.G.weapon,false);flags.push(o.G.shots.at(-1).returnShot);o.G.shots.length=0;}
+  ok('Возвратным становится только каждый тринадцатый выстрел',flags.slice(0,12).every(x=>!x)&&flags[12]&&o.p.returnShotN===13);
+}
+
+{
+  const o=setup();o.G.bag.add('returnShot','flag',1);o.c.recalc();fixed(o);
+  for(let i=0;i<13;i++)o.c.spawnPlayerShot(o.p,0,o.G.weapon,false);
+  const s=o.G.shots.at(-1);o.G.shots=[s];const began=o.c.beginReturningArrow(s);
+  const a=foe(o,120,0),b=foe(o,180,0),ah=a.hp,bh=b.hp;
+  s.x=a.x;s.y=a.y;o.c.update(0);s.x=b.x;s.y=b.y;o.c.update(0);
+  ok('обратная стрела проходит через несколько целей по 30% без отскоков',
+    began&&s.returningArrow&&s.chain===0&&s.pierce===0&&s.attackMul===0.30&&
+    Math.abs((ah-a.hp)-30)<1e-9&&Math.abs((bh-b.hp)-30)<1e-9&&o.G.shots.includes(s),
+    (ah-a.hp)+'/'+(bh-b.hp)+' урона');
+}
+
+{
+  const o=setup(()=>0.05);o.G.bag.add('returnShot','flag',1);o.c.recalc();fixed(o);
+  o.D.igniteCh=o.D.chillCh=o.D.shockCh=o.D.poiCh=10;o.D.ailEff=o.D.ailDur=1;
+  for(let i=0;i<13;i++)o.c.spawnPlayerShot(o.p,0,o.G.weapon,false);
+  const s=o.G.shots.at(-1);o.G.shots=[s];o.c.beginReturningArrow(s);const e=foe(o,120,0);s.x=e.x;s.y=e.y;o.c.update(0);
+  ok('обратный путь самостоятельно накладывает все четыре стихийных состояния',
+    e.dots.fire.dps>0&&e.ail.chill>0&&e.ail.shock>0&&e.dots.poison.dps>0);
+}
+
+{
+  const o=setup();o.G.bag.add('hunterMark','flag',1);o.c.recalc();const flags=[];
+  for(let i=0;i<6;i++){o.c.spawnPlayerShot(o.p,0,o.G.weapon,false);flags.push(o.G.shots.at(-1).hunterMarkShot);o.G.shots.length=0;}
+  ok('Метка охотника назначается только каждой шестой стреле',flags.slice(0,5).every(x=>!x)&&flags[5]&&o.p.hunterMarkN===6);
+}
+
+{
+  const o=setup();o.G.bag.add('hunterMark','flag',1);o.c.recalc();fixed(o);
+  for(let i=0;i<6;i++)o.c.spawnPlayerShot(o.p,0,o.G.weapon,false);
+  const s=o.G.shots.at(-1);o.G.shots=[s];const e=foe(o,100,0),hp=e.hp;s.x=e.x;s.y=e.y;s.vx=s.vy=0;o.c.update(0);
+  ok('метящий удар сразу получает +15% и ставит метку на 4 секунды',
+    Math.abs((hp-e.hp)-115)<1e-9&&Math.abs(e.hunterMarkUntil-o.G.time-4)<1e-9&&o.c.hunterMarkActive(e),hp-e.hp+' урона');
+}
+
+{
+  const o=setup(()=>0.15);o.G.bag.add('hunterMark','flag',1);o.c.recalc();fixed(o);
+  o.D.igniteCh=o.D.chillCh=o.D.shockCh=o.D.poiCh=10;o.D.ailEff=o.D.ailDur=1;
+  const e=foe(o);o.c.markHunterTarget(e);o.c.damage(e,{});
+  ok('по отмеченной цели вдвое выше все четыре стихийных шанса',
+    e.dots.fire.dps>0&&e.ail.chill>0&&e.ail.shock>0&&e.dots.poison.dps>0);
+}
+
+{
+  const o=setup();o.G.bag.add('hunterMark','flag',1);o.c.recalc();const a=foe(o),b=foe(o),c=foe(o);
+  o.G.time=0;o.c.markHunterTarget(a);o.G.time=1;o.c.markHunterTarget(b);o.G.time=2;o.c.markHunterTarget(c);
+  const html=require('fs').readFileSync('./PolyGrind.html','utf8');
+  ok('одновременно живут две метки, третья заменяет старейшую и рисует красный прицел',
+    !o.c.hunterMarkActive(a)&&o.c.hunterMarkActive(b)&&o.c.hunterMarkActive(c)&&
+    html.includes("ctx.strokeStyle='#ff3b4f'")&&html.includes("if (pass==='worldHud') drawHunterMark(e);"));
+}
+
+{
+  const o=setup();o.G.bag.add('hunterMark','flag',1);o.c.recalc();fixed(o);const e=foe(o),hp=e.hp;
+  o.c.markHunterTarget(e);o.G.time=4.01;o.c.damage(e,{});
+  ok('через четыре секунды метка и её +15% полностью исчезают',!o.c.hunterMarkActive(e)&&Math.abs((hp-e.hp)-100)<1e-9,hp-e.hp+' урона');
 }
 
 {

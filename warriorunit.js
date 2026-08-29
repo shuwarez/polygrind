@@ -77,21 +77,73 @@ function orbitHit({subclass=null,lvl=1,inc=0,more=1,element=0,crit=0,double=0,ig
 
 {
   const c=loadGame('./PolyGrind.html'), thorns=c.__api.MODS.find(x=>x.id==='dmg.thorns'),
-    reflect=c.__api.MODS.find(x=>x.id==='dmg.reflect');
-  ok('Шипы и Отражение ограничены оружием Воина',
-    thorns.wep.length===1 && thorns.wep[0]==='melee' &&
-    reflect.wep.length===1 && reflect.wep[0]==='melee' &&
-    c.allowedClassesForMod(thorns).join(',')==='blade' && c.allowedClassesForMod(reflect).join(',')==='blade');
+    circle=c.__api.MODS.find(x=>x.id==='dmg.thorn_circle'),
+    steps=c.__api.MODS.find(x=>x.id==='warrior.three_step'), fury=c.__api.MODS.find(x=>x.id==='warrior.iron_fury');
+  ok('четыре новые карты имеют правильные тиры и доступны только Воину',
+    thorns.kind==='inc' && thorns.r.join(',')==='25,25' && thorns.cap===100 &&
+    circle.kind==='flag' && circle.rar===2 && circle.unlock &&
+    steps.kind==='flag' && steps.rar===1 && fury.kind==='flag' && fury.rar===1 &&
+    [thorns,circle,steps,fury].every(x=>c.allowedClassesForMod(x).join(',')==='blade'));
 }
 
 {
-  const c=loadGame('./PolyGrind.html');
-  c.newGame('bow','keys'); c.__api.G.bag.add('thorns','flat',50); c.__api.G.bag.add('reflect','flat',35); c.recalc();
-  const ranged=[c.__api.D.thorns,c.__api.D.reflect];
-  c.newGame('blade','keys'); c.__api.G.bag.add('thorns','flat',50); c.__api.G.bag.add('reflect','flat',35); c.recalc();
-  ok('механика обнуляется другим классам и сохраняется Воину',
-    ranged[0]===0 && ranged[1]===0 && c.__api.D.thorns===40 && c.__api.D.reflect===35,
-    'Лучник '+ranged.join('/')+' · Воин '+c.__api.D.thorns+'/'+c.__api.D.reflect);
+  const o=mk(null,1); o.G.bag.add('thorns','inc',25); o.c.recalc();
+  o.D.baseMin=o.D.baseMax=100; o.D.elem={fire:0,cold:0,lit:0,poi:0};
+  o.D.incAll=0; o.D.moreAll=1; o.D.critCh=0; o.D.warriorMeleeInc=0;
+  const source=foe(o,70,0), hp=source.hp;
+  o.c.hurt(40,true,false,'ВРАГ · снаряд','norm',source);
+  const quarter=hp-source.hp, beforeNoSource=source.hp;
+  o.c.hurt(40,true,false,'ВРАГ · яд','norm');
+
+  const full=mk(null,1); full.G.bag.add('thorns','inc',125); full.G.bag.add('thornCircle','flag',1); full.c.recalc();
+  full.D.baseMin=full.D.baseMax=100; full.D.elem={fire:0,cold:0,lit:0,poi:0};
+  full.D.incAll=0; full.D.moreAll=1; full.D.critCh=0; full.D.warriorMeleeInc=0;
+  const attacker=foe(full,70,0), neighbor=foe(full,120,0), distant=foe(full,400,0);
+  const ah=attacker.hp, nh=neighbor.hp, dh=distant.hp;
+  full.c.hurt(40,true,false,'ВРАГ · контакт','norm',attacker);
+
+  const ranged=loadGame('./PolyGrind.html'); ranged.newGame('bow','keys');
+  ranged.__api.G.bag.add('thorns','inc',100); ranged.recalc();
+  ok('Шипы отражают обе доли от ближних и дальних ударов, а круг бьёт соседей',
+    Math.abs(quarter-35)<1e-9 && source.hp===beforeNoSource && full.D.thorns===100 &&
+    Math.abs((ah-attacker.hp)-140)<1e-9 && Math.abs((nh-neighbor.hp)-70)<1e-9 && distant.hp===dh &&
+    ranged.__api.D.thorns===0 && full.c.__api.MODS.find(x=>x.id==='dmg.thorn_circle').show(),
+    '25%='+quarter+' · 100%='+(ah-attacker.hp)+' · круг='+(nh-neighbor.hp));
+}
+
+{
+  const o=mk(null,1); o.G.bag.add('threeStep','flag',1); o.c.recalc();
+  const base=o.G.weapon.reach*o.D.arc;
+  const targetRanges=[0,1,2].map(n=>{o.p.bladeN=n; return o.c.attackRange();});
+  o.p.bladeN=0; o.G.fx.length=0;
+  o.c.attack(); const first=o.G.fx.filter(x=>x.t==='arc').at(-1).r;
+  o.c.attack(); const second=o.G.fx.filter(x=>x.t==='arc').at(-1).r;
+  o.c.attack(); const third=o.G.fx.filter(x=>x.t==='ring').at(-1).max;
+  o.c.attack(); const fourth=o.G.fx.filter(x=>x.t==='arc').at(-1).r;
+  ok('Техника трёх шагов даёт 5/10/15% дальности и повторяет цикл',
+    targetRanges.every((v,i)=>Math.abs(v-base*(1+(i+1)*0.05))<1e-9) &&
+    Math.abs(first-base*1.05)<1e-9 && Math.abs(second-base*1.10)<1e-9 &&
+    Math.abs(third-base*1.45*1.15)<1e-9 && Math.abs(fourth-base*1.05)<1e-9 && o.p.bladeN===4,
+    targetRanges.map(x=>x.toFixed(1)).join('/')+' · волна '+third.toFixed(1));
+}
+
+{
+  const o=mk(null,1); o.G.bag.add('ironFury','flag',1); o.c.recalc();
+  const baseInc=o.D.incAll, source=foe(o,70,0);
+  for(let i=0;i<6;i++) o.c.hurt(1,true,false,'ВРАГ · снаряд','norm',source);
+  o.p.ironFuryT=1.2;
+  o.c.hurt(1,true,false,'ВРАГ · контакт','norm',source);
+  const refreshedT=o.p.ironFuryT;
+  const activeInc=o.D.incAll;
+  o.c.setLanguage('ru'); const ru=o.c.activeCombatBuffs(o.p,0,0).join(' | ');
+  o.c.setLanguage('en'); const en=o.c.activeCombatBuffs(o.p,0,0).join(' | ');
+  o.G.enemies.length=0; o.G.spawnQueue=0; o.c.update(3.1);
+  ok('Железная ярость копится до 25%, обновляет 3 сек и показывается в HUD',
+    ru.includes('Железная ярость - урон увеличен на 25% - 3.0 секунд') &&
+    en.includes('Iron Fury - damage increased by 25% - 3.0 seconds') &&
+    Math.abs(activeInc-baseInc-25)<1e-9 && refreshedT===3 &&
+    o.p.ironFuryPct===0 && o.p.ironFuryT===0 && Math.abs(o.D.incAll-baseInc)<1e-9,
+    ru);
 }
 
 {

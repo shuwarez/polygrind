@@ -12,6 +12,7 @@ __pycache__/
 /outputs/**/*.inspect.ndjson
 /outputs/**/~$*.xlsx
 /outputs/**/*_IDEAS.xlsx
+/outputs/*.png
 /outputs/grim-grind-title-spritesheet-concept.png
 /outputs/grim-grind-title-spritesheet-wide.png
 /outputs/grim-grind-torch-spritesheet-8f.png

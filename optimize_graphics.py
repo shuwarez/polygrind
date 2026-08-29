@@ -15,7 +15,7 @@ import re
 from collections import deque
 from pathlib import Path
 
-from PIL import Image, ImageChops, ImageFilter
+from PIL import Image, ImageChops, ImageEnhance, ImageFilter
 
 
 ROOT = Path(__file__).resolve().parent
@@ -94,6 +94,47 @@ def four_frame_sheet(path: Path, frame_size: int, padding: int) -> bytes:
     return indexed_png(sheet)
 
 
+def separated_horizontal_frames(path: Path, count: int = 4) -> list[Image.Image]:
+    """Вырезать персонажей по настоящим прозрачным промежуткам листа.
+
+    Присланные листы свиты не используют равные ячейки: широкие позы и оружие
+    местами пересекают границы четвертей. Проекция alpha сохраняет силуэт целиком.
+    """
+    source = Image.open(path).convert("RGBA")
+    alpha = source.getchannel("A").point(lambda value: 255 if value >= 16 else 0)
+    occupied = [x for x in range(source.width)
+                if alpha.crop((x, 0, x + 1, source.height)).getbbox()]
+    runs: list[list[int]] = []
+    for x in occupied:
+        if not runs or x - runs[-1][1] > 4:
+            runs.append([x, x])
+        else:
+            runs[-1][1] = x
+    if len(runs) != count:
+        raise SystemExit(f"{path.name}: ожидалось {count} силуэтов, найдено {len(runs)}")
+    frames = []
+    for left, right in runs:
+        box = alpha.crop((left, 0, right + 1, source.height)).getbbox()
+        if not box:
+            raise SystemExit(f"{path.name}: пустой кадр свиты")
+        frames.append(source.crop((left + box[0], box[1], left + box[2], box[3])))
+    return frames
+
+
+def minion_sheet(path: Path, frame_size: int) -> bytes:
+    """Стабильный четырёхкадровый лист свиты в её экранном бюджете."""
+    subjects = separated_horizontal_frames(path)
+    canvas_size = (max(frame.width for frame in subjects),
+                   max(frame.height for frame in subjects))
+    aligned = []
+    for subject in subjects:
+        frame = Image.new("RGBA", canvas_size)
+        frame.alpha_composite(subject, ((canvas_size[0] - subject.width) // 2,
+                                        canvas_size[1] - subject.height))
+        aligned.append(frame)
+    return indexed_png(compact_stable_sheet(aligned, (frame_size, frame_size), padding=0))
+
+
 def shooter_sheet(path: Path) -> bytes:
     return four_frame_sheet(path, 40, 1)
 
@@ -115,6 +156,134 @@ def archer_projectile(path: Path) -> bytes:
 
 def mage_projectile_sheet(path: Path) -> bytes:
     return four_frame_sheet(path, 8, 0)
+
+
+def plague_slime_projectile_sheet(path: Path) -> bytes:
+    """Четыре фазы сгустка Чумной мерзости в экранном бюджете 20 px."""
+    return four_frame_sheet(path, 20, 0)
+
+
+def emerald_orb_projectile_sheet(path: Path) -> bytes:
+    """Четыре фазы большой сферы Лича в экранном бюджете 32 px."""
+    return four_frame_sheet(path, 32, 0)
+
+
+def greed_spear_projectile_sheet(path: Path) -> bytes:
+    """Четыре стабильные фазы длинного Копья жадности по 64×20."""
+    source = Image.open(path).convert("RGBA")
+    frames = split_horizontal_frames(source, 4)
+    return indexed_png(compact_stable_sheet(frames, (64, 20), padding=0))
+
+
+def executioner_axe_projectile_sheet(path: Path) -> bytes:
+    """Восемь центрированных фаз вращающегося топора по 56×56."""
+    subjects = separated_horizontal_frames(path, 8)
+    canvas_size = (max(frame.width for frame in subjects),
+                   max(frame.height for frame in subjects))
+    centered = []
+    for subject in subjects:
+        frame = Image.new("RGBA", canvas_size)
+        frame.alpha_composite(subject, ((canvas_size[0] - subject.width) // 2,
+                                        (canvas_size[1] - subject.height) // 2))
+        centered.append(frame)
+    return indexed_png(compact_stable_sheet(centered, (56, 56), padding=1))
+
+
+def minotaur_spear_projectile_sheet(path: Path) -> bytes:
+    """Четыре стабильные фазы Копья Минотавра по 64×20."""
+    source = Image.open(path).convert("RGBA")
+    frames = split_horizontal_frames(source, 4)
+    return indexed_png(compact_stable_sheet(frames, (64, 20), padding=0))
+
+
+def seraph_holy_spear_sheet(path: Path) -> bytes:
+    """Четыре стабильные фазы Святого Копья по 96×32."""
+    source = Image.open(path).convert("RGBA")
+    frames = split_horizontal_frames(source, 4)
+    return indexed_png(compact_stable_sheet(frames, (96, 32), padding=0))
+
+
+def demon_queen_blob_sheet(path: Path) -> bytes:
+    """Четыре центрированные фазы Демонического сгустка по 32×32."""
+    source = Image.open(path).convert("RGBA")
+    frames = split_horizontal_frames(source, 4)
+    return indexed_png(compact_stable_sheet(frames, (32, 32), padding=0))
+
+
+def matriarch_plague_projectile_sheet(path: Path) -> bytes:
+    """Четыре стабильные фазы Чумного снаряда Матриархии по 32×32."""
+    source = Image.open(path).convert("RGBA")
+    frames = split_horizontal_frames(source, 4)
+    return indexed_png(compact_stable_sheet(frames, (32, 32), padding=0))
+
+
+def void_ground_rift_sheet(path: Path) -> bytes:
+    """Четыре стабильные фазы наземного Разлома Пустоты по 64×64."""
+    source = Image.open(path).convert("RGBA")
+    frames = split_horizontal_frames(source, 4)
+    return indexed_png(compact_stable_sheet(frames, (64, 64), padding=0))
+
+
+def arcane_mine_sprite(path: Path) -> bytes:
+    """Свести присланную мину к маленькому читаемому кадру 32×32."""
+    source = Image.open(path).convert("RGBA")
+    return indexed_png(fit_frame(source, (32, 32), padding=1))
+
+
+def arcane_mine_explosion_sheet(path: Path) -> bytes:
+    """Упаковать восемь фаз взрыва с единым масштабом и неподвижным центром."""
+    source = Image.open(path).convert("RGBA")
+    frames = split_horizontal_frames(source, 8)
+    return indexed_png(compact_stable_sheet(frames, (64, 64)))
+
+
+def remove_dark_background(source: Image.Image) -> Image.Image:
+    """Убрать непрозрачный чёрный фон, сохранив цветные пиксели свечения."""
+    rgba = source.convert("RGBA")
+    pixels = []
+    for red, green, blue, _ in rgba.get_flattened_data():
+        high = max(red, green, blue)
+        alpha = 0 if high < 30 else min(255, max(0, round((high - 24) * 5)))
+        pixels.append((red, green, blue, alpha))
+    rgba.putdata(pixels)
+    return rgba
+
+
+def compact_centered_sheet(frames: list[Image.Image],
+                           frame_size: tuple[int, int], padding: int = 2) -> Image.Image:
+    """Один масштаб и неподвижный центр для фаз кругового взрыва."""
+    boxes = [frame.getchannel("A").point(
+        lambda value: 255 if value >= 16 else 0).getbbox() for frame in frames]
+    if any(box is None for box in boxes):
+        raise SystemExit("Пустой кадр магического эффекта")
+    shared = (min(box[0] for box in boxes), min(box[1] for box in boxes),
+              max(box[2] for box in boxes), max(box[3] for box in boxes))
+    width, height = shared[2] - shared[0], shared[3] - shared[1]
+    ratio = min((frame_size[0] - padding * 2) / width,
+                (frame_size[1] - padding * 2) / height, 1)
+    size = (max(1, round(width * ratio)), max(1, round(height * ratio)))
+    x = (frame_size[0] - size[0]) // 2
+    y = (frame_size[1] - size[1]) // 2
+    sheet = Image.new("RGBA", (frame_size[0] * len(frames), frame_size[1]))
+    for index, frame in enumerate(frames):
+        crop = frame.crop(shared)
+        if crop.size != size:
+            crop = crop.resize(size, Image.Resampling.LANCZOS)
+        sheet.alpha_composite(crop, (index * frame_size[0] + x, y))
+    return sheet
+
+
+def mage_ability_sheet(path: Path, count: int, light_background: bool = False,
+                       saturation: float = 1.0) -> bytes:
+    """Очистить фон и собрать центрированный лист взрыва 64 px на кадр."""
+    source = Image.open(path)
+    source = remove_logo_checker(source) if light_background else remove_dark_background(source)
+    if saturation != 1:
+        alpha = source.getchannel("A")
+        source = ImageEnhance.Color(source.convert("RGB")).enhance(saturation).convert("RGBA")
+        source.putalpha(alpha)
+    frames = split_horizontal_frames(source, count)
+    return indexed_png(compact_centered_sheet(frames, (64, 64)))
 
 
 ENEMY_FRAMES = {
@@ -218,6 +387,11 @@ def remove_logo_checker(source: Image.Image) -> Image.Image:
     пиксели получают мягкую альфу, чтобы после очистки не осталось белого ореола.
     """
     rgba = source.convert("RGBA")
+    # Новые листы приходят с настоящей прозрачностью; повторная очистка их RGB
+    # превратила бы прозрачный чёрный фон в непрозрачный. Шахматку удаляем только
+    # у старых полностью непрозрачных исходников.
+    if rgba.getchannel("A").getextrema()[0] < 255:
+        return rgba
     alpha = bytearray()
     for red, green, blue, _ in rgba.get_flattened_data():
         low, high = min(red, green, blue), max(red, green, blue)
@@ -262,14 +436,147 @@ def compact_horizontal_sheet(source: Image.Image, count: int,
     return sheet
 
 
+def split_horizontal_frames(source: Image.Image, count: int) -> list[Image.Image]:
+    """Разрезать горизонтальный лист, сохранив исходные координаты кадров."""
+    frames = []
+    width = max(round((index + 1) * source.width / count) -
+                round(index * source.width / count) for index in range(count))
+    for index in range(count):
+        x0 = round(index * source.width / count)
+        x1 = round((index + 1) * source.width / count)
+        frame = Image.new("RGBA", (width, source.height))
+        frame.alpha_composite(source.crop((x0, 0, x1, source.height)).convert("RGBA"))
+        frames.append(frame)
+    return frames
+
+
+def align_frames(frames: list[Image.Image], anchor_box) -> list[Image.Image]:
+    """Совместить кадры по центру и низу неподвижной части изображения."""
+    boxes = [anchor_box(frame) for frame in frames]
+    if any(box is None for box in boxes):
+        raise SystemExit("Не найдена неподвижная часть кадра меню")
+    reference = boxes[0]
+    reference_x = (reference[0] + reference[2]) / 2
+    aligned = []
+    for frame, box in zip(frames, boxes):
+        x = round(reference_x - (box[0] + box[2]) / 2)
+        y = reference[3] - box[3]
+        placed = Image.new("RGBA", frame.size)
+        placed.alpha_composite(frame, (x, y))
+        aligned.append(placed)
+    return aligned
+
+
+def compact_stable_sheet(frames: list[Image.Image],
+                         frame_size: tuple[int, int], padding: int = 2) -> Image.Image:
+    """Уменьшить все кадры через одну общую рамку и один transform.
+
+    Разная высота пламени или подсветки больше не меняет масштаб и положение
+    корпуса факела либо букв логотипа между соседними кадрами.
+    """
+    boxes = [frame.getchannel("A").point(
+        lambda value: 255 if value >= 16 else 0).getbbox() for frame in frames]
+    if any(box is None for box in boxes):
+        raise SystemExit("Пустой стабилизированный кадр меню")
+    shared = (min(box[0] for box in boxes), min(box[1] for box in boxes),
+              max(box[2] for box in boxes), max(box[3] for box in boxes))
+    width, height = shared[2] - shared[0], shared[3] - shared[1]
+    ratio = min((frame_size[0] - padding * 2) / width,
+                (frame_size[1] - padding * 2) / height, 1)
+    size = (max(1, round(width * ratio)), max(1, round(height * ratio)))
+    x = (frame_size[0] - size[0]) // 2
+    y = frame_size[1] - padding - size[1]
+    sheet = Image.new("RGBA", (frame_size[0] * len(frames), frame_size[1]))
+    for index, frame in enumerate(frames):
+        crop = frame.crop(shared)
+        if crop.size != size:
+            crop = crop.resize(size, Image.Resampling.LANCZOS)
+        sheet.alpha_composite(crop, (index * frame_size[0] + x, y))
+    return sheet
+
+
+def stable_logo_frames(source: Image.Image) -> list[Image.Image]:
+    """Оставить геометрию вывески неподвижной, перенеся лишь свет кадров."""
+    frames = split_horizontal_frames(source, 8)
+    alpha_box = lambda frame: frame.getchannel("A").point(
+        lambda value: 255 if value >= 16 else 0).getbbox()
+    frames = align_frames(frames, alpha_box)
+    master = frames[0]
+    master_blur = master.filter(ImageFilter.GaussianBlur(radius=10)).convert("RGB")
+    master_pixels = list(master.get_flattened_data())
+    master_light = list(master_blur.get_flattened_data())
+    stable = []
+    for frame in frames:
+        source_light = list(frame.filter(ImageFilter.GaussianBlur(
+            radius=10)).convert("RGB").get_flattened_data())
+        pixels = []
+        for base, dark, lit in zip(master_pixels, master_light, source_light):
+            red, green, blue, alpha = base
+            if alpha == 0:
+                pixels.append((0, 0, 0, 0))
+                continue
+            channels = []
+            for value, base_light, frame_light in zip((red, green, blue), dark, lit):
+                ratio = max(0.55, min(2.35, (frame_light + 12) / (base_light + 12)))
+                channels.append(max(0, min(255, round(value * ratio))))
+            pixels.append((*channels, alpha))
+        result = Image.new("RGBA", master.size)
+        result.putdata(pixels)
+        stable.append(result)
+    return stable
+
+
+def stable_torch_frames(source: Image.Image) -> list[Image.Image]:
+    """Повторить один корпус факела и анимировать только пламя и его жар."""
+    frames = split_horizontal_frames(source, 8)
+    lower_start = round(source.height * 0.55)
+
+    def body_box(frame: Image.Image):
+        alpha = frame.getchannel("A").point(lambda value: 255 if value >= 16 else 0)
+        mask = Image.new("L", frame.size)
+        mask.paste(alpha.crop((0, lower_start, frame.width, frame.height)),
+                   (0, lower_start))
+        return mask.getbbox()
+
+    frames = align_frames(frames, body_box)
+    flame_top = round(source.height * 0.30)
+    flame_bottom = round(source.height * 0.56)
+
+    def fire_mask(frame: Image.Image) -> Image.Image:
+        mask = Image.new("L", frame.size)
+        source_pixels = frame.load()
+        target_pixels = mask.load()
+        for y in range(frame.height):
+            for x in range(frame.width):
+                red, green, blue, alpha = source_pixels[x, y]
+                warm = (y < flame_bottom and red >= 45 and
+                        red > green * 1.10 and green > blue * 1.04)
+                if alpha >= 16 and (y < flame_top or warm):
+                    target_pixels[x, y] = alpha
+        return mask
+
+    master = frames[0]
+    master_fire = fire_mask(master)
+    body = master.copy()
+    body.putalpha(ImageChops.subtract(master.getchannel("A"), master_fire))
+    stable = []
+    for frame in frames:
+        result = body.copy()
+        flame = Image.new("RGBA", frame.size)
+        flame.paste(frame, mask=fire_mask(frame))
+        result.alpha_composite(flame)
+        stable.append(result)
+    return stable
+
+
 def menu_logo_sheet(path: Path) -> bytes:
     source = remove_logo_checker(Image.open(path))
-    return indexed_png(compact_horizontal_sheet(source, 8, (256, 96)))
+    return indexed_png(compact_stable_sheet(stable_logo_frames(source), (256, 96)))
 
 
 def menu_torch_sheet(path: Path) -> bytes:
     source = Image.open(path).convert("RGBA")
-    return indexed_png(compact_horizontal_sheet(source, 8, (72, 192)))
+    return indexed_png(compact_stable_sheet(stable_torch_frames(source), (72, 192)))
 
 
 def elite_variant_sheet(path: Path) -> bytes:
@@ -361,6 +668,28 @@ def main() -> None:
     parser.add_argument("--shooter-projectile", type=Path)
     parser.add_argument("--archer-projectile", type=Path)
     parser.add_argument("--mage-projectile", type=Path)
+    parser.add_argument("--plague-slime-projectile", type=Path)
+    parser.add_argument("--emerald-orb-projectile", type=Path)
+    parser.add_argument("--greed-spear-projectile", type=Path)
+    parser.add_argument("--executioner-axe-projectile", type=Path)
+    parser.add_argument("--minotaur-spear-projectile", type=Path)
+    parser.add_argument("--seraph-holy-spear", type=Path)
+    parser.add_argument("--demon-queen-blob", type=Path)
+    parser.add_argument("--matriarch-plague-projectile", type=Path)
+    parser.add_argument("--void-ground-rift", type=Path)
+    parser.add_argument("--arcane-mine", type=Path)
+    parser.add_argument("--arcane-mine-explosion", type=Path)
+    parser.add_argument("--necro-skeleton", type=Path)
+    parser.add_argument("--necro-hunter", type=Path)
+    parser.add_argument("--necro-mage", type=Path)
+    parser.add_argument("--necro-blood-golem", type=Path)
+    parser.add_argument("--necro-bone-golem", type=Path)
+    parser.add_argument("--mage-explosion-normal", type=Path)
+    parser.add_argument("--mage-explosion-remote", type=Path)
+    parser.add_argument("--mage-explosion-mini", type=Path)
+    parser.add_argument("--mage-residual-arcana", type=Path)
+    parser.add_argument("--mage-elemental-explosion", type=Path)
+    parser.add_argument("--mage-blast-heart", type=Path)
     parser.add_argument("--vampire-boss", type=Path)
     parser.add_argument("--void-wrath-boss", type=Path)
     parser.add_argument("--minotaur-boss", type=Path)
@@ -390,6 +719,52 @@ def main() -> None:
                         help="вывести JSON двух оптимизированных data payload без изменения HTML")
     parser.add_argument("--emit-player-projectile-base64", action="store_true",
                         help="вывести JSON стрелы и сферы без изменения HTML")
+    parser.add_argument("--build-plague-slime-projectile", action="store_true",
+                        help="записать четырёхкадровый сгусток Чумной мерзости в outputs")
+    parser.add_argument("--install-plague-slime-projectile", action="store_true",
+                        help="упаковать и встроить сгусток Чумной мерзости в HTML")
+    parser.add_argument("--build-emerald-orb-projectile", action="store_true",
+                        help="записать четырёхкадровую Изумрудную сферу в outputs")
+    parser.add_argument("--install-emerald-orb-projectile", action="store_true",
+                        help="упаковать и встроить Изумрудную сферу Лича в HTML")
+    parser.add_argument("--build-greed-spear-projectile", action="store_true",
+                        help="записать четырёхкадровое Копьё жадности в outputs")
+    parser.add_argument("--install-greed-spear-projectile", action="store_true",
+                        help="упаковать и встроить Копьё жадности Алчного громилы в HTML")
+    parser.add_argument("--build-executioner-axe-projectile", action="store_true",
+                        help="записать восьмикадровый вращающийся топор в outputs")
+    parser.add_argument("--install-executioner-axe-projectile", action="store_true",
+                        help="упаковать и встроить топор Короля палачей в HTML")
+    parser.add_argument("--build-minotaur-spear-projectile", action="store_true",
+                        help="записать четырёхкадровое Копьё Минотавра в outputs")
+    parser.add_argument("--install-minotaur-spear-projectile", action="store_true",
+                        help="упаковать и встроить копьё Ужасающего Минотавра в HTML")
+    parser.add_argument("--build-seraph-holy-spear", action="store_true",
+                        help="записать четырёхкадровое Святое Копьё в outputs")
+    parser.add_argument("--install-seraph-holy-spear", action="store_true",
+                        help="упаковать и встроить Святое Копьё Падшего Серафима в HTML")
+    parser.add_argument("--build-demon-queen-blob", action="store_true",
+                        help="записать четырёхкадровый Демонический сгусток в outputs")
+    parser.add_argument("--install-demon-queen-blob", action="store_true",
+                        help="упаковать и встроить сгусток Демонической Королевы в HTML")
+    parser.add_argument("--build-matriarch-plague-projectile", action="store_true",
+                        help="записать четырёхкадровый Чумной снаряд в outputs")
+    parser.add_argument("--install-matriarch-plague-projectile", action="store_true",
+                        help="упаковать и встроить Чумной снаряд Матриархии в HTML")
+    parser.add_argument("--build-void-ground-rift", action="store_true",
+                        help="записать четырёхкадровый наземный Разлом Пустоты в outputs")
+    parser.add_argument("--install-void-ground-rift", action="store_true",
+                        help="упаковать и встроить разломы Гнева Пустоты в HTML")
+    parser.add_argument("--build-arcane-mine-assets", action="store_true",
+                        help="записать компактные кадры Арканной мины в outputs")
+    parser.add_argument("--build-minion-assets", action="store_true",
+                        help="записать пять компактных листов свиты в outputs")
+    parser.add_argument("--install-minion-assets", action="store_true",
+                        help="упаковать и встроить пять листов свиты в автономный HTML")
+    parser.add_argument("--build-mage-ability-assets", action="store_true",
+                        help="записать шесть компактных листов взрывов Мага в outputs")
+    parser.add_argument("--install-mage-ability-assets", action="store_true",
+                        help="упаковать и встроить шесть листов взрывов Мага в HTML")
     parser.add_argument("--emit-new-boss-base64", action="store_true",
                         help="вывести JSON шести новых листов боссов без изменения HTML")
     parser.add_argument("--emit-constellation-base64", action="store_true",
@@ -403,6 +778,300 @@ def main() -> None:
     parser.add_argument("--install-elite-ranged-tank", action="store_true",
                         help="добавить шесть ranged/tank разновидностей элиты в автономный HTML")
     args = parser.parse_args()
+
+    if args.build_void_ground_rift or args.install_void_ground_rift:
+        if not args.void_ground_rift:
+            parser.error("Наземный Разлом Пустоты требует --void-ground-rift")
+        generated = void_ground_rift_sheet(args.void_ground_rift)
+        output_dir = ROOT / "outputs"
+        output_dir.mkdir(exist_ok=True)
+        path = output_dir / "void-wrath-ground-rift-4f-optimized.png"
+        path.write_bytes(generated)
+        if args.install_void_ground_rift:
+            html = HTML.read_text(encoding="utf-8")
+            value = base64.b64encode(generated).decode("ascii")
+            html, count = re.subn(
+                r"(const VOID_GROUND_RIFT_DATA = ')[^']*(';)",
+                rf"\g<1>data:image/png;base64,{value}\2", html, count=1)
+            if count != 1:
+                raise SystemExit(f"VOID_GROUND_RIFT_DATA: ожидалась одна замена, получено {count}")
+            HTML.write_text(html, encoding="utf-8", newline="\n")
+        print(json.dumps({"path": str(path), "bytes": len(generated),
+                          "size": Image.open(io.BytesIO(generated)).size},
+                         separators=(",", ":")))
+        return
+
+    if args.build_matriarch_plague_projectile or args.install_matriarch_plague_projectile:
+        if not args.matriarch_plague_projectile:
+            parser.error("Чумной снаряд требует --matriarch-plague-projectile")
+        generated = matriarch_plague_projectile_sheet(args.matriarch_plague_projectile)
+        output_dir = ROOT / "outputs"
+        output_dir.mkdir(exist_ok=True)
+        path = output_dir / "plague-matriarch-projectile-4f-optimized.png"
+        path.write_bytes(generated)
+        if args.install_matriarch_plague_projectile:
+            html = HTML.read_text(encoding="utf-8")
+            value = base64.b64encode(generated).decode("ascii")
+            html, count = re.subn(
+                r"(const MATRIARCH_PLAGUE_PROJECTILE_DATA = ')[^']*(';)",
+                rf"\g<1>data:image/png;base64,{value}\2", html, count=1)
+            if count != 1:
+                raise SystemExit(f"MATRIARCH_PLAGUE_PROJECTILE_DATA: ожидалась одна замена, получено {count}")
+            HTML.write_text(html, encoding="utf-8", newline="\n")
+        print(json.dumps({"path": str(path), "bytes": len(generated),
+                          "size": Image.open(io.BytesIO(generated)).size},
+                         separators=(",", ":")))
+        return
+
+    if args.build_demon_queen_blob or args.install_demon_queen_blob:
+        if not args.demon_queen_blob:
+            parser.error("Демонический сгусток требует --demon-queen-blob")
+        generated = demon_queen_blob_sheet(args.demon_queen_blob)
+        output_dir = ROOT / "outputs"
+        output_dir.mkdir(exist_ok=True)
+        path = output_dir / "demon-queen-blob-4f-optimized.png"
+        path.write_bytes(generated)
+        if args.install_demon_queen_blob:
+            html = HTML.read_text(encoding="utf-8")
+            value = base64.b64encode(generated).decode("ascii")
+            html, count = re.subn(
+                r"(const DEMON_QUEEN_BLOB_DATA = ')[^']*(';)",
+                rf"\g<1>data:image/png;base64,{value}\2", html, count=1)
+            if count != 1:
+                raise SystemExit(f"DEMON_QUEEN_BLOB_DATA: ожидалась одна замена, получено {count}")
+            HTML.write_text(html, encoding="utf-8", newline="\n")
+        print(json.dumps({"path": str(path), "bytes": len(generated),
+                          "size": Image.open(io.BytesIO(generated)).size},
+                         separators=(",", ":")))
+        return
+
+    if args.build_seraph_holy_spear or args.install_seraph_holy_spear:
+        if not args.seraph_holy_spear:
+            parser.error("Святое Копьё требует --seraph-holy-spear")
+        generated = seraph_holy_spear_sheet(args.seraph_holy_spear)
+        output_dir = ROOT / "outputs"
+        output_dir.mkdir(exist_ok=True)
+        path = output_dir / "fallen-seraph-holy-spear-4f-optimized.png"
+        path.write_bytes(generated)
+        if args.install_seraph_holy_spear:
+            html = HTML.read_text(encoding="utf-8")
+            value = base64.b64encode(generated).decode("ascii")
+            html, count = re.subn(
+                r"(const SERAPH_HOLY_SPEAR_DATA = ')[^']*(';)",
+                rf"\g<1>data:image/png;base64,{value}\2", html, count=1)
+            if count != 1:
+                raise SystemExit(f"SERAPH_HOLY_SPEAR_DATA: ожидалась одна замена, получено {count}")
+            HTML.write_text(html, encoding="utf-8", newline="\n")
+        print(json.dumps({"path": str(path), "bytes": len(generated),
+                          "size": Image.open(io.BytesIO(generated)).size},
+                         separators=(",", ":")))
+        return
+
+    if args.build_minotaur_spear_projectile or args.install_minotaur_spear_projectile:
+        if not args.minotaur_spear_projectile:
+            parser.error("Копьё Минотавра требует --minotaur-spear-projectile")
+        generated = minotaur_spear_projectile_sheet(args.minotaur_spear_projectile)
+        output_dir = ROOT / "outputs"
+        output_dir.mkdir(exist_ok=True)
+        path = output_dir / "dread-minotaur-spear-projectile-4f-optimized.png"
+        path.write_bytes(generated)
+        if args.install_minotaur_spear_projectile:
+            html = HTML.read_text(encoding="utf-8")
+            value = base64.b64encode(generated).decode("ascii")
+            html, count = re.subn(
+                r"(const MINOTAUR_SPEAR_PROJECTILE_DATA = ')[^']*(';)",
+                rf"\g<1>data:image/png;base64,{value}\2", html, count=1)
+            if count != 1:
+                raise SystemExit(f"MINOTAUR_SPEAR_PROJECTILE_DATA: ожидалась одна замена, получено {count}")
+            HTML.write_text(html, encoding="utf-8", newline="\n")
+        print(json.dumps({"path": str(path), "bytes": len(generated),
+                          "size": Image.open(io.BytesIO(generated)).size},
+                         separators=(",", ":")))
+        return
+
+    if args.build_executioner_axe_projectile or args.install_executioner_axe_projectile:
+        if not args.executioner_axe_projectile:
+            parser.error("Вращающийся топор требует --executioner-axe-projectile")
+        generated = executioner_axe_projectile_sheet(args.executioner_axe_projectile)
+        output_dir = ROOT / "outputs"
+        output_dir.mkdir(exist_ok=True)
+        path = output_dir / "executioner-king-spinning-axe-8f-optimized.png"
+        path.write_bytes(generated)
+        if args.install_executioner_axe_projectile:
+            html = HTML.read_text(encoding="utf-8")
+            value = base64.b64encode(generated).decode("ascii")
+            html, count = re.subn(
+                r"(const EXECUTIONER_AXE_PROJECTILE_DATA = ')[^']*(';)",
+                rf"\g<1>data:image/png;base64,{value}\2", html, count=1)
+            if count != 1:
+                raise SystemExit(f"EXECUTIONER_AXE_PROJECTILE_DATA: ожидалась одна замена, получено {count}")
+            HTML.write_text(html, encoding="utf-8", newline="\n")
+        print(json.dumps({"path": str(path), "bytes": len(generated),
+                          "size": Image.open(io.BytesIO(generated)).size},
+                         separators=(",", ":")))
+        return
+
+    if args.build_greed_spear_projectile or args.install_greed_spear_projectile:
+        if not args.greed_spear_projectile:
+            parser.error("Копьё жадности требует --greed-spear-projectile")
+        generated = greed_spear_projectile_sheet(args.greed_spear_projectile)
+        output_dir = ROOT / "outputs"
+        output_dir.mkdir(exist_ok=True)
+        path = output_dir / "greed-brute-spear-projectile-4f-optimized.png"
+        path.write_bytes(generated)
+        if args.install_greed_spear_projectile:
+            html = HTML.read_text(encoding="utf-8")
+            value = base64.b64encode(generated).decode("ascii")
+            html, count = re.subn(
+                r"(const GREED_SPEAR_PROJECTILE_DATA = ')[^']*(';)",
+                rf"\g<1>data:image/png;base64,{value}\2", html, count=1)
+            if count != 1:
+                raise SystemExit(f"GREED_SPEAR_PROJECTILE_DATA: ожидалась одна замена, получено {count}")
+            HTML.write_text(html, encoding="utf-8", newline="\n")
+        print(json.dumps({"path": str(path), "bytes": len(generated),
+                          "size": Image.open(io.BytesIO(generated)).size},
+                         separators=(",", ":")))
+        return
+
+    if args.build_emerald_orb_projectile or args.install_emerald_orb_projectile:
+        if not args.emerald_orb_projectile:
+            parser.error("Изумрудная сфера требует --emerald-orb-projectile")
+        generated = emerald_orb_projectile_sheet(args.emerald_orb_projectile)
+        output_dir = ROOT / "outputs"
+        output_dir.mkdir(exist_ok=True)
+        path = output_dir / "emerald-lich-orb-projectile-4f-optimized.png"
+        path.write_bytes(generated)
+        if args.install_emerald_orb_projectile:
+            html = HTML.read_text(encoding="utf-8")
+            value = base64.b64encode(generated).decode("ascii")
+            html, count = re.subn(
+                r"(const EMERALD_ORB_PROJECTILE_DATA = ')[^']*(';)",
+                rf"\g<1>data:image/png;base64,{value}\2", html, count=1)
+            if count != 1:
+                raise SystemExit(f"EMERALD_ORB_PROJECTILE_DATA: ожидалась одна замена, получено {count}")
+            HTML.write_text(html, encoding="utf-8", newline="\n")
+        print(json.dumps({"path": str(path), "bytes": len(generated),
+                          "size": Image.open(io.BytesIO(generated)).size},
+                         separators=(",", ":")))
+        return
+
+    if args.build_plague_slime_projectile or args.install_plague_slime_projectile:
+        if not args.plague_slime_projectile:
+            parser.error("сгусток Чумной мерзости требует --plague-slime-projectile")
+        generated = plague_slime_projectile_sheet(args.plague_slime_projectile)
+        output_dir = ROOT / "outputs"
+        output_dir.mkdir(exist_ok=True)
+        path = output_dir / "plague-abomination-slime-projectile-4f-optimized.png"
+        path.write_bytes(generated)
+        if args.install_plague_slime_projectile:
+            html = HTML.read_text(encoding="utf-8")
+            value = base64.b64encode(generated).decode("ascii")
+            html, count = re.subn(
+                r"(const PLAGUE_SLIME_PROJECTILE_DATA = ')[^']*(';)",
+                rf"\g<1>data:image/png;base64,{value}\2", html, count=1)
+            if count != 1:
+                raise SystemExit(f"PLAGUE_SLIME_PROJECTILE_DATA: ожидалась одна замена, получено {count}")
+            HTML.write_text(html, encoding="utf-8", newline="\n")
+        print(json.dumps({"path": str(path), "bytes": len(generated),
+                          "size": Image.open(io.BytesIO(generated)).size},
+                         separators=(",", ":")))
+        return
+
+    if args.build_mage_ability_assets or args.install_mage_ability_assets:
+        sources = {
+            "normal": (args.mage_explosion_normal, 6, False, 1.0),
+            "remote": (args.mage_explosion_remote, 6, True, 1.0),
+            "mini": (args.mage_explosion_mini, 6, False, 1.0),
+            "residual": (args.mage_residual_arcana, 4, True, 1.0),
+            # Цвет специально приглушён; умеренная прозрачность задаётся renderer-ом.
+            "elemental": (args.mage_elemental_explosion, 8, False, 0.45),
+            "heart": (args.mage_blast_heart, 4, True, 1.0),
+        }
+        missing = [key for key, (path, _, _, _) in sources.items() if not path]
+        if missing:
+            parser.error("листы взрывов Мага: отсутствуют " + ", ".join(missing))
+        generated = {key: mage_ability_sheet(path, count, light, saturation)
+                     for key, (path, count, light, saturation) in sources.items()}
+        output_dir = ROOT / "outputs"
+        output_dir.mkdir(exist_ok=True)
+        paths = {key: output_dir / f"mage-{key}-explosion-optimized.png"
+                 for key in generated}
+        for key, path in paths.items():
+            path.write_bytes(generated[key])
+        if args.install_mage_ability_assets:
+            html = HTML.read_text(encoding="utf-8")
+            payload = {key: base64.b64encode(data).decode("ascii")
+                       for key, data in generated.items()}
+            body = "const MAGE_ABILITY_SPRITE_DATA = {\n" + "\n".join(
+                f"  {key}:'data:image/png;base64,{value}',"
+                for key, value in payload.items()) + "\n};"
+            html, count = re.subn(r"const MAGE_ABILITY_SPRITE_DATA = \{.*?\n\};",
+                                  body, html, flags=re.S)
+            if count != 1:
+                raise SystemExit(f"MAGE_ABILITY_SPRITE_DATA: ожидалась одна замена, получено {count}")
+            HTML.write_text(html, encoding="utf-8", newline="\n")
+        print(json.dumps({key: {"path": str(paths[key]), "bytes": len(data),
+                                "size": Image.open(io.BytesIO(data)).size}
+                          for key, data in generated.items()}, separators=(",", ":")))
+        return
+
+    if args.build_minion_assets or args.install_minion_assets:
+        sources = {
+            "skeleton": (args.necro_skeleton, 24),
+            "hunter": (args.necro_hunter, 24),
+            "warlock": (args.necro_mage, 24),
+            "golemB": (args.necro_blood_golem, 24),
+            "golemN": (args.necro_bone_golem, 18),
+        }
+        missing = [key for key, (path, _) in sources.items() if not path]
+        if missing:
+            parser.error("листы свиты: отсутствуют " + ", ".join(missing))
+        generated = {key: minion_sheet(path, size)
+                     for key, (path, size) in sources.items()}
+        output_dir = ROOT / "outputs"
+        output_dir.mkdir(exist_ok=True)
+        paths = {key: output_dir / f"necro-{key}-4f-optimized.png"
+                 for key in generated}
+        for key, path in paths.items():
+            path.write_bytes(generated[key])
+        if args.install_minion_assets:
+            html = HTML.read_text(encoding="utf-8")
+            payload = {key: base64.b64encode(data).decode("ascii")
+                       for key, data in generated.items()}
+            body = "const MINION_SPRITE_DATA = {\n" + "\n".join(
+                f"  {key}:'data:image/png;base64,{value}',"
+                for key, value in payload.items()) + "\n};"
+            html, count = re.subn(r"const MINION_SPRITE_DATA = \{.*?\n\};",
+                                  body, html, flags=re.S)
+            if count != 1:
+                raise SystemExit(f"MINION_SPRITE_DATA: ожидалась одна замена, получено {count}")
+            HTML.write_text(html, encoding="utf-8", newline="\n")
+        print(json.dumps({key: {"path": str(paths[key]), "bytes": len(data),
+                                "size": Image.open(io.BytesIO(data)).size}
+                          for key, data in generated.items()}, separators=(",", ":")))
+        return
+
+    if args.build_arcane_mine_assets:
+        if not args.arcane_mine or not args.arcane_mine_explosion:
+            parser.error("--build-arcane-mine-assets требует оба ассета мины")
+        generated = {
+            "mine": arcane_mine_sprite(args.arcane_mine),
+            "explosion": arcane_mine_explosion_sheet(args.arcane_mine_explosion),
+        }
+        output_dir = ROOT / "outputs"
+        output_dir.mkdir(exist_ok=True)
+        paths = {
+            "mine": output_dir / "mage-arcane-mine-optimized.png",
+            "explosion": output_dir / "mage-arcane-mine-explosion-8f-optimized.png",
+        }
+        for key, path in paths.items():
+            path.write_bytes(generated[key])
+        print(json.dumps({
+            key: {"path": str(paths[key]), "bytes": len(data),
+                  "size": Image.open(io.BytesIO(data)).size}
+            for key, data in generated.items()
+        }, separators=(",", ":")))
+        return
 
     if args.build_menu_assets or args.install_menu_assets:
         if not args.menu_logo or not args.menu_torch:
