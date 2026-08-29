@@ -7,8 +7,9 @@ function ok(name, yes, got=''){
   console.log((yes?'  \u2713 ':'  \u2717 ') + name.padEnd(58) + got);
 }
 const html=fs.readFileSync('./PolyGrind.html','utf8');
+const bossSpriteBlock=html.slice(html.indexOf('const BOSS_SPRITE_DATA = {'), html.indexOf('const BOSS_SPRITE_META = {'));
 const embeddedPng = key => {
-  const m=html.match(new RegExp(key+":'data:image/png;base64,([^']+)'"));
+  const m=bossSpriteBlock.match(new RegExp(key+":'data:image/png;base64,([^']+)'"));
   return m ? Buffer.from(m[1], 'base64') : Buffer.alloc(0);
 };
 const pngInfo = b => b.length < 26 ? {w:0,h:0,color:-1} :

@@ -37,6 +37,16 @@ ok('вся текстура свиты укладывается в 6 КБ',
   minionBytes.reduce((sum,data)=>sum+data.length,0)<6000,
   minionBytes.reduce((sum,data)=>sum+data.length,0)+' байт');
 
+const lootKeys=['pickupXp','pickupGold','fire','cold','shock','poison','bleed','xp','monster'];
+const lootBytes=lootKeys.map(embeddedPng), lootPng=lootBytes.map(pngInfo);
+ok('опыт, золото и семь книг встроены как индексированные PNG-листы по четыре кадра',
+  lootPng.every(info=>info.png && info.color===3) &&
+  JSON.stringify(lootPng.map(info=>[info.w,info.h]))===
+    JSON.stringify([[64,16],[64,16],[96,24],[96,24],[96,24],[96,24],[96,24],[96,24],[96,24]]));
+ok('все девять листов добычи вместе укладываются в 10 КБ',
+  lootBytes.reduce((sum,data)=>sum+data.length,0)<10000,
+  lootBytes.reduce((sum,data)=>sum+data.length,0)+' байт');
+
 const mageEffectKeys=['normal','remote','mini','residual','elemental','heart'];
 const mageEffectBytes=mageEffectKeys.map(embeddedPng), mageEffectPng=mageEffectBytes.map(pngInfo);
 ok('шесть эффектов Мага встроены как индексированные PNG-листы по 64 px',
@@ -48,6 +58,18 @@ ok('все шесть эффектов Мага вместе укладываю�
   mageEffectBytes.reduce((sum,data)=>sum+data.length,0)+' байт');
 
 const c=loadGame('./PolyGrind.html');
+const rareItemKeys=['mirror','golem','fang','storm','ash','ice','plague','clock','shard','candle','doll','chalice','crown','bmask','bossShard','bone'];
+const rareItemBytes=rareItemKeys.map(embeddedPng), rareItemPng=rareItemBytes.map(pngInfo);
+ok('16 редких предметов встроены как индексированные PNG 24×24',
+  rareItemPng.every(info=>info.png && info.w===24 && info.h===24 && info.color===3));
+ok('все 16 иконок различаются и вместе укладываются в 7 КБ',
+  new Set(rareItemBytes.map(data=>data.toString('base64'))).size===rareItemKeys.length &&
+  rareItemBytes.reduce((sum,data)=>sum+data.length,0)<7000,
+  rareItemBytes.reduce((sum,data)=>sum+data.length,0)+' байт');
+ok('интерфейс берёт PNG для первой волны и старый знак для остальных',
+  rareItemKeys.every(key=>c.rareItemSpriteHTML(key,'hud').includes('rare-item-icon hud') &&
+    c.rareItemSpriteHTML(key,'hud').includes(rareItemBytes[rareItemKeys.indexOf(key)].toString('base64'))) &&
+  c.rareItemSpriteHTML('calm','hud')===c.__api.AMULETS.calm.ico);
 ok('эффекты Мага используют полные циклы 6/4/8 кадров',
   ['normal','remote','mini'].every(key=>[0,.2,.4,.6,.8,.999].map(p=>c.mageAbilitySpriteFrame(key,p).index).join(',')==='0,1,2,3,4,5') &&
   ['residual','heart'].every(key=>[0,.25,.5,.999].map(p=>c.mageAbilitySpriteFrame(key,p).index).join(',')==='0,1,2,3') &&
@@ -80,6 +102,12 @@ ok('круговой прицел PNG-врага заменён стрелкам
 
 c.newGame('bow','keys','hunter');
 const G=c.__api.G, p=G.player, e=c.spawnEnemy();
+const lootFrames=[];
+for (const t of [0,.125,.25,.375,.5]){ G.time=t; lootFrames.push(c.lootSpriteFrame({book:'shock'}).index); }
+ok('добыча маршрутизируется в нужные листы и циклически использует четыре кадра',
+  lootFrames.join(',')==='0,1,2,3,0' &&
+  c.lootSpriteFrame({v:1}).key==='pickupXp' && c.lootSpriteFrame({gold:true,v:1}).key==='pickupGold' &&
+  c.lootSpriteFrame({book:'fire'}).meta.drawW===24 && c.lootSpriteFrame({amu:'ash'})===null);
 G.time=0; const projectileFrames=[];
 for (const t of [0,0.1,0.2,0.3]){ G.time=t; projectileFrames.push(c.enemyProjectileSpriteFrame({shotType:'shooter'}).index); }
 ok('текстура снаряда циклически использует четыре кадра без своего таймера',

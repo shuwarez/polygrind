@@ -21,6 +21,9 @@ function addEnemy(c, x, y){
 const ok = (nm, cond, det) => console.log((cond?'  \u2713 ':'  \u2717 ') + nm.padEnd(38) + (det||''));
 
 console.log('ХАРАКТЕРИСТИКИ');
+{ const c = loadGame('./PolyGrind.html'), A = c.__api.AMULETS;
+  ok('два осколка имеют разные ключи и эффекты',
+    A.shard.nm === 'ЗЕРКАЛЬНЫЙ ОСКОЛОК' && A.bossShard.nm === 'ОСКОЛОК БОССА' && A.shard !== A.bossShard); }
 { const a = mk([]), b = mk(['golem']);
   ok('сердце голема: +50 брони', b.D.armor - a.D.armor === 50, a.D.armor + ' \u2192 ' + b.D.armor); }
 { const c1 = loadGame('./PolyGrind.html'); c1.newGame('bow','keys');

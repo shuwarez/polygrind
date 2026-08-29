@@ -280,12 +280,22 @@ console.log('ПОВТОРНАЯ ДЕТОНАЦИЯ');
 { const html=fs.readFileSync('./PolyGrind.html','utf8');
   const embedded=key=>Buffer.from(html.match(new RegExp("const "+key+" = 'data:image/png;base64,([^']+)'"))[1],'base64');
   const mine=embedded('ARCANE_MINE_SPRITE_DATA'), blast=embedded('ARCANE_MINE_EXPLOSION_DATA');
-  const mineFile=fs.readFileSync('./outputs/mage-arcane-mine-optimized.png');
-  const blastFile=fs.readFileSync('./outputs/mage-arcane-mine-explosion-8f-optimized.png');
-  ok('оптимизированные ассеты мины встроены без потерь и лишних копий',
-     mine.equals(mineFile) && blast.equals(blastFile) && mine.length===486 && blast.length===4350 &&
-     mine.readUInt32BE(16)===32 && mine.readUInt32BE(20)===32 && blast.readUInt32BE(16)===512 && blast.readUInt32BE(20)===64,
-     mine.length+' Б + '+blast.length+' Б');
+  // Проверяем самодостаточный runtime, а не локальные outputs: они намеренно игнорируются Git.
+  const pngInfo=buf=>{
+    let palette=0;
+    for(let off=8;off+12<=buf.length;){
+      const len=buf.readUInt32BE(off), type=buf.toString('ascii',off+4,off+8);
+      if(type==='PLTE') palette=len/3;
+      off+=12+len;
+    }
+    return {w:buf.readUInt32BE(16),h:buf.readUInt32BE(20),bitDepth:buf[24],colorType:buf[25],palette};
+  };
+  const mi=pngInfo(mine), bi=pngInfo(blast);
+  ok('оптимизированные ассеты мины встроены без внешних копий',
+     mine.length===486 && blast.length===4350 &&
+     mi.w===32 && mi.h===32 && bi.w===512 && bi.h===64 &&
+     mi.colorType===3 && bi.colorType===3 && mi.palette<=16 && bi.palette<=16,
+     mine.length+' Б / '+mi.palette+' цв. + '+blast.length+' Б / '+bi.palette+' цв.');
   ok('маленькая мина статична, а восемь фаз взрыва масштабируются по диаметру AoE',
      html.includes('const ARCANE_MINE_DRAW_SIZE = 24') && html.includes('Math.floor(progress*8)') &&
      html.includes('const d=f.r*2') && html.includes('ARCANE_MINE_EXPLOSION_FRAMES[Math.min(7') &&

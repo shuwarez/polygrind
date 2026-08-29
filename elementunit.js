@@ -61,6 +61,21 @@ console.log('СТИХИЙНЫЕ КАРТОЧКИ');
     ids.every(id=>M[id].show()===true && M[id].rar===2 && M[id].unlock!==true)); }
 
 console.log('ДЕЙСТВИЕ СТАТУСОВ');
+{ const o=build(), B=o.c.__api.BOOKS.shock;
+  ok('книга молнии добавлена отдельно от книги льда с тремя каноническими тирами',
+    B && B.el==='dLit' && B.proc===true && B.ico==='⚡' &&
+    JSON.stringify(B.tiers)===JSON.stringify([[3,5],[6,8],[9,12]]) &&
+    JSON.stringify(B.step)===JSON.stringify([3,5]) && o.c.__api.BOOKS.cold.el==='dCold'); }
+{ const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys','hunter');
+  const G=c.__api.G; G.items.shock={tier:1,val:5}; G.bag.add('iLit','inc',20); c.recalc();
+  ok('флэт книги молнии проходит через общий процентный множитель молнии', near(c.__api.D.elem.lit,6), c.__api.D.elem.lit.toFixed(1)); }
+{ const o=build(), main=foe(o,60,0), nearPlayer=foe(o,90,0), nearMinion=foe(o,100,10);
+  o.G.items.shock={tier:1,val:3};
+  const hpPlayer=nearPlayer.hp; o.c.__api.applyBookAilments(main,100,1,1,0);
+  const playerProc=near(main.ail.shock,1) && near(hpPlayer-nearPlayer.hp,15);
+  main.ail.shock=0; const hpMinion=nearMinion.hp; o.c.__api.applyBookAilments(main,100,.25,1,1);
+  ok('книга молнии срабатывает у игрока и свиты: Шок 1 секунда и обычный разряд',
+    playerProc && near(main.ail.shock,1) && near(hpMinion-nearMinion.hp,15)); }
 { const B=build().c.__api.ELEMENTAL_BALANCE;
   ok('базы охлаждения: 15% / 0,5 сек / 10% урона / 5% соседям',
     near(B.chillSlow,.15) && near(B.chillDuration,.5) && near(B.chillDamage,.10) && near(B.chillAuraSlow,.05)); }

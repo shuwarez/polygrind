@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import base64
+import hashlib
 import io
 import json
 import re
@@ -22,6 +23,25 @@ ROOT = Path(__file__).resolve().parent
 HTML = ROOT / "PolyGrind.html"
 TRANSPARENT_INDEX = 15
 PALETTE_COLORS = 15
+
+RARE_ITEM_SOURCES = {
+    "mirror": ("image1.png", "849ba0d0edbcf042cb35a650343dcb628de433182eb57b13c1dc8abbd3346e62"),
+    "golem": ("image2.png", "e1aafcf071228ede80755bf9afd5bca55e0573e7c1b53cf1731120ae98d9443a"),
+    "fang": ("image3.png", "96bd015df8c65ac7b3642714405c365c811ed77ef58f640080f9d7d1c8e43967"),
+    "storm": ("image4.png", "937a53751a09cdc055f78443a849b2096d10904124d43bd4cbba0a20aff84e7e"),
+    "ash": ("image5.png", "450765cec0b970e1b7adbe0d904432b1bad922afd41bbd0951be2936155b3ac2"),
+    "ice": ("image6.png", "19ca683a89f0f15687113d34a6fc272f4913640afb4aea9070863a0bf4c91d89"),
+    "plague": ("image7.png", "5a2c3d5008d58d954665ff085786ada23559a50b6e3918f6196b4a3f0f039859"),
+    "clock": ("image8.png", "5522dc68ca9ec3aee3ab2b053a886b410c5cdfe6b1c93faf2a45c20a71c3cf17"),
+    "shard": ("image9.png", "534f1a1e65e883cbe7747baef428f5d81ee8a41653371f8d09f1e59363ed4c66"),
+    "candle": ("image10.png", "00169d01cb83391ba95e667f31caca9c622a9297daed5f3c9eb485f0f3ad72bf"),
+    "doll": ("image11.png", "acfffdfc6b8e585d60c3519b869cc3a0e9bab2ebd9e83049b3c2563048d2d1ac"),
+    "chalice": ("image12.png", "710d581e77d5d1d7fd942a442bb88c076d4a9a9002600262e4283e42dabe2fc0"),
+    "crown": ("image13.png", "17b57f501574be67c1a28186174d7cd980882da2af932e10e9a8c240960ee575"),
+    "bmask": ("image14.png", "279b8689aaceb9db26193f5283b081e36ee9d1bd5d018b0631a95538f9b1eecc"),
+    "bossShard": ("image15.png", "4dab8a813721466a3694408d2d0b842517f062b5ef553026d49e0943412dd4da"),
+    "bone": ("image16.png", "648d5f3ac51dfe55200b16495710e9103c08b8d8fd5da1ff2e1c4783aa3c041d"),
+}
 
 
 def indexed_png(image: Image.Image) -> bytes:
@@ -92,6 +112,40 @@ def four_frame_sheet(path: Path, frame_size: int, padding: int) -> bytes:
                           (frame_size, frame_size), padding=padding)
         sheet.alpha_composite(frame, (frame_index * frame_size, 0))
     return indexed_png(sheet)
+
+
+def loot_sprite_sheet(path: Path, frame_size: int) -> bytes:
+    """Упаковать четыре фазы наземного лута через единый transform.
+
+    Общая alpha-рамка сохраняет неподвижными корпус монеты, кристалла или книги,
+    а nearest-neighbor не размывает пиксельный силуэт на целевых 16/24 px.
+    """
+    source = Image.open(path).convert("RGBA")
+    frames = split_horizontal_frames(source, 4)
+    sheet = compact_stable_sheet(
+        frames, (frame_size, frame_size), padding=0,
+        resample=Image.Resampling.NEAREST)
+    return indexed_png(sheet)
+
+
+def rare_item_sprite(path: Path) -> bytes:
+    """Свести статичный редкий предмет к читаемому холсту 24×24.
+
+    Один прозрачный пиксель со всех сторон защищает край силуэта, nearest-neighbor
+    сохраняет исходную пиксельную ступеньку, а indexed_png делает альфу жёсткой.
+    """
+    source = Image.open(path).convert("RGBA")
+    alpha = source.getchannel("A").point(lambda value: 255 if value >= 16 else 0)
+    box = alpha.getbbox()
+    if not box:
+        raise SystemExit(f"Пустой предмет: {path}")
+    crop = source.crop(box)
+    ratio = min(22 / crop.width, 22 / crop.height)
+    size = (max(1, round(crop.width * ratio)), max(1, round(crop.height * ratio)))
+    crop = crop.resize(size, Image.Resampling.NEAREST)
+    frame = Image.new("RGBA", (24, 24))
+    frame.alpha_composite(crop, ((24 - size[0]) // 2, (24 - size[1]) // 2))
+    return indexed_png(frame)
 
 
 def separated_horizontal_frames(path: Path, count: int = 4) -> list[Image.Image]:
@@ -468,7 +522,8 @@ def align_frames(frames: list[Image.Image], anchor_box) -> list[Image.Image]:
 
 
 def compact_stable_sheet(frames: list[Image.Image],
-                         frame_size: tuple[int, int], padding: int = 2) -> Image.Image:
+                         frame_size: tuple[int, int], padding: int = 2,
+                         resample: Image.Resampling = Image.Resampling.LANCZOS) -> Image.Image:
     """Уменьшить все кадры через одну общую рамку и один transform.
 
     Разная высота пламени или подсветки больше не меняет масштаб и положение
@@ -490,7 +545,7 @@ def compact_stable_sheet(frames: list[Image.Image],
     for index, frame in enumerate(frames):
         crop = frame.crop(shared)
         if crop.size != size:
-            crop = crop.resize(size, Image.Resampling.LANCZOS)
+            crop = crop.resize(size, resample)
         sheet.alpha_composite(crop, (index * frame_size[0] + x, y))
     return sheet
 
@@ -711,6 +766,25 @@ def main() -> None:
     parser.add_argument("--acid-carrier", type=Path)
     parser.add_argument("--menu-logo", type=Path)
     parser.add_argument("--menu-torch", type=Path)
+    parser.add_argument("--pickup-xp", type=Path)
+    parser.add_argument("--pickup-gold", type=Path)
+    parser.add_argument("--book-fire", type=Path)
+    parser.add_argument("--book-cold", type=Path)
+    parser.add_argument("--book-lightning", type=Path)
+    parser.add_argument("--book-poison", type=Path)
+    parser.add_argument("--book-bleed", type=Path)
+    parser.add_argument("--book-xp", type=Path)
+    parser.add_argument("--book-monster", type=Path)
+    parser.add_argument("--build-loot-sprites", action="store_true",
+                        help="записать компактные листы опыта, золота и семи книг в outputs")
+    parser.add_argument("--install-loot-sprites", action="store_true",
+                        help="собрать и встроить девять листов наземного лута в HTML")
+    parser.add_argument("--rare-item-dir", type=Path,
+                        help="каталог word/media с image1.png–image16.png из DOCX")
+    parser.add_argument("--build-rare-item-sprites", action="store_true",
+                        help="записать 16 статичных иконок редких предметов 24×24 в outputs")
+    parser.add_argument("--install-rare-item-sprites", action="store_true",
+                        help="проверить SHA-256, упаковать и встроить 16 редких предметов в HTML")
     parser.add_argument("--build-menu-assets", action="store_true",
                         help="записать компактные прозрачные листы логотипа и факела в outputs")
     parser.add_argument("--install-menu-assets", action="store_true",
@@ -778,6 +852,85 @@ def main() -> None:
     parser.add_argument("--install-elite-ranged-tank", action="store_true",
                         help="добавить шесть ranged/tank разновидностей элиты в автономный HTML")
     args = parser.parse_args()
+
+    if args.build_loot_sprites or args.install_loot_sprites:
+        sources = {
+            "pickupXp": (args.pickup_xp, 16, "pickup-xp-4f-optimized.png"),
+            "pickupGold": (args.pickup_gold, 16, "pickup-gold-4f-optimized.png"),
+            "fire": (args.book_fire, 24, "book-fire-4f-optimized.png"),
+            "cold": (args.book_cold, 24, "book-cold-4f-optimized.png"),
+            "shock": (args.book_lightning, 24, "book-lightning-4f-optimized.png"),
+            "poison": (args.book_poison, 24, "book-poison-4f-optimized.png"),
+            "bleed": (args.book_bleed, 24, "book-bleed-4f-optimized.png"),
+            "xp": (args.book_xp, 24, "book-xp-4f-optimized.png"),
+            "monster": (args.book_monster, 24, "book-monster-4f-optimized.png"),
+        }
+        missing = [key for key, (path, _, _) in sources.items() if not path]
+        if missing:
+            parser.error("спрайты наземного лута: отсутствуют " + ", ".join(missing))
+        generated = {key: loot_sprite_sheet(path, size)
+                     for key, (path, size, _) in sources.items()}
+        output_dir = ROOT / "outputs"
+        output_dir.mkdir(exist_ok=True)
+        paths = {key: output_dir / filename
+                 for key, (_, _, filename) in sources.items()}
+        for key, path in paths.items():
+            path.write_bytes(generated[key])
+        if args.install_loot_sprites:
+            html = HTML.read_text(encoding="utf-8")
+            payload = {key: base64.b64encode(data).decode("ascii")
+                       for key, data in generated.items()}
+            body = "const LOOT_SPRITE_DATA = {\n" + "\n".join(
+                f"  {key}:'data:image/png;base64,{value}',"
+                for key, value in payload.items()) + "\n};"
+            html, count = re.subn(r"const LOOT_SPRITE_DATA = \{.*?\n\};",
+                                  body, html, flags=re.S)
+            if count != 1:
+                raise SystemExit(f"LOOT_SPRITE_DATA: ожидалась одна замена, получено {count}")
+            HTML.write_text(html, encoding="utf-8", newline="\n")
+        print(json.dumps({
+            key: {"path": str(paths[key]), "bytes": len(data),
+                  "size": Image.open(io.BytesIO(data)).size}
+            for key, data in generated.items()
+        }, separators=(",", ":")))
+        return
+
+    if args.build_rare_item_sprites or args.install_rare_item_sprites:
+        if not args.rare_item_dir:
+            parser.error("редкие предметы требуют --rare-item-dir")
+        sources = {key: args.rare_item_dir / filename
+                   for key, (filename, _) in RARE_ITEM_SOURCES.items()}
+        for key, path in sources.items():
+            if not path.is_file():
+                parser.error(f"редкий предмет {key}: не найден {path}")
+            expected = RARE_ITEM_SOURCES[key][1]
+            actual = hashlib.sha256(path.read_bytes()).hexdigest()
+            if actual != expected:
+                raise SystemExit(f"редкий предмет {key}: SHA-256 {actual}, ожидался {expected}")
+        generated = {key: rare_item_sprite(path) for key, path in sources.items()}
+        output_dir = ROOT / "outputs"
+        output_dir.mkdir(exist_ok=True)
+        paths = {key: output_dir / f"rare-item-{key}-optimized.png" for key in generated}
+        for key, path in paths.items():
+            path.write_bytes(generated[key])
+        if args.install_rare_item_sprites:
+            html = HTML.read_text(encoding="utf-8")
+            payload = {key: base64.b64encode(data).decode("ascii")
+                       for key, data in generated.items()}
+            body = "const RARE_ITEM_SPRITE_DATA = {\n" + "\n".join(
+                f"  {key}:'data:image/png;base64,{value}',"
+                for key, value in payload.items()) + "\n};"
+            html, count = re.subn(r"const RARE_ITEM_SPRITE_DATA = \{.*?\n\};",
+                                  body, html, flags=re.S)
+            if count != 1:
+                raise SystemExit(f"RARE_ITEM_SPRITE_DATA: ожидалась одна замена, получено {count}")
+            HTML.write_text(html, encoding="utf-8", newline="\n")
+        print(json.dumps({
+            key: {"path": str(paths[key]), "bytes": len(data),
+                  "size": Image.open(io.BytesIO(data)).size}
+            for key, data in generated.items()
+        }, separators=(",", ":")))
+        return
 
     if args.build_void_ground_rift or args.install_void_ground_rift:
         if not args.void_ground_rift:
