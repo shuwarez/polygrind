@@ -72,8 +72,17 @@ function healing(G){ return G.fx.find(f=>f.t==='healNum'); }
   ok('лечение от 1 HP создаёт зелёное число', n && n.v==='+1' && n.life===0.4 && n.max===0.4, n && n.v); }
 
 { const c=fresh(), G=c.__api.G, p=G.player;
-  p.hp-=10; c.heal(0.99);
-  ok('дробное лечение ниже 1 HP не создаёт число', !healing(G)); }
+  p.hp-=10; c.heal(0.8); const n=healing(G);
+  ok('дробное лечение 0.8 HP создаёт зелёное число', n && n.v==='+0.8' && n.amount===0.8,
+    n && n.v); }
+
+{ const c=fresh(), G=c.__api.G, p=G.player;
+  p.hp-=10; c.heal(0.4); c.heal(0.4);
+  let nums=G.fx.filter(f=>f.t==='healNum');
+  const merged=nums.length===1 && nums[0].v==='+0.8' && Math.abs(nums[0].amount-0.8)<1e-9;
+  G.time+=0.13; c.heal(0.4); nums=G.fx.filter(f=>f.t==='healNum');
+  ok('частые мелкие тики объединяются только в коротком окне',merged && nums.length===2 && nums[1].v==='+0.4',
+    nums.map(x=>x.v).join(' · ')); }
 
 { const c=fresh(), G=c.__api.G, p=G.player;
   p.hp-=5; c.heal(100); const n=healing(G);

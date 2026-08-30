@@ -271,3 +271,123 @@ function orbitHit({subclass=null,lvl=1,inc=0,more=1,element=0,crit=0,double=0,ig
   o.G.time+=1.01; const before=e.hp; o.c.damage(e,{warriorMelee:true,directMelee:true});
   ok('после окна в 1 секунду рана начинается заново', Math.abs((before-e.hp)-100)<1e-9);
 }
+
+{
+  const o=mk(null,1), card=o.c.__api.MODS.find(x=>x.id==='warrior.groundbreaker');
+  ok('Землелом — фиолетовая одноразовая карта только Воина',
+    card && card.kind==='flag' && card.rar===2 && card.stat==='groundbreaker' &&
+    o.c.allowedClassesForMod(card).join(',')==='blade');
+  o.G.picks.push({id:card.id,nm:card.nm,val:'',cat:card.cat});
+  ok('после выбора Землелом полностью уходит из раздачи',
+    Array.from({length:100},()=>o.c.rollCards()).flat().every(x=>x.id!==card.id));
+}
+
+{
+  const o=mk(null,1); o.G.bag.add('groundbreaker','flag',1); o.c.recalc();
+  for(let i=0;i<6;i++) o.c.attack();
+  ok('первые две круговые волны только двигают счётчик Землелома',
+    o.p.groundbreakerWaveN===2 && o.G.groundbreakerCracks.length===0);
+  o.c.attack(); o.c.attack(); o.c.attack();
+  const crack=o.G.groundbreakerCracks[0], expected=o.G.weapon.reach*o.D.arc*1.45*o.D.warriorWaveRadius;
+  ok('третья круговая волна оставляет двухсекундную трещину своего радиуса',
+    o.p.groundbreakerWaveN===3 && crack && crack.life===2 && crack.tick===0.5 && Math.abs(crack.r-expected)<1e-9,
+    crack ? 'радиус '+crack.r.toFixed(1) : 'трещины нет');
+
+  o.D.baseMin=o.D.baseMax=100; o.D.elem={fire:0,cold:0,lit:0,poi:0};
+  o.D.incAll=0; o.D.moreAll=1; o.D.critCh=0; o.D.superCh=0; o.D.dblHit=0; o.D.deadlyHit=false;
+  o.D.igniteCh=o.D.chillCh=o.D.shockCh=o.D.poiCh=0; o.p.atkCd=999;
+  const plain=foe(o,0,0), armored=foe(o,40,0), outside=foe(o,crack.r+40,0);
+  armored.armor=60;
+  const hpPlain=plain.hp, hpArmored=armored.hp, hpOutside=outside.hp;
+  o.c.update(0.49); const beforeTick=plain.hp; o.c.update(0.01);
+  ok('первый тик приходит через 0,5 сек и отдельно применяет защиту целей',
+    beforeTick===hpPlain && Math.abs((hpPlain-plain.hp)-12)<1e-9 &&
+    Math.abs((hpArmored-armored.hp)-6)<1e-9 && outside.hp===hpOutside && o.p.perfectRhythmHeroN===0,
+    (hpPlain-plain.hp).toFixed(1)+'/'+(hpArmored-armored.hp).toFixed(1));
+  o.c.update(1.5);
+  ok('за 2 секунды трещина наносит ровно четыре тика и исчезает',
+    Math.abs((hpPlain-plain.hp)-48)<1e-9 && Math.abs((hpArmored-armored.hp)-24)<1e-9 &&
+    outside.hp===hpOutside && o.G.groundbreakerCracks.length===0,
+    (hpPlain-plain.hp).toFixed(1)+'/'+(hpArmored-armored.hp).toFixed(1));
+}
+
+{
+  const o=mk(null,1); o.G.bag.add('groundbreaker','flag',1); o.c.recalc();
+  o.c.setLanguage('ru');
+  o.p.groundbreakerWaveN=0; const ru3=o.c.activeCombatBuffs(o.p,0,0);
+  o.p.groundbreakerWaveN=1; const ru2=o.c.activeCombatBuffs(o.p,0,0);
+  o.p.groundbreakerWaveN=2; const ready=o.c.activeCombatBuffs(o.p,0,0);
+  o.c.setLanguage('en'); const en=o.c.activeCombatBuffs(o.p,0,0);
+  ok('нижний индикатор показывает отсчёт и готовую волну на RU/EN',
+    ru3.includes('Землелом через 3 волны') && ru2.includes('Землелом через 2 волны') &&
+    ready.includes('Землелом — ВОЛНА!') && en.includes('Groundbreaker — WAVE!'));
+}
+
+{
+  const o=mk(null,1), ids=['key.living_fortress','key.unsheathed_blade'];
+  const cards=ids.map(id=>o.c.__api.MODS.find(x=>x.id===id));
+  ok('Живая крепость и Клинок без ножен — кейстоуны только Воина',
+    cards.every(x=>x&&x.rar===3&&x.kind==='flag'&&o.c.allowedClassesForMod(x).join(',')==='blade'));
+  o.G.picks.push(...cards.map(x=>({id:x.id,nm:x.nm,val:'',cat:x.cat})));
+  ok('оба выбранных воинских кейстоуна полностью уходят из раздачи',
+    Array.from({length:100},()=>o.c.rollCards()).flat().every(x=>!ids.includes(x.id)));
+}
+
+{
+  const base=mk(null,1), live=mk(null,1);
+  for(const o of [base,live]){
+    o.G.bag.add('armor','flat',40); o.G.bag.add('thorns','inc',25); o.G.bag.add('dodge','flat',30);
+  }
+  live.G.bag.add('kLivingFortress','flag',1); base.c.recalc(); live.c.recalc();
+  ok('Живая крепость даёт ×1,3 брони, ×2 Шипов и обнуляет Уворот',
+    Math.abs(live.D.armor-base.D.armor*1.3)<1e-9&&live.D.thornsRaw===25&&live.D.thorns===50&&live.D.dodge===0);
+  ok('Живая крепость применяет ×0,70 движения и ×0,80 скорости атаки',
+    Math.abs(live.D.mspd-base.D.mspd*0.70)<1e-9&&Math.abs(live.D.aspd-base.D.aspd*0.80)<1e-9,
+    live.D.mspd.toFixed(1)+' скорости · '+live.D.aspd.toFixed(2)+' атак/сек');
+}
+
+{
+  const o=mk(null,1); o.G.bag.add('kLivingFortress','flag',1); o.G.bag.add('steelCrowd','flat',10); o.c.recalc();
+  for(let i=0;i<6;i++) foe(o,20+i*5,0);
+  const hp=o.p.hp; o.c.hurt(100,false,false,'ВРАГ · снаряд','norm');
+  const expected=100*(1-78/(78+90));
+  ok('Живая крепость усиливает и динамическую броню Стальной толпы',
+    Math.abs((hp-o.p.hp)-expected)<1e-9,(hp-o.p.hp).toFixed(2)+' урона');
+}
+
+{
+  const o=mk(null,1); o.G.bag.add('kLivingFortress','flag',1); o.c.recalc();
+  o.c.attack(); o.c.attack(); const before=o.p.barrier; o.c.attack(); const granted=o.p.barrier;
+  o.p.barrier=o.D.life*0.05; o.c.attack(); o.c.attack(); o.c.attack();
+  ok('каждый третий взмах Живой крепости даёт минимум 3% max HP барьера',
+    before===0&&Math.abs(granted-o.D.life*0.03)<1e-9&&Math.abs(o.p.barrier-o.D.life*0.05)<1e-9,
+    granted.toFixed(2)+' HP');
+}
+
+{
+  const base=mk(null,1), blade=mk(null,1); blade.G.bag.add('kUnsheathedBlade','flag',1); blade.c.recalc();
+  const baseRange=base.c.attackRange(), bladeRange=blade.c.attackRange();
+  const baseDamage=fixedDamage(base,true), bladeDamage=fixedDamage(blade,true);
+  ok('Клинок без ножен умножает дальность, дугу и ближний урон на 1,5/1,5/1,4',
+    Math.abs(blade.D.arc/base.D.arc-1.5)<1e-9&&Math.abs(bladeRange/baseRange-1.5)<1e-9&&
+    Math.abs(bladeDamage/baseDamage-1.4)<1e-9,
+    bladeRange.toFixed(1)+' дальности · '+bladeDamage.toFixed(1)+' урона');
+}
+
+{
+  const o=mk(null,1); o.c.__api.STORE.data.shop.sarmor=40;
+  o.G.bag.add('armor','flat',30); o.G.bag.add('drFlat','flat',7); o.G.bag.add('kUnsheathedBlade','flag',1); o.c.recalc();
+  const hp=o.p.hp; o.c.hurt(20,false,false,'ВРАГ · снаряд','norm');
+  ok('Клинок обнуляет обычную и магазинную броню, сохраняя Панцирь от роя',
+    o.D.armor===0&&o.D.drShop===0&&o.D.drFlat===7&&Math.abs((hp-o.p.hp)-13)<1e-9,
+    'броня '+o.D.armor+' · магазин '+o.D.drShop+' · панцирь '+o.D.drFlat);
+}
+
+{
+  const base=mk(null,1), both=mk(null,1);
+  both.G.bag.add('armor','flat',40); both.G.bag.add('thorns','inc',25);
+  both.G.bag.add('kLivingFortress','flag',1); both.G.bag.add('kUnsheathedBlade','flag',1); both.c.recalc();
+  ok('два воинских кейстоуна сочетаются, но обнуление брони имеет приоритет',
+    both.D.armor===0&&both.D.thorns===50&&Math.abs(both.D.mspd-base.D.mspd*0.7)<1e-9&&
+    Math.abs(both.D.aspd-base.D.aspd*0.8)<1e-9&&both.D.warriorMeleeMore===1.4&&Math.abs(both.D.arc/base.D.arc-1.5)<1e-9);
+}

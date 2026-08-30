@@ -31,12 +31,12 @@ function neutralHit(deadly=true){
 }
 
 { const {c}=mk(), m=c.__api.MODS.find(x=>x.id==='shape.double_hit');
-  ok('синяя карточка: 5–15%, целые значения, потолок 25%',
-    m.rar===1 && m.r[0]===5 && m.r[1]===15 && m.int===true && m.cap===25); }
+  ok('синяя карточка: 1–5%, целые значения, потолок 25%',
+    m.rar===1 && m.r[0]===1 && m.r[1]===5 && m.int===true && m.cap===25); }
 
 { const {c}=mk(), m=c.__api.MODS.find(x=>x.id==='shape.double_hit');
   ok('бросок карточки достигает обоих границ',
-    c.rollModValue(m,()=>0)===5 && c.rollModValue(m,()=>0.999999)===15); }
+    c.rollModValue(m,()=>0)===1 && c.rollModValue(m,()=>0.999999)===5); }
 
 { const {c,G}=mk(24), m=c.__api.MODS.find(x=>x.id==='shape.double_hit');
   ok('последняя карточка обрезается ровно до остатка',

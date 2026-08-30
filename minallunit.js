@@ -31,6 +31,32 @@ const quarter = v => v > 0.17 && v < 0.33;
 const quarterOfCap = v => v > 0.02 && v < 0.11;
 const quarterOfStunCap = v => v > 0.07 && v < 0.18;
 
+console.log('КОСТЯНОЙ СЛУГА');
+{ const c=loadGame('./PolyGrind.html'),m=c.__api.MODS.find(x=>x.id==='min.count');
+  ok('карточка переименована и имеет ровно три фиксированных ранга',m.nm==='Костяной слуга'&&
+    m.kind==='flat'&&m.stat==='minCount'&&m.r[0]===1&&m.r[1]===1); }
+{ const c=loadGame('./PolyGrind.html'); c.newGame('necro','keys'); const G=c.__api.G;
+  ok('Некромант начинает сразу с трёх скелетов',c.__api.D.maxSkel===3&&
+    G.minions.length===3&&G.minions.every(m=>m.kind==='skeleton'),'живых '+G.minions.length+' · лимит '+c.__api.D.maxSkel); }
+{ const c=loadGame('./PolyGrind.html'); c.newGame('necro','keys'); c.setLanguage('ru');
+  const m=c.__api.MODS.find(x=>x.id==='min.count'),html=c.levelCardBodyHtml({m,v:1,val:'+1.0'});
+  ok('первый ранг карточки показывает полный переход 3 → 4',html.includes('Максимум скелетов: +1')&&
+    html.includes('Сейчас: 3 → 4')&&html.includes('Ранг: 1/3'),html.replace(/<[^>]+>/g,' · ')); }
+{ const c=loadGame('./PolyGrind.html'); c.newGame('necro','keys');
+  const m=c.__api.MODS.find(x=>x.id==='min.count'),html=c.levelCardBodyHtml({m,v:1,val:'+1.0'});
+  ok('английская карточка сохраняет те же числа и подписи',html.includes('Maximum Skeletons: +1')&&
+    html.includes('Current: 3 → 4')&&html.includes('Rank: 1/3')); }
+{ const c=loadGame('./PolyGrind.html'); c.newGame('necro','keys'); const G=c.__api.G,m=c.__api.MODS.find(x=>x.id==='min.count'),limits=[];
+  for(let i=0;i<3;i++){ G.bag.add('minCount','flat',1); c.recalc(); limits.push(c.__api.D.maxSkel); }
+  ok('три выбора повышают предел строго 4 → 5 → 6',limits.join(',')==='4,5,6',limits.join(' → '));
+  ok('после третьего ранга карточка сообщает максимум и скрывается',G.bag.flat('minCount')===3&&m.hide());
+  ok('достигшая шести карточка полностью исчезает из случайной выдачи',
+    Array.from({length:40},()=>c.rollCards()).flat().every(x=>x.id!=='min.count')); }
+{ const c=loadGame('./PolyGrind.html'); c.newGame('necro','keys'); c.setLanguage('ru'); c.renderSheet();
+  const html=c.document.getElementById('sheet').innerHTML;
+  ok('интерфейс показывает стартовый счётчик «Скелеты: 3/6»',
+    html.includes('Скелеты:</span><b>3/6'),html.match(/Скелеты[^<]*<\/span><b>[^<]*/)?.[0]||'нет'); }
+
 console.log('СТАТУСЫ ОТ УДАРА СВИТЫ');
 { const o = mk([['igniteCh',25]]);
   const r = procRate(o, ()=>{ o.e.dots.fire.dps=0; o.e.dots.fire.n=0; }, ()=>o.e.dots.fire.dps>0);
@@ -67,7 +93,7 @@ console.log('СТАТУСЫ ОТ УДАРА СВИТЫ');
   const elite = impulse('blob','elite');
   const eliteRunner = impulse('runner','elite');
   const boss = impulse('tank','boss');
-  ok('отбрасывание свиты: полная сила, шанс 25%', Math.abs(normal.force - 260) < 0.01 && quarter(normal.rate),
+  ok('отбрасывание свиты: полная сила, 25% от потолка 75%', Math.abs(normal.force - 260) < 0.01 && normal.rate>0.13 && normal.rate<0.25,
      normal.force.toFixed(1) + ' · ' + Math.round(normal.rate*100) + '%');
   ok('Бегун: сила отбрасывания −30%', Math.abs(runner.force/normal.force - 0.70) < 0.001, runner.force.toFixed(1));
   ok('любая элита: сила отбрасывания −50%', Math.abs(elite.force/normal.force - 0.50) < 0.001, elite.force.toFixed(1));
@@ -127,32 +153,37 @@ console.log('БАЛАНС ВСЕЙ СВИТЫ');
 console.log('ПОЛЕ КОСТЕЙ');
 { const c = loadGame('./PolyGrind.html');
   const m = c.__api.MODS.find(x=>x.id==='min.bone_field');
-  ok('обычная бесконечная ветка доступна только Некроманту', !!m && m.kind==='inc' && m.stat==='boneField' &&
-     m.r[0]===2 && m.r[1]===4 && m.int===true && m.rar===undefined && m.cap===undefined &&
+  ok('фиксированная одноразовая карточка доступна только Некроманту', !!m && m.kind==='flag' && m.stat==='boneField' &&
+     m.r[0]===1 && m.r[1]===1 && m.rar===undefined && m.cap===undefined &&
      c.allowedClassesForMod(m).join(',')==='necro'); }
-{ const o = mk([['boneField',4,'inc']]);
+{ const c=loadGame('./PolyGrind.html'); c.newGame('necro','keys'); const G=c.__api.G,m=c.__api.MODS.find(x=>x.id==='min.bone_field');
+  const before=Array.from({length:80},()=>c.rollCards()).flat().some(x=>x.id===m.id);
+  G.bag.add('boneField','flag',1); G.picks.push({id:m.id}); c.recalc();
+  const after=Array.from({length:80},()=>c.rollCards()).flat().some(x=>x.id===m.id);
+  ok('после выбора Поле костей исчезает из выдачи',before&&!after); }
+{ const o = mk([['boneField',1,'flag']]);
   o.G.corpses=[{x:o.p.x+400,y:o.p.y,life:10}]; const edge=o.c.nearbyBoneFieldCorpseCount();
   o.G.corpses=[{x:o.p.x+401,y:o.p.y,life:10}]; const outside=o.c.nearbyBoneFieldCorpseCount();
-  o.G.corpses=Array.from({length:16},()=>({x:o.p.x+10,y:o.p.y,life:10})); const capped=o.c.nearbyBoneFieldCorpseCount();
-  ok('радиус 400 включителен, максимум — 15 трупов', edge===1 && outside===0 && capped===15,
+  o.G.corpses=Array.from({length:10},()=>({x:o.p.x+10,y:o.p.y,life:10})); const capped=o.c.nearbyBoneFieldCorpseCount();
+  ok('радиус 400 включителен, максимум — 9 трупов', edge===1 && outside===0 && capped===9,
      'граница '+edge+' · снаружи '+outside+' · потолок '+capped); }
-{ const o = mk([['boneField',4,'inc']]);
+{ const o = mk([['boneField',1,'flag']]);
   o.D.baseMin=o.D.baseMax=100; o.D.elem={fire:0,cold:0,lit:0,poi:0};
   o.D.incAll=0; o.D.moreAll=1; o.D.critCh=o.D.minCrit=o.D.superCh=o.D.dblHit=0;
   o.e.kind='norm'; o.e.armor=0; o.e.ward=null; o.e.bulwark=0; o.e.pack=null;
   const strike=()=>{ const hp=o.e.hp; o.c.minionHit(o.e,o.m); return hp-o.e.hp; };
   o.G.corpses=[]; const base=strike();
-  o.G.corpses=Array.from({length:15},()=>({x:o.p.x+20,y:o.p.y,life:10})); const boosted=strike();
-  o.G.corpses=Array.from({length:16},()=>({x:o.p.x+20,y:o.p.y,life:10})); const capped=strike();
-  o.G.corpses=Array.from({length:15},()=>({x:o.p.x+401,y:o.p.y,life:10})); const far=strike();
-  ok('15 трупов по 4% дают свите ровно +60% урона', Math.abs(boosted/base-1.6)<1e-6 &&
+  o.G.corpses=Array.from({length:9},()=>({x:o.p.x+20,y:o.p.y,life:10})); const boosted=strike();
+  o.G.corpses=Array.from({length:10},()=>({x:o.p.x+20,y:o.p.y,life:10})); const capped=strike();
+  o.G.corpses=Array.from({length:9},()=>({x:o.p.x+401,y:o.p.y,life:10})); const far=strike();
+  ok('9 трупов по 5% дают свите ровно +45% урона', Math.abs(boosted/base-1.45)<1e-6 &&
      Math.abs(capped-boosted)<1e-6 && Math.abs(far-base)<1e-6,
-     base.toFixed(1)+' → '+boosted.toFixed(1)+' · 16-й '+capped.toFixed(1)); }
-{ const o = mk([['boneField',4,'inc']]); o.c.setLanguage('ru');
+     base.toFixed(1)+' → '+boosted.toFixed(1)+' · 10-й '+capped.toFixed(1)); }
+{ const o = mk([['boneField',1,'flag']]); o.c.setLanguage('ru');
   o.G.corpses=Array.from({length:3},()=>({x:o.p.x+20,y:o.p.y,life:10}));
   const active=o.c.activeCombatBuffs(o.p,0,0).find(x=>x.startsWith('Поле костей'));
   o.G.corpses=[]; const empty=o.c.activeCombatBuffs(o.p,0,0).find(x=>x.startsWith('Поле костей'));
-  ok('HUD показывает текущий бонус, включая нулевой', active==='Поле костей +12% урона свиты' &&
+  ok('HUD показывает текущий бонус, включая нулевой', active==='Поле костей +15% урона свиты' &&
      empty==='Поле костей +0% урона свиты', (active||'нет')+' · '+(empty||'нет')); }
 
 console.log('ЕСТЕСТВЕННАЯ СМЕРТЬ СВИТЫ');

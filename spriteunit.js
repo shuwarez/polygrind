@@ -72,18 +72,23 @@ const newGloveIconKeys=['claws','thunder','ricochet','brute','riposte','critmass
 const newBootIconKeys=['lava','frost','momentum','marathon','panic','sprint'];
 const newRingIconKeys=['exec','duel','reaper','siege','headsman','critaim','vacuum','looter','arrow'];
 const newRelicIconKeys=['trinity','overload','breath','gravity','warskel','goldbag','xpbag'];
-const supportedRareItemKeys=rareItemKeys.concat(newAmuletIconKeys,newGloveIconKeys,newBootIconKeys,newRingIconKeys,newRelicIconKeys);
+const commonItemIconKeys=['copperChronometer','knottedCharm','tallyGloves','smithThumbstall','draftGloves','satinGloves',
+  'hobnailedSoles','shortCircuitBoots','trailfinders','boneSpurs','firstTraceRing','closeHarvestRing'];
+const rareItemSetIconKeys=['sealHunt','mothFang','cometEye','sealPack','eclipseBrushes','sparkstepBoots','marchingGreaves',
+  'secondWindRing','coolingAshRing','confinementRing','reactionRing','conductorRing','ledgerDebts','glassBell'];
+const supportedRareItemKeys=rareItemKeys.concat(newAmuletIconKeys,newGloveIconKeys,newBootIconKeys,newRingIconKeys,newRelicIconKeys,
+  commonItemIconKeys,rareItemSetIconKeys);
 const rareItemObject=(html.match(/const RARE_ITEM_SPRITE_DATA = \{([\s\S]*?)\n\};/)||[])[1]||'';
 const embeddedRareItemPng = key => {
   const match=rareItemObject.match(new RegExp('^\\s*'+key+":'data:image/png;base64,([^']+)'",'m'));
   return match ? Buffer.from(match[1], 'base64') : Buffer.alloc(0);
 };
 const rareItemBytes=supportedRareItemKeys.map(embeddedRareItemPng), rareItemPng=rareItemBytes.map(pngInfo);
-ok('55 редких предметов и элементов экипировки встроены как индексированные PNG 24×24',
+ok('81 предмет и элемент экипировки встроены как индексированные PNG 24×24',
   rareItemPng.every(info=>info.png && info.w===24 && info.h===24 && info.color===3));
-ok('все 55 иконок различаются и вместе укладываются в 24 КБ',
+ok('все 81 иконка различаются и вместе укладываются в 28 КБ',
   new Set(rareItemBytes.map(data=>data.toString('base64'))).size===supportedRareItemKeys.length &&
-  rareItemBytes.reduce((sum,data)=>sum+data.length,0)<24000,
+  rareItemBytes.reduce((sum,data)=>sum+data.length,0)<28000,
   rareItemBytes.reduce((sum,data)=>sum+data.length,0)+' байт');
 ok('вся экипировка берёт общий PNG на земле и во всех элементах интерфейса',
   supportedRareItemKeys.every(key=>c.rareItemSpriteHTML(key,'hud').includes('rare-item-icon hud') &&

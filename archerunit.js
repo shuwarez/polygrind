@@ -22,11 +22,14 @@ function arrowHit(o,age,{first=true}={}){
 }
 
 {
-  const o=setup(),mods=o.c.__api.MODS,ids=['archer.long_flight','archer.accelerated','archer.swift_arrows','archer.clean_trajectory','archer.elemental_pierce','archer.fletching','archer.split_arrow','archer.return_shot','archer.hunter_mark'];
-  ok('в каталоге есть все девять новых навыков Лучника',ids.every(id=>mods.some(m=>m.id===id)));
-  ok('все девять навыков доступны только Лучнику',ids.every(id=>o.c.allowedClassesForMod(mods.find(m=>m.id===id)).join(',')==='bow'));
+  const o=setup(),mods=o.c.__api.MODS,ids=['archer.long_flight','archer.accelerated','archer.swift_arrows','archer.clean_trajectory','archer.elemental_pierce','archer.fletching','archer.split_arrow','archer.return_shot','archer.hunter_mark','archer.mirror_volley'];
+  ok('в каталоге есть все десять новых навыков Лучника',ids.every(id=>mods.some(m=>m.id===id)));
+  ok('все десять навыков доступны только Лучнику',ids.every(id=>o.c.allowedClassesForMod(mods.find(m=>m.id===id)).join(',')==='bow'));
   ok('числовые ветки не имеют потолка',ids.filter(id=>mods.find(m=>m.id===id).kind!=='flag').every(id=>mods.find(m=>m.id===id).cap===undefined));
-  ok('три новые синие карты одноразовые',ids.slice(-3).every(id=>{const m=mods.find(x=>x.id===id);return m.kind==='flag'&&m.rar===1;}));
+  ok('три новые синие карты одноразовые',['archer.split_arrow','archer.return_shot','archer.hunter_mark'].every(id=>{const m=mods.find(x=>x.id===id);return m.kind==='flag'&&m.rar===1;}));
+  const mirror=mods.find(m=>m.id==='archer.mirror_volley');
+  ok('Зеркальный залп — фиолетовая одноразовая карта только Лучника',
+    mirror.kind==='flag'&&mirror.rar===2&&mirror.stat==='mirrorVolley'&&o.c.allowedClassesForMod(mirror).join(',')==='bow');
   o.G.bag.add('acceleratedArrow','inc',50);o.G.bag.add('cleanTrajectory','inc',50);o.c.recalc();
   ok('Стремительные стрелы открываются на 50% разгона',mods.find(m=>m.id==='archer.swift_arrows').show());
   ok('Элементальное пробитие открывается на 50% траектории',mods.find(m=>m.id==='archer.elemental_pierce').show());
@@ -42,6 +45,37 @@ function arrowHit(o,age,{first=true}={}){
     o.c.allowedClassesForMod(homing).join(',')+' · последний выбор +'+last+'%');
 }
 function fixed(o){o.D.baseMin=o.D.baseMax=100;o.D.elem={fire:0,cold:0,lit:0,poi:0};o.D.incAll=0;o.D.moreAll=1;o.D.critCh=o.D.superCh=o.D.dblHit=o.D.knock=0;return o;}
+
+{
+  const o=setup(),card=o.c.__api.MODS.find(x=>x.id==='archer.mirror_volley');
+  o.G.picks.push({id:card.id,nm:card.nm,val:'',cat:card.cat});
+  ok('после выбора Зеркальный залп полностью уходит из раздачи',
+    Array.from({length:100},()=>o.c.rollCards()).flat().every(x=>x.id!==card.id));
+}
+
+{
+  const o=setup();o.G.bag.add('mirrorVolley','flag',1);o.G.bag.add('projN','flat',2);o.c.recalc();fixed(o);o.p.aim=0.4;
+  for(let i=0;i<4;i++){o.c.attack();o.G.shots.length=0;}
+  ok('первые четыре залпа только двигают счётчик Зеркального залпа',
+    o.p.mirrorVolleyN===4&&o.G.delayedShots.length===0);
+  o.c.attack();
+  const queued=o.G.delayedShots[0],expected=[0.24,0.4,0.56];o.G.shots.length=0;
+  ok('пятый залп запоминает три направления и задержку 0,1 секунды',
+    o.p.mirrorVolleyN===5&&o.G.delayedShots.length===1&&queued.type==='mirrorVolley'&&
+    Math.abs(queued.fireAt-o.G.time-0.1)<1e-9&&queued.angles.every((a,i)=>Math.abs(a-expected[i])<1e-9));
+  o.c.update(0.099);
+  const early=o.G.shots.length===0&&o.G.delayedShots.length===1;o.c.update(0.001);
+  const ghosts=o.G.shots.filter(s=>s.mirrorGhost);
+  ok('призрачные стрелы появляются только на пороге 0,1 секунды',
+    early&&ghosts.length===3&&o.G.delayedShots.length===0);
+  ok('призрачный залп сохраняет направления и получает ровно 45% силы',
+    ghosts.every((s,i)=>Math.abs(s.a-expected[i])<1e-9&&s.attackMul===0.45&&s.playerArrow&&s.archerArrow));
+  const e=foe(o,100,0),ghost=ghosts[1],hp=e.hp;o.G.shots=[ghost];ghost.x=e.x;ghost.y=e.y;ghost.vx=ghost.vy=0;
+  o.c.update(0);
+  ok('призрачная стрела наносит 45% обычного удара',Math.abs((hp-e.hp)-45)<1e-9,hp-e.hp+' урона');
+  ok('призрачный залп не двигает счётчик и не создаёт новый повтор',
+    o.p.mirrorVolleyN===5&&o.G.delayedShots.length===0);
+}
 
 {
   const o=setup();o.G.bag.add('splitArrow','flag',1);o.c.recalc();fixed(o);
@@ -201,6 +235,77 @@ function fixed(o){o.D.baseMin=o.D.baseMax=100;o.D.elem={fire:0,cold:0,lit:0,poi:
   const e=foe(o);o.c.damage(e,{elementChanceMul:2});
   ok('второй удар сохраняет удвоенный стихийный шанс первой стрелы',e.dots.fire.n===2,
     e.dots.fire.n+' срабатывания поджога');
+}
+
+{
+  const o=setup(),card=o.c.__api.MODS.find(x=>x.id==='key.one_arrow_technique');
+  ok('Техника одной стрелы — оранжевый одноразовый кейстоун только Лучника',
+    card&&card.kind==='flag'&&card.rar===3&&card.stat==='kOneArrow'&&o.c.allowedClassesForMod(card).join(',')==='bow');
+  o.G.picks.push({id:card.id,nm:card.nm,val:'',cat:card.cat});
+  ok('после выбора Техника одной стрелы полностью уходит из раздачи',
+    Array.from({length:100},()=>o.c.rollCards()).flat().every(x=>x.id!==card.id));
+}
+
+{
+  const o=setup();
+  o.G.bag.add('projN','flat',5);o.G.bag.add('pierce','flat',2);o.G.bag.add('chain','flat',4);
+  o.G.bag.add('splitArrow','flag',1);o.G.bag.add('shotgun','flag',1);o.G.bag.add('kOneArrow','flag',1);o.c.recalc();
+  ok('кейстоун фиксирует один снаряд, даёт +3 пробития и сохраняет урон отскоков',
+    o.D.oneArrowTechnique&&o.D.projN===1&&o.D.pierce===5&&o.D.chainKeep&&o.D.oneArrowDamage===2.4);
+  const mods=o.c.__api.MODS,dead=['shape.proj_count','archer.split_arrow','shape.chain_retention'];
+  ok('Дробовик и раздвоение отключены, а бесполезные карты уходят из пула',
+    !o.D.shotgun&&!o.D.splitArrow&&mods.find(x=>x.id==='shape.proj_count').hide()&&
+    mods.find(x=>x.id==='archer.split_arrow').hide()&&!mods.find(x=>x.id==='shape.chain_retention').show()&&
+    Array.from({length:80},()=>o.c.rollCards()).flat().every(x=>!dead.includes(x.id)));
+}
+
+{
+  const o=setup();o.G.bag.add('projN','flat',6);o.G.bag.add('pierce','flat',2);o.G.bag.add('kOneArrow','flag',1);o.c.recalc();fixed(o);
+  o.c.attack();const s=o.G.shots[0];
+  ok('реальная атака выпускает ровно одну стрелу с ×2,4 и итоговым пробитием',
+    o.G.shots.length===1&&s.attackMul===2.4&&s.oneArrowMul===2.4&&s.pierce===5);
+}
+
+{
+  const o=setup();o.G.bag.add('splitArrow','flag',1);o.G.bag.add('kOneArrow','flag',1);o.c.recalc();fixed(o);
+  const hit=arrowHit(o,0);
+  ok('единственная стрела наносит ×2,4 урона и не создаёт раздвоение',
+    Math.abs(hit.damage-240)<1e-9&&o.G.shots.every(s=>!s.splitShard),hit.damage+' урона');
+}
+
+{
+  const o=setup();o.G.bag.add('chain','flat',2);o.G.bag.add('kOneArrow','flag',1);o.c.recalc();fixed(o);
+  const a=foe(o,100,0),b=foe(o,200,0),ah=a.hp,bh=b.hp;o.c.spawnPlayerShot(o.p,0,o.G.weapon,false);
+  const s=o.G.shots[0];s.x=a.x;s.y=a.y;s.vx=s.vy=0;o.c.update(0);
+  s.x=b.x;s.y=b.y;s.vx=s.vy=0;o.c.update(0);
+  ok('обычные отскоки усиленной стрелы больше не теряют 25% урона',
+    Math.abs((ah-a.hp)-240)<1e-9&&Math.abs((bh-b.hp)-240)<1e-9,
+    (ah-a.hp)+'/'+(bh-b.hp)+' урона');
+}
+
+{
+  const o=setup();o.G.bag.add('returnShot','flag',1);o.G.bag.add('kOneArrow','flag',1);o.c.recalc();fixed(o);
+  for(let i=0;i<13;i++)o.c.spawnPlayerShot(o.p,0,o.G.weapon,false);
+  const s=o.G.shots.at(-1),began=o.c.beginReturningArrow(s);
+  ok('возвратный выстрел наносит 30% уже усиленной стрелы',began&&Math.abs(s.attackMul-0.72)<1e-9,s.attackMul+'×');
+}
+
+{
+  const o=setup();o.G.bag.add('mirrorVolley','flag',1);o.G.bag.add('kOneArrow','flag',1);o.c.recalc();fixed(o);
+  for(let i=0;i<5;i++){o.c.attack();o.G.shots.length=0;}
+  o.c.update(0.1);const ghosts=o.G.shots.filter(s=>s.mirrorGhost);
+  ok('Зеркальный залп повторяет одну усиленную стрелу с коэффициентом 45%',
+    ghosts.length===1&&Math.abs(ghosts[0].attackMul-1.08)<1e-9,ghosts[0]&&ghosts[0].attackMul+'×');
+}
+
+{
+  const o=setup();o.G.bag.add('projN','flat',3);o.G.bag.add('pierce','flat',2);o.c.recalc();
+  const card=o.c.__api.MODS.find(x=>x.id==='key.one_arrow_technique'),data=o.c.cardImpactData(card,{v:1});
+  const row=key=>data.rows.find(x=>x.key===key);
+  ok('подробная подсказка показывает ×2,4, один снаряд, залп и +3 пробития',
+    Math.abs(row('hit').after/row('hit').before-2.4)<1e-9&&row('projectiles').before===4&&row('projectiles').after===1&&
+    Math.abs(row('volley').before-row('hit').before*4)<1e-9&&Math.abs(row('volley').after-row('hit').after)<1e-9&&
+    row('pierce').before===2&&row('pierce').after===5);
 }
 
 console.log(JSON.stringify({n,fail}));if(fail)process.exitCode=1;

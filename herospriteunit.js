@@ -38,11 +38,12 @@ ok('официальное имя Grim Grind стоит в title и доступ
   html.includes('<title>Grim Grind</title>') && html.includes('aria-label="Grim Grind"') &&
   !html.includes("fillText('PolyGrind'"));
 ok('оптимизированный прозрачный лист нового логотипа встроен в HTML',
-  !!logoPng && logoPng.length===20355 && logoHash==='806942D5DDCC55DE543A22D35AEE5F9A5B0A2722AD997A18AB35081477EB1624',
+  !!logoPng && logoPng.length===101980 && logoHash==='16073A42607471FF463693693FFEB70D978F9AFF11F60281EC64C70D40CE665D',
   (logoPng?logoPng.length:0)+' Б · '+(logoHash||'нет'));
-ok('лист логотипа сжат до 2048×96 и восьми кадров 256×96',
-  !!logoPng && logoPng.readUInt32BE(16)===2048 && logoPng.readUInt32BE(20)===96 &&
-  html.includes("{w:256,h:96,count:8,fps:5}"));
+ok('лист логотипа сохраняет детали: 4096×144 и восемь кадров 512×144',
+  !!logoPng && logoPng.readUInt32BE(16)===4096 && logoPng.readUInt32BE(20)===144 &&
+  html.includes("{w:512,h:144,count:8,fps:5}") &&
+  optimizer.includes('opaque_colors=63, transparent_index=63, bits=8'));
 ok('лист факела сжат до 576×192, прозрачен и встроен один раз',
   !!torchPng && torchPng.length===6469 && torchHash==='F3FF6456E62B5452FE2B56B67258C9F56F0F2F80DC66C681B8558CB9524BDB55' &&
   torchPng.readUInt32BE(16)===576 && torchPng.readUInt32BE(20)===192 &&
@@ -53,7 +54,10 @@ ok('меню анимирует свет неподвижного логотип
   html.includes('Math.floor(tm*GRIM_GRIND_TORCH_FRAME.fps) % GRIM_GRIND_TORCH_FRAME.count') &&
   html.includes('drawBrandTitle(t);') && html.includes('drawBrandTorches(t);') &&
   html.includes('id="brandtorchl"') && html.includes('id="brandtorchr"') &&
-  html.includes('#brandnm{display:block;width:clamp(390px,45vw,510px)') &&
+  html.includes('#brandnm{display:block;width:clamp(382px,44.1vw,500px)') &&
+  html.includes('.overlay.menu #brandnm{width:min(40.2vw,304px)}') &&
+  html.includes('.overlay.menu #brandnm{width:clamp(333px,34.3vw,382px)}') &&
+  html.includes('aspect-ratio:32/9') && html.includes('id="brandnm" width="512" height="144"') &&
   html.includes('.brandtorch{display:block;width:clamp(38.4px,4vw,51.2px)') &&
   html.includes('#brandtorchr{transform:scaleX(-1)}') &&
   (html.match(/__brandFrame === frame/g)||[]).length===2 &&

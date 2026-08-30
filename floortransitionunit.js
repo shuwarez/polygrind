@@ -70,10 +70,13 @@ const fresh = () => loadGame('./PolyGrind.html', {random:() => 0.5});
     prevented && G.paused === false && G.floorFinds.length === 0 && G.player.dashN===dashBefore);
 
   const floor = G.floor;
+  G.corpses.push({x:111,y:222,life:9},{x:-333,y:444,life:4}); G.raiseT = 1.25;
   p.x = G.portal.x; p.y = G.portal.y; p.dash = 0.2; G.portal.t = 1;
   c.update(0.01);
   ok('касание портала переводит на следующий этаж', G.floor === floor + 1,
     floor + ' → ' + G.floor);
+  ok('новый этаж очищает трупы и прогресс их поднятия', G.corpses.length === 0 && G.raiseT === 0,
+    'трупов ' + G.corpses.length + ', таймер ' + G.raiseT);
   ok('на новом этаже игрок находится точно в центре', p.x === 0 && p.y === 0,
     '(' + p.x + ', ' + p.y + ')');
   ok('рывок не переносит импульс через портал', p.dash === 0, String(p.dash)); }
@@ -105,3 +108,53 @@ const fresh = () => loadGame('./PolyGrind.html', {random:() => 0.5});
   ok('обычный ручной подбор книги сохраняет окно', G.paused === true);
   G.paused = false; c.takeAmulet('mirror');
   ok('обычный ручной подбор амулета сохраняет окно', G.paused === true); }
+
+/* Регрессия реального сбоя: tooltip сводки оставался после удаления строки,
+   затем пробел открывал level-up сквозь окно книги и оставлял вечную паузу. */
+{ const c = fresh();
+  const overlay = c.document.getElementById('ov');
+  const tip = {style:{},innerHTML:'',offsetWidth:420,offsetHeight:180,
+    getBoundingClientRect:()=>({left:0,top:0,right:0,bottom:0})};
+  const oldGet = c.document.getElementById.bind(c.document);
+  const oldQuery = c.document.querySelector.bind(c.document);
+  c.document.getElementById = id => id === 'skilltip' ? tip : oldGet(id);
+  c.document.querySelector = selector => selector === '#skilltip' ? tip : oldQuery(selector);
+  c.newGame('bow', 'keys');
+  const G = c.__api.G;
+  const find = {ico:'BOOK',col:'#79c9ff',name:'КНИГА МОЛНИИ',detail:'КНИГА · ТИР 1 · +3',tip:'описание книги'};
+  c.innerWidth = 1280; c.innerHeight = 720;
+  G.floorFinds = [find]; c.showFloorFindSummary();
+  c.showFloorFindTip({clientX:100,clientY:100},find,null);
+  ok('tooltip сводки действительно открыт перед закрытием', tip.style.display === 'block');
+  c.handleGameKeyDown({code:'Space',key:' ',repeat:false,preventDefault(){}});
+  ok('пробел закрывает сводку вместе с наведённым tooltip', tip.style.display === 'none' && !G.floorFindSummaryOpen);
+  c.handleGameKeyUp({code:'Space',key:' '});
+
+  G.pending = 1; G.rerolls = 2;
+  c.takeBook('shock');
+  ok('книга имеет приоритетное модальное окно перед level-up', G.paused && overlay.innerHTML.includes('id="bkok"'));
+  const rerolls = G.rerolls;
+  c.handleGameKeyDown({code:'Space',key:' ',repeat:false,preventDefault(){}});
+  ok('пробел сначала подтверждает книгу, не тратя переброс', !G.paused && G.rerolls === rerolls &&
+    G.pending === 1 && overlay.innerHTML.includes('УРОВЕНЬ'));
+  c.handleGameKeyUp({code:'Space',key:' '});
+  c.handleGameKeyDown({code:'Digit1',key:'1',repeat:false,preventDefault(){}});
+  ok('выбор карточки снимает overlay и не оставляет вечную паузу', G.pending === 0 && !G.paused &&
+    G.levelUpCards === null && overlay.style.display === 'none' && tip.style.display === 'none');
+  const time = G.time; G.hitStop = 0; c.loop(20);
+  ok('после последовательности игровой цикл снова обновляется', G.time > time, G.time + ' > ' + time); }
+
+{ const c = fresh(); c.newGame('bow', 'keys');
+  const G = c.__api.G, p = G.player, overlay = c.document.getElementById('ov');
+  p.dashN = 0; p.dashCd = 3;
+  c.takeBook('cold');
+  let prevented = false;
+  c.handleGameKeyDown({code:'Space',key:' ',repeat:true,preventDefault(){prevented=true;}});
+  ok('повторный пробел после рывка закрывает окно книги на КД', prevented && !G.paused &&
+    overlay.style.display === 'none' && p.dashN === 0 && p.dashCd === 3);
+  p.dashN = 1; p.dash = 0;
+  c.handleGameKeyDown({code:'Space',key:' ',repeat:true,preventDefault(){}});
+  ok('остаток удержания после окна не расходует новый заряд рывка', p.dashN === 1 && G.modalSpaceHeld === true);
+  c.handleGameKeyUp({code:'Space',key:' '});
+  c.handleGameKeyDown({code:'Space',key:' ',repeat:false,preventDefault(){}});
+  ok('после отпускания новый пробел снова выполняет рывок', !G.modalSpaceHeld && p.dashN === 0 && p.dash > 0); }

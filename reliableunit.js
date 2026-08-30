@@ -17,6 +17,14 @@ function defense(normalDr=0){
   c.recalc();
   return {c,G,D:c.__api.D,m:c.__api.MODS.find(x=>x.id==='def.normal_reduction')};
 }
+function knockback(chance=0){
+  const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys');
+  const G=c.__api.G;
+  if (chance) G.bag.add('knock','chance',chance);
+  c.recalc();
+  return {c,G,D:c.__api.D,m:c.__api.MODS.find(x=>x.id==='cc.knockback'),
+    dizzy:c.__api.MODS.find(x=>x.id==='cc.dizzy')};
+}
 function critWave(primaryHp=1000){
   const c=loadGame('./PolyGrind.html',{random:()=>0}); c.newGame('bow','keys');
   const G=c.__api.G, D=c.__api.D;
@@ -55,6 +63,18 @@ console.log('Надёжный удар');
 { const o=build(), crit=o.c.__api.MODS.find(x=>x.id==='crit.chance_flat');
   ok('плоский шанс крита переведён в синий тир без смены диапазона',
     crit.rar===1 && crit.kind==='flat' && crit.stat==='critCh' && crit.r[0]===4 && crit.r[1]===8); }
+
+console.log('Шанс отбрасывания');
+{ const o=knockback();
+  ok('карточка даёт целые 5–15% с потолком 75%',o.m.kind==='chance' && o.m.r[0]===5 &&
+    o.m.r[1]===15 && o.m.int===true && o.m.cap===75 &&
+    o.c.rollModValue(o.m,()=>0)===5 && o.c.rollModValue(o.m,()=>0.999999)===15); }
+{ const o=knockback(73), value=o.c.rollModValue(o.m,()=>0.999999);
+  const capped=knockback(100);
+  ok('последняя карточка обрезается, механический шанс не выше 75%',value===2 &&
+    capped.D.knock===75 && capped.m.hide(),value+'% · итог '+capped.D.knock+'%'); }
+{ const before=knockback(74), ready=knockback(75);
+  ok('Головокружение открывается на новом достижимом потолке',!before.dizzy.show() && ready.dizzy.show()); }
 
 console.log('Ударная волна при крите');
 { const o=critWave(), nearby=o.enemy();

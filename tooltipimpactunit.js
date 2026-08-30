@@ -71,7 +71,7 @@ const row = (data,key) => data.rows.find(x=>x.key===key);
     row(data,'minionHit') && row(data,'minionDps') && row(data,'minionHit').after>row(data,'minionHit').before); }
 
 { const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys');
-  const x=card(c,'shape.double_hit',10), data=c.cardImpactData(x.m,x);
+  const x=card(c,'shape.double_hit',5), data=c.cardImpactData(x.m,x);
   ok('двойное попадание показывает шанс и ожидаемый DPS',
     row(data,'doubleChance') && row(data,'doubleDps') && row(data,'doubleDps').after>row(data,'doubleDps').before); }
 
@@ -119,3 +119,54 @@ const row = (data,key) => data.rows.find(x=>x.key===key);
 { const html=fs.readFileSync('./PolyGrind.html','utf8');
   ok('настройка подсказок сохраняется отдельно от прогресса',
     html.includes("localStorage.getItem(SKILL_TIPS_KEY)") && html.includes("localStorage.setItem(SKILL_TIPS_KEY")); }
+
+{ const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys');
+  const source=c.__api.MODS.find(m=>m.id==='shape.double_hit');
+  const links=c.linkedUnlocksForCards([source]);
+  ok('карточка потолка находит свой связанный навык',
+    links.length===1 && links[0].targetMod.id==='shape.deadly_hit' && links[0].at===25); }
+
+{ const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys'); c.setLanguage('ru');
+  c.__api.G.bag.add('dblHit','chance',24); c.recalc();
+  const source=c.__api.MODS.find(m=>m.id==='shape.double_hit');
+  const links=c.linkedUnlocksForCards([{m:source}]);
+  const html=c.levelUnlockPanelHtml([{m:source}],links);
+  ok('панель показывает текущий прогресс до порога', links[0].value===24 && html.includes('24 / 25%'), html.match(/24 \/ 25%/)?.[0]);
+  ok('панель находится между карточками и кнопками уровня',
+    fs.readFileSync('./PolyGrind.html','utf8').includes("</div>' + levelUnlockPanelHtml(rolled, linkedUnlocks) +\n    '<div class=\"level-actions\"")); }
+
+{ const c=loadGame('./PolyGrind.html'); c.newGame('necro','keys');
+  const source=c.__api.MODS.find(m=>m.id==='min.damage');
+  const links=c.linkedUnlocksForCards([source]);
+  ok('одна ветка показывает все три последовательных открытия свиты',
+    links.map(x=>x.targetMod.id).join(',')==='min.frenzy,min.bloodbath,min.boiling' && links.map(x=>x.at).join(',')==='50,75,100'); }
+
+{ const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys');
+  const flat=c.__api.MODS.find(m=>m.id==='crit.chance_flat'), inc=c.__api.MODS.find(m=>m.id==='crit.chance_inc');
+  const links=c.linkedUnlocksForCards([flat,inc]);
+  ok('одинаковое открытие от двух карточек не дублируется', links.length===1 && links[0].targetMod.id==='crit.super_chance'); }
+
+{ const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys');
+  const source=c.__api.MODS.find(m=>m.id==='shape.double_hit');
+  c.__api.G.bag.add('deadlyHit','flag',1); c.__api.G.picks.push({id:'shape.deadly_hit'}); c.recalc();
+  ok('уже взятый одноразовый связанный навык скрывается', c.linkedUnlocksForCards([source]).length===0); }
+
+{ const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys'); c.setLanguage('ru');
+  c.innerWidth=1280; c.innerHeight=720;
+  const source=c.__api.MODS.find(m=>m.id==='shape.double_hit'), links=c.linkedUnlocksForCards([source]);
+  const html=c.levelUnlockPanelHtml([source],links), ov=c.document.getElementById('ov'), tip=c.document.getElementById('skilltip');
+  ok('связанный навык доступен мыши и клавиатурному фокусу',
+    html.includes('data-linked-skill="0"') && html.includes('tabindex="0"') && html.includes('aria-describedby="skilltip"'));
+  ov.innerHTML=html;
+  const el=c.document.querySelector('#ov .level-unlock'), preview=c.linkedSkillPreviewCard(links[0].targetMod);
+  c.showSkillTip({clientX:30,clientY:30},preview,{note:'Связанный навык'});
+  ok('наведение открывает подробную подсказку будущего навыка',
+    !!el && tip.style.display==='block' && tip.innerHTML.includes('СМЕРТОНОСНОЕ ПОПАДАНИЕ') &&
+    fs.readFileSync('./PolyGrind.html','utf8').includes('el.onmouseenter = ev => showSkillTip(ev, preview, {note})'));
+  c.setSkillTipsEnabled(false);
+  if (el && el.onfocus) el.onfocus();
+  ok('выключенные подробные подсказки блокируют панельный тултип', tip.style.display==='none'); }
+
+{ const c=loadGame('./PolyGrind.html');
+  ok('новые подписи панели имеют английский перевод',
+    c.tr('СВЯЗАННЫЕ НАВЫКИ')==='RELATED SKILLS' && c.tr('наведите для подробностей')==='hover for details' && c.tr('ОТКРЫТО')==='UNLOCKED'); }

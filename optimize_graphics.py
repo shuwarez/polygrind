@@ -145,30 +145,31 @@ LIGHTNING_TOTEM_SPRITE_SOURCES = (
 )
 
 
-def indexed_png(image: Image.Image) -> bytes:
-    """Свести RGBA к 15 непрозрачным цветам + одному прозрачному индексу."""
+def indexed_png(image: Image.Image, opaque_colors: int = PALETTE_COLORS,
+                transparent_index: int = TRANSPARENT_INDEX, bits: int = 4) -> bytes:
+    """Свести RGBA к индексированной PNG с отдельным прозрачным индексом."""
     rgba = image.convert("RGBA")
     alpha = rgba.getchannel("A")
     mask = alpha.point(lambda value: 255 if value >= 64 else 0)
     rgb = Image.new("RGB", rgba.size, (0, 0, 0))
     rgb.paste(rgba.convert("RGB"), mask=mask)
-    pal = rgb.quantize(colors=PALETTE_COLORS, method=Image.Quantize.MEDIANCUT,
+    pal = rgb.quantize(colors=opaque_colors, method=Image.Quantize.MEDIANCUT,
                        dither=Image.Dither.NONE)
     palette = list(pal.getpalette() or [])
     palette.extend([0] * (768 - len(palette)))
-    palette[TRANSPARENT_INDEX * 3:TRANSPARENT_INDEX * 3 + 3] = [0, 0, 0]
+    palette[transparent_index * 3:transparent_index * 3 + 3] = [0, 0, 0]
     pal.putpalette(palette)
     pixels = bytearray(pal.tobytes())
     mask_bytes = mask.tobytes()
     for index, opaque in enumerate(mask_bytes):
         if not opaque:
-            pixels[index] = TRANSPARENT_INDEX
+            pixels[index] = transparent_index
     out = Image.frombytes("P", pal.size, bytes(pixels))
     out.putpalette(palette)
-    out.info["transparency"] = TRANSPARENT_INDEX
+    out.info["transparency"] = transparent_index
     buffer = io.BytesIO()
-    out.save(buffer, "PNG", optimize=True, compress_level=9, bits=4,
-             transparency=TRANSPARENT_INDEX)
+    out.save(buffer, "PNG", optimize=True, compress_level=9, bits=bits,
+             transparency=transparent_index)
     return buffer.getvalue()
 
 
@@ -667,7 +668,8 @@ def align_frames(frames: list[Image.Image], anchor_box) -> list[Image.Image]:
 
 def compact_stable_sheet(frames: list[Image.Image],
                          frame_size: tuple[int, int], padding: int = 2,
-                         resample: Image.Resampling = Image.Resampling.LANCZOS) -> Image.Image:
+                         resample: Image.Resampling = Image.Resampling.LANCZOS,
+                         stretch: bool = False) -> Image.Image:
     """Уменьшить все кадры через одну общую рамку и один transform.
 
     Разная высота пламени или подсветки больше не меняет масштаб и положение
@@ -680,9 +682,12 @@ def compact_stable_sheet(frames: list[Image.Image],
     shared = (min(box[0] for box in boxes), min(box[1] for box in boxes),
               max(box[2] for box in boxes), max(box[3] for box in boxes))
     width, height = shared[2] - shared[0], shared[3] - shared[1]
-    ratio = min((frame_size[0] - padding * 2) / width,
-                (frame_size[1] - padding * 2) / height, 1)
-    size = (max(1, round(width * ratio)), max(1, round(height * ratio)))
+    if stretch:
+        size = (frame_size[0] - padding * 2, frame_size[1] - padding * 2)
+    else:
+        ratio = min((frame_size[0] - padding * 2) / width,
+                    (frame_size[1] - padding * 2) / height, 1)
+        size = (max(1, round(width * ratio)), max(1, round(height * ratio)))
     x = (frame_size[0] - size[0]) // 2
     y = frame_size[1] - padding - size[1]
     sheet = Image.new("RGBA", (frame_size[0] * len(frames), frame_size[1]))
@@ -768,9 +773,26 @@ def stable_torch_frames(source: Image.Image) -> list[Image.Image]:
     return stable
 
 
+def menu_logo_source(path: Path) -> Image.Image:
+    """Принять прозрачный, светлый checkerboard или чёрный фон логотипа."""
+    source = Image.open(path).convert("RGBA")
+    if source.getchannel("A").getextrema()[0] < 255:
+        return source
+    corners = (source.getpixel((0, 0)), source.getpixel((source.width - 1, 0)),
+               source.getpixel((0, source.height - 1)),
+               source.getpixel((source.width - 1, source.height - 1)))
+    if max(max(pixel[:3]) for pixel in corners) < 48:
+        return remove_dark_background(source)
+    return remove_logo_checker(source)
+
+
 def menu_logo_sheet(path: Path) -> bytes:
-    source = remove_logo_checker(Image.open(path))
-    return indexed_png(compact_stable_sheet(stable_logo_frames(source), (256, 96)))
+    source = menu_logo_source(path)
+    # Этот центральный арт намеренно крупнее остальных runtime-спрайтов:
+    # 512×144 на кадр и 63 цвета сохраняют мелкий металл и огненные блики.
+    sheet = compact_stable_sheet(stable_logo_frames(source), (512, 144),
+                                 stretch=True)
+    return indexed_png(sheet, opaque_colors=63, transparent_index=63, bits=8)
 
 
 def menu_torch_sheet(path: Path) -> bytes:
@@ -985,9 +1007,9 @@ def main() -> None:
     parser.add_argument("--install-totem-sprites", action="store_true",
                         help="проверить SHA-256 и встроить пять тотемов по четыре ранга")
     parser.add_argument("--build-menu-assets", action="store_true",
-                        help="записать компактные прозрачные листы логотипа и факела в outputs")
+                        help="записать переданные прозрачные листы логотипа и/или факела в outputs")
     parser.add_argument("--install-menu-assets", action="store_true",
-                        help="собрать листы меню и встроить их data URI в автономный HTML")
+                        help="собрать переданные листы меню и встроить их data URI в автономный HTML")
     parser.add_argument("--emit-shooter-base64", action="store_true",
                         help="вывести JSON двух оптимизированных data payload без изменения HTML")
     parser.add_argument("--emit-player-projectile-base64", action="store_true",
@@ -1677,24 +1699,27 @@ def main() -> None:
         return
 
     if args.build_menu_assets or args.install_menu_assets:
-        if not args.menu_logo or not args.menu_torch:
-            parser.error("ассеты меню требуют --menu-logo и --menu-torch")
-        generated = {
-            "logo": menu_logo_sheet(args.menu_logo),
-            "torch": menu_torch_sheet(args.menu_torch),
-        }
+        if not args.menu_logo and not args.menu_torch:
+            parser.error("ассеты меню требуют --menu-logo и/или --menu-torch")
+        generated = {}
+        if args.menu_logo:
+            generated["logo"] = menu_logo_sheet(args.menu_logo)
+        if args.menu_torch:
+            generated["torch"] = menu_torch_sheet(args.menu_torch)
         output_dir = ROOT / "outputs"
         output_dir.mkdir(exist_ok=True)
         paths = {
             "logo": output_dir / "grim-grind-title-spritesheet-optimized.png",
             "torch": output_dir / "grim-grind-torch-spritesheet-optimized.png",
         }
-        for key, path in paths.items():
-            path.write_bytes(generated[key])
+        for key, data in generated.items():
+            paths[key].write_bytes(data)
         if args.install_menu_assets:
             html = HTML.read_text(encoding="utf-8")
-            for key, js_name in (("logo", "GRIM_GRIND_LOGO_STRIP"),
-                                 ("torch", "GRIM_GRIND_TORCH_STRIP")):
+            js_names = {"logo": "GRIM_GRIND_LOGO_STRIP",
+                        "torch": "GRIM_GRIND_TORCH_STRIP"}
+            for key in generated:
+                js_name = js_names[key]
                 pattern = rf"({js_name}\.src = 'data:image/png;base64,)[^']+(')"
                 value = base64.b64encode(generated[key]).decode("ascii")
                 html, count = re.subn(pattern, rf"\g<1>{value}\2", html, count=1)
