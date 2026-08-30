@@ -1,7 +1,7 @@
 /* «Первый шаг»: дорогая постоянная покупка выдаёт обычные выборы навыков
    до первого боя. Проверяем сам каталог, рост цены и число стартовых выборов. */
 const {loadGame} = require('./sim');
-const fs = require('fs');
+const fs = require('fs'), crypto = require('crypto');
 const ok = (nm, cond, det) => console.log((cond ? '  ✓ ' : '  ✗ ') + nm.padEnd(44) + (det || ''));
 
 const c = loadGame('./PolyGrind.html');
@@ -167,9 +167,61 @@ for (const rank of [1, 5]){
   ok('интерфейс содержит полный возврат бонуса и всего магазина',
     /class="refund-all"[\s\S]*?ВСЁ/.test(html) && /id="shoprefundall"[\s\S]*?ВЕРНУТЬ ВСЕ ПОКУПКИ/.test(html)); }
 
+{ const html=fs.readFileSync('./PolyGrind.html','utf8'), design=loadGame('./PolyGrind.html');
+  design.shopScreen(()=>{}); const screen=design.document.getElementById('ov').innerHTML;
+  const atlasMatch=html.match(/const SHOP_ICON_ATLAS_DATA = 'data:image\/png;base64,([^']+)'/);
+  const atlas=atlasMatch&&Buffer.from(atlasMatch[1],'base64');
+  const atlasHash=atlas&&crypto.createHash('sha256').update(atlas).digest('hex').toUpperCase();
+  ok('магазин оформлен как кузнечная dark-fantasy лавка',
+    screen.includes('class="shop-header"') && screen.includes('class="shop-crest"') &&
+    screen.includes('class="shop-seal"') && screen.includes('ЛАВКА ВЕЧНЫХ УЛУЧШЕНИЙ') &&
+    /classList\.add\('menu','shop-menu'\)/.test(html));
+  ok('все товары получили иконки, описания и шкалы постоянного ранга',
+    (screen.match(/class="shop-rune"/g)||[]).length===18 &&
+    (screen.match(/class="shop-rankbar"/g)||[]).length===18 &&
+    (screen.match(/class="snt"/g)||[]).length===18 && !/\.srow \.snt\{display:none/.test(html));
+  ok('пять разделов различаются цветом, знаком и адаптивной сеткой',
+    ['attack','health','defense','farm','qol'].every(id=>screen.includes('data-cat="'+id+'"')) &&
+    (screen.match(/class="shopcat-mark"/g)||[]).length===5 &&
+    html.includes('@media(max-width:650px)') && html.includes('.overlay.shop-menu'));
+  ok('сгенерированный атлас 5×4 сжат и встроен одной PNG-копией',
+    !!atlas && atlas.length===23414 && atlas.readUInt32BE(16)===240 && atlas.readUInt32BE(20)===192 &&
+    atlasHash==='B193543C091CAC74C807E232128999C916F382ED9CCBB298BE84033E7BF859F2' &&
+    (screen.match(/class="shop-icon-style"/g)||[]).length===1 && !html.includes('const SHOP_RUNES ='),
+    (atlas?atlas.length:0)+' Б');
+  ok('все 18 товаров и пять разделов используют предметные спрайты',
+    Object.keys(design.__api.SHOP.reduce((out,it)=>(out[it.id]=1,out),{})).length===18 &&
+    (screen.match(/class="shop-icon/g)||[]).length>=25 &&
+    ['dmg','hpPct','armor','sgold','itemDrop'].every(id=>html.includes(id+':[')));
+  ok('нехватка золота не скрывает цену покупки',
+    (screen.match(/class="insufficient" disabled/g)||[]).length>0 && screen.includes('shop-price-coin') &&
+    /\.srow \.sbuy button\.insufficient:disabled\{opacity:1;/.test(html) &&
+    /\.srow \.sbuy button\.insufficient:disabled b\{color:#ff9d70;font-size:12\.5px/.test(html));
+  ok('краткие описания крупнее, контрастнее и не обрезаются по двум строкам',
+    html.includes('const SHOP_SHORT_NT = Object.freeze({') &&
+    /\.srow \.snt\{min-height:58px;color:#d2c8ba;font:500 14\.2px\/1\.38 Georgia/.test(html) &&
+    !/\.srow \.snt\{[^}]*line-clamp/.test(html) && /\.srow\{[^}]*min-height:218px/.test(html) &&
+    !screen.includes('НЕТ ПОКУПОК'));
+}
+
 { const shop=c.__api.SHOP;
   ok('блок полностью удалён из каталога', !shop.some(x=>x.id==='block'));
   ok('общее снижение урона удалено из каталога', !shop.some(x=>x.id==='dr'));
+  ok('дубликат брони и быстрый сбор удалены из каталога',
+    !shop.some(x=>x.id==='sarmor') && !shop.some(x=>x.id==='vacuum'));
+  const armorItems=shop.filter(x=>x.nm==='БРОНЯ');
+  ok('в каталоге осталась ровно одна основная броня',
+    armorItems.length===1 && armorItems[0].id==='armor' && armorItems[0].base===3600);
+  const sxp=shop.find(x=>x.id==='sxp'), sgold=shop.find(x=>x.id==='sgold');
+  ok('опыт подорожал втрое', !!sxp && sxp.base===1500 && c.shopCost(sxp,0)===1500,
+    sxp ? sxp.base.toLocaleString('ru-RU')+' золота' : 'товар не найден');
+  ok('золото подорожало в полтора раза', !!sgold && sgold.base===750 && c.shopCost(sgold,0)===750,
+    sgold ? sgold.base.toLocaleString('ru-RU')+' золота' : 'товар не найден');
+  const dmg=shop.find(x=>x.id==='dmg'), aspd=shop.find(x=>x.id==='aspd');
+  ok('весь урон подорожал в 2,5 раза', !!dmg && dmg.base===6250 && c.shopCost(dmg,0)===6250,
+    dmg ? dmg.base.toLocaleString('ru-RU')+' золота' : 'товар не найден');
+  ok('скорость атаки подорожала втрое', !!aspd && aspd.base===7500 && c.shopCost(aspd,0)===7500,
+    aspd ? aspd.base.toLocaleString('ru-RU')+' золота' : 'товар не найден');
   const dodge=shop.find(x=>x.id==='dodge');
   ok('уворот подорожал ровно на 20%', !!dodge && dodge.base===4200 && c.shopCost(dodge,0)===4200,
     dodge ? dodge.base.toLocaleString('ru-RU')+' золота' : 'товар не найден');
@@ -181,24 +233,29 @@ for (const rank of [1, 5]){
     shell ? c.shopCost(shell,0).toLocaleString('ru-RU')+' золота за первый ранг' : 'товар не найден'); }
 
 { const defense=loadGame('./PolyGrind.html');
-  defense.__api.STORE.data.shop={drFlat:100,block:60,dr:60};
+  defense.__api.STORE.data.shop={drFlat:100,block:60,dr:60,sarmor:70,vacuum:10};
   defense.newGame('bow','keys');
   ok('старые блок и снижение урона не дают характеристик', !('block' in defense.__api.D) && !('dr' in defense.__api.D));
+  ok('удалённые броня и быстрый сбор не дают характеристик',
+    defense.__api.D.drShop===0 && defense.__api.D.lootVacuum===1);
   ok('100 рангов панциря входят в новый забег', defense.__api.D.drFlat===100,
     '−'+defense.__api.D.drFlat+' с каждого попадания'); }
 
 { const legacy=loadGame('./PolyGrind.html');
-  const oldDr={base:3000,grow:1.075}, oldBlock={base:2500,grow:1.07};
+  const oldDr={base:3000,grow:1.075}, oldBlock={base:2500,grow:1.07}, oldVacuum={base:3000,grow:1.55};
   const expected=[0,1,2].reduce((s,i)=>s+legacy.shopCost(oldDr,i),0)+
-    [0,1].reduce((s,i)=>s+legacy.shopCost(oldBlock,i),0);
+    [0,1].reduce((s,i)=>s+legacy.shopCost(oldBlock,i),0)+
+    [0,1,2,3].reduce((s,i)=>s+legacy.shopCost(oldDr,i),0)+
+    [0,1].reduce((s,i)=>s+legacy.shopCost(oldVacuum,i),0);
   legacy.__api.STORE.data.gold=100;
   legacy.__api.STORE.data.spent=expected+50;
-  legacy.__api.STORE.data.shop={dr:3,block:2,armor:1};
+  legacy.__api.STORE.data.shop={dr:3,block:2,sarmor:4,vacuum:2,armor:1};
   legacy.__api.STORE.save();
   ok('старые покупки удалённых защит возвращаются золотом', legacy.__api.STORE.data.gold===100+expected &&
     legacy.__api.STORE.data.spent===50, '+'+expected.toLocaleString('ru-RU')+' золота');
-  ok('миграция удаляет только блок и общее снижение', !('dr' in legacy.__api.STORE.data.shop) &&
-    !('block' in legacy.__api.STORE.data.shop) && legacy.__api.STORE.data.shop.armor===1);
+  ok('миграция удаляет только снятые с продажи товары', !('dr' in legacy.__api.STORE.data.shop) &&
+    !('block' in legacy.__api.STORE.data.shop) && !('sarmor' in legacy.__api.STORE.data.shop) &&
+    !('vacuum' in legacy.__api.STORE.data.shop) && legacy.__api.STORE.data.shop.armor===1);
   const gold=legacy.__api.STORE.data.gold;
   legacy.__api.STORE.save();
   ok('повторная миграция не выдаёт золото снова', legacy.__api.STORE.data.gold===gold); }

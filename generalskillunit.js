@@ -68,12 +68,23 @@ function elementalStatuses(e,n=4){
   ok('Идеальный ритм не считает непрямой урон и гарантирует седьмой крит героя',
     p.perfectRhythmHeroN===7&&before===0&&G.stats.crits===1&&Math.abs(hp-e.hp-850)<1e-9); }
 
+{ const c=fresh(),G=c.__api.G,p=G.player; take(c,'perfectRhythm'); fixedHit(c); const e=target(c);
+  const start=c.activeCombatBuffs(p).join(' | ');
+  for(let i=0;i<6;i++) c.damage(e,{direct:true});
+  const ready=c.activeCombatBuffs(p).join(' | ');
+  c.damage(e,{direct:true}); const reset=c.activeCombatBuffs(p).join(' | ');
+  ok('HUD Идеального ритма считает атаки, показывает готовый крит и начинает новый цикл',
+    start.includes('Perfect Rhythm - critical hit in 7 attacks')&&ready.includes('Perfect Rhythm — CRIT!')&&
+    reset.includes('Perfect Rhythm - critical hit in 7 attacks'),start+' · '+ready+' · '+reset); }
+
 { const c=fresh('necro'),G=c.__api.G,p=G.player; take(c,'perfectRhythm'); fixedHit(c); const e=target(c),a=G.minions[0],b=G.minions[1];
   for(let i=0;i<6;i++) c.damage(e,{direct:true,minion:i%2?a:b});
+  const readyHud=c.activeCombatBuffs(p).join(' | ');
   for(let i=0;i<6;i++) c.damage(e,{direct:true});
   const before=G.stats.crits; c.damage(e,{direct:true,minion:b}); const afterMin=G.stats.crits; c.damage(e,{direct:true});
   ok('вся свита делит один отдельный счётчик Идеального ритма',
-    before===0&&afterMin===1&&G.stats.crits===2&&p.perfectRhythmMinionN===7&&p.perfectRhythmHeroN===7); }
+    before===0&&afterMin===1&&G.stats.crits===2&&p.perfectRhythmMinionN===7&&p.perfectRhythmHeroN===7);
+  ok('у Некроманта HUD использует общий счётчик атак свиты',readyHud.includes('Perfect Rhythm — CRIT!'),readyHud); }
 
 { const c=fresh(),G=c.__api.G,p=G.player; take(c,'lastWitness'); fixedHit(c); p.x=p.y=0;
   const e=target(c),other=target(c); e.x=100; e.y=0; other.x=500; other.y=0; const hp=e.hp; c.damage(e,{direct:true});
@@ -97,6 +108,11 @@ function elementalStatuses(e,n=4){
   ok('первый тик Передышки восстанавливает ровно 5% max HP',Math.abs(first-before-D.life*0.05)<1e-9,before.toFixed(1)+' → '+first.toFixed(1));
   c.update(3);
   ok('Передышка повторяет 5% лечения каждые 3 секунды',Math.abs(p.hp-first-D.life*0.05)<1e-9,first.toFixed(1)+' → '+p.hp.toFixed(1));
+  p.hp=D.life*0.58; p.respiteT=4; p.respiteHealT=0.1; c.update(1);
+  ok('тик Передышки обрезается точно на 60% max HP',Math.abs(p.hp-D.life*0.60)<1e-9,p.hp.toFixed(1));
+  p.respiteHealT=0.1; c.update(3);
+  ok('на 60% Передышка прекращает лечение и скрывает HUD-таймер',Math.abs(p.hp-D.life*0.60)<1e-9&&p.respiteHealT===3&&
+    !c.activeCombatBuffs(p).some(x=>x.includes('Respite')));
   c.hurt(1,true,false,'ТЕСТ');
   ok('реально полученный урон сбрасывает ожидание Передышки',p.respiteT===0&&p.respiteHealT===3);
   p.hp=D.life*0.30; p.respiteT=4; p.respiteHealT=0.1; G.portal={x:0,y:0}; const hp=p.hp; c.update(1);

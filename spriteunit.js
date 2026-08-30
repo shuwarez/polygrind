@@ -65,7 +65,36 @@ ok('портал этажа встроен индексированным лис
   portalPng.png && portalPng.w===512 && portalPng.h===64 && portalPng.color===3 &&
   portalBytes.length<10000, portalBytes.length+' байт');
 
+const groundPoolKeys=['tar','ogreAcid','bossAcid','boilingBlood','lavaTrail','frostTrail','venomAcid','tyrantFire'];
+const groundPoolObject=(html.match(/const GROUND_POOL_SPRITE_DATA = \{([\s\S]*?)\n\};/)||[])[1]||'';
+const groundPoolBytes=groundPoolKeys.map(key => {
+  const match=groundPoolObject.match(new RegExp('^\\s*'+key+":'data:image/png;base64,([^']+)'",'m'));
+  return match ? Buffer.from(match[1],'base64') : Buffer.alloc(0);
+});
+const groundPoolPng=groundPoolBytes.map(pngInfo);
+ok('восемь луж и следов встроены индексированными четырёхкадровыми PNG',
+  groundPoolPng.every(info=>info.png && info.color===3) &&
+  JSON.stringify(groundPoolPng.map(info=>[info.w,info.h]))===
+    JSON.stringify([[128,32],[128,32],[256,64],[128,32],[128,32],[128,32],[128,32],[128,32]]));
+ok('листы наземных эффектов различаются и вместе укладываются в 18 КБ',
+  new Set(groundPoolBytes.map(data=>data.toString('base64'))).size===groundPoolKeys.length &&
+  groundPoolBytes.reduce((sum,data)=>sum+data.length,0)<18000,
+  groundPoolBytes.reduce((sum,data)=>sum+data.length,0)+' байт');
+
 const c=loadGame('./PolyGrind.html');
+c.newGame('bow','keys','hunter');
+const poolG=c.__api.G;
+poolG.time=0; const poolFrame0=groundPoolKeys.map(key=>c.groundPoolSpriteFrame(key).index);
+poolG.time=0.48; const poolFrameLater=groundPoolKeys.map(key=>c.groundPoolSpriteFrame(key).index);
+ok('лужи используют общий G.time и заданный независимый темп кадров',
+  poolFrame0.every(index=>index===0) && poolFrameLater.join(',')==='2,2,1,2,3,2,2,3' &&
+  c.groundPoolSpriteFrame('bossAcid').meta.frameW===64 && c.groundPoolSpriteFrame('__missing__')===null);
+ok('рендер масштабирует спрайты по механическому радиусу и сохраняет телеграф/слои следа',
+  groundPoolKeys.every(key=>new RegExp("drawGroundPoolSprite\\('"+key+"'").test(html)) &&
+  /const diameter=o\.r\*2;[\s\S]*?imageSmoothingEnabled=false/.test(html) &&
+  /if \(arming\) continue;[\s\S]{0,180}drawGroundPoolSprite\('tar'/.test(html) &&
+  html.indexOf("drawGroundPoolSprite('lavaTrail'")<html.indexOf("drawGroundPoolSprite('frostTrail'") &&
+  /frostTrail',tr,TRAIL_LIFE,tr\.fire\?0\.46:0\.62/.test(html));
 const rareItemKeys=['mirror','golem','fang','storm','ash','ice','plague','clock','shard','candle','doll','chalice','crown','bmask','bossShard','bone'];
 const newAmuletIconKeys=['calm','runner','pulse','predator','fullplate','lastplate','steel','swift','survive'];
 const newGloveIconKeys=['claws','thunder','ricochet','brute','riposte','critmass','critchain','shove'];
@@ -76,19 +105,21 @@ const commonItemIconKeys=['copperChronometer','knottedCharm','tallyGloves','smit
   'hobnailedSoles','shortCircuitBoots','trailfinders','boneSpurs','firstTraceRing','closeHarvestRing'];
 const rareItemSetIconKeys=['sealHunt','mothFang','cometEye','sealPack','eclipseBrushes','sparkstepBoots','marchingGreaves',
   'secondWindRing','coolingAshRing','confinementRing','reactionRing','conductorRing','ledgerDebts','glassBell'];
+const epicItemIconKeys=['emptyThroneSeal','surgeonsHand','betweenWorldsBoots','unhealedWoundRing','deadGodClock'];
+const legendaryItemIconKeys=['heartSecond','titansHands','stepBeyond','marchDead','zeroDistanceRing','invertedCrown','archivist'];
 const supportedRareItemKeys=rareItemKeys.concat(newAmuletIconKeys,newGloveIconKeys,newBootIconKeys,newRingIconKeys,newRelicIconKeys,
-  commonItemIconKeys,rareItemSetIconKeys);
+  commonItemIconKeys,rareItemSetIconKeys,epicItemIconKeys,legendaryItemIconKeys);
 const rareItemObject=(html.match(/const RARE_ITEM_SPRITE_DATA = \{([\s\S]*?)\n\};/)||[])[1]||'';
 const embeddedRareItemPng = key => {
   const match=rareItemObject.match(new RegExp('^\\s*'+key+":'data:image/png;base64,([^']+)'",'m'));
   return match ? Buffer.from(match[1], 'base64') : Buffer.alloc(0);
 };
 const rareItemBytes=supportedRareItemKeys.map(embeddedRareItemPng), rareItemPng=rareItemBytes.map(pngInfo);
-ok('81 предмет и элемент экипировки встроены как индексированные PNG 24×24',
+ok('93 предмета и элемента экипировки встроены как индексированные PNG 24×24',
   rareItemPng.every(info=>info.png && info.w===24 && info.h===24 && info.color===3));
-ok('все 81 иконка различаются и вместе укладываются в 28 КБ',
+ok('все 93 иконки различаются и вместе укладываются в 33 КБ',
   new Set(rareItemBytes.map(data=>data.toString('base64'))).size===supportedRareItemKeys.length &&
-  rareItemBytes.reduce((sum,data)=>sum+data.length,0)<28000,
+  rareItemBytes.reduce((sum,data)=>sum+data.length,0)<33000,
   rareItemBytes.reduce((sum,data)=>sum+data.length,0)+' байт');
 ok('вся экипировка берёт общий PNG на земле и во всех элементах интерфейса',
   supportedRareItemKeys.every(key=>c.rareItemSpriteHTML(key,'hud').includes('rare-item-icon hud') &&
@@ -164,6 +195,110 @@ ok('добыча и окно первой книги используют общ
   c.lootSpriteFrame({book:'fire'}).meta.drawW===24 && c.lootSpriteFrame({amu:'ash'})===null &&
   bookModalHtml.includes('loot-item-icon modal') && bookModalHtml.includes('data:image/png;base64') &&
   !bookModalHtml.includes(bookModal.__api.BOOKS.cold.ico));
+
+let lootAudio;
+class FakeAudioParam {
+  constructor(){ this.events=[]; }
+  setValueAtTime(value,time){ this.events.push(['set',value,time]); }
+  exponentialRampToValueAtTime(value,time){ this.events.push(['ramp',value,time]); }
+}
+class FakeOscillator {
+  constructor(){ this.type='sine'; this.frequency=new FakeAudioParam(); }
+  connect(node){ return node; }
+  start(time){ this.started=time; }
+  stop(time){ this.stopped=time; }
+}
+class FakeGain {
+  constructor(){ this.gain=new FakeAudioParam(); }
+  connect(node){ return node; }
+}
+class FakeAudioContext {
+  constructor(){ this.currentTime=10; this.state='running'; this.destination={}; this.oscillators=[]; this.gains=[]; this.filters=[]; lootAudio=this; }
+  resume(){ this.state='running'; }
+  createOscillator(){ const node=new FakeOscillator(); this.oscillators.push(node); return node; }
+  createGain(){ const node=new FakeGain(); this.gains.push(node); return node; }
+  createBiquadFilter(){ const node=new FakeGain(); node.type='lowpass'; node.frequency=new FakeAudioParam(); this.filters.push(node); return node; }
+}
+const soundGame=loadGame('./PolyGrind.html',{random:()=>0});
+soundGame.window.AudioContext=FakeAudioContext; soundGame.unlockSound(); soundGame.newGame('bow','keys');
+const soundG=soundGame.__api.G, soundAt={x:12,y:34};
+const itemKey=Object.keys(soundGame.__api.AMULETS)[0];
+soundGame.dropItem(soundAt,{pool:[itemKey],tot:[]},{itemShare:1,totemShare:0});
+ok('звук находки сохраняет частоты, типы и громкость исходного синтеза',
+  lootAudio.oscillators.length===3 &&
+  lootAudio.oscillators.map(o=>o.frequency.events[0][1]).join(',')==='659.25,1046.5,2093' &&
+  lootAudio.oscillators.map(o=>o.type).join(',')==='sine,sine,triangle' &&
+  lootAudio.gains.map(g=>g.gain.events[0][1]).join(',')==='0.04,0.04,0.05');
+soundGame.dropItem(soundAt,{pool:[],tot:['fire']},{itemShare:0,totemShare:1});
+ok('две одновременные находки дают один сигнал без сложения громкости',
+  soundG.orbs.length===2 && soundG.orbs[0].amu===itemKey && soundG.orbs[1].totem==='fire' && lootAudio.oscillators.length===3);
+lootAudio.currentTime+=0.41;
+soundGame.dropItem(soundAt,{pool:[],tot:[]},{itemShare:0,totemShare:0});
+lootAudio.currentTime+=0.41;
+soundGame.dropItem(soundAt,{pool:[],tot:['fire']},{itemShare:0,totemShare:1});
+ok('экипировка, книга и тотем проходят через общий звук выпадения',
+  soundG.orbs.some(o=>o.amu) && soundG.orbs.some(o=>o.book) && soundG.orbs.some(o=>o.totem) && lootAudio.oscillators.length===9);
+lootAudio.currentTime+=0.41;
+const hitOscBefore=lootAudio.oscillators.length, hitGainBefore=lootAudio.gains.length;
+soundGame.playHitSound();
+const hitOsc=lootAudio.oscillators.at(-1), hitGain=lootAudio.gains.at(-1), hitFilter=lootAudio.filters.at(-1);
+ok('звук удара сохраняет осциллятор, фильтр и огибающую исходного HTML',
+  lootAudio.oscillators.length===hitOscBefore+1 && lootAudio.gains.length===hitGainBefore+1 &&
+  hitOsc.type==='triangle' && hitOsc.frequency.events.map(x=>x[1]).join(',')==='420,110' &&
+  hitFilter.type==='lowpass' && hitFilter.frequency.events[0][1]===1200 &&
+  hitGain.gain.events.map(x=>x[1]).join(',')==='0.04,0.0001' && Math.abs(hitOsc.stopped-hitOsc.started-0.025)<1e-9);
+soundGame.playHitSound();
+ok('одновременные попадания не складывают громкость hit marker', lootAudio.oscillators.length===hitOscBefore+1);
+lootAudio.currentTime+=0.03;
+const hitEnemy=soundGame.spawnEnemy(); hitEnemy.hp=hitEnemy.maxHp=100; hitEnemy.armor=0; hitEnemy.ward=null; hitEnemy.bulwark=0;
+const dealt=soundGame.applyDamage(hitEnemy,10,false,false);
+ok('фактический урон запускает звук и одноразовую вспышку PNG-врага',
+  dealt===10 && hitEnemy.hit===0.12 && lootAudio.oscillators.length===hitOscBefore+2 &&
+  /if \(e\.hit > 0\)[\s\S]*?ctx\.filter='brightness\(0\) saturate\(100%\) invert\(100%\)'/.test(html));
+ok('Escape-меню содержит общий ползунок 0–100 и кнопку отключения звуков',
+  /id="pauseov"[\s\S]*?НАСТРОЙКИ[\s\S]*?id="sfxvolume"[^>]*min="0"[^>]*max="100"[^>]*value="50"[\s\S]*?id="sfxmute"/.test(html));
+ok('громкость эффектов по умолчанию равна 50 процентам',
+  soundGame.__api.SFX_SETTINGS.volume===50 && !soundGame.__api.SFX_SETTINGS.muted && soundGame.__api.SFX_SETTINGS.audible);
+const soundSaved=new Map(), soundStorage={
+  getItem:key=>soundSaved.has(key)?soundSaved.get(key):null,
+  setItem:(key,value)=>soundSaved.set(key,String(value)),
+};
+const settingsGame=loadGame('./PolyGrind.html',{random:()=>0,localStorage:soundStorage});
+let settingsAudio;
+class SettingsAudioContext extends FakeAudioContext { constructor(){ super(); settingsAudio=this; } }
+settingsGame.window.AudioContext=SettingsAudioContext; settingsGame.unlockSound(); settingsGame.newGame('bow','keys');
+settingsGame.setSfxVolume(80);
+ok('ползунок меняет общую громкость и сохраняет выбранное значение',
+  settingsGame.__api.SFX_SETTINGS.volume===80 && soundSaved.get('polygrind_sfx_volume')==='80' &&
+  soundSaved.get('polygrind_sfx_muted')==='off');
+settingsGame.toggleSfxMute();
+const mutedOscillators=settingsAudio.oscillators.length;
+settingsGame.playHitSound(); settingsGame.levelUpSfx();
+ok('кнопка отключения глушит каждый синтезированный игровой эффект',
+  settingsGame.__api.SFX_SETTINGS.muted && !settingsGame.__api.SFX_SETTINGS.audible &&
+  soundSaved.get('polygrind_sfx_muted')==='on' && settingsAudio.oscillators.length===mutedOscillators);
+const restoredSettings=loadGame('./PolyGrind.html',{random:()=>0,localStorage:soundStorage});
+ok('громкость и выключение звуков восстанавливаются после перезапуска',
+  restoredSettings.__api.SFX_SETTINGS.volume===80 && restoredSettings.__api.SFX_SETTINGS.muted &&
+  !restoredSettings.__api.SFX_SETTINGS.audible);
+restoredSettings.startScreen();
+ok('на главном экране есть отдельная кнопка НАСТРОЙКИ',
+  restoredSettings.document.getElementById('ov').innerHTML.includes('id="settingsb"') &&
+  restoredSettings.document.getElementById('ov').innerHTML.includes('НАСТРОЙКИ'));
+restoredSettings.menuSettingsScreen();
+const mainSettingsHtml=restoredSettings.document.getElementById('ov').innerHTML;
+ok('кнопка открывает те же сохранённые настройки звука в главном меню',
+  mainSettingsHtml.includes('id="menusfxvolume"') && mainSettingsHtml.includes('id="menusfxmute"') &&
+  restoredSettings.document.getElementById('menusfxvolume').value==='80');
+ok('настройки главного меню используют общие обработчики и возвращают на главный экран',
+  /\$\('#menusfxvolume'\)\.oninput=event=>setSfxVolume\(event\.target\.value\)/.test(html) &&
+  /\$\('#menusfxmute'\)\.onclick=toggleSfxMute/.test(html) &&
+  /\$\('#settingsback'\)\.onclick=\(\)=>runConfirmedMenuAction\(startScreen\)/.test(html));
+const escapeGame=loadGame('./PolyGrind.html',{random:()=>0});
+escapeGame.newGame('bow','keys');
+escapeGame.handleGameKeyDown({key:'Escape',code:'Escape',repeat:false,preventDefault(){}});
+ok('Escape открывает настройки и автоповтор клавиши не переключает паузу',
+  escapeGame.__api.G.paused && /if \(\(k === 'p' \|\| k === 'escape'\) && !e\.repeat\)/.test(html));
 G.time=0; const projectileFrames=[];
 for (const t of [0,0.1,0.2,0.3]){ G.time=t; projectileFrames.push(c.enemyProjectileSpriteFrame({shotType:'shooter'}).index); }
 ok('текстура снаряда циклически использует четыре кадра без своего таймера',

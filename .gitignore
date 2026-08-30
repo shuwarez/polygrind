@@ -10,8 +10,11 @@ __pycache__/
 /BALANCE_REPORT.md
 /HANDOVER.md
 
-# Локальная среда сборки, концепты и PNG-превью артефактов. Идеи не публикуются.
+# Локальная среда сборки, исходники генерации, концепты и промежуточные экспорты.
+# Runtime-версии ресурсов уже встроены в PolyGrind.html и отдельно не публикуются.
 /.artifact-work/
+/assets/
+/outputs/
 /outputs/*/previews/
 /outputs/*/*-previews/
 /outputs/**/*.inspect.ndjson

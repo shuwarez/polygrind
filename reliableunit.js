@@ -73,6 +73,24 @@ console.log('Шанс отбрасывания');
   const capped=knockback(100);
   ok('последняя карточка обрезается, механический шанс не выше 75%',value===2 &&
     capped.D.knock===75 && capped.m.hide(),value+'% · итог '+capped.D.knock+'%'); }
+
+console.log('Пробитие насквозь');
+{ const o=build(), m=o.c.__api.MODS.find(x=>x.id==='shape.pierce');
+  ok('карточка даёт только целые +1 или +2 цели с потолком 4',
+    m.kind==='flat' && m.stat==='pierce' && m.r[0]===1 && m.r[1]===2 && m.int===true && m.cap===4 &&
+    o.c.rollModValue(m,()=>0)===1 && o.c.rollModValue(m,()=>0.999999)===2); }
+{ const o=build(), m=o.c.__api.MODS.find(x=>x.id==='shape.pierce'), bonus=o.c.__api.MODS.find(x=>x.id==='shape.pierce_bonus');
+  o.G.bag.add('pierce','flat',3); o.c.recalc();
+  ok('последняя карточка при трёх целях обрезается до +1',
+    o.D.pierceBase===3 && o.c.rollModValue(m,()=>0.999999)===1 && !m.hide() && !bonus.show());
+  o.G.bag.add('pierce','flat',1); o.c.recalc();
+  const rolls=Array.from({length:30},()=>o.c.rollCards());
+  ok('на четырёх целях базовая карточка исчезает и открывает Сверхпробитие',
+    o.D.pierceBase===4 && o.D.pierce===4 && m.hide() && bonus.show() &&
+    rolls.every(cards=>cards.every(card=>card.id!=='shape.pierce') && cards.some(card=>card.id==='shape.pierce_bonus'))); }
+{ const o=build(); o.G.bag.add('pierce','flat',20); o.c.recalc();
+  ok('старый дробный или завышенный бонус механически ограничен четырьмя целями',
+    o.D.pierceBase===4 && o.D.pierce===4); }
 { const before=knockback(74), ready=knockback(75);
   ok('Головокружение открывается на новом достижимом потолке',!before.dizzy.show() && ready.dizzy.show()); }
 

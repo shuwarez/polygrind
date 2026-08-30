@@ -32,7 +32,8 @@ function foe(o,x,y){
 
 {
   const fs=require('fs'), crypto=require('crypto'), html=fs.readFileSync('./PolyGrind.html','utf8');
-  const m=html.match(/warrior:'data:image\/png;base64,([^']+)'/);
+  const heroSpriteBlock=(html.match(/const HERO_SPRITE_DATA = \{(.*?)\};/s)||[])[1]||'';
+  const m=heroSpriteBlock.match(/warrior:'data:image\/png;base64,([^']+)'/);
   const hash=m && crypto.createHash('sha256').update(Buffer.from(m[1],'base64')).digest('hex').toUpperCase();
   const c=loadGame('./PolyGrind.html');
   ok('класс называется ВОИН', c.__api.WEAPONS.blade.nm==='ВОИН');

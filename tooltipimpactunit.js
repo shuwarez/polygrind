@@ -132,8 +132,15 @@ const row = (data,key) => data.rows.find(x=>x.key===key);
   const links=c.linkedUnlocksForCards([{m:source}]);
   const html=c.levelUnlockPanelHtml([{m:source}],links);
   ok('панель показывает текущий прогресс до порога', links[0].value===24 && html.includes('24 / 25%'), html.match(/24 \/ 25%/)?.[0]);
-  ok('панель находится между карточками и кнопками уровня',
-    fs.readFileSync('./PolyGrind.html','utf8').includes("</div>' + levelUnlockPanelHtml(rolled, linkedUnlocks) +\n    '<div class=\"level-actions\"")); }
+  ok('панель создаётся внутри колонки сразу после своей карточки',
+    fs.readFileSync('./PolyGrind.html','utf8').includes("'</div>' + levelUnlockPanelHtml([c], linkedUnlocks) + '</div>'")); }
+
+{ const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys'); c.setLanguage('ru');
+  const move=c.__api.MODS.find(m=>m.id==='mov.speed'), chill=c.__api.MODS.find(m=>m.id==='ail.chill.chance');
+  const links=c.linkedUnlocksForCards([move,chill]);
+  const moveHtml=c.levelUnlockPanelHtml([move],links), chillHtml=c.levelUnlockPanelHtml([chill],links);
+  ok('ЗАМОРОЗКА выводится только под карточкой шанса Охлаждения',
+    moveHtml==='' && chillHtml.includes('data-source-card="ail.chill.chance"') && chillHtml.includes('ЗАМОРОЗКА')); }
 
 { const c=loadGame('./PolyGrind.html'); c.newGame('necro','keys');
   const source=c.__api.MODS.find(m=>m.id==='min.damage');

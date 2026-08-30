@@ -104,7 +104,7 @@ console.log('ДРОП');
     G.items={}; G.totems={}; G.orbs.length=0; roll=value; c.tryDropBook({kind:'norm',x:0,y:0});
     return G.orbs.length;
   };
-  ok('после исчерпания предметов книги сохраняют нерф ×1/3', dropsAt(.0013)===1 && dropsAt(.0014)===0); }
+  ok('с Архивариусом книги дополнительно режутся вдвое', dropsAt(.00065)===1 && dropsAt(.0007)===0); }
 { const d = dropSample([], {}, 8000);
   ok('без книг тотемы не выпадают', d.tot === 0); }
 { const d = dropSample(['fire'], {}, 6000);

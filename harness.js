@@ -10,6 +10,7 @@ function loadGame(file, options={}){
              'get MODS(){return MODS}, get BOOKS(){return BOOKS}, get AMULETS(){return AMULETS}, ' +
              'get WEAPONS(){return WEAPONS}, get SUBCLASSES(){return SUBCLASSES}, get ETYPES(){return ETYPES}, ' +
              'get STORE(){return Store}, get PACKS(){return PACK_AFFIXES}, ' +
+             'get SFX_SETTINGS(){return {volume:SFX_VOLUME,muted:SFX_MUTED,audible:sfxAudible()}}, ' +
              'get CONSTELLATIONS(){return typeof CONSTELLATIONS!=="undefined"?CONSTELLATIONS:null}, ' +
              'get LANGUAGE(){return LANGUAGE}, localizationMissing:()=>localizationMissing(), ' +
              'constellationMultiplier:(e)=>constellationMultiplier(e), ' +
@@ -36,10 +37,10 @@ function loadGame(file, options={}){
   const c = {
     document:{getElementById:()=>el, querySelector:()=>el, querySelectorAll:()=>[],
               addEventListener:noop, body:el},
-    window:{devicePixelRatio:1, addEventListener:noop, localStorage:undefined},
+    window:{devicePixelRatio:1, addEventListener:noop, localStorage:options.localStorage},
     addEventListener:noop, requestAnimationFrame:noop,
     performance:{now:()=>0}, setTimeout:noop, clearTimeout:noop,
-    localStorage:undefined, console,
+    localStorage:options.localStorage, Audio:options.Audio, console,
     // Баланс-аудит подставляет общий seeded random и в игру, и в выбор карточек.
     // Без этого два прогона одного seed расходятся уже на первой пачке врагов.
     Math: options.random ? Object.assign(Object.create(Math), {random:options.random}) : Math,

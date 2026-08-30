@@ -73,9 +73,9 @@ const ok = (nm, cond, det) => console.log((cond ? '  ✓ ' : '  ✗ ') + nm.padE
   c.__api.STORE.data.shop.vacuum = 10;
   c.newGame('bow', 'keys');
   const D = c.__api.D;
-  ok('быстрый сбор: максимум даёт ×3 радиус', D.lootPickup === D.pickup * 3,
+  ok('удалённый быстрый сбор больше не увеличивает радиус', D.lootPickup === D.pickup,
      D.pickup + ' → ' + D.lootPickup);
-  ok('быстрый сбор: максимум даёт ×3 скорость', D.lootPull === 1020, '340 → ' + D.lootPull); }
+  ok('удалённый быстрый сбор больше не ускоряет притягивание', D.lootPull === 340, '340 → ' + D.lootPull); }
 
 { const c = loadGame('./PolyGrind.html'); c.newGame('bow', 'keys');
   const G = c.__api.G, D = c.__api.D, p = G.player, DT = 1/60;
@@ -108,9 +108,8 @@ const ok = (nm, cond, det) => console.log((cond ? '  ✓ ' : '  ✗ ') + nm.padE
   ok('ВОР: +2% ко всему золоту за уровень', Math.abs(c.__api.D.goldGainMult - 1.50) < 0.001,
      'уровень 25 · множитель ×' + c.__api.D.goldGainMult.toFixed(2));
   const thiefDesc = c.__api.SUBCLASSES.bow.find(s=>s.id==='thief').desc;
-  ok('ВОР: описание соответствует механике', thiefDesc.includes('+2%') &&
-     thiefDesc.includes('отдельным множителем') && thiefDesc.includes('+1% скорости') &&
-     thiefDesc.includes('Бонуса к уклонению нет'));
+  ok('ВОР: краткое описание соответствует механике',
+     thiefDesc === '+2% ко всему получаемому золоту за уровень и +1% к скорости передвижения за уровень.');
   G.floor = 10; G.enemies.length = 0; G.spawnQueue = 0; G.orbs.length = 0;
   const oldRandom = Math.random;
   try {

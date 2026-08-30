@@ -56,6 +56,12 @@ function orbitHit({subclass=null,lvl=1,inc=0,more=1,element=0,crit=0,double=0,ig
 
   const plain=orbitHit();
   ok('касание орба наносит ровно 25% базовой автоатаки', Math.abs(plain.damage-25)<1e-9, plain.damage+' урона');
+  const radiusGame=loadGame('./PolyGrind.html'); radiusGame.newGame('blade','keys');
+  radiusGame.__api.G.bag.add('orbit','flat',1); radiusGame.recalc();
+  radiusGame.__api.G.player.x=radiusGame.__api.G.player.y=0; radiusGame.__api.G.orbitA=0;
+  const radiusPos=radiusGame.orbitPos(0);
+  ok('радиус вращения орба увеличен на 20%: 74 → 88,8',
+    Math.abs(Math.hypot(radiusPos.x,radiusPos.y)-88.8)<1e-9);
   const scaled=orbitHit({subclass:'berserker',lvl:20,inc:40,more:1.5,element:40});
   ok('орб наследует стихии, общие и классовые модификаторы', Math.abs(scaled.damage-84)<1e-9, scaled.damage+' урона');
   const procs=orbitHit({crit:100,double:100,ignite:100});
@@ -120,10 +126,10 @@ function orbitHit({subclass=null,lvl=1,inc=0,more=1,element=0,crit=0,double=0,ig
   o.c.attack(); const second=o.G.fx.filter(x=>x.t==='arc').at(-1).r;
   o.c.attack(); const third=o.G.fx.filter(x=>x.t==='ring').at(-1).max;
   o.c.attack(); const fourth=o.G.fx.filter(x=>x.t==='arc').at(-1).r;
-  ok('Техника трёх шагов даёт 5/10/15% дальности и повторяет цикл',
-    targetRanges.every((v,i)=>Math.abs(v-base*(1+(i+1)*0.05))<1e-9) &&
-    Math.abs(first-base*1.05)<1e-9 && Math.abs(second-base*1.10)<1e-9 &&
-    Math.abs(third-base*1.45*1.15)<1e-9 && Math.abs(fourth-base*1.05)<1e-9 && o.p.bladeN===4,
+  ok('Техника трёх шагов даёт 10/15/20% дальности и повторяет цикл',
+    targetRanges.every((v,i)=>Math.abs(v-base*(1.10+i*0.05))<1e-9) &&
+    Math.abs(first-base*1.10)<1e-9 && Math.abs(second-base*1.15)<1e-9 &&
+    Math.abs(third-base*1.45*1.20)<1e-9 && Math.abs(fourth-base*1.10)<1e-9 && o.p.bladeN===4,
     targetRanges.map(x=>x.toFixed(1)).join('/')+' · волна '+third.toFixed(1));
 }
 

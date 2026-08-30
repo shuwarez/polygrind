@@ -13,6 +13,7 @@ import hashlib
 import io
 import json
 import re
+import zipfile
 from collections import deque
 from pathlib import Path
 
@@ -97,6 +98,24 @@ RELIC_ICON_SOURCES = {
     "xpbag": ("image7.png", "d65157d7d189d5d9f7504bf19b8de886b4508db96e9339e9cf748ad7c63a0581"),
 }
 
+EPIC_ITEM_SOURCES = {
+    "emptyThroneSeal": ("empty-throne-seal.png", "5906f76b05858354cc75d788296e7866a73cf9bd8632d8d1f070e816a9d98a2c"),
+    "surgeonsHand": ("surgeons-hand.png", "538450bed30785bdd3d3315e53e8cab6cba25067785d71841cc3b4b05d9d3f35"),
+    "betweenWorldsBoots": ("between-worlds-boots.png", "3f28bc2fc7a629f21a38b7d5b63b6b5382ad7dd7d98c3164bfc94346c0c513a1"),
+    "unhealedWoundRing": ("unhealed-wound-ring.png", "c4855511b69624b53d0f2d1d7e8de48b284273eb3230ed6159689163881f529e"),
+    "deadGodClock": ("dead-god-clock.png", "23e166bbdbdc5c1cebb975f29e0559b54e5a3c3e32d78ceeddcacba7831d91a1"),
+}
+
+LEGENDARY_ITEM_SOURCES = {
+    "heartSecond": ("heart-of-second.png", "adf9790692d4d1d12276b43be187f29a5cf316f6cb128b0078239742772b3d12"),
+    "titansHands": ("titans-hands.png", "fd6ec8e28e0b4cb231f6ee36e779e56de52e44b393f95ddf5750d43161486d45"),
+    "stepBeyond": ("step-beyond.png", "b8ef5d9112e1027b15cd1c684b3caf5b617e914ce79bf3d586041455f8c834ca"),
+    "marchDead": ("march-of-dead.png", "5641bf935a78838743f7f24976fdee29b43a200b1c0e700e4b8686bf108042ee"),
+    "zeroDistanceRing": ("zero-distance-ring.png", "6c761734bffe6b66e7f3c47e4d4101f899521885b85322b0246cf3bbbd831978"),
+    "invertedCrown": ("inverted-crown.png", "aa9f582e18b409d90f7c7fa897c87c8ec60c79e3451c8226d5fd049739e07824"),
+    "archivist": ("archivist.png", "efe815cc8368591ccd03b177582afc075b3a96a91e5209739660bd04eb15b68c"),
+}
+
 # Ячейки master-листа 4×3, которые действительно используются в игре.
 # Первый ряд начинается с elite, третий содержит rage/pack/hit/hunter mark —
 # эти пять не входят в элементальную индикацию и намеренно не упаковываются.
@@ -143,6 +162,94 @@ LIGHTNING_TOTEM_SPRITE_SOURCES = (
     ("image3.png", "6bf7dfe693a8525b07ce78a06afb513b6989e7d32b132b1e94876c85722f005a"),
     ("image4.png", "fd2f76dc62fd20da2c121caab4b7ffd1bd065ca738fbe7d630825a2a7704ced7"),
 )
+
+PUDDLE_SPRITE_SOURCES = {
+    "tar": ("image1.png", "36fe13058f4744f6bc85f8691d961b2ae5a034e77ba10ab917a35b1daf860076", 32,
+            "tar-pool-4f-optimized.png"),
+    "ogreAcid": ("image2.png", "5812fd8f9dc0f644760967311301dec97b00b00f7ef8adc378fe4ac005fa82f7", 32,
+                 "plague-ogre-acid-4f-optimized.png"),
+    "bossAcid": ("image3.png", "e0b4c9d6eca4d5744731ca11930c3a4533f05f2305da9779322111e9e6ff0d0e", 64,
+                 "plague-abomination-boss-acid-4f-optimized.png"),
+    "boilingBlood": ("image4.png", "486bcf58e5c8a5fd3b9b795642b840658b5cee66c84ae5dc91a1f2b92d45a7bf", 32,
+                     "boiling-blood-4f-optimized.png"),
+    "lavaTrail": ("image5.png", "d857922d5bba16c3bd116f1b3ae826fe36d75477a57170864df3327f74ccc8bd", 32,
+                  "lava-boots-fire-trail-4f-optimized.png"),
+    "frostTrail": ("image6.png", "82b7368f626a1a566bc7ee54797f190984db54070843df7cf0764f4b7f4ad2cb", 32,
+                   "frost-boots-ice-trail-4f-optimized.png"),
+    "venomAcid": ("image7.png", "767af9cd0aa1c9ef79a6cc87f48689375c49f37422939859c5015ab61ce95109", 32,
+                  "venomancer-friendly-acid-4f-optimized.png"),
+    "tyrantFire": ("image8.png", "4cfb7070afb8516fb3b005e98da39928b1daf21decb40aef5b12b4a5ec7160ae", 32,
+                   "horned-tyrant-fire-trail-4f-optimized.png"),
+}
+
+MENU_BACKGROUND_SOURCE_SHA256 = "3627a52e9cbd4739fbe9552cee51fab5adc240f1df17c438ef5ed78619d54192"
+MENU_BACKGROUND_WEBP_SHA256 = "571683ab685f6abbb3356031c5dcfbd4ec22d8753cb8ae8d3ab6a7dbe65d3c92"
+MENU_MUSIC_SHA256 = "077f237a32911f2ce4564cb39991cd2ec96d553e2ece6f87b8048dba4c0b9e2b"
+CONFIRM_SOUND_SHA256 = "300084b049183ca0e8da0938208a6db95ad9ee67254fe81b2138a28cbdc2d62e"
+HOVER_SOUND_SHA256 = "64b6e293a63d3e76658572c83f875f874a8b61842ed799238d41a1441a817f18"
+ARCHER_SHOT_SOUND_SHA256 = (
+    "2bfd7a9cf697ecfb5730d38bb20a20494b2e584aa8d0622c9ea2fdbaf869ad80",
+    "a537c616742c4d4fa3919a61caf2c53ead11c3d1754aa3940ce28f9b0101cc9e",
+    "1bed32779aca31427b20bcf2a5d264437c618e1778db384ffce677114a5bcf40",
+    "469400e38347e51f95df933f5c58edd6d3537ccd8129ae77bdfbf47e74b97231",
+)
+WARRIOR_ATTACK_SOUND_SHA256 = (
+    "3a72d4a60fa8d79d98001586f89084ee391ed9766d80bb97b2271afc57b0d5c5",
+    "3ef1fe28c3797bd4427aa0766f6d8f51dd4c4a4f8aa31216a89b1c550b75f82b",
+    "609857aac108498a369327cd6bf3f73e8c2a51840f452e644afeb65844edce41",
+    "14348e52d7e875ea1e05f27655b232ef63bdee975438c3390e45611bc903d315",
+)
+MAGE_ATTACK_SOUND_SHA256 = (
+    "3b6baf3457eb7fc4bc3d0edcbccc9b670f5a3019e6566f18ea91493c3a14baee",
+    "2f705e4eb6720aec80e4480b7d1fd7e2b5b37a71ced16b7cb6c052ecbcf6390f",
+    "442afd04d92987bb9eb4d90f1fd06b8dc93a62afcb673cdb6bcf98b19319ebed",
+    "013d99d1bfdb688ad9e6f85e10c2bf579bbb9740f66855bacad76cbfba9c2417",
+)
+
+CLASS_FRAME_SOURCES = {
+    "archer": ("word/media/image3.png", "4413b6f02e7ae495f2215d055b79f178501face7647d971c60e40c2a40079307"),
+    "mage": ("word/media/image5.png", "ed3db3d7ee5908bceaaa4c8a5a1d62471c293ecffabdd2e3a619f16b1e078ea9"),
+    "necromancer": ("word/media/image7.png", "ad14eaf3682edce941930793328042befad58b2da5192f326fbb582f60779f55"),
+    "warrior": ("word/media/image9.png", "7a6b86d2331f1d41f1b8aa0e02cc001ccb345d1aed6b450a4d63f573e11686ea"),
+}
+
+SUBCLASS_FRAME_SOURCES = {
+    "thief": ("word/media/image6.png", "aac7565a71d448c459e52d31aeb31c0c98c53e94302ef6776658a4480c416c56"),
+    "hunter": ("word/media/image8.png", "577a58526c4a2d8b0e4df3d53e6135e92b8ef35f3788b5488cb7d34c5cf6c343"),
+    "dancer": ("word/media/image10.png", "105a7d61ecfa288265dbb9c8f1c30796f1b3271ccf1aaac4828bb2e11c9c3744"),
+    "destroyer": ("word/media/image12.png", "e6226bc764879ceb93f50c52373312c6b2565c0f8d90037132c0eb819362fce2"),
+    "multiplier": ("word/media/image14.png", "8dfeb283cac5d7d6db27263747b2cd94db317b0b698ea40836fcf7a55815778e"),
+    "elementalist": ("word/media/image16.png", "2591fa0f92fa302cf33c00d7c8bbc3720ac59c41c4fbe42ff39bbb60692f0371"),
+    "graverobber": ("word/media/image18.png", "93d078a5ae5176bc764c97981adc85bcd1b9472fc129401ec43b4b02e821018e"),
+    "animator": ("word/media/image20.png", "2f2526056723328d3cb0e6d5a3f289b4b413b810e81c462a2ff220148d19ad4d"),
+    "venomancer": ("word/media/image22.png", "4360b83868f0b2bbb0a3234b0512afabd6d51ae58bc6149ac579ceedf8dcbfd7"),
+    "berserker": ("word/media/image24.png", "3dd49fb6a84112afc38ffd561b6e8689b7f08fbe9ac4f8a7cb17af3b77c0ddfd"),
+    "guardian": ("word/media/image26.png", "34d91e55a60ed729cbd87a7440abb2b7cf73ea7819f0d83f8508a00fdfa8b4d0"),
+    "swordmaster": ("word/media/image28.png", "2aa72b31b7cc30da73c9563c0305a0fcf7dfccc4c0acdae95b979ec0ff09f02b"),
+}
+
+SHOP_ICON_ATLAS_SOURCE_SHA256 = "f05fb7c14b4e46e542de12f103c8f8a41c059c7410211694b6408641a51843ad"
+
+
+def shop_icon_atlas(path: Path) -> bytes:
+    """Свести сгенерированную сетку 5×4 к одному игровому PNG 240×192."""
+    source_data = path.read_bytes()
+    actual_hash = hashlib.sha256(source_data).hexdigest()
+    if actual_hash != SHOP_ICON_ATLAS_SOURCE_SHA256:
+        raise SystemExit(
+            f"атлас магазина: SHA-256 {actual_hash}, ожидался {SHOP_ICON_ATLAS_SOURCE_SHA256}")
+    source = Image.open(io.BytesIO(source_data)).convert("RGBA")
+    if source.size != (1402, 1122):
+        raise SystemExit(f"атлас магазина: ожидался размер 1402×1122, получен {source.size}")
+    sheet = Image.new("RGBA", (240, 192))
+    for row in range(4):
+        for col in range(5):
+            cell = source.crop((
+                round(col * source.width / 5), round(row * source.height / 4),
+                round((col + 1) * source.width / 5), round((row + 1) * source.height / 4),
+            )).resize((48, 48), Image.Resampling.LANCZOS)
+            sheet.alpha_composite(cell, (col * 48, row * 48))
+    return indexed_png(sheet, opaque_colors=255, transparent_index=255, bits=8)
 
 
 def indexed_png(image: Image.Image, opaque_colors: int = PALETTE_COLORS,
@@ -699,6 +806,24 @@ def compact_stable_sheet(frames: list[Image.Image],
     return sheet
 
 
+def puddle_sprite_sheet(path: Path, frame_size: int) -> bytes:
+    """Упаковать четыре кадра наземного эффекта с общей нижней привязкой.
+
+    Исходники из handoff имеют мягкую генеративную альфу. До уменьшения она
+    переводится в один прозрачный/непрозрачный слой: так не остаётся случайной
+    полупрозрачной грязи и широкого свечения у часто повторяемых следов.
+    """
+    frames = split_horizontal_frames(Image.open(path).convert("RGBA"), 4)
+    cleaned = []
+    for frame in frames:
+        alpha = frame.getchannel("A").point(lambda value: 255 if value >= 64 else 0)
+        frame.putalpha(alpha)
+        cleaned.append(frame)
+    sheet = compact_stable_sheet(cleaned, (frame_size, frame_size), padding=1,
+                                 resample=Image.Resampling.NEAREST)
+    return indexed_png(sheet)
+
+
 def stable_logo_frames(source: Image.Image) -> list[Image.Image]:
     """Оставить геометрию вывески неподвижной, перенеся лишь свет кадров."""
     frames = split_horizontal_frames(source, 8)
@@ -798,6 +923,26 @@ def menu_logo_sheet(path: Path) -> bytes:
 def menu_torch_sheet(path: Path) -> bytes:
     source = Image.open(path).convert("RGBA")
     return indexed_png(compact_stable_sheet(stable_torch_frames(source), (72, 192)))
+
+
+def menu_constellation_star_sheet(path: Path) -> bytes:
+    """Восемь мерцающих звёзд из широкого master-листа → кадры 32×32.
+
+    Каждый кадр берётся из фиксированного квадрата вокруг центра исходной
+    ячейки: так сохраняется заложенное автором изменение размера при мерцании.
+    """
+    source = Image.open(path).convert("RGBA")
+    sheet = Image.new("RGBA", (256, 32))
+    center_y = source.height / 2
+    for index in range(8):
+        x0 = round(index * source.width / 8)
+        x1 = round((index + 1) * source.width / 8)
+        side = x1 - x0
+        y0 = round(center_y - side / 2)
+        frame = source.crop((x0, y0, x1, y0 + side))
+        frame = frame.resize((32, 32), Image.Resampling.NEAREST)
+        sheet.alpha_composite(frame, (index * 32, 0))
+    return indexed_png(sheet)
 
 
 def elite_variant_sheet(path: Path) -> bytes:
@@ -937,6 +1082,7 @@ def main() -> None:
     parser.add_argument("--acid-carrier", type=Path)
     parser.add_argument("--menu-logo", type=Path)
     parser.add_argument("--menu-torch", type=Path)
+    parser.add_argument("--menu-constellation-star", type=Path)
     parser.add_argument("--pickup-xp", type=Path)
     parser.add_argument("--pickup-gold", type=Path)
     parser.add_argument("--book-fire", type=Path)
@@ -950,12 +1096,30 @@ def main() -> None:
                         help="записать компактные листы опыта, золота и семи книг в outputs")
     parser.add_argument("--install-loot-sprites", action="store_true",
                         help="собрать и встроить девять листов наземного лута в HTML")
+    parser.add_argument("--puddle-sprite-dir", type=Path,
+                        help="word/media с восемью четырёхкадровыми наземными эффектами")
+    parser.add_argument("--build-puddle-sprites", action="store_true",
+                        help="собрать восемь компактных листов луж и следов в outputs")
+    parser.add_argument("--install-puddle-sprites", action="store_true",
+                        help="проверить SHA-256 и встроить восемь листов луж и следов в HTML")
     parser.add_argument("--rare-item-dir", type=Path,
                         help="каталог word/media с image1.png–image16.png из DOCX")
     parser.add_argument("--build-rare-item-sprites", action="store_true",
                         help="записать 16 статичных иконок редких предметов 24×24 в outputs")
     parser.add_argument("--install-rare-item-sprites", action="store_true",
                         help="проверить SHA-256, упаковать и встроить 16 редких предметов в HTML")
+    parser.add_argument("--epic-item-dir", type=Path,
+                        help="каталог с пятью исходными PNG новых эпических предметов")
+    parser.add_argument("--build-epic-item-icons", action="store_true",
+                        help="записать пять статичных иконок эпических предметов 24×24 в outputs")
+    parser.add_argument("--install-epic-item-icons", action="store_true",
+                        help="проверить SHA-256 и встроить пять эпических предметов в HTML")
+    parser.add_argument("--legendary-item-dir", type=Path,
+                        help="каталог с семью исходными PNG легендарных предметов")
+    parser.add_argument("--build-legendary-item-icons", action="store_true",
+                        help="записать семь статичных иконок легендарных предметов 24×24 в outputs")
+    parser.add_argument("--install-legendary-item-icons", action="store_true",
+                        help="проверить SHA-256 и встроить семь легендарных предметов в HTML")
     parser.add_argument("--amulet-icon-dir", type=Path,
                         help="каталог word/media с Master-иконками image1,3,…,17 из DOCX")
     parser.add_argument("--build-amulet-icons", action="store_true",
@@ -1010,6 +1174,46 @@ def main() -> None:
                         help="записать переданные прозрачные листы логотипа и/или факела в outputs")
     parser.add_argument("--install-menu-assets", action="store_true",
                         help="собрать переданные листы меню и встроить их data URI в автономный HTML")
+    parser.add_argument("--class-frame-docx", type=Path,
+                        help="DOCX handoff с оригинальными V2-рамками классов")
+    parser.add_argument("--install-class-frames", action="store_true",
+                        help="проверить и встроить четыре V2-рамки классов в автономный HTML")
+    parser.add_argument("--subclass-frame-docx", type=Path,
+                        help="DOCX handoff с оригинальными рамками двенадцати подклассов")
+    parser.add_argument("--install-subclass-frames", action="store_true",
+                        help="проверить и встроить двенадцать рамок подклассов в автономный HTML")
+    parser.add_argument("--shop-icon-atlas", type=Path,
+                        help="сгенерированный прозрачный атлас 5×4 иконок магазина")
+    parser.add_argument("--install-shop-icon-atlas", action="store_true",
+                        help="сжать и встроить атлас иконок магазина в автономный HTML")
+    parser.add_argument("--menu-background", type=Path,
+                        help="исходный PNG 1672×941 с фоном главного меню")
+    parser.add_argument("--install-menu-background", action="store_true",
+                        help="сжать фон в WebP quality 35 и встроить его в CSS автономного HTML")
+    parser.add_argument("--menu-music", type=Path,
+                        help="готовая OGG/Vorbis музыка главного меню")
+    parser.add_argument("--install-menu-music", action="store_true",
+                        help="проверить и встроить OGG главного меню в автономный HTML")
+    parser.add_argument("--confirm-sound", type=Path,
+                        help="готовый короткий OGG/Opus звук подтверждения")
+    parser.add_argument("--install-confirm-sound", action="store_true",
+                        help="проверить и встроить Opus-подтверждение в автономный HTML")
+    parser.add_argument("--hover-sound", type=Path,
+                        help="готовый короткий OGG/Opus звук наведения по меню")
+    parser.add_argument("--install-hover-sound", action="store_true",
+                        help="проверить и встроить Hover UI в автономный HTML")
+    parser.add_argument("--archer-shot-sounds", type=Path, nargs=4,
+                        help="четыре OGG/Vorbis вариации выстрела Лучника")
+    parser.add_argument("--install-archer-shot-sounds", action="store_true",
+                        help="проверить и встроить четыре выстрела Лучника в автономный HTML")
+    parser.add_argument("--warrior-attack-sounds", type=Path, nargs=4,
+                        help="четыре OGG/Vorbis вариации атаки Воина")
+    parser.add_argument("--install-warrior-attack-sounds", action="store_true",
+                        help="проверить и встроить четыре атаки Воина в автономный HTML")
+    parser.add_argument("--mage-attack-sounds", type=Path, nargs=4,
+                        help="четыре OGG/Vorbis вариации атаки Мага")
+    parser.add_argument("--install-mage-attack-sounds", action="store_true",
+                        help="проверить и встроить четыре атаки Мага в автономный HTML")
     parser.add_argument("--emit-shooter-base64", action="store_true",
                         help="вывести JSON двух оптимизированных data payload без изменения HTML")
     parser.add_argument("--emit-player-projectile-base64", action="store_true",
@@ -1073,6 +1277,325 @@ def main() -> None:
     parser.add_argument("--install-elite-ranged-tank", action="store_true",
                         help="добавить шесть ranged/tank разновидностей элиты в автономный HTML")
     args = parser.parse_args()
+
+    if args.install_class_frames:
+        if not args.class_frame_docx or not args.class_frame_docx.is_file():
+            parser.error("рамки классов требуют существующий --class-frame-docx")
+        payload: dict[str, str] = {}
+        source_bytes = 0
+        with zipfile.ZipFile(args.class_frame_docx) as archive:
+            for class_name, (member, expected_hash) in CLASS_FRAME_SOURCES.items():
+                data = archive.read(member)
+                actual_hash = hashlib.sha256(data).hexdigest()
+                if actual_hash != expected_hash:
+                    raise SystemExit(
+                        f"рамка {class_name}: SHA-256 {actual_hash}, ожидался {expected_hash}")
+                image = Image.open(io.BytesIO(data))
+                if image.size != (280, 390) or image.mode != "RGBA":
+                    raise SystemExit(
+                        f"рамка {class_name}: ожидался RGBA 280×390, получен {image.mode} {image.size}")
+                payload[class_name] = base64.b64encode(data).decode("ascii")
+                source_bytes += len(data)
+        html = HTML.read_text(encoding="utf-8")
+        if "const CLASS_FRAME_DATA = {" not in html:
+            anchor = "const HERO_SPRITE_DATA = {"
+            if anchor not in html:
+                raise SystemExit("не найден якорь HERO_SPRITE_DATA для рамок классов")
+            html = html.replace(anchor, "const CLASS_FRAME_DATA = {\n};\n" + anchor, 1)
+        html = install_object_payloads(html, "CLASS_FRAME_DATA", payload)
+        HTML.write_text(html.rstrip("\n") + "\n", encoding="utf-8")
+        print(json.dumps({
+            "installed": sorted(payload),
+            "sourceBytes": source_bytes,
+            "target": str(HTML),
+        }, ensure_ascii=False))
+        return
+
+    if args.install_subclass_frames:
+        if not args.subclass_frame_docx or not args.subclass_frame_docx.is_file():
+            parser.error("рамки подклассов требуют существующий --subclass-frame-docx")
+        payload: dict[str, str] = {}
+        source_bytes = 0
+        with zipfile.ZipFile(args.subclass_frame_docx) as archive:
+            for subclass_name, (member, expected_hash) in SUBCLASS_FRAME_SOURCES.items():
+                data = archive.read(member)
+                actual_hash = hashlib.sha256(data).hexdigest()
+                if actual_hash != expected_hash:
+                    raise SystemExit(
+                        f"рамка {subclass_name}: SHA-256 {actual_hash}, ожидался {expected_hash}")
+                image = Image.open(io.BytesIO(data))
+                if image.size != (270, 304) or image.mode != "RGBA":
+                    raise SystemExit(
+                        f"рамка {subclass_name}: ожидался RGBA 270×304, получен {image.mode} {image.size}")
+                payload[subclass_name] = base64.b64encode(data).decode("ascii")
+                source_bytes += len(data)
+        html = HTML.read_text(encoding="utf-8")
+        if "const SUBCLASS_FRAME_DATA = {" not in html:
+            anchor = "const CLASS_FRAME_DATA = {"
+            if anchor not in html:
+                raise SystemExit("не найден якорь CLASS_FRAME_DATA для рамок подклассов")
+            html = html.replace(anchor, "const SUBCLASS_FRAME_DATA = {\n};\n" + anchor, 1)
+        html = install_object_payloads(html, "SUBCLASS_FRAME_DATA", payload)
+        HTML.write_text(html.rstrip("\n") + "\n", encoding="utf-8")
+        print(json.dumps({
+            "installed": sorted(payload),
+            "sourceBytes": source_bytes,
+            "target": str(HTML),
+        }, ensure_ascii=False))
+        return
+
+    if args.install_shop_icon_atlas:
+        if not args.shop_icon_atlas or not args.shop_icon_atlas.is_file():
+            parser.error("иконки магазина требуют существующий --shop-icon-atlas")
+        data = shop_icon_atlas(args.shop_icon_atlas)
+        optimized_path = ROOT / "assets" / "shop-upgrade-icons-atlas-v1-optimized.png"
+        optimized_path.parent.mkdir(parents=True, exist_ok=True)
+        optimized_path.write_bytes(data)
+        value = base64.b64encode(data).decode("ascii")
+        html = HTML.read_text(encoding="utf-8")
+        html, count = re.subn(
+            r"const SHOP_ICON_ATLAS_DATA = 'data:image/png;base64,[^']*';",
+            f"const SHOP_ICON_ATLAS_DATA = 'data:image/png;base64,{value}';", html, count=1)
+        if count != 1:
+            raise SystemExit(f"SHOP_ICON_ATLAS_DATA: ожидалась одна замена, получено {count}")
+        HTML.write_text(html.rstrip("\n") + "\n", encoding="utf-8")
+        print(json.dumps({
+            "source": str(args.shop_icon_atlas),
+            "optimized": str(optimized_path),
+            "bytes": len(data),
+            "target": str(HTML),
+        }, ensure_ascii=False))
+        return
+
+    if args.install_menu_background:
+        if not args.menu_background or not args.menu_background.is_file():
+            parser.error("фон меню требует существующий --menu-background")
+        source_data = args.menu_background.read_bytes()
+        actual_source = hashlib.sha256(source_data).hexdigest()
+        if actual_source != MENU_BACKGROUND_SOURCE_SHA256:
+            raise SystemExit(
+                f"фон меню: SHA-256 {actual_source}, ожидался {MENU_BACKGROUND_SOURCE_SHA256}")
+        source = Image.open(io.BytesIO(source_data)).convert("RGB")
+        if source.size != (1672, 941):
+            raise SystemExit(f"фон меню: ожидался размер 1672×941, получен {source.size}")
+        encoded = io.BytesIO()
+        source.save(encoded, "WEBP", quality=35, method=6)
+        data = encoded.getvalue()
+        actual_webp = hashlib.sha256(data).hexdigest()
+        if actual_webp != MENU_BACKGROUND_WEBP_SHA256:
+            raise SystemExit(
+                f"сжатый фон меню: SHA-256 {actual_webp}, ожидался {MENU_BACKGROUND_WEBP_SHA256}")
+        output_dir = ROOT / "outputs"
+        output_dir.mkdir(exist_ok=True)
+        path = output_dir / "grim-grind-menu-background.webp"
+        path.write_bytes(data)
+        html = HTML.read_text(encoding="utf-8")
+        value = base64.b64encode(data).decode("ascii")
+        html, count = re.subn(
+            r'url\("(?:assets/menu-forge-background\.png|data:image/webp;base64,[A-Za-z0-9+/=]+)"\) center/cover no-repeat',
+            f'url("data:image/webp;base64,{value}") center/cover no-repeat', html, count=1)
+        if count != 1:
+            raise SystemExit(f"фон меню в CSS: ожидалась одна замена, получено {count}")
+        HTML.write_text(html, encoding="utf-8", newline="\n")
+        print(json.dumps({"path": str(path), "bytes": len(data),
+                          "base64Bytes": len(value)}, separators=(",", ":")))
+        return
+
+    if args.install_mage_attack_sounds:
+        if not args.mage_attack_sounds or any(not path.is_file() for path in args.mage_attack_sounds):
+            parser.error("атаки Мага требуют четыре существующих --mage-attack-sounds")
+        payloads = []
+        for index, (path, expected_hash) in enumerate(
+                zip(args.mage_attack_sounds, MAGE_ATTACK_SOUND_SHA256), start=1):
+            data = path.read_bytes()
+            actual = hashlib.sha256(data).hexdigest()
+            if actual != expected_hash:
+                raise SystemExit(
+                    f"атака Мага {index}: SHA-256 {actual}, ожидался {expected_hash}")
+            if not data.startswith(b"OggS") or b"vorbis" not in data[:512]:
+                raise SystemExit(f"атака Мага {index}: ожидался контейнер OGG/Vorbis")
+            payloads.append("  'data:audio/ogg;base64," + base64.b64encode(data).decode("ascii") + "'")
+        html = HTML.read_text(encoding="utf-8")
+        value = "[\n" + ",\n".join(payloads) + "\n]"
+        html, count = re.subn(
+            r"const MAGE_ATTACK_SOUND_DATA = \[[\s\S]*?\];",
+            f"const MAGE_ATTACK_SOUND_DATA = {value};", html, count=1)
+        if count != 1:
+            raise SystemExit(f"MAGE_ATTACK_SOUND_DATA: ожидалась одна замена, получено {count}")
+        HTML.write_text(html, encoding="utf-8", newline="\n")
+        print(json.dumps({"files": len(payloads),
+                          "bytes": sum(path.stat().st_size for path in args.mage_attack_sounds)},
+                         separators=(",", ":")))
+        return
+
+    if args.install_warrior_attack_sounds:
+        if not args.warrior_attack_sounds or any(not path.is_file() for path in args.warrior_attack_sounds):
+            parser.error("атаки Воина требуют четыре существующих --warrior-attack-sounds")
+        payloads = []
+        for index, (path, expected_hash) in enumerate(
+                zip(args.warrior_attack_sounds, WARRIOR_ATTACK_SOUND_SHA256), start=1):
+            data = path.read_bytes()
+            actual = hashlib.sha256(data).hexdigest()
+            if actual != expected_hash:
+                raise SystemExit(
+                    f"атака Воина {index}: SHA-256 {actual}, ожидался {expected_hash}")
+            if not data.startswith(b"OggS") or b"vorbis" not in data[:512]:
+                raise SystemExit(f"атака Воина {index}: ожидался контейнер OGG/Vorbis")
+            payloads.append("  'data:audio/ogg;base64," + base64.b64encode(data).decode("ascii") + "'")
+        html = HTML.read_text(encoding="utf-8")
+        value = "[\n" + ",\n".join(payloads) + "\n]"
+        html, count = re.subn(
+            r"const WARRIOR_ATTACK_SOUND_DATA = \[[\s\S]*?\];",
+            f"const WARRIOR_ATTACK_SOUND_DATA = {value};", html, count=1)
+        if count != 1:
+            raise SystemExit(f"WARRIOR_ATTACK_SOUND_DATA: ожидалась одна замена, получено {count}")
+        HTML.write_text(html, encoding="utf-8", newline="\n")
+        print(json.dumps({"files": len(payloads),
+                          "bytes": sum(path.stat().st_size for path in args.warrior_attack_sounds)},
+                         separators=(",", ":")))
+        return
+
+    if args.install_archer_shot_sounds:
+        if not args.archer_shot_sounds or any(not path.is_file() for path in args.archer_shot_sounds):
+            parser.error("выстрелы Лучника требуют четыре существующих --archer-shot-sounds")
+        payloads = []
+        for index, (path, expected_hash) in enumerate(
+                zip(args.archer_shot_sounds, ARCHER_SHOT_SOUND_SHA256), start=1):
+            data = path.read_bytes()
+            actual = hashlib.sha256(data).hexdigest()
+            if actual != expected_hash:
+                raise SystemExit(
+                    f"выстрел Лучника {index}: SHA-256 {actual}, ожидался {expected_hash}")
+            if not data.startswith(b"OggS") or b"vorbis" not in data[:512]:
+                raise SystemExit(f"выстрел Лучника {index}: ожидался контейнер OGG/Vorbis")
+            payloads.append("  'data:audio/ogg;base64," + base64.b64encode(data).decode("ascii") + "'")
+        html = HTML.read_text(encoding="utf-8")
+        value = "[\n" + ",\n".join(payloads) + "\n]"
+        html, count = re.subn(
+            r"const ARCHER_SHOT_SOUND_DATA = \[[\s\S]*?\];",
+            f"const ARCHER_SHOT_SOUND_DATA = {value};", html, count=1)
+        if count != 1:
+            raise SystemExit(f"ARCHER_SHOT_SOUND_DATA: ожидалась одна замена, получено {count}")
+        HTML.write_text(html, encoding="utf-8", newline="\n")
+        print(json.dumps({"files": len(payloads),
+                          "bytes": sum(path.stat().st_size for path in args.archer_shot_sounds)},
+                         separators=(",", ":")))
+        return
+
+    if args.install_hover_sound:
+        if not args.hover_sound or not args.hover_sound.is_file():
+            parser.error("звук наведения требует существующий --hover-sound")
+        data = args.hover_sound.read_bytes()
+        actual = hashlib.sha256(data).hexdigest()
+        if actual != HOVER_SOUND_SHA256:
+            raise SystemExit(
+                f"звук наведения: SHA-256 {actual}, ожидался {HOVER_SOUND_SHA256}")
+        if not data.startswith(b"OggS") or b"OpusHead" not in data[:512]:
+            raise SystemExit("звук наведения: ожидался контейнер OGG с потоком Opus")
+        output_dir = ROOT / "outputs"
+        output_dir.mkdir(exist_ok=True)
+        path = output_dir / "grim-grind-hover-ui.opus"
+        path.write_bytes(data)
+        html = HTML.read_text(encoding="utf-8")
+        value = base64.b64encode(data).decode("ascii")
+        html, count = re.subn(
+            r"const HOVER_SOUND_DATA = 'data:audio/ogg;codecs=opus;base64,[^']*';",
+            f"const HOVER_SOUND_DATA = 'data:audio/ogg;codecs=opus;base64,{value}';", html, count=1)
+        if count != 1:
+            raise SystemExit(f"HOVER_SOUND_DATA: ожидалась одна замена, получено {count}")
+        HTML.write_text(html, encoding="utf-8", newline="\n")
+        print(json.dumps({"path": str(path), "bytes": len(data),
+                          "base64Bytes": len(value)}, separators=(",", ":")))
+        return
+
+    if args.install_confirm_sound:
+        if not args.confirm_sound or not args.confirm_sound.is_file():
+            parser.error("звук подтверждения требует существующий --confirm-sound")
+        data = args.confirm_sound.read_bytes()
+        actual = hashlib.sha256(data).hexdigest()
+        if actual != CONFIRM_SOUND_SHA256:
+            raise SystemExit(
+                f"звук подтверждения: SHA-256 {actual}, ожидался {CONFIRM_SOUND_SHA256}")
+        if not data.startswith(b"OggS") or b"OpusHead" not in data[:512]:
+            raise SystemExit("звук подтверждения: ожидался контейнер OGG с потоком Opus")
+        output_dir = ROOT / "outputs"
+        output_dir.mkdir(exist_ok=True)
+        path = output_dir / "grim-grind-confirm-click.opus"
+        path.write_bytes(data)
+        html = HTML.read_text(encoding="utf-8")
+        value = base64.b64encode(data).decode("ascii")
+        html, count = re.subn(
+            r"const CONFIRM_SOUND_DATA = 'data:audio/ogg;codecs=opus;base64,[^']*';",
+            f"const CONFIRM_SOUND_DATA = 'data:audio/ogg;codecs=opus;base64,{value}';", html, count=1)
+        if count != 1:
+            raise SystemExit(f"CONFIRM_SOUND_DATA: ожидалась одна замена, получено {count}")
+        HTML.write_text(html, encoding="utf-8", newline="\n")
+        print(json.dumps({"path": str(path), "bytes": len(data),
+                          "base64Bytes": len(value)}, separators=(",", ":")))
+        return
+
+    if args.install_menu_music:
+        if not args.menu_music or not args.menu_music.is_file():
+            parser.error("музыка меню требует существующий --menu-music")
+        data = args.menu_music.read_bytes()
+        actual = hashlib.sha256(data).hexdigest()
+        if actual != MENU_MUSIC_SHA256:
+            raise SystemExit(
+                f"музыка меню: SHA-256 {actual}, ожидался {MENU_MUSIC_SHA256}")
+        if not data.startswith(b"OggS") or b"vorbis" not in data[:4096]:
+            raise SystemExit("музыка меню: ожидался контейнер OGG с потоком Vorbis")
+        output_dir = ROOT / "outputs"
+        output_dir.mkdir(exist_ok=True)
+        path = output_dir / "grim-grind-menu-music.ogg"
+        path.write_bytes(data)
+        html = HTML.read_text(encoding="utf-8")
+        value = base64.b64encode(data).decode("ascii")
+        html, count = re.subn(
+            r"const MENU_MUSIC_DATA = 'data:audio/ogg;base64,[^']*';",
+            f"const MENU_MUSIC_DATA = 'data:audio/ogg;base64,{value}';", html, count=1)
+        if count != 1:
+            raise SystemExit(f"MENU_MUSIC_DATA: ожидалась одна замена, получено {count}")
+        HTML.write_text(html, encoding="utf-8", newline="\n")
+        print(json.dumps({"path": str(path), "bytes": len(data),
+                          "base64Bytes": len(value)}, separators=(",", ":")))
+        return
+
+    if args.build_puddle_sprites or args.install_puddle_sprites:
+        if not args.puddle_sprite_dir:
+            parser.error("лужи требуют --puddle-sprite-dir")
+        sources = {}
+        for key, (filename, expected, frame_size, _) in PUDDLE_SPRITE_SOURCES.items():
+            path = args.puddle_sprite_dir / filename
+            if not path.is_file():
+                parser.error(f"лужа {key}: не найден {path}")
+            actual = hashlib.sha256(path.read_bytes()).hexdigest()
+            if actual != expected:
+                raise SystemExit(f"лужа {key}: SHA-256 {actual}, ожидался {expected}")
+            sources[key] = (path, frame_size)
+        generated = {key: puddle_sprite_sheet(path, frame_size)
+                     for key, (path, frame_size) in sources.items()}
+        output_dir = ROOT / "outputs"
+        output_dir.mkdir(exist_ok=True)
+        paths = {key: output_dir / PUDDLE_SPRITE_SOURCES[key][3] for key in generated}
+        for key, path in paths.items():
+            path.write_bytes(generated[key])
+        if args.install_puddle_sprites:
+            html = HTML.read_text(encoding="utf-8")
+            body = "const GROUND_POOL_SPRITE_DATA = {\n" + "\n".join(
+                f"  {key}:'data:image/png;base64,{base64.b64encode(data).decode('ascii')}',"
+                for key, data in generated.items()) + "\n};"
+            html, count = re.subn(r"const GROUND_POOL_SPRITE_DATA = \{.*?\n\};",
+                                  body, html, count=1, flags=re.S)
+            if count != 1:
+                raise SystemExit(
+                    f"GROUND_POOL_SPRITE_DATA: ожидалась одна замена, получено {count}")
+            HTML.write_text(html, encoding="utf-8", newline="\n")
+        print(json.dumps({
+            key: {"path": str(paths[key]), "bytes": len(data),
+                  "size": Image.open(io.BytesIO(data)).size}
+            for key, data in generated.items()
+        }, separators=(",", ":")))
+        return
 
     if args.build_loot_sprites or args.install_loot_sprites:
         sources = {
@@ -1215,6 +1738,68 @@ def main() -> None:
             key: {"paths": [str(path) for path in paths[key]],
                   "bytes": [len(data) for data in images], "size": [24, 24]}
             for key, images in generated.items()
+        }, separators=(",", ":")))
+        return
+
+    if args.build_legendary_item_icons or args.install_legendary_item_icons:
+        if not args.legendary_item_dir:
+            parser.error("легендарные предметы требуют --legendary-item-dir")
+        sources = {key: args.legendary_item_dir / filename
+                   for key, (filename, _) in LEGENDARY_ITEM_SOURCES.items()}
+        for key, path in sources.items():
+            if not path.is_file():
+                parser.error(f"легендарный предмет {key}: не найден {path}")
+            expected = LEGENDARY_ITEM_SOURCES[key][1]
+            actual = hashlib.sha256(path.read_bytes()).hexdigest()
+            if actual != expected:
+                raise SystemExit(f"легендарный предмет {key}: SHA-256 {actual}, ожидался {expected}")
+        generated = {key: rare_item_sprite(path) for key, path in sources.items()}
+        output_dir = ROOT / "outputs"
+        output_dir.mkdir(exist_ok=True)
+        paths = {key: output_dir / f"legendary-item-{key}-optimized.png" for key in generated}
+        for key, path in paths.items():
+            path.write_bytes(generated[key])
+        if args.install_legendary_item_icons:
+            html = HTML.read_text(encoding="utf-8")
+            payload = {key: base64.b64encode(data).decode("ascii")
+                       for key, data in generated.items()}
+            html = install_object_payloads(html, "RARE_ITEM_SPRITE_DATA", payload)
+            HTML.write_text(html, encoding="utf-8", newline="\n")
+        print(json.dumps({
+            key: {"path": str(paths[key]), "bytes": len(data),
+                  "size": Image.open(io.BytesIO(data)).size}
+            for key, data in generated.items()
+        }, separators=(",", ":")))
+        return
+
+    if args.build_epic_item_icons or args.install_epic_item_icons:
+        if not args.epic_item_dir:
+            parser.error("эпические предметы требуют --epic-item-dir")
+        sources = {key: args.epic_item_dir / filename
+                   for key, (filename, _) in EPIC_ITEM_SOURCES.items()}
+        for key, path in sources.items():
+            if not path.is_file():
+                parser.error(f"эпический предмет {key}: не найден {path}")
+            expected = EPIC_ITEM_SOURCES[key][1]
+            actual = hashlib.sha256(path.read_bytes()).hexdigest()
+            if actual != expected:
+                raise SystemExit(f"эпический предмет {key}: SHA-256 {actual}, ожидался {expected}")
+        generated = {key: rare_item_sprite(path) for key, path in sources.items()}
+        output_dir = ROOT / "outputs"
+        output_dir.mkdir(exist_ok=True)
+        paths = {key: output_dir / f"epic-item-{key}-optimized.png" for key in generated}
+        for key, path in paths.items():
+            path.write_bytes(generated[key])
+        if args.install_epic_item_icons:
+            html = HTML.read_text(encoding="utf-8")
+            payload = {key: base64.b64encode(data).decode("ascii")
+                       for key, data in generated.items()}
+            html = install_object_payloads(html, "RARE_ITEM_SPRITE_DATA", payload)
+            HTML.write_text(html, encoding="utf-8", newline="\n")
+        print(json.dumps({
+            key: {"path": str(paths[key]), "bytes": len(data),
+                  "size": Image.open(io.BytesIO(data)).size}
+            for key, data in generated.items()
         }, separators=(",", ":")))
         return
 
@@ -1699,25 +2284,29 @@ def main() -> None:
         return
 
     if args.build_menu_assets or args.install_menu_assets:
-        if not args.menu_logo and not args.menu_torch:
-            parser.error("ассеты меню требуют --menu-logo и/или --menu-torch")
+        if not args.menu_logo and not args.menu_torch and not args.menu_constellation_star:
+            parser.error("ассеты меню требуют --menu-logo, --menu-torch и/или --menu-constellation-star")
         generated = {}
         if args.menu_logo:
             generated["logo"] = menu_logo_sheet(args.menu_logo)
         if args.menu_torch:
             generated["torch"] = menu_torch_sheet(args.menu_torch)
+        if args.menu_constellation_star:
+            generated["constellationStar"] = menu_constellation_star_sheet(args.menu_constellation_star)
         output_dir = ROOT / "outputs"
         output_dir.mkdir(exist_ok=True)
         paths = {
             "logo": output_dir / "grim-grind-title-spritesheet-optimized.png",
             "torch": output_dir / "grim-grind-torch-spritesheet-optimized.png",
+            "constellationStar": output_dir / "constellation-menu-star-8f-optimized.png",
         }
         for key, data in generated.items():
             paths[key].write_bytes(data)
         if args.install_menu_assets:
             html = HTML.read_text(encoding="utf-8")
             js_names = {"logo": "GRIM_GRIND_LOGO_STRIP",
-                        "torch": "GRIM_GRIND_TORCH_STRIP"}
+                        "torch": "GRIM_GRIND_TORCH_STRIP",
+                        "constellationStar": "CONSTELLATION_STAR_STRIP"}
             for key in generated:
                 js_name = js_names[key]
                 pattern = rf"({js_name}\.src = 'data:image/png;base64,)[^']+(')"
