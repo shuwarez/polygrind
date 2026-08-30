@@ -24,6 +24,7 @@ ROOT = Path(__file__).resolve().parent
 HTML = ROOT / "PolyGrind.html"
 TRANSPARENT_INDEX = 15
 PALETTE_COLORS = 15
+FRAME_PALETTE_COLORS = 128
 
 RARE_ITEM_SOURCES = {
     "mirror": ("image1.png", "849ba0d0edbcf042cb35a650343dcb628de433182eb57b13c1dc8abbd3346e62"),
@@ -228,6 +229,38 @@ SUBCLASS_FRAME_SOURCES = {
     "swordmaster": ("word/media/image28.png", "2aa72b31b7cc30da73c9563c0305a0fcf7dfccc4c0acdae95b979ec0ff09f02b"),
 }
 
+# Готовые игровые листы из отдельного handoff: четыре кадра 32×32, P-mode,
+# прозрачный индекс 0. Их нельзя масштабировать или повторно квантизировать.
+SUBCLASS_HERO_SPRITE_SOURCES = {
+    "thief": ("word/media/image1.png", "0d41142a3ce95cd0afd2ded46df8725e09d7f3f443c5a8ebd843a5b9cb13f8cb"),
+    "hunter": ("word/media/image2.png", "6ec80cef6fc002a2a7832d690ab4ae682999f2866124e7dfaf387024debfb35f"),
+    "dancer": ("word/media/image3.png", "29dff041fa2ccc593ddde33fdab12cb7fca30168fd5a789ad3338a777e1eccb3"),
+    "destroyer": ("word/media/image4.png", "2165fb363a659355b1cb69003e1ffaddd5cdbdebabb03408ac9f3ab28e942bf1"),
+    "multiplier": ("word/media/image5.png", "6c9bf2ae8cd0f7c1e864b0e9289dd265b14599cd44438d61759ce96ee6e8e73a"),
+    "elementalist": ("word/media/image6.png", "57ff07d24a9a6399b439fe5aeda8a75d656118d832bbd86d3f0172725979f516"),
+    "graverobber": ("word/media/image7.png", "3668cdc935759aac8eaa179ff34626d6ab39956047bce65680778c7da6870d90"),
+    "animator": ("word/media/image8.png", "45ea989633631a621c46df3bc20e7158faa5e8d7e84576897a0d30596618ab5e"),
+    "venomancer": ("word/media/image9.png", "d9019bfef4115a909b93ae222c1f3b4f3c05b04887f16caa764ad90c698486b7"),
+    "berserker": ("word/media/image10.png", "20f5ac623f299830ad37f8d046b3ca9f491291de71ee04eca1d65e29bc95b86e"),
+    "guardian": ("word/media/image11.png", "6d862cdf3b16d9e2bda9e52e18f0dd1c5f6f187ae15543d212c32a00159d7333"),
+    "swordmaster": ("word/media/image12.png", "14a1f6cbd767e82529bb9048aa1659c42f9ed4cab08ea4f57c090211ff5957f2"),
+}
+
+# Готовые листы из handoff системы крови. Они уже имеют игровой размер,
+# прозрачность и крошечную палитру, поэтому повторное квантование только
+# увеличило бы риск артефактов. Установщик проверяет байты и геометрию.
+BLOOD_SPRITE_SOURCES = {
+    "splash": ("blood_splash_4f.png",
+               "0c46d1b3fcfa342fa716f0dddad2883ec2330693d9c9dcbe22afcaae4a1a15c7",
+               (256, 64)),
+    "mist": ("blood_mist_4f.png",
+             "20373938f43fbb76cc12cb561dda6608d79fc55a3c5f7f15187bf350308bd645",
+             (256, 64)),
+    "decals": ("blood_decal_atlas_8x.png",
+               "cd0ef52397dfed2e376f05545221fe14b136b678d106128ce0d1e11bafcbf174",
+               (256, 128)),
+}
+
 SHOP_ICON_ATLAS_SOURCE_SHA256 = "f05fb7c14b4e46e542de12f103c8f8a41c059c7410211694b6408641a51843ad"
 
 
@@ -277,6 +310,20 @@ def indexed_png(image: Image.Image, opaque_colors: int = PALETTE_COLORS,
     buffer = io.BytesIO()
     out.save(buffer, "PNG", optimize=True, compress_level=9, bits=bits,
              transparency=transparent_index)
+    return buffer.getvalue()
+
+
+def indexed_rgba_png(image: Image.Image, colors: int = FRAME_PALETTE_COLORS) -> bytes:
+    """Свести UI-иллюстрацию к индексированной PNG, сохранив градации альфы."""
+    if not 2 <= colors <= 256:
+        raise ValueError(f"палитра RGBA PNG должна содержать от 2 до 256 цветов, получено {colors}")
+    rgba = image.convert("RGBA")
+    pal = rgba.quantize(colors=colors, method=Image.Quantize.FASTOCTREE,
+                        dither=Image.Dither.NONE)
+    buffer = io.BytesIO()
+    # Рамки крупнее пиксельных спрайтов: таблица tRNS сохраняет мягкий край,
+    # но итоговый PNG всё равно остаётся индексированным color type 3.
+    pal.save(buffer, "PNG", optimize=True, compress_level=9, bits=8)
     return buffer.getvalue()
 
 
@@ -978,6 +1025,38 @@ def install_object_payloads(html: str, object_name: str, payload: dict[str, str]
     return html[:match.start()] + body + html[match.end():]
 
 
+def optimize_embedded_frame_family(html: str, object_name: str,
+                                   keys: tuple[str, ...], size: tuple[int, int]) -> tuple[str, dict[str, int]]:
+    """Переупаковать уже встроенные рамки; повторный запуск не ухудшает готовую палитру."""
+    matches = list(re.finditer(
+        rf"const {re.escape(object_name)} = \{{.*?\n\}};", html, flags=re.S))
+    if len(matches) != 1:
+        raise SystemExit(f"Объект {object_name}: ожидался один якорь, найдено {len(matches)}")
+    body = matches[0].group(0)
+    payload: dict[str, str] = {}
+    source_bytes = 0
+    optimized_bytes = 0
+    for key in keys:
+        pattern = rf"^\s*{re.escape(key)}:'data:image/png;base64,([^']+)',\s*$"
+        key_matches = list(re.finditer(pattern, body, flags=re.M))
+        if len(key_matches) != 1:
+            raise SystemExit(
+                f"{object_name}.{key}: ожидался один встроенный PNG, найдено {len(key_matches)}")
+        data = base64.b64decode(key_matches[0].group(1), validate=True)
+        image = Image.open(io.BytesIO(data))
+        if image.size != size:
+            raise SystemExit(f"{object_name}.{key}: ожидался размер {size}, получен {image.size}")
+        colors = image.getcolors(maxcolors=256) if image.mode == "P" else None
+        optimized = data if colors and len(colors) <= FRAME_PALETTE_COLORS else indexed_rgba_png(image)
+        payload[key] = base64.b64encode(optimized).decode("ascii")
+        source_bytes += len(data)
+        optimized_bytes += len(optimized)
+    return install_object_payloads(html, object_name, payload), {
+        "sourceBytes": source_bytes,
+        "optimizedBytes": optimized_bytes,
+    }
+
+
 def constellation_sheets(path: Path) -> dict[str, bytes]:
     """Два ряда по четыре кадра: убрать тёмный фон и собрать 4×48 для UI."""
     source = Image.open(path).convert("RGBA")
@@ -1182,6 +1261,16 @@ def main() -> None:
                         help="DOCX handoff с оригинальными рамками двенадцати подклассов")
     parser.add_argument("--install-subclass-frames", action="store_true",
                         help="проверить и встроить двенадцать рамок подклассов в автономный HTML")
+    parser.add_argument("--subclass-hero-docx", type=Path,
+                        help="DOCX handoff с 12 готовыми четырёхкадровыми моделями подклассов")
+    parser.add_argument("--install-subclass-hero-sprites", action="store_true",
+                        help="без ресэмплинга проверить и встроить 12 моделей подклассов в HTML")
+    parser.add_argument("--blood-asset-dir", type=Path,
+                        help="каталог assets из handoff системы крови")
+    parser.add_argument("--install-blood-assets", action="store_true",
+                        help="проверить и без ресэмплинга встроить три листа крови в HTML")
+    parser.add_argument("--optimize-embedded-frames", action="store_true",
+                        help="переупаковать уже встроенные рамки в индексированные PNG на 128 цветов")
     parser.add_argument("--shop-icon-atlas", type=Path,
                         help="сгенерированный прозрачный атлас 5×4 иконок магазина")
     parser.add_argument("--install-shop-icon-atlas", action="store_true",
@@ -1278,11 +1367,27 @@ def main() -> None:
                         help="добавить шесть ranged/tank разновидностей элиты в автономный HTML")
     args = parser.parse_args()
 
+    if args.optimize_embedded_frames:
+        html = HTML.read_text(encoding="utf-8")
+        html, class_stats = optimize_embedded_frame_family(
+            html, "CLASS_FRAME_DATA", tuple(CLASS_FRAME_SOURCES), (280, 390))
+        html, subclass_stats = optimize_embedded_frame_family(
+            html, "SUBCLASS_FRAME_DATA", tuple(SUBCLASS_FRAME_SOURCES), (270, 304))
+        HTML.write_text(html.rstrip("\n") + "\n", encoding="utf-8", newline="\n")
+        print(json.dumps({
+            "paletteColors": FRAME_PALETTE_COLORS,
+            "classFrames": class_stats,
+            "subclassFrames": subclass_stats,
+            "target": str(HTML),
+        }, ensure_ascii=False))
+        return
+
     if args.install_class_frames:
         if not args.class_frame_docx or not args.class_frame_docx.is_file():
             parser.error("рамки классов требуют существующий --class-frame-docx")
         payload: dict[str, str] = {}
         source_bytes = 0
+        optimized_bytes = 0
         with zipfile.ZipFile(args.class_frame_docx) as archive:
             for class_name, (member, expected_hash) in CLASS_FRAME_SOURCES.items():
                 data = archive.read(member)
@@ -1294,8 +1399,10 @@ def main() -> None:
                 if image.size != (280, 390) or image.mode != "RGBA":
                     raise SystemExit(
                         f"рамка {class_name}: ожидался RGBA 280×390, получен {image.mode} {image.size}")
-                payload[class_name] = base64.b64encode(data).decode("ascii")
+                optimized = indexed_rgba_png(image)
+                payload[class_name] = base64.b64encode(optimized).decode("ascii")
                 source_bytes += len(data)
+                optimized_bytes += len(optimized)
         html = HTML.read_text(encoding="utf-8")
         if "const CLASS_FRAME_DATA = {" not in html:
             anchor = "const HERO_SPRITE_DATA = {"
@@ -1307,6 +1414,88 @@ def main() -> None:
         print(json.dumps({
             "installed": sorted(payload),
             "sourceBytes": source_bytes,
+            "optimizedBytes": optimized_bytes,
+            "paletteColors": FRAME_PALETTE_COLORS,
+            "target": str(HTML),
+        }, ensure_ascii=False))
+        return
+
+    if args.install_blood_assets:
+        if not args.blood_asset_dir or not args.blood_asset_dir.is_dir():
+            parser.error("система крови требует существующий --blood-asset-dir")
+        payload: dict[str, str] = {}
+        source_bytes = 0
+        for key, (filename, expected_hash, expected_size) in BLOOD_SPRITE_SOURCES.items():
+            path = args.blood_asset_dir / filename
+            if not path.is_file():
+                parser.error(f"лист крови {key}: не найден {path}")
+            data = path.read_bytes()
+            actual_hash = hashlib.sha256(data).hexdigest()
+            if actual_hash != expected_hash:
+                raise SystemExit(
+                    f"лист крови {key}: SHA-256 {actual_hash}, ожидался {expected_hash}")
+            image = Image.open(io.BytesIO(data))
+            colors = image.convert("RGBA").getcolors(maxcolors=256)
+            if image.size != expected_size or image.mode != "RGBA" or not colors or len(colors) > 16:
+                raise SystemExit(
+                    f"лист крови {key}: ожидался RGBA {expected_size[0]}×{expected_size[1]} "
+                    f"до 16 цветов, получен {image.mode} {image.size}, "
+                    f"цветов {len(colors) if colors else 'больше 256'}")
+            if not image.getchannel("A").getextrema()[0] == 0:
+                raise SystemExit(f"лист крови {key}: отсутствует прозрачный фон")
+            payload[key] = base64.b64encode(data).decode("ascii")
+            source_bytes += len(data)
+        html = HTML.read_text(encoding="utf-8")
+        html = install_object_payloads(html, "BLOOD_SPRITE_DATA", payload)
+        HTML.write_text(html.rstrip("\n") + "\n", encoding="utf-8", newline="\n")
+        print(json.dumps({
+            "installed": sorted(payload),
+            "sourceBytes": source_bytes,
+            "resampled": False,
+            "target": str(HTML),
+        }, ensure_ascii=False))
+        return
+
+    if args.install_subclass_hero_sprites:
+        if not args.subclass_hero_docx or not args.subclass_hero_docx.is_file():
+            parser.error("модели подклассов требуют существующий --subclass-hero-docx")
+        payload: dict[str, str] = {}
+        source_bytes = 0
+        with zipfile.ZipFile(args.subclass_hero_docx) as archive:
+            for subclass_name, (member, expected_hash) in SUBCLASS_HERO_SPRITE_SOURCES.items():
+                data = archive.read(member)
+                actual_hash = hashlib.sha256(data).hexdigest()
+                if actual_hash != expected_hash:
+                    raise SystemExit(
+                        f"модель {subclass_name}: SHA-256 {actual_hash}, ожидался {expected_hash}")
+                image = Image.open(io.BytesIO(data))
+                colors = image.getcolors(maxcolors=256) if image.mode == "P" else None
+                transparency = image.info.get("transparency")
+                if image.size != (128, 32) or image.mode != "P" or not colors or len(colors) > 16:
+                    raise SystemExit(
+                        f"модель {subclass_name}: ожидался P 128×32 до 16 индексов, "
+                        f"получен {image.mode} {image.size}, цветов {len(colors) if colors else 'больше 256'}")
+                if transparency != 0:
+                    raise SystemExit(
+                        f"модель {subclass_name}: прозрачный индекс должен быть 0, получен {transparency}")
+                alpha = image.convert("RGBA").getchannel("A")
+                if any(not alpha.crop((frame * 32, 0, (frame + 1) * 32, 32)).getbbox()
+                       for frame in range(4)):
+                    raise SystemExit(f"модель {subclass_name}: найден пустой кадр")
+                payload[subclass_name] = base64.b64encode(data).decode("ascii")
+                source_bytes += len(data)
+        html = HTML.read_text(encoding="utf-8")
+        if "const SUBCLASS_HERO_SPRITE_DATA = {" not in html:
+            anchor = "const HERO_SPRITE_DATA = {"
+            if anchor not in html:
+                raise SystemExit("не найден якорь HERO_SPRITE_DATA для моделей подклассов")
+            html = html.replace(anchor, "const SUBCLASS_HERO_SPRITE_DATA = {\n};\n" + anchor, 1)
+        html = install_object_payloads(html, "SUBCLASS_HERO_SPRITE_DATA", payload)
+        HTML.write_text(html.rstrip("\n") + "\n", encoding="utf-8", newline="\n")
+        print(json.dumps({
+            "installed": list(payload),
+            "sourceBytes": source_bytes,
+            "resampled": False,
             "target": str(HTML),
         }, ensure_ascii=False))
         return
@@ -1316,6 +1505,7 @@ def main() -> None:
             parser.error("рамки подклассов требуют существующий --subclass-frame-docx")
         payload: dict[str, str] = {}
         source_bytes = 0
+        optimized_bytes = 0
         with zipfile.ZipFile(args.subclass_frame_docx) as archive:
             for subclass_name, (member, expected_hash) in SUBCLASS_FRAME_SOURCES.items():
                 data = archive.read(member)
@@ -1327,8 +1517,10 @@ def main() -> None:
                 if image.size != (270, 304) or image.mode != "RGBA":
                     raise SystemExit(
                         f"рамка {subclass_name}: ожидался RGBA 270×304, получен {image.mode} {image.size}")
-                payload[subclass_name] = base64.b64encode(data).decode("ascii")
+                optimized = indexed_rgba_png(image)
+                payload[subclass_name] = base64.b64encode(optimized).decode("ascii")
                 source_bytes += len(data)
+                optimized_bytes += len(optimized)
         html = HTML.read_text(encoding="utf-8")
         if "const SUBCLASS_FRAME_DATA = {" not in html:
             anchor = "const CLASS_FRAME_DATA = {"
@@ -1340,6 +1532,8 @@ def main() -> None:
         print(json.dumps({
             "installed": sorted(payload),
             "sourceBytes": source_bytes,
+            "optimizedBytes": optimized_bytes,
+            "paletteColors": FRAME_PALETTE_COLORS,
             "target": str(HTML),
         }, ensure_ascii=False))
         return

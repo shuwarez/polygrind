@@ -7,6 +7,11 @@ const embeddedPng = key => {
   const match=html.match(new RegExp(key+"\\s*[:=]\\s*'data:image/png;base64,([^']+)'"));
   return match ? Buffer.from(match[1], 'base64') : Buffer.alloc(0);
 };
+const embeddedObjectPng = (objectName,key) => {
+  const object=(html.match(new RegExp('const '+objectName+' = \\{([\\s\\S]*?)\\n\\};'))||[])[1]||'';
+  const match=object.match(new RegExp('^\\s*'+key+":'data:image/png;base64,([^']+)'",'m'));
+  return match ? Buffer.from(match[1], 'base64') : Buffer.alloc(0);
+};
 const pngInfo = b => {
   if (b.length < 26) return {png:false,w:0,h:0,color:-1};
   return {png:b.subarray(0,8).toString('hex')==='89504e470d0a1a0a', w:b.readUInt32BE(16), h:b.readUInt32BE(20), color:b[25]};
@@ -29,7 +34,8 @@ ok('стрела и сфера игрока — индексированные P
   mageShot.png && mageShot.w===32 && mageShot.h===8 && mageShot.color===3 && mageShotBytes.length<400,
   arrowBytes.length+' / '+mageShotBytes.length+' байт');
 const minionKeys=['skeleton','hunter','warlock','golemB','golemN'];
-const minionBytes=minionKeys.map(embeddedPng), minionPng=minionBytes.map(pngInfo);
+const minionBytes=minionKeys.map(key=>embeddedObjectPng('MINION_SPRITE_DATA',key));
+const minionPng=minionBytes.map(pngInfo);
 ok('пять листов свиты встроены как индексированные четырёхкадровые PNG',
   minionPng.every(info=>info.png && info.color===3) &&
   JSON.stringify(minionPng.map(info=>[info.w,info.h]))===JSON.stringify([[96,24],[96,24],[96,24],[96,24],[72,18]]));

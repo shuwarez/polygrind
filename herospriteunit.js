@@ -305,30 +305,82 @@ ok('метаданные задают четыре листа по 32×32 и в�
   (html.match(/frameW:32,frameH:32,drawW:48,drawH:48/g)||[]).length===4);
 ok('рендер использует только один ряд ходьбы без действий',
   html.includes("frame*meta.frameW, 0") && !html.includes('heroAttackT') && !html.includes('heroSummonT'));
-ok('превью меню берёт один кадр без копии PNG',
-  html.includes("heroPreviewHTML(spriteKey, 'class-sprite')") && html.includes('background-size:400% 100%'));
+ok('превью меню берёт общий четырёхкадровый лист без копии PNG',
+  html.includes("heroPreviewHTML(spriteKey, 'class-sprite')") &&
+  html.includes('data-hero-preview="1"') && html.includes('background-size:400% 100%'));
 
 const classFrameBlock=(html.match(/const CLASS_FRAME_DATA = \{(.*?)\n\};/s)||[])[1]||'';
-const classFrameExpected={
-  archer:{bytes:57259,hash:'4413B6F02E7AE495F2215D055B79F178501FACE7647D971C60E40C2A40079307'},
-  mage:{bytes:53624,hash:'ED3DB3D7EE5908BCEAAA4C8A5A1D62471C293ECFFABDD2E3A619F16B1E078EA9'},
-  necromancer:{bytes:61466,hash:'AD14EAF3682EDCE941930793328042BEFAD58B2DA5192F326FBB582F60779F55'},
-  warrior:{bytes:76731,hash:'7A6B86D2331F1D41F1B8AA0E02CC001CCB345D1AED6B450A4D63F573E11686EA'},
+const pngChunkLength=(png,wanted)=>{
+  for(let offset=8;offset+12<=png.length;){
+    const length=png.readUInt32BE(offset), type=png.subarray(offset+4,offset+8).toString('ascii');
+    if(type===wanted) return length;
+    offset+=12+length;
+  }
+  return -1;
 };
+const indexedFrameOk=(png,w,h)=>!!png && png.subarray(1,4).toString()==='PNG' &&
+  png.readUInt32BE(16)===w && png.readUInt32BE(20)===h && png[25]===3 &&
+  pngChunkLength(png,'PLTE')>0 && pngChunkLength(png,'PLTE')/3<=256 &&
+  pngChunkLength(png,'tRNS')>0 && pngChunkLength(png,'tRNS')<=128;
+const pngChunkData=(png,wanted)=>{
+  for(let offset=8;offset+12<=png.length;){
+    const length=png.readUInt32BE(offset), type=png.subarray(offset+4,offset+8).toString('ascii');
+    if(type===wanted) return png.subarray(offset+8,offset+8+length);
+    offset+=12+length;
+  }
+  return null;
+};
+const subclassSpriteExpected={
+  thief:[1639,'0D41142A3CE95CD0AFD2DED46DF8725E09D7F3F443C5A8EBD843A5B9CB13F8CB'],
+  hunter:[1432,'6EC80CEF6FC002A2A7832D690AB4AE682999F2866124E7DFAF387024DEBFB35F'],
+  dancer:[1495,'29DFF041FA2CCC593DDDE33FDAB12CB7FCA30168FD5A789AD3338A777E1ECCB3'],
+  destroyer:[1531,'2165FB363A659355B1CB69003E1FFADDD5CDBDEBABB03408AC9F3AB28E942BF1'],
+  multiplier:[1333,'6C9BF2AE8CD0F7C1E864B0E9289DD265B14599CD44438D61759CE96EE6E8E73A'],
+  elementalist:[1660,'57FF07D24A9A6399B439FE5AEDA8A75D656118D832BBD86D3F0172725979F516'],
+  graverobber:[1539,'3668CDC935759AAC8EAA179FF34626D6AB39956047BCE65680778C7DA6870D90'],
+  animator:[1623,'45EA989633631A621C46DF3BC20E7158FAA5E8D7E84576897A0D30596618AB5E'],
+  venomancer:[1615,'D9019BFEF4115A909B93AE222C1F3B4F3C05B04887F16CAA764AD90C698486B7'],
+  berserker:[1467,'20F5AC623F299830AD37F8D046B3CA9F491291DE71EE04ECA1D65E29BC95B86E'],
+  guardian:[1640,'6D862CDF3B16D9E2BDA9E52E18F0DD1C5F6F187AE15543D212C32A00159D7333'],
+  swordmaster:[1374,'14A1F6CBD767E82529BB9048AA1659C42F9ED4CAB08EA4F57C090211FF5957F2'],
+};
+const subclassSpriteBlock=(html.match(/const SUBCLASS_HERO_SPRITE_DATA = \{(.*?)\n\};/s)||[])[1]||'';
+const subclassSprites=Object.fromEntries(
+  [...subclassSpriteBlock.matchAll(/^\s*(\w+):'data:image\/png;base64,([^']+)',\s*$/gm)]
+    .map(match=>[match[1],Buffer.from(match[2],'base64')])
+);
+const subclassIds=Object.values(loadGame('./PolyGrind.html').__api.SUBCLASSES).flat().map(s=>s.id);
+ok('12 моделей сопоставлены один-к-одному с id каталога SUBCLASSES',
+  JSON.stringify(Object.keys(subclassSprites))===JSON.stringify(Object.keys(subclassSpriteExpected)) &&
+  Object.keys(subclassSpriteExpected).every(id=>subclassIds.includes(id)) && subclassIds.length===12);
+ok('все модели — точные P-mode PNG 128×32, палитра до 16 и прозрачный индекс 0',
+  Object.entries(subclassSpriteExpected).every(([id,[bytes,hash]])=>{
+    const png=subclassSprites[id], palette=png&&pngChunkData(png,'PLTE'), transparency=png&&pngChunkData(png,'tRNS');
+    return !!png && png.length===bytes && png.readUInt32BE(16)===128 && png.readUInt32BE(20)===32 &&
+      png[25]===3 && !!palette && palette.length/3<=256 && !!transparency && transparency[0]===0 &&
+      crypto.createHash('sha256').update(png).digest('hex').toUpperCase()===hash;
+  }), Object.values(subclassSprites).reduce((sum,png)=>sum+png.length,0)+' Б');
+ok('оптимизатор валидирует handoff и встраивает листы без ресэмплинга',
+  optimizer.includes('SUBCLASS_HERO_SPRITE_SOURCES = {') &&
+  optimizer.includes('--install-subclass-hero-sprites') && optimizer.includes('transparency != 0') &&
+  optimizer.includes('payload[subclass_name] = base64.b64encode(data)') &&
+  !optimizer.includes('subclass_hero_sprite_sheet'));
+ok('runtime загружает 12 моделей один раз и сохраняет базовый fallback',
+  html.includes('const SUBCLASS_HERO_SPRITES = {};') &&
+  html.includes('for (const key of Object.keys(SUBCLASS_HERO_SPRITE_DATA))') &&
+  html.includes('heroSpriteFor(spriteKey, G.subclass)') &&
+  /return subclassSprite && subclassSprite\.complete && subclassSprite\.naturalWidth \?\s*subclassSprite : HERO_SPRITES\[key\]/.test(html));
 const classFrames=Object.fromEntries(
   [...classFrameBlock.matchAll(/^\s*(\w+):'data:image\/png;base64,([^']+)',\s*$/gm)]
     .map(match=>[match[1],Buffer.from(match[2],'base64')])
 );
-ok('четыре оригинальные рамки V2 1× встроены без потери данных',
+ok('четыре рамки V2 — индексированные PNG до 128 цветов и 70 КБ',
   Object.keys(classFrames).length===4 &&
-  Object.entries(classFrameExpected).every(([key,wanted])=>{
-    const png=classFrames[key];
-    return !!png && png.subarray(1,4).toString()==='PNG' &&
-      png.readUInt32BE(16)===280 && png.readUInt32BE(20)===390 && png[25]===6 &&
-      png.length===wanted.bytes &&
-      crypto.createHash('sha256').update(png).digest('hex').toUpperCase()===wanted.hash;
-  }) && Object.values(classFrames).reduce((sum,png)=>sum+png.length,0)===249080 &&
-  optimizer.includes('CLASS_FRAME_SOURCES = {') && optimizer.includes('--install-class-frames'),
+  Object.values(classFrames).every(png=>indexedFrameOk(png,280,390)) &&
+  Object.values(classFrames).reduce((sum,png)=>sum+png.length,0)<70000 &&
+  optimizer.includes('CLASS_FRAME_SOURCES = {') && optimizer.includes('--install-class-frames') &&
+  optimizer.includes('FRAME_PALETTE_COLORS = 128') && optimizer.includes('def indexed_rgba_png') &&
+  optimizer.includes('--optimize-embedded-frames'),
   Object.values(classFrames).reduce((sum,png)=>sum+png.length,0)+' Б');
 ok('рамка — прозрачный некликабельный overlay над каждой карточкой',
   html.includes('CLASS_FRAME_DATA[spriteKey]') &&
@@ -339,38 +391,20 @@ ok('рамка — прозрачный некликабельный overlay н�
   /image-rendering:pixelated;image-rendering:crisp-edges/.test(html));
 
 const subclassFrameBlock=(html.match(/const SUBCLASS_FRAME_DATA = \{(.*?)\n\};/s)||[])[1]||'';
-const subclassFrameExpected={
-  thief:[53934,'AAC7565A71D448C459E52D31AEB31C0C98C53E94302EF6776658A4480C416C56'],
-  hunter:[57773,'577A58526C4A2D8B0E4DF3D53E6135E92B8EF35F3788B5488CB7D34C5CF6C343'],
-  dancer:[66933,'105A7D61ECFA288265DBB9C8F1C30796F1B3271CCF1AAAC4828BB2E11C9C3744'],
-  destroyer:[60409,'E6226BC764879CEB93F50C52373312C6B2565C0F8D90037132C0EB819362FCE2'],
-  multiplier:[52166,'8DFEB283CAC5D7D6DB27263747B2CD94DB317B0B698EA40836FCF7A55815778E'],
-  elementalist:[46904,'2591FA0F92FA302CF33C00D7C8BBC3720AC59C41C4FBE42FF39BBB60692F0371'],
-  graverobber:[62374,'93D078A5AE5176BC764C97981ADC85BCD1B9472FC129401EC43B4B02E821018E'],
-  animator:[68793,'2F2526056723328D3CB0E6D5A3F289B4B413B810E81C462A2FF220148D19AD4D'],
-  venomancer:[66653,'4360B83868F0B2BBB0A3234B0512AFABD6D51AE58BC6149AC579CEEDF8DCBFD7'],
-  berserker:[59213,'3DD49FB6A84112AFC38FFD561B6E8689B7F08FBE9AC4F8A7CB17AF3B77C0DDFD'],
-  guardian:[63095,'34D91E55A60ED729CBD87A7440ABB2B7CF73EA7819F0D83F8508A00FDFA8B4D0'],
-  swordmaster:[55274,'2AA72B31B7CC30DA73C9563C0305A0FCF7DFCCC4C0ACDAE95B979EC0FF09F02B'],
-};
 const subclassFrames=Object.fromEntries(
   [...subclassFrameBlock.matchAll(/^\s*(\w+):'data:image\/png;base64,([^']+)',\s*$/gm)]
     .map(match=>[match[1],Buffer.from(match[2],'base64')])
 );
-ok('12 оригинальных рамок подклассов 270×304 встроены без потерь',
+ok('12 рамок подклассов — индексированные PNG до 128 цветов и 170 КБ',
   Object.keys(subclassFrames).length===12 &&
-  Object.entries(subclassFrameExpected).every(([key,[wantedBytes,wantedHash]])=>{
-    const png=subclassFrames[key];
-    return !!png && png.subarray(1,4).toString()==='PNG' && png.readUInt32BE(16)===270 &&
-      png.readUInt32BE(20)===304 && png[25]===6 && png.length===wantedBytes &&
-      crypto.createHash('sha256').update(png).digest('hex').toUpperCase()===wantedHash;
-  }) && Object.values(subclassFrames).reduce((sum,png)=>sum+png.length,0)===713521 &&
+  Object.values(subclassFrames).every(png=>indexedFrameOk(png,270,304)) &&
+  Object.values(subclassFrames).reduce((sum,png)=>sum+png.length,0)<170000 &&
   optimizer.includes('SUBCLASS_FRAME_SOURCES = {') && optimizer.includes('--install-subclass-frames'),
   Object.values(subclassFrames).reduce((sum,png)=>sum+png.length,0)+' Б');
 ok('геометрия всех рамок фиксирована, слой прозрачен для мыши',
   /\.overlay\.menu \.card\.subclass-card\{[^}]*width:270px;height:304px;min-height:304px;max-height:304px;/.test(html) &&
   /\.subclass-card__frame\{[^}]*position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;/.test(html) &&
-  /\.subclass-card__content\{[^}]*z-index:2;[^}]*padding:58px 34px 38px/.test(html) &&
+  /\.subclass-card__content\{[^}]*z-index:2;[^}]*padding:46px 34px 32px/.test(html) &&
   html.includes('image-rendering:pixelated;image-rendering:crisp-edges;object-fit:fill'));
 ok('длинные описания Мага и Воина уплотнены внутри рамок',
   /\.subclass-card\[data-s="multiplier"\] \.nt,\s*\.overlay\.menu \.subclass-card\[data-s="guardian"\] \.nt,\s*\.overlay\.menu \.subclass-card\[data-s="swordmaster"\] \.nt\{[^}]*font-size:12\.4px;line-height:1\.18/.test(html));
@@ -381,8 +415,21 @@ ok('каждый экран класса получает ровно три пр
       const screen=game.document.getElementById('ov').innerHTML;
       return (screen.match(/class="card subclass-card"/g)||[]).length===3 &&
         (screen.match(/class="subclass-card__frame"/g)||[]).length===3 &&
+        (screen.match(/class="hero-preview sheet subclass-sprite"/g)||[]).length===3 &&
         !screen.includes('<div class="cat">подкласс</div>') && ids.every(id=>screen.includes('data-s="'+id+'"'));
     }) && html.includes("document.querySelectorAll('#ov .card').forEach(el => el.onclick"));
+ok('превью остаются 48×48, а подкласс в бою рисуется 64×64 без смены p.r',
+  /\.class-card \.class-sprite\{position:relative;width:48px;height:48px/.test(html) &&
+  /\.subclass-card \.subclass-sprite\{\s*width:48px;height:48px/.test(html) &&
+  !/\.class-card \.class-sprite\{[^}]*width:(?:120|140|150)px/.test(html) &&
+  html.includes('const SUBCLASS_HERO_DRAW_SIZE = 64;') &&
+  html.includes('sprite === subclassSprite ? SUBCLASS_HERO_DRAW_SIZE : meta.drawW') &&
+  html.includes('-drawW/2, -drawH/2, drawW, drawH') &&
+  !/SUBCLASS_HERO_DRAW_SIZE[^;]*p\.r/.test(html));
+ok('общий menuTick анимирует модели без отдельных таймеров',
+  html.includes("document.querySelectorAll('[data-hero-preview]').forEach") &&
+  html.includes('const position = (frame * 100 / 3)') && html.includes('drawHeroPreviews(t);') &&
+  !/function drawHeroPreviews[\s\S]*?(?:setInterval|setTimeout)/.test(html));
 
 const logoMatch=html.match(/GRIM_GRIND_LOGO_STRIP\.src = 'data:image\/png;base64,([^']+)'/);
 const logoPng=logoMatch && Buffer.from(logoMatch[1],'base64');
@@ -440,7 +487,7 @@ ok('меню анимирует свет неподвижного логотип
   optimizer.includes('body = master.copy()') && optimizer.includes('compact_stable_sheet'));
 ok('системное отключение анимаций оставляет первые кадры вывески',
   html.includes("matchMedia('(prefers-reduced-motion: reduce)').matches") &&
-  (html.match(/const frame = reducedMenuMotion\(\) \? 0 :/g)||[]).length===2);
+  (html.match(/const frame = reducedMenuMotion\(\) \? 0 :/g)||[]).length===3);
 
 {
   const c=loadGame('./PolyGrind.html'); c.startScreen();
@@ -451,11 +498,11 @@ ok('системное отключение анимаций оставляет 
     !menu.includes('choose one of four classes') && !menu.includes('Each level-up offers a choice of') &&
     !menu.includes('flat values add together'));
 }
-ok('в карточке сначала название, затем крупная модель и короткое описание',
+ok('в карточке сначала название, затем модель игрового размера и описание',
   /'<div class="nm">' \+ w\.nm \+ '<\/div>' \+\s*heroPreviewHTML\(spriteKey, 'class-sprite'\) \+\s*'<div class="nt">' \+ w\.desc \+ '<\/div>'/.test(html));
 ok('название, модель и описание героя центрируются стилями витрины',
   /\.card\.class-card\{[^}]*align-items:center;[^}]*text-align:center/.test(html) &&
-  /\.class-card \.class-sprite\{position:relative;width:150px;height:150px/.test(html));
+  /\.class-card \.class-sprite\{position:relative;width:48px;height:48px/.test(html));
 ok('описания классов короткие и не содержат внутренних имён параметров',
   Object.values(loadGame('./PolyGrind.html').__api.WEAPONS).every(w=>w.desc.length<110 && !/wpn\.|min\.\*/.test(w.desc)));
 
