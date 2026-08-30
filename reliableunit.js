@@ -257,15 +257,6 @@ console.log('Урон после недавнего убийства');
   ok('HUD показывает оставшуюся длительность эффекта с десятыми секунды',
     ru.includes('0,6 с осталось') && en.includes('0.6 s remaining'),ru+' · '+en); }
 
-console.log('Урон за время боя');
-{ const o=build(); o.c.setLanguage('ru'); o.G.bag.add('ramp','inc',2.75);
-  o.G.player.combatT=0; const idle=o.c.activeCombatBuffs(o.G.player,0,0);
-  o.G.player.combatT=4; const active=o.c.activeCombatBuffs(o.G.player,0,0);
-  o.G.player.combatT=20; const capped=o.c.activeCombatBuffs(o.G.player,0,0);
-  ok('HUD показывает текущий разгон только в бою и ограничивает его на +40%',
-    !idle.some(x=>x.includes('Идёт бой')) && active.includes('Идёт бой - урон +11%') &&
-    capped.includes('Идёт бой - урон +40%')); }
-
 console.log('Уникальное добивание');
 { const o=build(), m=o.c.__api.MODS.find(x=>x.id==='dmg.execute');
   ok('ДОБИВАНИЕ — одна фиолетовая карточка-флаг',

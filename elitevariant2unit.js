@@ -76,11 +76,17 @@ ok('пути новых исходных PNG не попали в runtime HTML',
 
 { const a=fresh('forgottenGuard'),base=a.c.spawnEnemy('pack',null,'plagueOgre');
   ok('Забытый страж наносит на 30% меньше урона',Math.abs(a.e.dmg/base.dmg-0.70)<1e-9);
-  ok('таймер первого рывка стража равен двум секундам',a.e.eliteDashCd===2&&a.e.eliteDashT===0);
-  a.e.x=0;a.e.y=0;a.p.x=300;a.p.y=0;
-  ok('страж не рывкует раньше двух секунд',!a.c.tickEliteAbility(a.e,1.99,a.p)&&a.e.x===0);
+  ok('пауза перед первым рывком стража увеличена с двух до четырёх секунд',a.e.eliteDashCd===4&&a.e.eliteDashT===0);
+  a.e.x=0;a.e.y=0;a.p.x=1000;a.p.y=0;
+  ok('страж не рывкует раньше четырёх секунд',!a.c.tickEliteAbility(a.e,3.99,a.p)&&a.e.x===0);
   const lock=a.c.tickEliteAbility(a.e,0.02,a.p);
-  ok('после двух секунд страж начинает короткий рывок к герою',lock&&a.e.eliteDashT>0&&a.e.x>0); }
+  for(let i=0;i<17;i++) a.c.tickEliteAbility(a.e,0.02,a.p);
+  const firstDistance=a.e.x,expected=a.e.spd*3.4*0.36;
+  const early=a.c.tickEliteAbility(a.e,3.64,a.p),beforeSecond=a.e.x;
+  const second=a.c.tickEliteAbility(a.e,0.02,a.p);
+  ok('рывок к герою стал втрое длиннее и повторяется вдвое реже',
+    lock&&Math.abs(firstDistance-expected)<1e-8&&!early&&second&&a.e.x>beforeSecond,
+    firstDistance.toFixed(1)+' ед. · интервал 4 сек'); }
 
 { const {c,p,e}=fresh('forgottenGuard'); c.applyEliteContact(e);
   ok('первый удар стража даёт 10% замедления на 6 секунд',p.eliteGuardSlowStacks===1&&p.eliteGuardSlowT===6);

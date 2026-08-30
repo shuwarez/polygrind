@@ -56,20 +56,56 @@ ok('шесть эффектов Мага встроены как индекси�
 ok('все шесть эффектов Мага вместе укладываются в 18 КБ',
   mageEffectBytes.reduce((sum,data)=>sum+data.length,0)<18000,
   mageEffectBytes.reduce((sum,data)=>sum+data.length,0)+' байт');
+const statusIconBytes=embeddedPng('ENEMY_STATUS_ICON_DATA'), statusIconPng=pngInfo(statusIconBytes);
+ok('семь элементальных индикаторов встроены одним индексированным листом 112×16',
+  statusIconPng.png && statusIconPng.w===112 && statusIconPng.h===16 && statusIconPng.color===3 &&
+  statusIconBytes.length<1000, statusIconBytes.length+' байт');
+const portalBytes=embeddedPng('FLOOR_PORTAL_SPRITE_DATA'), portalPng=pngInfo(portalBytes);
+ok('портал этажа встроен индексированным листом 8×64 без изменения кадров',
+  portalPng.png && portalPng.w===512 && portalPng.h===64 && portalPng.color===3 &&
+  portalBytes.length<10000, portalBytes.length+' байт');
 
 const c=loadGame('./PolyGrind.html');
 const rareItemKeys=['mirror','golem','fang','storm','ash','ice','plague','clock','shard','candle','doll','chalice','crown','bmask','bossShard','bone'];
-const rareItemBytes=rareItemKeys.map(embeddedPng), rareItemPng=rareItemBytes.map(pngInfo);
-ok('16 редких предметов встроены как индексированные PNG 24×24',
+const newAmuletIconKeys=['calm','runner','pulse','predator','fullplate','lastplate','steel','swift','survive'];
+const newGloveIconKeys=['claws','thunder','ricochet','brute','riposte','critmass','critchain','shove'];
+const newBootIconKeys=['lava','frost','momentum','marathon','panic','sprint'];
+const newRingIconKeys=['exec','duel','reaper','siege','headsman','critaim','vacuum','looter','arrow'];
+const newRelicIconKeys=['trinity','overload','breath','gravity','warskel','goldbag','xpbag'];
+const supportedRareItemKeys=rareItemKeys.concat(newAmuletIconKeys,newGloveIconKeys,newBootIconKeys,newRingIconKeys,newRelicIconKeys);
+const rareItemObject=(html.match(/const RARE_ITEM_SPRITE_DATA = \{([\s\S]*?)\n\};/)||[])[1]||'';
+const embeddedRareItemPng = key => {
+  const match=rareItemObject.match(new RegExp('^\\s*'+key+":'data:image/png;base64,([^']+)'",'m'));
+  return match ? Buffer.from(match[1], 'base64') : Buffer.alloc(0);
+};
+const rareItemBytes=supportedRareItemKeys.map(embeddedRareItemPng), rareItemPng=rareItemBytes.map(pngInfo);
+ok('55 редких предметов и элементов экипировки встроены как индексированные PNG 24×24',
   rareItemPng.every(info=>info.png && info.w===24 && info.h===24 && info.color===3));
-ok('все 16 иконок различаются и вместе укладываются в 7 КБ',
-  new Set(rareItemBytes.map(data=>data.toString('base64'))).size===rareItemKeys.length &&
-  rareItemBytes.reduce((sum,data)=>sum+data.length,0)<7000,
+ok('все 55 иконок различаются и вместе укладываются в 24 КБ',
+  new Set(rareItemBytes.map(data=>data.toString('base64'))).size===supportedRareItemKeys.length &&
+  rareItemBytes.reduce((sum,data)=>sum+data.length,0)<24000,
   rareItemBytes.reduce((sum,data)=>sum+data.length,0)+' байт');
-ok('интерфейс берёт PNG для первой волны и старый знак для остальных',
-  rareItemKeys.every(key=>c.rareItemSpriteHTML(key,'hud').includes('rare-item-icon hud') &&
-    c.rareItemSpriteHTML(key,'hud').includes(rareItemBytes[rareItemKeys.indexOf(key)].toString('base64'))) &&
-  c.rareItemSpriteHTML('calm','hud')===c.__api.AMULETS.calm.ico);
+ok('вся экипировка берёт общий PNG на земле и во всех элементах интерфейса',
+  supportedRareItemKeys.every(key=>c.rareItemSpriteHTML(key,'hud').includes('rare-item-icon hud') &&
+    c.rareItemSpriteHTML(key,'hud').includes(rareItemBytes[supportedRareItemKeys.indexOf(key)].toString('base64'))) &&
+  Object.keys(c.__api.AMULETS).every(key=>supportedRareItemKeys.includes(key)) &&
+  c.rareItemSpriteHTML('__missing__','hud')==='');
+const totemTypes=['fire','freeze','poison','blood','lightning'];
+const totemObject=(html.match(/const TOTEM_SPRITE_DATA = \{([\s\S]*?)\n\};/)||[])[1]||'';
+const totemBytes=totemTypes.flatMap(key => {
+  const row=(totemObject.match(new RegExp('^\\s*'+key+":\\[([^\\]]+)\\]",'m'))||[])[1]||'';
+  return [...row.matchAll(/'data:image\/png;base64,([^']+)'/g)].map(match=>Buffer.from(match[1],'base64'));
+});
+const totemPng=totemBytes.map(pngInfo);
+ok('пять тотемов по четыре ранга встроены как индексированные PNG 24×24',
+  totemBytes.length===20 && totemPng.every(info=>info.png && info.w===24 && info.h===24 && info.color===3));
+ok('все 20 рангов различаются, укладываются в 10 КБ и используются в UI',
+  new Set(totemBytes.map(data=>data.toString('base64'))).size===20 &&
+  totemBytes.reduce((sum,data)=>sum+data.length,0)<10000 &&
+  totemTypes.every(key=>[1,2,3,4].every(tier=>c.totemSpriteHTML(key,tier,'hud').includes('totem-icon hud'))) &&
+  c.totemSpriteEntry('fire',0).rank===1 && c.totemSpriteEntry('fire',9).rank===4 &&
+  /function drawTotemSprite[\s\S]*?totemTier\(o\.totem\)\+1[\s\S]*?imageSmoothingEnabled=false/.test(html),
+  totemBytes.reduce((sum,data)=>sum+data.length,0)+' байт');
 ok('эффекты Мага используют полные циклы 6/4/8 кадров',
   ['normal','remote','mini'].every(key=>[0,.2,.4,.6,.8,.999].map(p=>c.mageAbilitySpriteFrame(key,p).index).join(',')==='0,1,2,3,4,5') &&
   ['residual','heart'].every(key=>[0,.25,.5,.999].map(p=>c.mageAbilitySpriteFrame(key,p).index).join(',')==='0,1,2,3') &&
@@ -90,12 +126,23 @@ ok('экранные размеры свиты отделены от механ�
   c.minionSpriteFrame({kind:'skeleton',animT:0}).meta.drawW===24 &&
   c.minionSpriteFrame({kind:'golemB',animT:0}).meta.drawW===24 &&
   c.minionSpriteFrame({kind:'golemN',animT:0}).meta.drawW===18);
-const blank={hit:0,kind:'norm',dots:{fire:{dps:0}},plague:null,ail:{chill:0,shock:0,freeze:0},frost:false,pack:null,rage:0};
-ok('обычный PNG-враг не получает старую контурную метку', c.enemySpriteMarks(blank).length===0);
-const marked={...blank,kind:'elite',ail:{chill:1,shock:1,freeze:0},frost:true};
-const marks=c.enemySpriteMarks(marked);
-ok('элита и статусы заменены уникальными цветными ромбами',
-  marks.includes('#ffd24a') && marks.includes('#7fd6ff') && marks.includes('#ffe14a') && new Set(marks).size===marks.length);
+const blank={hit:1,kind:'elite',dots:{fire:{dps:0,n:0},poison:{dps:0,n:0},bleed:{dps:0,n:0}},
+  plague:null,ail:{chill:0,shock:0,freeze:0},frost:false,pack:{col:'#ff00ff'},rage:9};
+ok('попадание, элита, ярость и пачка больше не создают меток над врагом',
+  c.enemyStatusIcons(blank).length===0 && !/function enemySpriteMarks/.test(html) && !/function drawEnemySpriteMarks/.test(html));
+const marked={...blank,dots:{fire:{dps:4,n:2},poison:{dps:3,n:3},bleed:{dps:2,n:4}},
+  plague:{dps:1},ail:{chill:1,shock:1,freeze:1},frost:true};
+const statuses=c.enemyStatusIcons(marked);
+ok('индикаторы врага содержат только семь элементальных состояний в стабильном порядке',
+  statuses.map(status=>status.key).join(',')==='burning,poison,plague,chilled,frozen,shocked,bleeding' &&
+  statuses.map(status=>status.frame.index).join(',')==='0,1,2,3,4,5,6' &&
+  statuses.map(status=>status.stacks).join(',')==='2,3,0,0,0,0,4');
+ok('портал проигрывает бесшовный цикл 8 кадров по 100 мс с нижней привязкой',
+  [0,.1,.2,.3,.4,.5,.6,.7,.8].map(t=>c.floorPortalSpriteFrame({t}).index).join(',')===
+    '0,1,2,3,4,5,6,7,0' &&
+  c.floorPortalSpriteFrame({t:0}).meta.anchorX===0.5 &&
+  c.floorPortalSpriteFrame({t:0}).meta.anchorY===1 &&
+  /function drawFloorPortalSprite[\s\S]*?imageSmoothingEnabled=false[\s\S]*?drawImage\(FLOOR_PORTAL_SPRITE/.test(html));
 ok('круговой прицел PNG-врага заменён стрелками',
   c.enemyTargetMarkerKind({typeKey:'blob',animT:0})==='chevron' && c.enemyTargetMarkerKind({typeKey:'tank',animT:0})==='chevron' &&
   c.enemyTargetMarkerKind({typeKey:'shooter',animT:0})==='chevron');
@@ -104,10 +151,14 @@ c.newGame('bow','keys','hunter');
 const G=c.__api.G, p=G.player, e=c.spawnEnemy();
 const lootFrames=[];
 for (const t of [0,.125,.25,.375,.5]){ G.time=t; lootFrames.push(c.lootSpriteFrame({book:'shock'}).index); }
-ok('добыча маршрутизируется в нужные листы и циклически использует четыре кадра',
+const bookModal=loadGame('./PolyGrind.html'); bookModal.newGame('wand','keys'); bookModal.takeBook('cold');
+const bookModalHtml=bookModal.document.getElementById('ov').innerHTML;
+ok('добыча и окно первой книги используют общий четырёхкадровый лист',
   lootFrames.join(',')==='0,1,2,3,0' &&
   c.lootSpriteFrame({v:1}).key==='pickupXp' && c.lootSpriteFrame({gold:true,v:1}).key==='pickupGold' &&
-  c.lootSpriteFrame({book:'fire'}).meta.drawW===24 && c.lootSpriteFrame({amu:'ash'})===null);
+  c.lootSpriteFrame({book:'fire'}).meta.drawW===24 && c.lootSpriteFrame({amu:'ash'})===null &&
+  bookModalHtml.includes('loot-item-icon modal') && bookModalHtml.includes('data:image/png;base64') &&
+  !bookModalHtml.includes(bookModal.__api.BOOKS.cold.ico));
 G.time=0; const projectileFrames=[];
 for (const t of [0,0.1,0.2,0.3]){ G.time=t; projectileFrames.push(c.enemyProjectileSpriteFrame({shotType:'shooter'}).index); }
 ok('текстура снаряда циклически использует четыре кадра без своего таймера',
@@ -145,11 +196,15 @@ const remoteFx=MFG.fx.filter(f=>f.t==='mageOrbExplosion').at(-1);
 MFD.blastHeart=10; MFD.elementalExplosion=true;
 mageFx.explodePlayerOrb({x:50,y:60,orb:true,miniOrb:true,travel:0,hitSet:[]});
 const miniFx=MFG.fx.filter(f=>f.t==='mageOrbExplosion').at(-1);
-ok('обычный, дальний и мини-взрыв маршрутизируются в свои листы и оверлеи',
+ok('все взрывы Мага маршрутизируются в свои листы и рисуются на 50% прозрачнее',
   normalFx && normalFx.variant==='normal' && !normalFx.heart && !normalFx.elemental &&
   remoteFx && remoteFx.variant==='remote' &&
   miniFx && miniFx.variant==='mini' && miniFx.heart && miniFx.elemental &&
-  !MFG.fx.some(f=>f.t==='ring'));
+  !MFG.fx.some(f=>f.t==='ring') &&
+  /const MAGE_EXPLOSION_ALPHA = 0\.5/.test(html) &&
+  /ctx\.globalAlpha=alpha\*MAGE_EXPLOSION_ALPHA/.test(html) &&
+  /ctx\.save\(\); ctx\.globalAlpha=MAGE_EXPLOSION_ALPHA/.test(html) &&
+  /col:'#8f7dff',alpha:MAGE_EXPLOSION_ALPHA/.test(html));
 const prism=c.spawnEnemy('shooter'); G.enemies=[prism]; G.spawnQueue=1; G.eshots.length=0;
 p.x=0; p.y=0; prism.x=250; prism.y=0; prism.cd=0; prism.spd=0; prism.aff=[]; prism.kb={x:0,y:0};
 c.update(0.01); G.pending=0;

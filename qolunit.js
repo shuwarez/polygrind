@@ -14,9 +14,23 @@ const ok = (nm, cond, det) => console.log((cond ? '  ✓ ' : '  ✗ ') + nm.padE
     !c.__api.MODS.some(m=>m.id==='def.recoup' || m.stat==='recoup'));
   ok('карточки урона вблизи и издалека удалены',
     !c.__api.MODS.some(m=>m.id==='cond.close_range' || m.id==='cond.long_range' || m.stat==='close' || m.stat==='far'));
+  ok('карточка двойного броска шанса крита удалена',
+    !c.__api.MODS.some(m=>m.id==='crit.lucky' || m.stat==='critLucky'));
+  ok('карточка урона за каждую секунду боя удалена',
+    !c.__api.MODS.some(m=>m.id==='cond.per_second_in_combat' || m.stat==='ramp'));
   G.bag.add('pickup','inc',999); c.recalc();
   ok('старый стат карточки больше не влияет на героя', c.__api.D.pickup===base,
      base+' → '+c.__api.D.pickup); }
+
+{ const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys');
+  const G=c.__api.G,D=c.__api.D; G.enemies.length=0;G.spawnQueue=0;G.packs.length=0;
+  G.bag.add('critLucky','flag',1);c.recalc();
+  D.baseMin=D.baseMax=100;D.elem={fire:0,cold:0,lit:0,poi:0};D.incAll=0;D.moreAll=1;
+  D.critCh=50;D.superCh=D.dblHit=0;
+  const rolls=[0.5,0.75,0.25], oldRandom=c.Math.random;c.Math.random=()=>rolls.length?rolls.shift():0.99;
+  const e=c.spawnEnemy();e.maxHp=e.hp=1e9;e.armor=0;e.ward=null;e.bulwark=0;e.kind='norm';
+  const crits=G.stats.crits;c.damage(e,{noDouble:true});c.Math.random=oldRandom;
+  ok('старый флаг critLucky больше не даёт второй бросок',G.stats.crits===crits); }
 
 { const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys');
   const G=c.__api.G,D=c.__api.D,p=G.player; G.enemies.length=0;G.spawnQueue=0;G.packs.length=0;

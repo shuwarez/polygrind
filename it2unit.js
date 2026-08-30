@@ -102,6 +102,16 @@ console.log('РЕАКЦИЯ И ДОБИВАНИЕ');
   ok('глаз хищника: +20%', b-a === 20);
   const e2 = foe(o,9e5,0); o.c.killEnemy(e2, o.G.enemies.indexOf(e2));
   ok('убийство заряжает и продлевает', o.p.predT === 2); }
+{ const o=mk('predator');
+  const idle=o.c.activeCombatBuffs(o.p,0,0); o.p.predT=1.74; o.c.setLanguage('ru');
+  const ru=o.c.activeCombatBuffs(o.p,0,0); o.c.setLanguage('en');
+  const en=o.c.activeCombatBuffs(o.p,0,0); o.p.predT=0;
+  const expired=o.c.activeCombatBuffs(o.p,0,0);
+  ok('глаз хищника: HUD показывает бонус и таймер',
+    !idle.some(x=>x.includes('Глаз хищника')) &&
+    ru.includes('Глаз хищника - +20% урона - 1.7 секунд') &&
+    en.includes("Predator's Eye - +20% damage - 1.7 seconds") &&
+    !expired.some(x=>x.includes("Predator's Eye"))); }
 { const o = mk('bossShard'); const e = foe(o,40,0);
   const a = o.c.conditionalInc(e, {});
   for (let i=0;i<4;i++){ const el = foe(o, 60+i*10, 20); el.kind = 'elite'; }

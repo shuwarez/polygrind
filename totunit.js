@@ -56,6 +56,10 @@ console.log('РАНГИ И ПРОЦЕНТЫ');
   e.dots.bleed.dps = 4; const on = o.c.conditionalInc(e, {});
   e.dots.bleed.dps = 0; const off = o.c.conditionalInc(e, {});
   ok('кровь: только по кровоточащим', on-off === 4); }
+{ const o = mk({lightning:4}); const e = foe(o);
+  e.ail.shock = 1; const on = o.c.conditionalInc(e, {});
+  e.ail.shock = 0; const off = o.c.conditionalInc(e, {});
+  ok('молния: только по шокированным', on-off === 10); }
 { const o = mk({fire:4, poison:4}); const e = foe(o);
   e.dots.fire.dps = 5; e.dots.poison.dps = 5;
   const both = o.c.conditionalInc(e, {});
@@ -115,11 +119,14 @@ console.log('ДРОП');
 { const d = dropSample(['bleed'], {}, 6000);
   ok('книга крови открывает только тотем крови', d.seen.size === 1 && d.seen.has('blood'),
      'в пуле: ' + [...d.seen].join(', ')); }
-{ const d = dropSample(['fire','cold','poison','bleed'], {}, 40000);
+{ const d = dropSample(['shock'], {}, 6000);
+  ok('книга молнии открывает только тотем молнии', d.seen.size === 1 && d.seen.has('lightning'),
+     'в пуле: ' + [...d.seen].join(', ')); }
+{ const d = dropSample(['fire','cold','shock','poison','bleed'], {}, 40000);
   ok('после нерфа доля открытых тотемов среди находок ~21,7%', Math.abs(d.tot/d.n - 5/23) < 0.02,
      'тотемы ' + (d.tot/d.n*100).toFixed(1) + '% · предметы ' + (d.amu/d.n*100).toFixed(1) + '% · книги ' + (d.book/d.n*100).toFixed(1) + '%'); }
-{ const d = dropSample(['fire','cold','poison','bleed'], {fire:4, freeze:4, poison:4, blood:4}, 8000);
+{ const d = dropSample(['fire','cold','shock','poison','bleed'], {fire:4, freeze:4, lightning:4, poison:4, blood:4}, 8000);
   ok('великие тотемы больше не выпадают', d.tot === 0); }
-{ const d = dropSample(['fire','cold','poison','bleed'], {fire:4}, 8000);
-  ok('выпавший до предела тип выбывает из пула', !d.seen.has('fire') && d.seen.size === 3,
+{ const d = dropSample(['fire','cold','shock','poison','bleed'], {fire:4}, 8000);
+  ok('выпавший до предела тип выбывает из пула', !d.seen.has('fire') && d.seen.size === 4,
      'в пуле: ' + [...d.seen].join(', ')); }

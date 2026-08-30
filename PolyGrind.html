@@ -227,8 +227,15 @@ button:disabled{opacity:.35;cursor:default}
 .rare-item-icon.modal{width:clamp(48px,8vh,72px);height:clamp(48px,8vh,72px)}
 .rare-item-icon.tiny{width:18px;height:18px;margin-right:5px}.rare-item-icon.hud{width:18px;height:18px}
 .rare-item-icon.inventory{width:24px;height:24px;margin-right:7px}.rare-item-icon.summary{width:30px;height:30px}
+.totem-icon{display:inline-block;width:24px;height:24px;object-fit:contain;vertical-align:middle;image-rendering:pixelated}
+.totem-icon.modal{width:clamp(48px,8vh,72px);height:clamp(48px,8vh,72px);filter:drop-shadow(0 5px 8px #000a)}
+.totem-icon.tiny{width:18px;height:18px;margin-right:5px}.totem-icon.hud{width:18px;height:18px}
+.totem-icon.inventory{width:24px;height:24px;margin-right:7px}.totem-icon.summary{width:30px;height:30px}
+.totem-icon.banner{width:44px;height:44px;margin-right:8px}
 .loot-item-icon{display:inline-block;width:24px;height:24px;background-repeat:no-repeat;background-size:400% 100%;
   background-position:left center;vertical-align:middle;image-rendering:pixelated}
+.loot-item-icon.modal{width:clamp(48px,8vh,72px);height:clamp(48px,8vh,72px);
+  filter:drop-shadow(0 5px 8px #000a)}
 .loot-item-icon.summary{width:30px;height:30px}
 .overlay{gap:clamp(9px,2.2vh,22px)}
 /* Полоса прокрутки видимая: иначе непонятно, что список продолжается */
@@ -339,12 +346,12 @@ button:disabled{opacity:.35;cursor:default}
 .overlay.menu{
   --menu-heading:"Grim Cormorant SC",Georgia,"Times New Roman",serif;
   --menu-copy:"Grim Cormorant Garamond",Georgia,"Times New Roman",serif;
-  --menu-bone:#d8c8aa;
-  --menu-parchment:#a99e8f;
-  --menu-muted:#81786d;
-  --menu-ember:#f0c47a;
-  --menu-border:#493f36;
-  --menu-border-hot:#9b592b;
+  --menu-bone:#f0e2c7;
+  --menu-parchment:#c9bead;
+  --menu-muted:#aaa094;
+  --menu-ember:#f3c981;
+  --menu-border:#6f5d4c;
+  --menu-border-hot:#d18742;
   font-family:var(--menu-copy);font-weight:500;color:var(--menu-parchment);
   font-kerning:normal;font-variant-ligatures:common-ligatures;
 }
@@ -386,12 +393,14 @@ button:disabled{opacity:.35;cursor:default}
    описания исключают прыжки при переключении языка. */
 .overlay.menu .card.class-card{
   height:360px;min-height:360px;border-color:var(--menu-border);
-  background:radial-gradient(circle at 50% 44%,#211b17 0,#12100f 70%);
-  box-shadow:inset 0 1px #fff7e608;transition:border-color .15s,box-shadow .15s,transform .12s;
+  background:radial-gradient(circle at 50% 42%,#2a211b 0,#171311 68%,#100e0d 100%);
+  box-shadow:inset 0 1px #fff7e614,0 8px 24px #0007;
+  transition:border-color .15s,background .15s,box-shadow .15s,transform .12s;
 }
 .overlay.menu .card.class-card:hover{
   border-color:var(--menu-border-hot);
-  box-shadow:inset 0 1px #f0c47a12,0 0 18px #7b32151f;
+  background:radial-gradient(circle at 50% 42%,#33261e 0,#1b1512 68%,#110f0d 100%);
+  box-shadow:inset 0 1px #f0c47a22,0 0 20px #9a451f3d;
 }
 .overlay.menu .class-card .nm{
   width:100%;max-width:100%;min-height:47px;
@@ -410,11 +419,12 @@ button:disabled{opacity:.35;cursor:default}
   background-image:linear-gradient(90deg,transparent 0,#b06b32 25%,#b06b32 43%,transparent 43%,transparent 57%,#b06b32 57%,#b06b32 75%,transparent 100%);
 }
 .overlay.menu .class-card .nt{
-  flex:0 0 84px;height:84px;min-height:84px;max-width:232px;
-  align-items:flex-start;font-size:16px;line-height:1.48;letter-spacing:.05px;
-  color:var(--menu-parchment);
+  flex:0 0 86px;height:86px;min-height:86px;max-width:236px;
+  align-items:flex-start;justify-content:flex-start;text-align:left;
+  font-size:16.5px;line-height:1.5;font-weight:600;letter-spacing:.05px;
+  color:var(--menu-parchment);text-shadow:0 1px 2px #000;
 }
-.overlay.menu .card.class-card:hover .nt{color:#c3b6a5}
+.overlay.menu .card.class-card:hover .nt{color:#dfd3c0}
 .overlay.menu .card:not(.class-card) .nm{
   font-size:21px;line-height:1.2;letter-spacing:1px;color:var(--menu-bone);
 }
@@ -454,10 +464,17 @@ button:disabled{opacity:.35;cursor:default}
 }
 .overlay.menu .const-entry-copy small,
 .overlay.menu .grave-entry-copy small{
-  font-family:var(--menu-copy);font-size:12px;line-height:1.1;font-weight:500;
+  font-family:var(--menu-copy);font-size:13px;line-height:1.15;font-weight:600;
   letter-spacing:.45px;color:var(--menu-muted);text-shadow:none;
 }
 .overlay.menu .const-entry-copy small.ready{color:#c99d58;text-shadow:none}
+
+/* Чёткая клавиатурная фокусировка не зависит только от смены цвета рамки. */
+.overlay.menu .card.class-card:focus-visible,
+.overlay.menu button:focus-visible{
+  outline:2px solid #e5a85b;outline-offset:3px;border-color:var(--menu-border-hot);
+  box-shadow:inset 0 1px #f0c47a22,0 0 0 2px #080604,0 0 22px #b85a263d;
+}
 
 /* Технические блоки меню остаются моноширинными: суммы, ранги, действия
    магазина, переключатель языка и скрытые отладочные панели. */
@@ -484,9 +501,9 @@ button:disabled{opacity:.35;cursor:default}
   .overlay.menu{gap:8px;padding-block:8px 10px}
   .overlay.menu #brandnm{width:clamp(340px,35vw,390px)}
   .overlay.menu .brandtorch{width:clamp(32px,3.2vw,40px)}
-  .overlay.menu .card.class-card{height:310px;min-height:310px;padding:13px 16px 12px;gap:8px}
+  .overlay.menu .card.class-card{height:320px;min-height:320px;padding:13px 16px 12px;gap:8px}
   .overlay.menu .class-card .class-sprite{width:120px;height:120px}
-  .overlay.menu .class-card .nt{flex-basis:64px;height:64px;min-height:64px;font-size:15px;line-height:1.4}
+  .overlay.menu .class-card .nt{flex-basis:70px;height:70px;min-height:70px;font-size:16px;line-height:1.45}
   .overlay.menu .meta-actions > button{min-height:54px}
 }
 #hint{position:absolute;bottom:10px;left:14px;font-size:13.8px;color:var(--dim);line-height:1.6;pointer-events:none;text-shadow:0 1px 3px #000}
@@ -622,6 +639,7 @@ const EN_ITEMS = [
   ["КОНТРУДАР", "RIPOSTE"], ["получили удар — ваш следующий бьёт на 150% сильнее", "after taking a hit, your next hit deals 150% more damage"],
   ["РУКА ПАЛАЧА", "EXECUTIONER'S HAND"], ["по врагам ниже 15% здоровья урон удваивается. Множитель поверх всей формулы", "damage is doubled against enemies below 15% health. This multiplier is applied on top of the entire formula"],
   ["ГЛАЗ ХИЩНИКА", "PREDATOR'S EYE"], ["+20% урона на 2 сек после убийства, каждое следующее продлевает", "+20% damage for 2 sec after a kill; each subsequent kill refreshes the duration"],
+  ["Глаз хищника", "Predator's Eye"],
   ["ОСКОЛОК БОССА", "BOSS SHARD"], ["+5% урона за каждого элитного врага в радиусе 250, до +50%. Чем страшнее комната, тем сильнее вы", "+5% damage for each elite enemy within 250 range, up to +50%. The deadlier the room, the stronger you become"],
   ["ТРИЕДИНСТВО", "TRINITY"], ["цель горит, охлаждена и отравлена одновременно — следующий удар по ней гарантированный крит", "when a target is simultaneously Burning, Chilled, and Poisoned, your next hit against it is guaranteed to be critical"],
   ["ПЕРЕГРУЗКА", "OVERLOAD"], ["поджог шокированного врага вызывает разряд по округе", "Igniting a Shocked enemy releases a lightning discharge nearby"],
@@ -949,7 +967,7 @@ const EN_TEXT = Object.freeze(Object.fromEntries([
   ["+N% к шансу крита", "+N% Critical Hit Chance"], ["+% к шансу крита", "+% Critical Hit Chance"],
   ["Множитель критического урона", "Critical Damage Multiplier"], ["СВЕРХКРИТ", "SUPER CRITICAL"],
   ["крит внутри крита: урон ×2 и кровотечение на 3% от удара в секунду — стакается без предела", "a critical hit within a critical hit: ×2 damage and bleeding for 3% of the hit per second; stacks without limit"],
-  ["Ударная волна при крите", "Critical Shockwave"], ["волна по соседям на 20% фактически нанесённого критом урона; защита применяется отдельно", "a wave hits nearby enemies for 20% of the critical damage actually dealt; each target applies its own defenses"], ["Шанс крита считается дважды", "Roll Critical Chance Twice"],
+  ["Ударная волна при крите", "Critical Shockwave"], ["волна по соседям на 20% фактически нанесённого критом урона; защита применяется отдельно", "a wave hits nearby enemies for 20% of the critical damage actually dealt; each target applies its own defenses"],
   ["Скорость атаки", "Attack Speed"], ["Скорость действий (глобально)", "Global Action Speed"],
   ["Скорость передвижения", "Movement Speed"], ["Ускорение после убийства", "Speed after Kill"],
   ["+25% скорости на 0,8 сек", "+25% speed for 0.8 sec"],
@@ -1018,7 +1036,6 @@ const EN_TEXT = Object.freeze(Object.fromEntries([
   ["каждая карточка даёт 3–7% · после убийства действует 1 секунду · значения складываются без потолка", "each card grants 3–7% · active for 1 second after a kill · values stack with no cap"],
   ["<b>Когда срабатывает:</b> сразу после убийства любого врага.<br><b>Эффект:</b> весь подходящий урон получает накопленный процент бонуса ровно на 1 секунду.<br><b>Диапазон:</b> каждая карточка даёт целые 3–7%.<br><b>Накопление:</b> значения складываются без потолка; например, 4% + 6% = +10% урона на следующую секунду.<br><b>Обновление:</b> новое убийство снова выставляет таймер на 1 секунду; длительности не складываются.", "<b>Trigger:</b> immediately after killing any enemy.<br><b>Effect:</b> all eligible damage gains the accumulated percentage bonus for exactly 1 second.<br><b>Range:</b> each card grants a whole 3–7%.<br><b>Stacking:</b> values add with no cap; for example, 4% + 6% = +10% damage for the next second.<br><b>Refresh:</b> another kill resets the timer to 1 second; durations do not stack."],
   ["каждая карточка даёт 3–5% шанса · потолок 50% · базовое оглушение 0,5 секунды", "each card grants 3–5% chance · capped at 50% · base Stun lasts 0.5 seconds"],
-  ["Урон за каждую секунду боя", "Damage per Second in Combat"], ["разгон с начала боя, потолок +40%, сбрасывается при зачистке", "ramps from the start of combat, capped at +40%, and resets when the room is cleared"],
   ["<b>Формула:</b> выбранное значение × прошедшее время боя в секундах, пока на арене есть хотя бы один живой враг. Бонус прибавляется к обычным процентам урона и растёт плавно, включая доли секунды.<br><b>Пример:</b> +2% даёт +20% через 10 сек и достигает потолка +40% через 20 сек.<br><b>Сброс:</b> сразу после зачистки, когда живых врагов не остаётся. Работает и на урон свиты.", "<b>Formula:</b> rolled value × elapsed combat time in seconds while at least one enemy is alive in the arena. The bonus is added to regular increased damage and grows smoothly, including fractions of a second.<br><b>Example:</b> +2% grants +20% after 10 sec and reaches the +40% cap after 20 sec.<br><b>Reset:</b> immediately after the room is cleared. Also affects minion damage."],
   ["БРОНЯ В УРОН", "ARMOR INTO DAMAGE"], ["каждые 100 брони превращаются в +12 к урону", "every 100 Armor grants +12 Damage"],
   ["ПРОХОД СКВОЗЬ ВРАГОВ", "PHASE THROUGH ENEMIES"], ["в движении вы проходите сквозь тела и не получаете контактный урон — но не стоя на месте", "while moving, you phase through enemies and take no contact damage; this does not work while stationary"],
@@ -1111,7 +1128,7 @@ const EN_TEXT = Object.freeze(Object.fromEntries([
   ["Открытая рана", "Open Wound"], ["Повторный прямой ближний удар по той же цели в течение 1 сек получает дополнительный урон. До 5 стаков на каждой цели.", "A repeated direct melee hit against the same target within 1 sec gains additional damage. Up to 5 stacks on each target."],
   ["брони", "Armor"], ["Глухая оборона", "Hold the Line"], ["урон уменьшен на", "damage reduced by"],
   ["скорости атаки", "Attack Speed"], ["с осталось", "s remaining"], ["Стоит на месте", "Standing Still"], ["Враги рядом", "Nearby Enemies"],
-  ["В движении", "Moving"], ["Недавнее убийство", "Recent Kill"], ["Идёт бой", "In Combat"], ["урон", "damage"],
+  ["В движении", "Moving"], ["Недавнее убийство", "Recent Kill"], ["урон", "damage"],
   ["Критический прицел", "Critical Aim"], ["к шансу критического удара", "Critical Hit Chance"],
   ["восстановление 5% HP через", "5% HP recovery in"], ["шанса критического удара", "Critical Hit Chance"],
   ["барьер на", "barrier"],
@@ -1154,6 +1171,7 @@ const EN_TEXT = Object.freeze(Object.fromEntries([
   ["МАЛЫЙ", "MINOR"], ["СРЕДНИЙ", "MEDIUM"], ["БОЛЬШОЙ", "MAJOR"], ["ВЕЛИКИЙ", "GRAND"],
   ["ТОТЕМ ОГНЯ", "TOTEM OF FIRE"], ["горящим", "burning"], ["ТОТЕМ ЗАМОРОЗКИ", "TOTEM OF FREEZING"], ["замороженным", "frozen"],
   ["ТОТЕМ ОТРАВЛЕНИЯ", "TOTEM OF POISONING"], ["отравленным", "poisoned"], ["ТОТЕМ КРОВИ", "TOTEM OF BLOOD"], ["кровоточащим", "bleeding"],
+  ["ТОТЕМ МОЛНИИ", "TOTEM OF LIGHTNING"], ["шокированным", "shocked"],
 ].concat(EN_ITEMS, EN_WORLD, EN_UI_PAIRS)));
 
 function tr(value){
@@ -1416,7 +1434,7 @@ const LOOT_SPRITE_DATA = {
   xp:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAAAYBAMAAAD3x+WnAAAAMFBMVEXQt4gWtrmTZThKU0wCU2EiKyoEJjMDJzQBMT8BIC0DDRUCAgUAAAMBAAAAAAAAAADpnucdAAAAEHRSTlP///////////////////8A4CNdGQAAA7pJREFUeNqVzH1M1AUcx/HP/e7gIAh+d5CQskXBRXDZLiE6qROsOR4Svegfl+HYmmO4hMOcPUzalWl5W3WitAY2cfYwhboTW5tMOqDlRuPhSJMFwh00jh0YnghyD7/z0x+HxL99//m+9t6+Xxnx/0YAAAytKRNr/MsaD0aW3AwgWCeMPbXSg8/HTa04fV/xqhEqjFgAALuzc+zBIyf+Oh3RwpTtvvetB92BvpsAICMg7c13JjySXwQAUpPSLVNv0wFA2t5Un/TboUivznOq1dt0kJuB9m9jJmZl9zaIAK4cXTfojb+wPh1A4GhW48Cu716JAdD+TcoNr3Q3mC4AoMGtGdSJGd1AaGzLsGYgOetlNxBKOHzWFJQKk9wAWOjUDOTNvOkWgNDkxceWP5oMWVsBLNmfHTlwW22tAhw/nTJ9oVRItVVA26QtfeQAo2rNAmAL7ddeFELXrUXAD47X+3pUYZ/JBLgk73GfFECHCZAc+7U96gE0GgVIc+PTZkwgcaYV0j9PRzvFSTEhy4qw12C+LR6EYtoKaT572iwOIay0C+hsSt1o1p176GFLP2ab1CrgrJKb5+D9RKkUYY4P1PRjtjEqoQodWYn7+hXSeN1wuOWr+V/tT9bz67p5QL+zcTy7Xmqw+qyQxQ7Y1x2RPqt3iZZP75+k8lUhfNIZkum7PCP60dzgEV9oPmbL39UvjCrC59oDNXfebliO9qrCl2QhMXp8pHr9aIbc0Ol6qbciSehfaki7+bvrljojeK1r6fP4638It9rF3J5xb+Uznss38ha0c1Ndix9kCrKkeqvG5RnL1GqK5GqDM0WM1qZnJRnl8u3Ogybli0+U7zLK1Jus9xC14fHsjCIBnsbySZVqwlAuBzw/v2FNVDmLjAok/nms5hS6rYVGOeDpbRhWqycKdyogIMF81dDr2PFoD0Dxw6s1J7q3x14rAnStx7NPOA/HugGI5u/TuoZ2xN4F4C9N7ih4V5OT2076S5M7Cg5FxWa0kIupKnvOx1HR8jbSX5zckfOlJie3jQSvbDVCW5Grt5HsV+mgrXhO7yA5p9IhrmJTpo3k4FYdtBWv6W0k6C95zwjtJQtJ+kuKjdD2vk+SiyXFOsTZy0hyueQdK7S9FpKg78dAcSs220jStztQ2oqCMyTpq/WntCL/jEjStydQstLBhY3sK0WzgyQX4ni5FOcjTuBMKpqH7pBc0LLzWPp5B0mQLrLFcpokSQd5oaxy1cGy3atutuxh5IAkww6uTqXrP6/tIQdJ/gvIhQxHtVcS5AAAAABJRU5ErkJggg==',
   monster:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAAAYBAMAAAD3x+WnAAAAMFBMVEXKr7SScXqaSoFeP1OdGXdlFFE1FjVQC0ImCyYcCR0SBRINAQ0DAAQAAAEAAAAAAAD6LnFwAAAAEHRSTlP///////////////////8A4CNdGQAAA9JJREFUeNpVyn1MVXUcx/H3+d0rPjC593IUZIade1HW8ukqpiU+MMxVOkUhW83N4WZFOZuzsn/adIZrzuXIh7ShzoXNTWdiYTN0+cBARfFerqlU0j2Q8yEveIIE5Z5zvv2B2vr89d5rH0RE7Ig8nR3/rx9FRHxP/PFHATRtW82TNW6veFwPiH1YgfXE9/e7Apxf48+vWBmJAtgXzellm1ujwFLnuGSVbep356I5vez9P6IoQLSlMmbC3O1RQFR+NOhO218Npx1jpWUw9yMAV82PBMNT96OA2tt3rUvW+p/9QOW1rvunzC1X/MCn5xo695ilHoAT13qsiLXuCgr4ZWK9E0jrzTSAB0WXO7KfvddVANxc+FXnIierHeBqUW1r2tDULhQ4vra05tIXpBxwfG3H27US5w1gkpjZsXB56wrA8ZktAfISS1Dg3Ew0F8c2R+v3gXvWluUvrrKuVMOxmg6ztGemNSwK7p8d7ZOnfWF2mwrwU2RasYkhC5gwqDjae9o/GfDOjhvtfW2GDkja4NXmwx+MEkvBkfHWIM2s8PUWwF6j9REV64Z+bsDhZfW/Jz6oGP9eGI7MbrqjHT2c/WrYC7rj8yXaT3S2vA26cy/cktIYDIbB647NvDHgp5xRgCc+bqg9sDLdQGFXmuaUEQv8B0rA3t0pA8esGr5jMdi7H45aMnrWmG3FkNxtuaGe+VOqlqOQtRZH/4nP0QB3oyKW8t3yFBO0jT1mXaaUeCzQPsasSzEXp0RRRK6Gg/HBZsMpC6LnDO3+dF/DSQuazqeHyHLrT5tw+TohM9/98aSFIl7XHfec1W3VDXGnzWgvHTZE6dDacYaufVNSu+dA3PkStUXvy81BOZ4jZTl9/sDgxQU4ns/2BJ4rDKQWF+AM2NaY3uKPXVjmx1FVQ6Qv0JY6IYyW/D67uWU4C0vVOezq4KkbEpqxxtOAXTUutjMnb+nLf9/C/mZWdSLAuHKtAZJn9MDUC+9kjDwokjyj5838LT99RqVIsk6flNf47rBnDook63Q9/8LK0NiLIgrFJ8l5g9bnKEC5b45+Ka+8KwDAW+4r1zeEugDctbnzSlakNYPX23tgsylbAyEPeG8f2pRwtuqGB/r97NVROnh7D21KOIW6oYOisMO/A03uGEBx0r8BzbnlBwqT/jVozl8GUHjXvwHNuWOAwrPAyt1VGxxpAZ5ZVtau2qAL4JltvbbrYHBkGPAssjK+rg2OCAMiNd+KOAcyRESkpkbErervYztE7J2ZIiJS/7qIU5UhIojU9oqIfUlE/t+RByJiN4mIyPmn/i+Z9hUa/I+Q2AAAAABJRU5ErkJggg==',
 };
-/* Первая очередь редких предметов: шестнадцать статичных палитровых PNG 24×24. */
+/* Поддерживаемые редкие предметы и экипировка: статичные палитровые PNG 24×24. */
 const RARE_ITEM_SPRITE_DATA = {
   mirror:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEXr2vC/qLuedbBoRpGWMPtpMb04MT9TG6MrHUoVDSkRDhcGBA0BAAsAAAUAAAAAAABLYuFmAAAAEHRSTlP///////////////////8A4CNdGQAAAMdJREFUeNpj/M+AAEwwhgADAwPD/////////8nmy////6Eyxv8YAmAysqfTUv7//8/w/////38eRLTx+0OVSanqC0VsYGBgYWBgYAgUfMd8DGr01w08CvufPIBwogNbf//u+gDhLGRo5DARMYBwZBfI855UYGBgYPzPwPA3V5HXTgtqALNkv/J0UagMQznz58lwVwd8zYQ48f////+vQZwOcc4xJM99F0Zw/j1SgHn3//8PLvlQPYz/Gf6d5DSAy/z3/4+QQQAA0tVjLnIscsIAAAAASUVORK5CYII=',
   golem:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEX4+uvAydNbvtCIlqp+jaJObYJFU2cySl0vO00cM0MZJTMNGSQLEBoECRIAAAAAAAClLMk+AAAAEHRSTlP///////////////////8A4CNdGQAAASNJREFUeNpNkM8rg3Ecx9/P5/li5udaclA8KSPJVsssrdBiLZQnlHJxcDElt5V/gHKilIPITcrJHzAOclF7Lp5dtkw5LEmztnbYnt4OS7xvr16n11sj/iaAkweAHACQD6EUWdQXSUE9upa1nJfxqgVBbaVwel82/ZYDMPHsVZG7iK/ZJuiJHK/GVNg+GkuLo3pHXr+6sslhFxSKEr92bvS4OQmtfmDlSq1LV7G5Uljpdr6wPGoMbs93B8Cnw4WM0Wd447cUTGB/+sRt9psCsLK7Ndt23pLIkAK33/B2+DaCF4AA66X8gHY59QEowFX2hyrRvTNAANnUyzs9IQNQAIKf7W/JITRA3mtN3zONUrL6GE6TpACAy9MZwK+hkyJJav+v+gEItnGBYGITSQAAAABJRU5ErkJggg==',
@@ -1434,6 +1452,45 @@ const RARE_ITEM_SPRITE_DATA = {
   bmask:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEX67OPlxLO4lJeic4qpTqlbOm3iDcifB5A7IUotDj0eByscAiwRAhw0ADkAAAAAAABUT7FrAAAAEHRSTlP///////////////////8A4CNdGQAAAPlJREFUeNpN0DEvg1EYxfH/e3vxmghioVFJVVKGmozYCDY2wptYJIYOVkkTJpOpi4HB3GiISbQRQ5NGJMIgBv0GpCS31abHUFrPepKT83s80T4DkAQHgCT1SB+SZIB6ErryzeRzULWcgg3JQGEbd056EgzszUYoOesDqmV3ZhbS5at4Tp4qWzd9R7i3r++UxV+v9q4Gz++xMyyEzdRjuX+kAhbcQL5UXJmLgYF6JHPY/WpuwULC3u/HX6Kuue1uc/i0c00SkqrL2aGnE0kWaMwHOhj/80yPRndbOMbaUn8iEbpIARag43JxqcXW9bH0Wy01HiRJ3v9X/QB59XQtZeR67gAAAABJRU5ErkJggg==',
   bossShard:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEX8+Pz7n/X8YO7NI8lAHG/IA7llAm83AkQaAh7OALNRAFcvADYhACUUABcAAAAAAAAMPg74AAAAEHRSTlP///////////////////8A4CNdGQAAANpJREFUeNpj/M+AAEwwxu8EBOc3hwCCI6H5Ac753vxbgIGB4f///////zfiKv3//z8LAwMDA8PnJH6EaSIKLPsYGBhYGBgYGD4HXn57Hi5jduXTaxjH7G74nUCosk/5X7eWvGSAGK0sc0jrxvn///8zMTB8+ps+j+kJAwMDA+N/hl8rT/nyH5n8gIGBiYGBbeebpgMqAlA9S7XPxp3+////f8b/DAy/DsmwPXKAGv3/J1vkSQYoh33H4UiIT/7///+feyXEI0wMDAwM1mwQCcb/DAwMP9mRODAAAIyaV3RX9H2IAAAAAElFTkSuQmCC',
   bone:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEX9+en77sn347f85kDt0qL3zjrYqWHBgDiYXzt5RSdiMBJIKBgsDAUZAAYAAAAAAABYPkBmAAAAEHRSTlP///////////////////8A4CNdGQAAALxJREFUeNpj/M+AAExQeosfAwMDw38IYJp2//9/qMyXOtMeuDK2J//VAxhYIJz/R37YnoPJ/H35ZLcWjPOn4ZqAEETZj2YGiWK9GwyM/xkYGBi+LJB466oEVbaWieG7EszoRX94UxgYIMr+iIpkfmqAyoQauRY9gLrtF5v4eogDGf7a7HTwM4B64Sh74B8rBShnoonsVQOY59T+PIiDcxKtFEXg3lZ+N3ULlMP4n+Hn3l8B8ABhvRKAkEEAACeHSL/GM1QlAAAAAElFTkSuQmCC',
+  calm:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEX7/PzV9vO9xc+es8NBt9pTkbVmcpA/aJZBVYEWMF4GGEIEBhcBARQAABAAAAAAAAB8F84RAAAAEHRSTlP///////////////////8A4CNdGQAAAO5JREFUeNpFjiFIA2EARt9//8m4McNgqCDKYDhEZIiT2ZxsZpNJTDZNdqNg0GKwWgTFKGh2wUOcZWtu6sGwCs6lC3J+hnPea4+PB58RCQ4AswuJRN0fAFwAuzuSCJPpOJKkr2ggSXIAvIvHZLkfLbaGiz82bm0bMCJamd+c3jI+uBCeNR9qlx9x0w2W1ta9uZaEVCn7Jre4V5WQrjv1rKm3G5LL4LQQ5d+5/VzFIdPf3u9lqT6Bgy0FE4XeAWVACkqHz69Hlb5kRHiee2FqZhmQvq+Kb830sSQX3PzNRuYuFX+DHRulToZC6MG//PELwbdmDxtQ360AAAAASUVORK5CYII=',
+  runner:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEX1+936y2xq4Hbam0ijfDwVokoLZjKHRxpsNA8rMhI1EwEWBAEGCgIPAAAAAAAAAACBQFYLAAAAEHRSTlP///////////////////8A4CNdGQAAANVJREFUeNpj/M+AAEwMDAwMDF8cILz//////1/74///////Q2SEmGAyH////1UPlfnDqMDw6wLUgO+nmQVkWBkYGBgYWBi4pxgwGl2GyjCtt+TcpAAz4JPqggrO/VCj8xbs0clSgMp8U02I2i79/////wz////foHZqjQSM8/dBwtJcqJ5fTDJn7sAdmpr2pZgDpuz//1Whwvuhrv5cwOC78wkDAwPjfwYGhkR2x9UXfz+A+HT+/xTNjkiYT/9/0xBwhBnw////ihX3EZz/v+3/MyIHFQDlN4r7fCqW/wAAAABJRU5ErkJggg==',
+  pulse:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEX79uX4y43NjkmyWB72FSeOKA48GgUZAgLXABCxAAd3AAc8AAUXAAAMAAAAAAAAAAA12cj9AAAAEHRSTlP///////////////////8A4CNdGQAAAMtJREFUeNpNkL8LAXEYxp/7JhJXfmVTYtflNhaDlElSrJLdeIvFbLT7A8RkVWwMUrcxSVah1A04j+Gc+z7bp+ep99OrEF4EAOChSWCqEui6BG5IkkebJOk08bzXGJupQZIg+VnH69vbb3a225dVDoBCfFqLQuUZrqYhAFyGtdBYOHey3fTrOoplAQHMDb6X930RAGmZEa2kpHqkDwhYk11/YjYAAYjOKepXk5ojug1mBueZq5NKlE1Xh/phpv+BnSY9sHsyHEmSivyqLwXRfuX0LbsHAAAAAElFTkSuQmCC',
+  predator:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEX962f6yQ3UgAO6UwSMSQmCHQRNGAoaCQMLAgEJAQEjAAAIAAAGAAADAAAAAAAAAAAQA1n8AAAAEHRSTlP///////////////////8A4CNdGQAAANJJREFUeNpNkDFLQmEUhp9PxcWlWoKgcs6m7hZBzQU1OYaBYxD+Af+Bw/0FjY1REbQGzakEDeGYiwRBBnWN6HHw3mvv9vI+55yXE2SuAvAI/LRSE+4huQJQf7tJb1G1BBRflxoV0kRvD8wS2B0wTzovqhYAJslZnN3htBruMvO9cLEzbgElIDyvPh2vAEFYXu+v7b1fzrB2HDW+3tKZ5vnwKEQp9vlR3xiM+7MF5eLken8ra3ByUyurovpwONxUDQLJdlSJ86LdkTnmX88c+/+dXFOkgHO84m6yMAAAAABJRU5ErkJggg==',
+  fullplate:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEX3+PnByNmanq1pcYdNapNEUGY0O0wVM2UdIi8AJWcJEisECx0EAwQAAAIAAAAAAAARIaYRAAAAEHRSTlP///////////////////8A4CNdGQAAAOxJREFUeNpj/M+AAEwMDAwMDId1kTiMBkgcg8cQdf//////f8+Z//////8P4bz/8///////IcruXkDosbokOx2m58c+jebX+////8/4n4FB8UXUF63mPwwMDP//fxO8uFhLRjD+/38WBgYGldnzl0r0CjAwMPz//1BOkXuD8CO+//+ZGxi4zri/+fRXIkyDgYmBQcPpoR6zwqc0BgYmBoYr6+/VX7v7t4qBgfE/w+cVfLs/mcq3XWBgYmDgtVfY/5fp8wWIC7oCmBPZdkNd8OWC0I71ygsgDuWRP8LzcQHcc5/s//+HKkMLHSgAABcHcYUz9spWAAAAAElFTkSuQmCC',
+  lastplate:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEXzzoLAjlCbXSh1VkGDTiZzRyhbQjJWNh9OKhIzKykTDw4GBAMDAgEBAAAAAAAAAACfztVhAAAAEHRSTlP///////////////////8A4CNdGQAAAM9JREFUeNpj/M+AAEwMDAwMDA8/IDj/79+BSP3/////p/9f/v////8/EwMDAwPP1mMMDAwMDCwMDAwMjArSSAZ8YEDo+a9ZjdAjVamfAJP5ymBt+fz/////WRgYGF7KNTM84xBgYGD4//9HGZNEqFg1RA+rrtOr367GEKP/z+QTUv/+DsJhnviJ6cPvz1BLnwnkf7AxgHIO+yy0crjAwMDA+J+B4dec69pMaVCZf8ECe/7BHMrh8FRsB9zVZw00N8D9w8Uvj+QFiK//MyIHFQBt81v6HVxaCAAAAABJRU5ErkJggg==',
+  steel:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEX3/P2pvM90r8loi61ieJJbaYJKYH81SG0ZKl8DCDkBARkCAhMAABsAABAAAAAAAAAXZO64AAAAEHRSTlP///////////////////8A4CNdGQAAAPBJREFUeNpNjz1Lw2AYRc+bpEIrOChKQKFqHQouooNuBjo5ipt0EBzcRBAE/4Dg4uCP8GN7Bz86SNeO0qHtJC0iFaUiWdqmiNehxni3h3ueC8eIJA4AewcAeAB8Rv+OzfSQkyT5WUmSB/B1bpKBm/qLjX++l0OzGDeNLVvbbgFGRDuZdr4fXoAHqdxd82NyZYiVRnOzYzNdC0irVxOnJ2uVdQnpctf6C7eHj5IRpbn3kUF76TXAiH5xvJAtV6/Bgdpx2W32jiwY0Zs/G6Tc/TdwIN1p4T5FvwrdafswJUlGwP2z8kGssJHxg8Q0lP6wOD9sGGgO7YAYFwAAAABJRU5ErkJggg==',
+  swift:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEX8/Pyp8/IF+PwB7fZYssQApMNTbXc0U2IAUngQNkkIHisFChQCAwwAAAcAAAAAAACkadDyAAAAEHRSTlP///////////////////8A4CNdGQAAAPhJREFUeNpNkDEoRHEcxz/v76U34Eom3aBQslCK15XFctmuKAaD1XaL0hWTkd3AZJPhGZRykUlCT09hcHXllAG9TqiX976G5/J+26fvZ/h+f5b4PwPAmZ+SJKm7JEmyATh6z2hXhxktOpUkpYlzTb2lBUXKjT+IVyYfJ3IhWILKbPxqjqs3WCIZbMuXw575JgZuRxvFlyVvCGxwncXNzhFCsKTt3E/Nd6cLH9h8LhRm7g5MPgKbju96whpdHiB97e0+uM5WVTIQ7cfrpYGxtEH7ePP+afXtEgw4td5gyjt5Ticklb658x1JSNLFcv+GWiAFw74kK/uqX5ETegHjnssSAAAAAElFTkSuQmCC',
+  survive:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEXm1sbDkW2IYVGBPzlINjI1KCapCAwrDxAKBgUEAQF3AAMuAAEDAAAAAAEAAAAAAAB8CMi2AAAAEHRSTlP///////////////////8A4CNdGQAAANtJREFUeNpj/M+AAEwMDAwMDJ8DGBgYGBhYGBgYGBj0xJFkzqkjcQQckThT10JM+P//////+l/+/////z9EJvMGXNnP4lc9GhMYGBgY/zMwfFT5p8949wGEM/Wd58dahWUMDEwMDJ9engh7lv1HgIGB4f//7+EPGBdoLpv//z8TAwOH8OvUUwc+J0D09O+JYf3pIA0xWsj+9/4n5lB7JBy+/heVvwDxwrepKv9+HIXKvJnh8OAkA9QFf5l28dxOgLvac9f//////4dwvsYjcf6d////////jMhBBQAoA2pNcESTmQAAAABJRU5ErkJggg==',
+  claws:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEXUyL+QY1hnQDZGOTpsJCAsJSgfGyCEBAQpCQcQDQ4FAwICAQFtAAANAAAAAAAAAAD+kor6AAAAEHRSTlP///////////////////8A4CNdGQAAAP9JREFUeNpl0DEvA2EcgPHnfXsnlw4cWyfHJdKkogYM2nC2jgaDWERuFINBEEM/Al9Act0MhvoATc9gb8IqEVMt7kq05c79LZImPNtvfZQwSvMHPYA2gEiyNxdl/k4kosHYrl+n1sQmaJBiuN7P2k1AJLM2Iik1zkU0fNQKjrhnHdCw5I7H3+9OGRCpvh6IrDzNiGi+TmuFOF0+OgnQvDV8CdJPI9hHU3If/ebLsUzPg+TXKsP6YPf5/ka0bDndMZuLhVYF1buEQ5K7bvWhqAbxlVdWxJbZyWlsL1Rgh/3ZUJtGGAHc5icXjRx4AGaiPQPiVYApC9TvkKHFCP/v/AAYPmD8M1DeGAAAAABJRU5ErkJggg==',
+  thunder:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEX4+v348Jr5vhmgutOwfCtXZ4ZNSU1DOC4jK0MaGiEICAsCAgIAAAMBAAAAAAAAAABBcb63AAAAEHRSTlP///////////////////8A4CNdGQAAAPNJREFUeNp90M8rg3EAx/H389332XN4Sk/hoNZjqx2XXCQHWQ7aRZ6TaGcp/hBJ2g7KcX6UciC1LTUHf4AIB6VdSBxWapiS8HFRTy57317XtyPiDP9RiAAEGBoTIUDDBcN55hDAWVjDvlevhgC+mzNH1vPDHMB1ruxZa1ujAH2tLc9QDS+z0Hk63g4M9vUxBVyMz2II8rfD4Dr1NI7IuGrSG4zV2oaekcla+WX3fqCN4cHsbN4lzhLJPAYvu1x5/tgb9AF1blYXFaWm05LBX58Pv/qXVoqApLn908+paENCkop6Ozmo/EH6KZQUoyRJTrchcb8O+WOuq2/QkwAAAABJRU5ErkJggg==',
+  ricochet:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEXl7PdMquVraIMuZbtxPy1POD0fOXxIJiQ4HycLI14eDRwECCQHABAAAAYAAAAAAAAQ6w4lAAAAEHRSTlP///////////////////8A4CNdGQAAAQNJREFUeNpFkLFLAnEAhT9/d4SCQUtg4CBE1NQdBEUFERS19gc0V1hDQ0RbEIZDtDYEEUHUFFqDTWItWUE4NLQ0C01eeJ2Iyms4rt728cF78GLiPwbgOCJJs8mcJEkxgX/WM9uRua3fJf29K8kAr8F9sTR2OICB3mT5ZsHz1h4wYKWqO7TLzy4GmEkOsrs4F+5slDNMxTfDtqGtJZVO0pINPyupTq/e8cBA30Uzo3z8HQz0Z735t5HT0GQb1sSB2wBQ82O84Ofi+ZqEgtblfvC4PupINonq8NHXquMkAOnlu6Jl/7ogxUSn/elaT7blgiSpdZ4OalII3dp0VxFIleiDv/wCOd6JmTTbAzsAAAAASUVORK5CYII=',
+  brute:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEX5yoPTgDfDZSJ7XlSCQhxTPDZbKBBJIxU5JyYyFA8kFxgYCgcDAgEBAAAAAAAAAAC8LWquAAAAEHRSTlP///////////////////8A4CNdGQAAAQNJREFUeNpj/M+AAEwMWDh//RGc73x6CE6Y5qMPDAxMDAwfXRm+9tj+m8DAwMTwR0LwA0fVw0//GRiYGNSMmB2Ywm6V/WBgYPlv//nOX0aH9/7qHwRYfprw3lBmELMT9VtQwPDvsZ7cwbx/6YtEwv6zMC6c8t9D5cOlU2cXf2D8/2JTl3X6S4N1D5fYMTEI+BpEpP/v13i+2ICJgaNFNyJMSesie6ABw///txSsNa//iXue856FgUHKK/xG0rE7Cy8JMPz//ymITUPs//157/8z/mf4GiH+m30WAwMDAwsDA4ehv+J+iE/+////aF3s////////z/D/////tyDs/4w4QwcAzwJtMP4msXEAAAAASUVORK5CYII=',
+  riposte:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEXn39ielY9tam1cWF9yOjwuMj0gJC16BwkaERYHBgYDAgMCAQEeAAEAAAMAAAAAAAAhxwAkAAAAEHRSTlP///////////////////8A4CNdGQAAAPJJREFUeNqNkD1IAnEAR9/9O4pEkJaoQXIOoYYgaHCIwCFQoqEtEJpqsMWmQIigoCFaXO1jKJt0skUiWiNvaGm9yyJxOCQNu+LXkNAWve2N71niF8Mf0swDXJUBdbYnJcm9SwslrDlJckc8GS52JgAqyT0MJ8NRgEcnglHuVT7Ij2/5pn2bco/hY/wpHDOUZ8MtqN1UA+yh0syXBREnPb9pTGg/8QlnD2unMZRvFQay3emD+3chBblQs+GsFIuywe6MXZ6/FJJgA6O7mfXeUvcnYTFYXqh4/R7v7WgwVQeQ1N64Dp6nJCFJjcPeqiRZ/xvyDd1Law1hZEL9AAAAAElFTkSuQmCC',
+  critmass:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEX92Tj7nAPyZQaTZ0vLOg5fMi08Jy2/EACQDQFbDQsoGB4PAgIsAAECAAAAAAAAAACaQc1RAAAAEHRSTlP///////////////////8A4CNdGQAAANpJREFUeNpj/M+AAEwMxHK+QVgLGBiYGP4J5zMwMDBc//iAgeF/89H1/z/9//8rJuI/0+8XS14zGP9k2GPVu4Hh/61C4Tv/+e8aSmT/Z2FQuKl6w/kVk5MhNwMTw79zZds59Hanv33AwMLA+MdYWHTl1EuiuQxMDCxBpZ8X3DB0M3dgYGJgYhZ4P4F7HbOsAgMLA0PBRWlfUSMWcQYGJgaGtw75osHPnc8zMDD+Z7h/0nAGk/TbZCUGFgYG+QM88nmMt4UYGBj+///////9H///////n5E8byMAAJHjTLyvBFJIAAAAAElFTkSuQmCC',
+  critchain:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEX9+9380Bv3pwnhfQrUYwLBSw6DQSKBKQdRIxYxFBIXCQgMBAIDAgEBAAAAAAAAAACIYrjdAAAAEHRSTlP///////////////////8A4CNdGQAAAQZJREFUeNpdkD8sA3Ecxd/v218qlCCSW4mcszhnFynRgSDxZ+p2iUFMSCwSg4SByWAxGpqwdmxvuaTCIKGxSusikTS9oVO5RvQZSom3ffLe8nmK+I0AeDX+gBxOfxPJlfgZSZIaaDhWpT0zu10N1KuDAFkuXNTI99Q6FbFhhicKoXWX0WgYzkhKvMCtuuC4eX9qC3O5JQqi5YPgxl6ob79AmnOrk81Pv9C1n4W85YvGaO9Q6VH1QyfmrYEpz5frRBpaxSvBnj22s7sGCI5jsa3FD/NK+wDJrPPQGQ1P1KgBzBRxlHeSgAbQA8jtbLoPaJlE9uY5KS2TZ++pAz8NL0OS6v877XwBXT5uMc1rU2YAAAAASUVORK5CYII=',
+  shove:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEXw2rK8jVqnbDZ3ZVyDTiVnSjhNQTxCKyQkHx8bERANBgYHAgIGAAEAAAEAAAAAAABak70WAAAAEHRSTlP///////////////////8A4CNdGQAAAQhJREFUeNpj/M+AAEwMaBwPBQaGowkMDAwM////32Cz/5PYwf///zMxMPx8fvtCqOJJBgYGFgYG5uVbWHgPXIAo+/0w5f25Z6/8//9nYmDgKXNx0E08acDAwMTAoHPrwgLGOc/PMjAw/P8vtYzX/pN7Ocv//0wMH7Va13qxmHIWT2BgYth43nzGh18Kr3I3M7AwxD97cO89s/dr3a8MLL+NtD30eBmWv1ZnmMD08+p/UQNmlu+itgoKTDy86v+ufGdR7RXeEMDEsEBOS9CR8dKK1xcYmBg2CDz5ZsBceV85gYHh/8fMH+f////C5dz0n4mB0YzdgIGB++vmvwwM/+Eg/z8j3gCBAwDCSmuzro7p8gAAAABJRU5ErkJggg==',
+  lava:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEX94j/gojSoWzN/LiEsJCjcCQB4BAUiFxoxCQsKBASTAAJKAAUcAAEDAAAAAAAAAACDOV3XAAAAEHRSTlP///////////////////8A4CNdGQAAARpJREFUeNpNkD1IAnEAxd8d13GLYMVBQ2JLDQZBQ5tDdEaCByF2IDRci3uBBC1hS2Mk0QeECLdIhQhxBo01tDREkLQUQpkRFxHIHVjYa/gP9bYHPx7vPYn4kwwAni2MRPiV6OfUCACA7LwtPJWt6iMpAz+L9m4l3G0AILnmvkfq/aOkDCCeeZgrjmVF2vZWM6aGTIHdJc22NXErsOHwyqCWOAJA+pPefm/mvkmCZCux/n12PU/KQLC8o0pOyVuCRFxtRjrdD+ewANDPK8l6tpVv6JQRV92BtHZA8wtKYMROc+Xx1+feC+D3XcA3jk+MQpTgnn6TcWZXN/QaQZLt1HRqyCYVAMElNcsVS8mcng6Rog5ZPCdJSv+v+gVHmYq+4Hvk1QAAAABJRU5ErkJggg==',
+  frost:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEX9/f31/Py+3PCF0/wQ2/xUouNlfagabMkjR4UdM18HIlECETkBBB0BARAAAAAAAAAphRK4AAAAEHRSTlP///////////////////8A4CNdGQAAASRJREFUeNpFkD9IAmEAR3/f56FDN1RchJMOBy1lEklw5B+CCiGQkBxCMGiIxkAamoQi2mtKgqCoBiPXaLlBCiOkFsuwgoZoCS49CyL9NRj1tsfbniD+kQDQDP0ayersUZIkCfJbzSHAQJAURDNYRMyReDkxQfJ81TA7TBmmBJB1+8dnxoa9AMlseaB8EEiSIFlb3/5YLu54qAAwGE7lLX0OErCRaxbmd3srAN+H7MyNp/q2FqNgXdxq0Y0zLbSZF3VVLnT1H07cOVMRqV54W7qv3Irf+70Sob745/7pY0+0cC1rk76t10TDcNnHgJ126KOKc/HZb1LwoeRWMksWV7RLkBx0aUplasQiSKuRdnfvPV2RgkCk0VkvGWb7Ab84nSLb5Y8fnlqN7HQWKZwAAAAASUVORK5CYII=',
+  momentum:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEXD87pH60ZWn1cKiCJlVlIXSSs/KyU3IBkFLxwJIRkaExQGFRMEBQQCAAEAAAAAAABmY3FwAAAAEHRSTlP///////////////////8A4CNdGQAAAQ5JREFUeNpNkM8rw3EAhp/PpyEH1pRFqS2OrktEmfIrk5alHDguXFxInCSX/QXKgRMHUZOTqFlJLo4oS0qy7bDGVsrad16HqXluT8/pfY2oYQF+tmoSuvoIVE1yEmPXHikmITmrMY9bbz4J6ash3Ou6vNegLDQOBb4z7bvTZyBpsS5+G932ueUCvFE2Yv1NnxjB+ELh5mE2mU+6gEprcCRcjAsLdBYv2upnBBYqFbucGtghiIXSU+LuJJcqJLGw0j1q1q0tgFG2y7+Zfs94T19waf6oFFGkx/rAls3jPpXca2gOTHkpfWjWPIHz5yRI0sHwVL5DkhGUmkOTLeHqUjnZvQnpr3Ds9PkBzP+rfgF3GnsIrRbCHQAAAABJRU5ErkJggg==',
+  marathon:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEXOol+bcj+UVCBaVi9uOx9hMho8ORxLJhcyIxcwFg4XDwoDAgECAAAAAAEAAAAAAABOiDoxAAAAEHRSTlP///////////////////8A4CNdGQAAAQBJREFUeNpNkCFLQ2EYhZ/v+iHCRBcMN8wwRDAueFGLQRSrm8Fi0KAGZVVBs2DyRwiCCjrB4izDhQluMlB0YwgLBkHEy9TB7sIx3IF72xPOwzmvEf/nAAx1w9pXHQAjoHlVj2wCDt/rOCOvpwCoPTObXepNS5LF7vjVSzsXChqV2ONboRaCDopjlT0DYBl0J/x4K9FRO3FvOhdkAAufpfefjXKnQWOgL3kb68DH3Um+FimHmeSqc+EVmmdh0eeXqVSrlAEHUivDu1pcEBgpEYzP/54/pbcxal8fyd4cV5ejGHHv7vcXlQvVnpsf9cOpkjQZ7TmUJCQpeNiSJJnuV/0BfHtpyvnrD84AAAAASUVORK5CYII=',
+  panic:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEXJt7+VeoxsTVxTKTMgHSWaBAgYChAKCAoEAwIDAQGmAAFHAAEWAAIBAAAAAAAAAAAl1TjPAAAAEHRSTlP///////////////////8A4CNdGQAAARNJREFUeNpNkD1LQgEARc97PHEwKGkqG0SXgihzCYLGoCJJyh8QfQ1Cg2FbY0R7QUtDU0NUODkEkkNGTUFDhYuFWJSRBIqmPW+DRZ31DOdyDfGHCWCnEwBYQPVioPJrmttOw2unEsKEamNh7CTtSnRggcPf2z6UP14NY0GtbSsTbQSuHCA1Zw/ui7Huo7oMQU//s+1ams6EkVSeP6vEH08lEwht3jVuRwqApAf3a3UqpJaJZxfXc3wmQCp7lye/xj2HkglvPkcxGwyugUXt3OGzYsZeEpDHjJbKc09dKclSYWLDGbF3+0ywGjs37nx9ZvgjANjvqu37VwZLkpBU7xx9yeknGrm0kl5ozZGuJUky/l/1Da8Dhg72JSFbAAAAAElFTkSuQmCC',
+  sprint:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEX898f0uhmubShxOB5GNDFPHQ1AGxI0GhknFxwcBwsKAQcNAAkEAAQAAAEAAAAAAABZnEH3AAAAEHRSTlP///////////////////8A4CNdGQAAAPtJREFUeNp9kD9LAnEch5/fr98VJBweCLcEHQX2AqI/U4tnQhQd3GAvoCjsJQhR9BKiMRwc0paiqaHMwZCajKCGltobtCiQU78NSUJDz/bAZ3k+Shig+SPF3EBK9WW8IoCBCXaejw/a66BhqjCbb6QTPzPjXywOuScdQOQz3IuZ6bFhEQPW2m0i9J2td9sAlVFv+/TpxfYQiR6y1zM1K3TEwP3Z266Lc6XQlDejjWqGTstGSVonU4G70LproqNqshLcTDa7gO7FLw8/Ckuv8x4oKY+s+GbcatTBkOWrljGpeL/nfL8dW53rS/fIPFoBgIhIKS8iIqL+PeSXb1t1VNrjiUoKAAAAAElFTkSuQmCC',
+  exec:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEX18vLCtKeTh4RiWFdJRU07NTymAwQwGhwbGh8KCgsFAwMDAgFtAAEGAAAAAAAAAAA9thIRAAAAEHRSTlP///////////////////8A4CNdGQAAAPRJREFUeNpNj6FLA3EARt/9tiLI2DjQJhOLGKYbHkZlRa4s+A9YxCQmwSDCGWYxDUyi1XpXBBFhYLEMQdmSTRDR6d1Q1HHIfYZNt9c+eC98lhhgAC7LTv1vHO4ur12NBWBgywS3c01nBww/93kK6dn2RQf0NX4uSWeeL8MHCwCuWQQdWerE0apyFaWpbdh2u+ROnWRJeZmJ5/xLKZjvroygb68cFu1w2vWFkutHJ7VUPcj4QgqPXzdPbxoVyRKo+p609ouAJM3sFR4iSUhSffQulnoavJkc9DWtb0uSDADxJwA97ak7+X+bbI1Bk0RDjcVQ0+cX9a57l5VOo3oAAAAASUVORK5CYII=',
+  duel:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEX9/f36+PTx4dL73Wi+pY58amxPR1U2NU4vGEgODBYHBBAEAQ4EAA0AAAUAAAAAAADqYxkZAAAAEHRSTlP///////////////////8A4CNdGQAAAQpJREFUeNpNkE0ow2EAh5//27tZm48l201kJzVZKTnQcLATcVRaK45oOTu47zBJ4jRxcHLwcVBOXHZQpuTka8UBpU1bTWn/n8MOPNfnOT2O+MOACzUQgPTdr/mS2iQZaIpULzcr0w2jWq/P781JQpJWt6MZNTJ37oj0RbKRfdZndkjWSxJS/HbY2zlQiEtIj9n77snnTEEyMGu77FOHPw0WEhN9S97B0w9A5Ru7PDSyYPYky/7XweKDjWy8lIOGrfDJm/G95kMp0IqVJFV7srK0XgEQWKtjCF0D4FZiGFLvRYCzYgzkhsdz0rqnRTI45578WOKu+RgMRAMQ/JkaBQPmsD1k4ruA83/VL7Drd3t7nY2/AAAAAElFTkSuQmCC',
+  reaper:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEX6+PXl3dO4rKGPhYN4dHtnX2RHQks4NDoqJi4kIScdGRkJBwgDAgEBAAAAAAAAAACe9CNkAAAAEHRSTlP///////////////////8A4CNdGQAAAPlJREFUeNpNzs8rw3Ecx/HXPvsetgPNYYmSJJJiB+d9yYFWmIRw2l/gL1Dfo5NWysFpJeUiWw6c0ORiJz/OCpcdxJcYtub7dPhk9ro9er/q9Q6h/xhJ2804bsbIcr2B2vXtZdoK1lsLjusDCPpDs6Zno5oFwfxQX2zA37KX93Z3+iLxlgOjr2RiNP59UtmTjKKR7nzbSmX1XhLMPKVOy2vFLBjpKOw6+bmuK8kRkZvyYDJYuJPE63mLB7WXNIhgfxGobuZAcHgGlCbsaK8H7D4DRurISB8PO/brkkc9Pubb2mdnajw8jK1FM1OPS0VJCiH9HASTsT808gsWUYQWnzchhAAAAABJRU5ErkJggg==',
+  siege:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEX65nDtmSbZXgt5TjeNNxFoMBE+LzDoEwGADQQwFBMcFBgNBgUEAgE0AAAAAAAAAABthUHiAAAAEHRSTlP///////////////////8A4CNdGQAAAPpJREFUeNpNkC1IA3EAxX/39+6cgiD4AYKsmQxqWD/ckpYFFxc1CMqKxeKB2u2aBAeiMCyKRYNs5RAsRs8giGF4547pcOgznOJeeTzeC+89S/zDpOT3CD/xASwBtNwMgA0QXLx39n5j3Zt4f+7P+SzNjt3Hw2DDWztcdeYBkJoH+fzTUTeSDGSy4fHm13MFDLhx4XDbzlXAEsnlxHnSYaEIkjdSn1xpVB8lpI16WG32r59KSLfla7XGRx8kpNeXmnS1k5VscAMPcroDA4MzNTAni2nR4gcMlFPHOuvbAsdLx7WHlguBswtI0lRjbTqShCR9l5YiSbJ6r/oBYWFwMmErAZIAAAAASUVORK5CYII=',
+  headsman:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEX49fPIuraVhYZxY2ddUFZMQUc6MTdpCAgmISUQDxAHAgICAQFcAAAUAAAAAAAAAAAXq2H8AAAAEHRSTlP///////////////////8A4CNdGQAAAQFJREFUeNpNkD0ohHEAh5/3z3l93MWifAy64Uo+Sqk7o1JsipRNMUhSTpL1FhS60WgwWKQMSjbd4AjJ4DA5N5iu964uL7rcz/C+Ob/t6ZmenyWqMwC8X1ShlDkcBkCSZiLOtiQZoNL+NtZf9M1RdDHY2+Sb7vueV0aAmgTcBsoPS/YQGNDLbtvC5+BxC0gl6+Z86iC62iWkk85YqvVxM92sWnhed+3MXTYRB1XSp40b+aQ9IKFSaDYpOdNByRDYslfgOpICQ10uBqyNhwF9TRQkfe9LMtj1WWA57/XsAGXnw4OnnyKjbtxLcPvmLidDflzDWXivI/eXfTVfkCRZ/6/6BUkAedVHfd+QAAAAAElFTkSuQmCC',
+  critaim:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEX7/f329/l37/mywNaQnrs3iclZZIcgSZcvOFcQM2oSJFMKESkCAw8AAA4AAAAAAAB47Y3zAAAAEHRSTlP///////////////////8A4CNdGQAAAQpJREFUeNpNkLtLQnEARs/9eW8PboRCkQRmEQkFgkODFA0VtAUiBQ0N/Qkt0dDSYJuTNLZWECRFU0QP6LEEQUOtt9ChhkilQvTW12LY2T44y3cs0cQAUG4sSdLSuSTJAPwsdjY116mn/rTyc3r7SpKQdOcMDMffJdlQ6UqNO3wEAal7IWSFwvNRyYb8aqbumK0DsERff3I/kCxVLkCl48ehXC72eikZpns3g8XC51ooheWPts09HEbHIiftR3YtvDJ16sXTE4k8VHck3XvS155spwgMumAKGMM6uMCywVDrKQFc+4CqN7FZfSdmXiRD69lTZKMl+LYLSH52JBPoyDb+6HbS9STJ+p/qF4cWe1G29dFAAAAAAElFTkSuQmCC',
+  vacuum:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEX4+vuNx9+DlbheW4I/OWGBCO4uGHUcE1oGBhkGASwBAQstAIYCABcAAA0AAAAAAAAdFf1UAAAAEHRSTlP///////////////////8A4CNdGQAAAQ5JREFUeNpFkE8oQwEAh3/vWUseB1Lawd/LaiEkFsr8LQ5ocVpxUjs5uewgOUmRWrHk4KJoyA6Sm8NSOEkOK1sbJ3JQ2yRP+lxefLfv+H0G+seUJI04BvB0a8cBBNA9mwv2O3LSZ+2mOwADafx61GW/XUoG+vZulstYtRIypa+bg5xn4yUvGUj+usX7lF/VAUEheTRzFfXe1SOYCA3kIiWDbXFM2V353vaeVhZW5NJZy/an+zA8/ZGRqVTSZ58fN1bVXEgMlZZlmiN72PuIh6ZJyL4z5kMUhwGwd04RhQoAXoNZTKlWkvLrjw0yUNQd1lYmOzclQTHmiYUqlwGXZKUTel6bdx78BDqXwCn94xd/BZFKoOAr2wAAAABJRU5ErkJggg==',
+  looter:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEX864/8zTLtohDIdwy5ZxNtVxt6OwxuOApIHggRLRcSFwwVBgELAAAGAAAAAAAAAABpCjajAAAAEHRSTlP///////////////////8A4CNdGQAAAQlJREFUeNpNj88rg3EAh5/36x3bQVZbs5XyukhO8ysOpLZJclBy8Q8sxWG1m8gOiqPc3F3EwY0sF7TL6JVd3GgHcmJ+rB3e+Ths4bk9PafHEn8YAG7+S0czSZIi9QlXkgF47+muTx03iufko4HFvGQJ7uZMuvJY3neQNJZLDHbFDiZl4PO2VfG+gdV2kKqFcLr3rPM8KwOp65X5J/9SsYKhPns1mjk6XKeEoRq+/Pj27dZefdi8kHs+rVCyQ6CZ2F6b5A1nXRmcncA2fAXzcWysjF2GYP8CoIuhDSkZ3JJkM5IZ9+4tfw1A3vRmIpQ6kSSblpz15iajzVNvrRh5kCQhqbDsSlJj7pcfbpN9cYBXzowAAAAASUVORK5CYII=',
+  arrow:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEXg5OiPoLBsY2hwMSI9Nz0pLDWNGBpCGhYoGRkUExkLBgcDAgMAAAgBAAAAAAAAAAC8Vy6UAAAAEHRSTlP///////////////////8A4CNdGQAAAPpJREFUeNpFjzFLQnEAxM+/zxAfxKOoVRJawqEgag3XlsJcaikaGhykoagpiHBoqTFoiZaoRYcCm+ojqEMFITTYUEMvjIei5q/hPXo33XEcdxdBIcw/662HImUvSPhYHluDSJBJWYlq4NiHduYhcPqV6vOF58iSNMjXsk+eIxmpv7s9/bE64/fcNwq18dmNb0kwVb8q5mI7SRCDs/T+Fu/pTxCtyaZLiZVXED+PJ7QLvGVB9CZc2uA1XYwsy1Fcii6dSpA7AOiMgpG+upJ03ZKMdDdclrg9lgSdynz+JjNS8lcXh14a9cVLScDv3GbsCEAA3b1zILwtSfoDH2OLsydLu5gAAAAASUVORK5CYII=',
+  trinity:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEX8+Zr710W52a/anlTJcyVwf6CMSiuJHZFJOmYcLlggD0IMAx8oADsAAAQAAAAAAAAcZh7CAAAAEHRSTlP///////////////////8A4CNdGQAAANhJREFUeNpj/M+AAEwMGJxPARDe////////e////////0NkuBcegCv7Jpx4Ac7hiV2xEcb50/zr3YkDUM5XBVFmhgIoh3XS5787DWB6FiZ+uwXjvGhzMn0eB+F88lYucL02VYGBgYmB4eFGocP6htJ2DAwsDAwmfH+uvXA2lmFgYG74x3qHi+u2CD+rrgDD/09XQ4OVr7uIyMb/Z2FgZmFwVG/8+zbnEwPDf94rMwM4DBhFfB/+Z6572MsUqf6OUy1msS7D//8drK0OahEBHf//o/iUEWfoAABOq1mxfXuzzwAAAABJRU5ErkJggg==',
+  overload:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEX+/ej+7RnO7b/ytQ3kjQSNin2YWgxeTUw5OE8vJywNK5MDAz8BAB4BAAAAAAAAAACwlOavAAAAEHRSTlP///////////////////8A4CNdGQAAAQVJREFUeNpNkD9Lw1AAxO+9BKV0iYYO2ioubjq5iPiniwUFKdhBDF0c3P0AfgX1A4gg4tSlLRQsxaG7HTKIkGBphnRosZhadchDzyEp9qY7fjccJ4h/ybGhNxEsnEFEtVKwedmyY7I+ffszH9c4OjdXruJQnfW/ujMVHQCgLC1zULuLyLe95tVXbZBkmBP+XqK2IwHcW30jm95PNyUwPAoMjp6LHiRUmHgNhsXFpywE1W9mq+MPNAVImBdNwz88VgD0j7d8sj7nngKA+KzuthuDVtcDINgrXfdzqXYFgGD5wVze1peiwSdTjvNeJkmCLws3rkuSpMTGY1JLjY9g6BQiQDF51R/6OHGvZdVHDQAAAABJRU5ErkJggg==',
+  breath:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEXK6fKhwtWNkJRFTlg2PEgqLzuCCx40EhkWGiMIChAEAwMCAgENAAEAAAEAAAAAAABZzwgrAAAAEHRSTlP///////////////////8A4CNdGQAAALlJREFUeNpj/M+AAEwMDAwMDAZInD+KSJwfz6Dq/v///7/pZP7//////2f4/////y9WZe/hnE8h33PgnB/zvn3b////fyYGBgaGv9ycDA4w074IMHDCjP7/R8eAoYGBgYHxPwPDZ4twuQSYzE61DZvglqoyCUev/w817Ygfg6YATNkhg3fnHGAcZ0ZmZrir2Y543YRzuJy/BiK8MOvg//8w0xgEYiASLAwMDAyhX5F8+v89RBkjclABAFPjZAJNmq3uAAAAAElFTkSuQmCC',
+  gravity:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEW+vdmCYolfSIlOLWMjIjp3Ces0Ba8bFTQQDhsHAyADARcmAI0CAA4AAAIAAAAAAAD55Rc5AAAAEHRSTlP///////////////////8A4CNdGQAAAQVJREFUeNpj/M+AAEwMGJyvDQjO12BT31Yo5+uVwF4dHwYGBob///87pDI7sxb9//+fiYHhC/ehoiN5jAEMDEwMDCEcmwy3RF00ZWBgYmD497r3g+apk9cYGJgY/l+wNXZUVrX+9YGB8f/XVzmv1b5O/9OtWMD43/RC6ZsfFbUC95j2MjEIrGf88KdbLO07EwMTw87bnC7sVz/zpM5mYPz/X/ywo47yS+vjPQoM//9ft6s8WaXxfPv//wz//7vUXm/g6NUV+f+f4f//L7phd+8yud3//5+JgYFb4WGzJes/AYirn6c/zzP3////P+N/BgaGr828pzdA/fP//7/7///DZLCGDgAtJXRQPBcRtwAAAABJRU5ErkJggg==',
+  warskel:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEXr3sDUtId6u02Db1gFag43NyyAChlZBBAxFRYzAQUQEREEBAMKAQIvAAUAAAAAAADxuxftAAAAEHRSTlP///////////////////8A4CNdGQAAAM1JREFUeNplkDFKA2EUhL9/kxiLJCLaCV7BK6hgY7WtwWLFA6TTRvAE3kEQUou4NiYnsJdUWtlYKGtisbDyWfxxE/A1j+Ex82YmyGIS/oHpdzoHKQf7GaQQpGzvbVavTy1IoHX88v7xeQWgVX6ztZGPVHTg9u3jmpeK+tO/ezsyXhxMTi8s1QQ4We8W2QoQhH7jvvvcmTsY0q5GAE2A8WFnt/b2QHZNfKo752XxJ60TVQ0CzFabNedrfLYI18t71AIWkZMsNxFXiCAsV/UL6uBmq2B+fhkAAAAASUVORK5CYII=',
+  goldbag:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEX99qH86yz9zhT8tQrznQvxgQvMXg6ZNRCBHBVUEQ44DAkyAgITAwErAAQAAAAAAAAleJBTAAAAEHRSTlP///////////////////8A4CNdGQAAAQVJREFUeNpFkDEoRHEAxn/v/16XRL0RHfUoLJLtTurdwCQ6EmXBYJESg1HKZrZYdIvhbAalpCxCqbuJDLqLSxZc7h0uT5/h7vi23/D9vvos8R8DQBBWSZKKw4dzkoSk8oF7X6zDqa+P71lJBtjKZ6++WmudIDqlH1+SAzTY9tHbcU3ddTnoLIWAA2V/7fppNQTsTSKjzyT2G2OAFMSjydt0b05CKtnp7vGbzIrkgPvaTKEykQMHFk7eK14mqI5+Ls4UltOFfskStG08Nj103KUwEMa32ye9ljwYcEams25i5wwMVIo93vpY3zwYiHSWvIshPwUGrKS7+xIbqH+g8z1JVfVffgE4XX7oVeWO2wAAAABJRU5ErkJggg==',
+  xpbag:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEX4/Puv+NMY49UB4Ocooq8AmsMNY5YoQUQNKjgCNWcGHz8IGSgCBhEAAAMAAAAAAABqFV8aAAAAEHRSTlP///////////////////8A4CNdGQAAAO1JREFUeNpj/M+AAEwQSgHB2WXIWMDAwMDA+J+B4ZPLL5W/6xkYGBj+////3+j/t8T1////Z/j//38a+///H+OhnG+M//9v+A/l/E+e9cEUzhEVXbnr/////5kbGBj+aMsc+mMHNe2fkSnrbP////8z/mdg+Ff+SPz2dqilDGdWMcf9NIAoE13+7nl//P///5kYGBg8njez/Z7CwMDAwsDwaR+X2CtG4Z8MDCwMDExOou8PuJtAvMDDto1FgK0Aas9uYdtuyb1QA3pqf/7OPwD1adgzLXNmJail/3ZffOQUBDGagcmVWSQIFgZwAADIhXgnuel0UAAAAABJRU5ErkJggg==',
 };
 /* Арканная мина: один компактный кадр 32×32 и восемь фаз взрыва в листе 512×64.
    Оба присланных ресурса сведены к индексированным PNG и встроены в HTML. */
@@ -1482,6 +1539,36 @@ const MINION_SPRITE_DATA = {
   golemB:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAAAYBAMAAAD3x+WnAAAAMFBMVEXMqJCdc2KVTkppPzigHi55FiFkGB9FGRtoChlWCBVGBxIzBA0hAwkgAAUAAAAAAAAQEtSgAAAAEHRSTlP///////////////////8A4CNdGQAAA5FJREFUeNp1lF9MW2UYh5/z9QAb27pTWqaZcZzTglskwoHCgolxLcXNxJgNSfwTk8GYzplotoHxwhipd+7CBYkm6paBSqKgDlzMohC1MYsskT8FonFuKxRjggj0tEVgo/Tz4kC88r35nuR9n+/u90NKKdOG/L/p2wT/xiuAVPHM511sjNvHf5Pune+3KRXzDAAgADHvvpTZOFlKxAYubN73PvxaNmujZS1NRTeFA9nOzJcn7cVlCm5GIjafvz6dHuwJA6z2i/Lvvg/Ywmq06HiFYi/Sr8u9fdkWANYuOTWVx9oB7rRnTyWW/7CFXKf1t/soAYDkVEVcq5mwBdEenz8YXQWIT5tXC+/90xaGn9i/05HrngZwlDTp++OOLmCpUwojozfXACh7TaV23NUFKmRShVr+ju5ZgElz4tn79v0EcMDrOrH7rc7QQ0BmSP/lsNacp4EKRcsNU4nwlS2ATDxZMHuutiMHiB33zBS2fZDUAfFDgzb34V2NdSBIvbOtO2wV/z4FZNrvjKVvj09rkNVfTtcLKUqLgSs4dYcMjn4DAt4zj8moylwE3hijfF0EzluwrDs0PXkrd10CC64vdq6jG8MgmFm5XJaqatm1ux8u3r6mWwTq3oXsRLFv1Ot7JW8owlI4+pTPnWMY0kTQIasVWRIwP+mHNS06VXfIVWtBfrLVtM7mBJ07wmy3rk2ui9ZkVloI+gsD+tz70QHTAYcdjUwEvlrPmqgdiyTkhai8exLCUo/0vq1VqToik/H4plXZlmuehYp/3LLH+Zlbs6C6kqKqNa0qPwg/qroMbjuVmTyKEEdCZeOu+gdDqgcmDXO7FncXrTRBsf+m6motlt15EDd0Ix3cqpwWCPnInpj0l1wPugPwfGPUExdbwo8HQHGOJUKLWdlQAZ+2RH2h3G/rlCaEUkBCE0YEP6BEnXMj5X1XPRowklS8mq4Gq8CynDFxP8FqUIV/14IwBl1hgMrnHugpnDY+WjCBG0Zo7deDuAPgtyqHlfVQGBB4ypSsvNEcAHD4Y44Xbr2KH6DQBaOP2jELZfBGn94M0D0n3yxZsQDQUjlnvA4NQP71YsTRGLOzJBIiafZvCI6SZ45UOF+yE3qmQFO0cwCKHkQUrJ62Dd/yYrI0AmB3wc8fK21SSpnad2Js8Jh7arMrBuvdGzQ00mOUSilV+wP/bGUAYOvFr/EW6PpmDRjeuQ2qYU/tb8C/ek6X3mQ2YOQAAAAASUVORK5CYII=',
   golemN:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAAASBAMAAAAK1oXlAAAAMFBMVEXVybW0pZOlloWajHuRg3KIeWp+cWJzZ1lpXVFUST9GNi82MSkxGBcxAAUAAAAAAAAtlukAAAAAEHRSTlP///////////////////8A4CNdGQAAAWpJREFUeNrN0D1IlAEAxvG/771Y0tALfqyeYifp4CXVUnRCV7OfCEFD4F0EBYEGbVJRi4MQTd7gIC4hCEGb4FRGiy0FgoggJi3F3avnXXH8G96GqKG1Z3ye3/Q0yb8T8L+iw+6/hsofKB7MFqMEz0S/+qPbtwCI0wmqZFJX9soA8WimnJgznevDERAXpyMIYOJgY7Lp0RDQfOrVSBag9VIx1xwCY1s9FQho3Dma3innh4D+G+eWh4HqzRcjp1vGgUL8eRxQ6x06ox4/+bKo6vv1i2sLi+rx1Lv5mgZAai6irQRBR7EPgAuXH+cLB/ch/Lp09gTgs3zJLm3oQubB3U1VX357PuiKfn97vrSpQb3+OuRjmgDKpd6rEUB7e3QvYAxWw722LLCtWu1Uf6xuDKh62KtxTnWtek0VVR1VdWlWtfZQLaj66am/oeqAalK9UV3OqdZmVQ2Th8PrH7LQs5sG9gEmTgKkGgD8BO0X0oqsZoN7AAAAAElFTkSuQmCC',
 };
+/* Семь кадров 16×16: burning, poison, plague, chilled, frozen, shocked, bleeding.
+   Elite/rage/pack/hit/hunter-mark из исходного master в runtime не входят. */
+const ENEMY_STATUS_ICON_DATA = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHAAAAAQBAMAAAA8OuYiAAAAMFBMVEXx7YaT0oV1nmWkbRhEY08VXlDIHAZMHQQlLxoeFAIGKicFCglCAAAAAAMAAAAAAABlDPlmAAAAEHRSTlP///////////////////8A4CNdGQAAAltJREFUeNqdk8tLVAEYxX9zx1dScjEV2plaiERM4IOK7IYWRUUaLYIIX6UEUUKLEl2IRFAWuhBMLRVBTCsz2hS9hoRCKRuodoVKD9LQO0Sac70zp8VIf4Df5nxwPjhw+H0esboxAAWiux0V59qKtzgS1af/r2eDAA4AkkINkiS90LwkLe0MtUiS+nIkSeGUyaivUIEk6UePJAOYKIkm3XBz/eAM1B0xgeVyBRdHgO/zja4f4NLPeABafYCB09mfKQBNTgGw4ezje0Csm2L5S4BzXncAgFe7t/cCTrATMPDiTI4BPEn/1uGD9oYp3l0Ht6V2KTQFgvH1FsDdr5XlwFzA7AUDI3Zd9ydAteV2sQleC5MRGLS2jP6ph+dH1y4kAnArtzsI3M8/CSB3YrRgXtJSavaQJEWamrKLbak01YopTZX6H5ZuGiqT/taB96Wk1/XV7yWD2XBv3jDwbJeDH1j2Vy4WBmBw77R5rBMOZH70xQs8/ou+HRbAwTjA4EtXwBgPQiA/LlqOVZjVNw6xrVnWmhKoSXNjy1yIr278MASwuddMB4NHYW8CUwDpBIHWGk2eroTlC7ed+BFYLvI5vz3A8ZmEQwDJ+RkmGJQSmAsA23I+bzWB5J6NnrwkwDj/1gIq5jiceQq42dq2D2CsYhpAM1V4q21p9mrzHUmK+Jq72mxJWiiTJCejf88JSYoUtEuSOkJnJBmkVvm8CSakuOE4AIqSIjEAJDYCxPjSYi4DhPZXAlAddyXKavhNgy1Jv5ptSdKcQpIkO6KIJDkPhqOk2ivIRiTJs9q3+gen/E/AaKV22QAAAABJRU5ErkJggg==';
+const ENEMY_STATUS_ICON_KEYS = Object.freeze([
+  'burning','poison','plague','chilled','frozen','shocked','bleeding'
+]);
+const ENEMY_STATUS_ICON_FRAMES = Object.freeze(Object.fromEntries(
+  ENEMY_STATUS_ICON_KEYS.map((key,index) => [key,Object.freeze({key,index,x:index*16,y:0,w:16,h:16})])
+));
+/* Портал завершения этажа: восемь кадров 64×64, 100 мс на кадр.
+   Механический радиус хранится в G.portal.r и от текстуры не зависит. */
+const FLOOR_PORTAL_SPRITE_DATA = 'data:image/png;base64,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';
+/* Отдельный прозрачный PNG для каждого типа и ранга. Оптимизатор заменяет
+   эти заглушки проверенными 24×24 master-ресурсами из пакетов художника. */
+const TOTEM_SPRITE_DATA = {
+  fire:['data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEXcpiaVXUuQRi+cKBQ6KCcvIyYnGh64BwFEBQMkDQ0YEhgXDBEKAwIGAAAAAAAAAACNZuTXAAAAEHRSTlP///////////////////8A4CNdGQAAAJxJREFUeNp9kKEKAlEQRe97COsLgtEPsIg/5IeI2aYiGPwBwWiQDVbB7YLNIH6AmFbc8Mp6DMKbTU47cObeYRyy8foPcSpJckhSbEuSWpJ02bpV0sbNnf7+USZtGTtdS5sMfx7Axx0AEMBr9jSosoVBPT8D4CXJn97WU6u0tCrcTAv3aFq1yQxGZZGn23p5WKeA62BnpRwBwDVf9QXAqWUVV3s1AAAAAABJRU5ErkJggg==','data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEX0pyfWZBprNCo+Kyk0IB8mHSPGCgNuAwM7Dg8YFB0OBgUDAgI8AAEAAAEAAAAAAAD4QGO/AAAAEHRSTlP///////////////////8A4CNdGQAAALxJREFUeNplkKEKwlAYhc/dLgPbQJOC7BEEg7DkTGI2CD6AUYvZFZ/AuiwYBdFiMNosvoGziQ6DV1B2DN7thv3tcA7f+f9fEGYsAMD7L0TRUeEEAECSHI1JkhYAeCWlMudFOJxpR/TwWQCABCCfrU5wywBRszwlSZBkOpw/choGW1MqEs81pf7KlH6tmonJ/hJ5LBUVkqQdAlDVq93QG0BGsTlus77EZw1Ij6f7/qCF5Tv1XTtDd90kKDzkB/llXxVYL1/eAAAAAElFTkSuQmCC','data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEX40UvqlCrsWAeKTju1MRReMys9JybBCwJhDgcvHB09DQ0lFBYVCAgiAAEAAAAAAACES8ROAAAAEHRSTlP///////////////////8A4CNdGQAAANdJREFUeNpFjiFPQlEYhp9zYOJwEzcTiaCRwU3m+xPuDBTNRAOJjYDJqEEDgUBg418YTE4SiMHgNInb3YTdTVFgew2ec3nbs2/v+z1GbGIB+OEcAEkqLaolSbLAIlhGOYAssBUFu0e+k5m8Ph34TrI6Pkl8p6mQ7R5gBPq6tC3jYH02zZu+/6NGW5KEJK3sjiQpC5C5ft64fca38xTuxns9r8NLoThPreNoOJMkI+CmYtehu/x+1Duxn05Gw8fD/eB/7b57cTp4c27Lq0L5veYAHr5DUnD5A55ebSFbJq22AAAAAElFTkSuQmCC','data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEX87m/zpiPTaA/rSQSvKwZmIAJGJRw+GAmrCwJIDAcyCgoeCQ0KAgMhAAEAAAAAAACO2+uuAAAAEHRSTlP///////////////////8A4CNdGQAAAMNJREFUeNpVjrFqwmAYRU/+xtJBsO4ZOnTo2FkQBR+gAR9Al66hS1e7+AzOXTsIGTvq6hKcxdDqZoihNBShhOuSP2nvdrjfd7iOqGMAyP/Cv4Z+DW9dP7Sg5DhNAVzASTyzB0DSZ75+/sokuYA3yptXl2Xz21tGG0lCkvT0IkkyQEFIYdXGv78ZW3Ae2unQqqWPR9WCZVYJKF7n1dBT1GsdABzBKYjN7cwOvQ7uZM8WsVaTsITBxe694Zc//Gy/O1ZQ5QxyuF9dcROJRQAAAABJRU5ErkJggg=='],
+  freeze:['data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEXV7famrLFE6vwxt/tFdqk1TG84O1AmNlQpK0McJEQPEiYHBxADAhABAA0AAAAAAAD5F+zUAAAAEHRSTlP///////////////////8A4CNdGQAAALJJREFUeNpNzi0PQXEcxfHvvQgeAk20KYrNMBMUhaZIok0zUfcidMEb0FTzCjTx2jzMMHM3M2ZzhOvev9M+4Xd+xxImNgDuP7YrT5L0LuYlSZaARPps3YAwQCwZr+OjMZ9cg5tnuy9JsgGmw9AsqD6NvW4bIBcrj4KClpMigCq2AZ+9QWgZN0M/TtLgtWkaOJeu+VOqZhf+NrdwKAz8bZFd73H0q6Ode+0FYAlgHc0Y/PIFKE1Ed6ubnUQAAAAASUVORK5CYII=','data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEW17Pmco7Mm4f0fpPRXVWM6QFQTWKUsN00TNm4XJ0MIGzsEDBwBAwsAAAUAAAAAAADywMmRAAAAEHRSTlP///////////////////8A4CNdGQAAAK9JREFUeNpljrEOwWAUhc/fGjQMwguUxaiTiaQJg7GjyRN4mD5CZ09gEYMdk4gIpas0VBgUx9D0/oOzfbnny7mK0DHwB3c3I5JkUCZJgiRTx5yTpAEAz6Tli2MebrY4b2d6lFq1r5TURmGwEVhYblePPiqmgBslloBfv+jfiOgqO5/eXu+gvdK11Fvr34bj5g4AFIFXo9MYxF52+caT7RkACgCKy9mp5OWOXQtV7kh+pVxPuMB/U3cAAAAASUVORK5CYII=','data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEX3+vzn7vV86PyovNkru/ouedQ/S20yP2MXQZEbMGEWK1sWIkADCTAAABUAAAAAAACOBEN0AAAAEHRSTlP///////////////////8A4CNdGQAAALdJREFUeNpNkLEOwVAYhU+50oQOFQwEqSfoTSwWg0iwsVs8QjejB7FbLI2YJF7Agl3C2E0tkio5pntvz/bl/89/Tn6LMMoBAN5ZUCJJFnySpEUA7qgYh2rN82cX7WnfSlJ7jt3lmSRBkmmtT5IUACCmc5MjO4EEAAEAje0k0pND7Dw0VBd5V0P0qoem6NMzRdNeizo0ETsD103lruBnB2tH1UlkdPqqa/a4OdgryK0+5SEAWNlX/QFbO2EiWnAKtQAAAABJRU5ErkJggg==','data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEXa9v2rvsxMwvtei8VZX3cHe/IBWd43QmMdMFQEPLEJIFAKHDsCBywAABgAAAAAAAB7KFYSAAAAEHRSTlP///////////////////8A4CNdGQAAANtJREFUeNplj79KQmEAxc/9SElIvdw2o0kQnNJeoCGcIogCl5bb6CY+haPUA+QThKCDiwQNCSJUU9CgY2PaBRPh+nPwu7egsx3O4fxx0C+M/pGg/ofsr7cSAJdFAIwkdzWb1OdW8emekQIEFLKDj1lrawtfL0btxLQjCUK32kvXzAsYyST21ocDvyTtSPrM3ORPT2zp4vrLffYlOUgrzr1dte2C78bBPbaHZeEuC+AgyffeH1LR6jB3/BhfGC/e5hFZBldlr2VX/zTzldFRFPCUDG678dNhnzg6wgaD/3X3kfGFDwAAAABJRU5ErkJggg=='],
+  poison:['data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEX07mqh2xiTmT0+fQdcYD1mQjQgQg5CJRgqLCQoGQ4bEgcPGQUSEAURDAQAAAAAAADAzqxYAAAAEHRSTlP///////////////////8A4CNdGQAAALBJREFUeNpNkL8LQXEUxc/7kVKK3cBkeilSMhkMVrIY/QfeJpvFH8BifeUPoJTJ4E+wmA02ZbEIvT4Gdb/u9unczrnnesiNL0l6/sPn+CMAdm0ABPCqjR1E+xIAviRVz7ORGXT2N2eQ9psbgFCSiIY9U3LZiTNYPStvUw7FKG85aHqxtXRxLVtOkHixu7oeS5JCSVIhWZryCEcng8E6czRIW9vUYH4Puq52AwC8/1d9ARFrbMV4ZxoxAAAAAElFTkSuQmCC','data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEXe9j2B4wKalVIWhwhnUkE+SjYdRg0vLjA/JBMaJRsdEw0HBwMCAgEBAAAAAAAAAAAhm9HZAAAAEHRSTlP///////////////////8A4CNdGQAAAMxJREFUeNpNkD0LgWEUhu/Ht0hvBokog+RjIya7stgMBgabxGAx2RgkrMoPsCsZlFUpf0GSskgU+eq2vM/L2U73fa6ujiB+owMA5W95KVfUAcAAQCzb5otMxFlgCAAgeZ8kvVOSBMlbU5+I1NSF63gqKhNms+E1SeoAwD6LdyQai5gvI2n8nPrUagG3/+fmd+4UABAE8OyYjgOZOCzzkKy9PY/ySrMuFPdpiT5U8tbjRkV3bcZqaave9IyucTAnDd6NETVrskWSFP+v+gKW52qy1bDNzgAAAABJRU5ErkJggg==','data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEXp53zLs5NFwgKmimCFbF0zcCo+PDsuJycUNg8YIiAdGRgRDAkCBQIAAAEAAAAAAAD7Z8yzAAAAEHRSTlP///////////////////8A4CNdGQAAALdJREFUeNpj/M+AAEwMmJwEBOfzz88CcM5Vh3P/4ZxVc40s4JxdvOe+MTAwMLAwMDAwnI51k2RgYGBg+P////8/S/je/////z8TAwMDw/8nVQjTvsezCMCV/Z8tqf//////EM6LOf/her68fuAA18Nq/GUDnPPH4N4EuKUStZwf4TJmh4QWwoz+I3lRrvD9////Gf8zMJh+13gfsHEPRGbKlprrXpwwS2c84D6JcMHyyv//oXrgAAAmQ2kk1gyOTQAAAABJRU5ErkJggg==','data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEXf+jLg0ktUzQGdiTSCVQsmiwMmTCJTOwkkLCMLKRYTGBgKFA0ICAQEAAEAAAAAAAAGw4wuAAAAEHRSTlP///////////////////8A4CNdGQAAAN5JREFUeNpj/M+AAEwMDAwMDH+QOb8MEJwAc4YAOOfDSwYBBgYGBob////P+aKg/H3+////Gf7//6C1XVX9lML///8Z/zMwzNLjEvt4PIGBgfE/A8OX58teVUkzQDifPb9xcuyFGlD/iVPo/3+onq/uqjrdL6Ay/187eMz/////fxYGBob/IpZM8QxQAximScuczGJgYGBhYGBgkH33Jxbmtm3tJ7c5X4BytgaEi4R+hiqTmNHOKKgKMfqH0ipXrwlaEKPZpzEu+vSQFarH/X/nK9YLMBf8X7we7jY4AACIz2X0U8hMGgAAAABJRU5ErkJggg=='],
+  blood:['data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEXm1LeejHyFWkh0PjdANjQzMDe/EgVYDQkhHyciDwkUExgMCA0HBAhgAAAAAAAAAADeIKvQAAAAEHRSTlP///////////////////8A4CNdGQAAAL1JREFUeNpNkCELwlAcxO89HysWQavJLE5Qu02wiEwxil9Am9Vks4ggtn0HTYIumU2GgUHwC0wYiG54Bn3b+7fj97/jOEGkJwEAT1OY5DXZpEJOfw+CwEPJT1aTDG6zEABAsvputAOSlAC8et9B50+ibKklNFFelNsBgAIAa12wdAB9FMckqQDA3V/9pMF8EJitLTvxhKsedXTcPF6GOvpQHt232rPMd92arT2xs4hJEiTJU4WpCM8kSWFO9QUDzmXRT+14jQAAAABJRU5ErkJggg==','data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEX86s/xzq3Wro6Ld3lkW2haPDrVCRaBAwVNCw0lHiQcFx4TBwmCAAMjAAAAAAAAAAAXPt9JAAAAEHRSTlP///////////////////8A4CNdGQAAAMZJREFUeNp9jjELAXEAxd/9T1nIJ1A3Kep0g+ILKJMkCxmtJh9AbvMBblLyESxkcKR8gOtiowwsRkfKxTOc/93mba/3e6+nEJEE/hunG5mb/tIAIAYA8Xs2KxOtcajsvSDxThcT16ThQAAoZuZ+vQMA5JNuo6z7fRIkyeGCJCkA5OFb+PzWhDlQtUfQofk+HteCstO0wg6wTQdPSbJ1rhphstrlpvIbdbddmEhsVuqNSFIh8DrbqYJbCzB1mdjYjsS4H1Niob6ubW3JdFt7dAAAAABJRU5ErkJggg==','data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEX927fgtJCycVuBODM9LS8mHyMbFxzNBgqTBApZBAsjDhArAwUKBAUvAAEAAAAAAAAM+3SAAAAAEHRSTlP///////////////////8A4CNdGQAAALhJREFUeNpj/M+AAEwMDAwMDJ+ROJ+n1iE4tpxKCnAOT/nDD3DOd4FPCQwMDAwM/////7/utsv//////2diYGBgeBqZjzDgz5M3E+AcXsf9AnA9/w+c////////EI7jeYQBDGWPEQb8+C3KwMDAwMDCwMDAwDRPygJhQM77frie3it3P8CVmRhuhdvzT/G6yFOYsneFD/UUPkCNLjf+ILyuAars7xEPxxy4c769Dfv//////4zIQQUA16NqcvNwdCIAAAAASUVORK5CYII=','data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEX98djtxKG8kHPgUymDVUNNOz7OCANlCA0pHiYhBgixAAF7AAJkAAQ6AAEAAAAAAAA27IgNAAAAEHRSTlP///////////////////8A4CNdGQAAAOtJREFUeNpFjzFLQmEUht97vVwsghxuEGHUkkNDimNTzQ3e/oNTDfUPutia1dAohC4ODg4FTVHQloNBUT/ApNGCvGWpT4PfR+/28HKec46D/uNKkur7EwKI4zYAriSNd15CSfIkaeSfde3Mh/dcyaUMOMm3o9yyEQTN7vHPphHMpe6GiW3TjFr9kxurzq50vsPHSfMOpXmYBcHnOf0CgwIIxhutp3LD64ErDS+jYGZqK5IE8S9RkvYeCPiis8aBUftBbTUf2n+qmVraLh1Uiv7Vqbn6frc6fXFtYP114SF/KMlB0u2is5SwYPMHHCB8lRvaQBcAAAAASUVORK5CYII='],
+  lightning:['data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEXn3M4tsPBPbaqcQCR1NSZDQ1gTO6RGJywiJTwYGzMREikGCB8DAxUCAhcAAAAAAAAJmOfGAAAAEHRSTlP///////////////////8A4CNdGQAAAMxJREFUeNpNkM0KAXEUxc98LIgaomGhzCMoykryBja24hGUR7Cz8Qh2doqVlYWVsjALZTMhKwpNE8pXx2L+8+fufp17zz33KsSvVACA9wcefVIIwKoYPQAASTKWJUnqAF5m1bB2QmmbSjxRJgmSVzaNDEn61mysArfbXM+kIwB0AKHpIzxZCNA2W60rEzw/B1vCQCvmINrglAoxqbjL8Q+SqMsT7m+3fwyWOufT2u5YvjLct+nYwq2Qis5alpgpjy6Gngvi1JJqXv4gqC9Qh0xZila0nAAAAABJRU5ErkJggg==','data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEXx69bVlGskx/WFYH9KSmwiTKZSLy9CHhkqJTUVJlsNFCkDAwYCAAAAAAEAAAAAAAAmvuVdAAAAEHRSTlP///////////////////8A4CNdGQAAANNJREFUeNpdjjFLAnEchp87T7hJiZaWtkNcDKkPkIv7DX2AoKGhIdBZFPoA9xFc3KTwI0hQSw6Hg0tL0iDS0GGcV5K+Dd79D3q3h+f9vfwskcfmP+yo52BXcrP6qlXGUQqHx43tVRtA0mPXvvg5l4SkzWekJJBkA991evsFSbo9HRwprSk5mAQGNL+R0hvoe5fmg3WxERpoKY7M2oszK0uSJeD14e1pmtWuf70hQKEHcXT/vlhX92a26TSfQ8ABTj5G5SWAJWB1d+b62UDJcX1jsvwBSLlmC8VyjRwAAAAASUVORK5CYII=','data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEX6/f3427K3wM4ixv6igIEwcMtyQVA7QFAaNZgtLjgxISULECUCAAQAAAIAAAAAAAAj0O+aAAAAEHRSTlP///////////////////8A4CNdGQAAALBJREFUeNpNjz0LQXEYxX/3drvJ4EpZWAzMXmPkGzCx+gbu17GYTDYZrD6FwaREGZSXkqSOQf/nOtvpd3rOeTyRyAfg/m/S45+TpB6aSJIPcLyysdh7mS0BeAI6hfC8ceTRPGSNLNbF1sCRYe41AAgAnv0g6bnme5KkACCafRLSJZItqK3msS3Y4u/NNCpRbKfv01TbkXcJf+dIeBndTharkwmtR+WqJMkTwCuFveD0BQCIScpb/IaoAAAAAElFTkSuQmCC','data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYBAMAAAASWSDLAAAAMFBMVEX7/v78893M1tSaiJmaYTY0eeduNhE+LjUeHzoDILARESIICBACAQUCAAEAAAAAAADFXPtjAAAAEHRSTlP///////////////////8A4CNdGQAAAL5JREFUeNpFjr0OAVEUhOfeXQnxEyFBPIU3QKtZUYpk9QqPotMoeAE/keiIKClE4Q0UEpXdkI1YRuPcnW5yZr45ioikAQDe35Ekmy5JEiS5uj8HxlTv3JKkDcArLK1pzQC+mAnA57n/kE7gPtiWjh6OLJpRBWsMADYAjVNCi3nb3aL5LYxfjgkx6U/uFhpA4F+jr3vZZF92XqVJfi+x2KaCncQah3r54JBUBPyWoxZrAIoA/LnVMeiMTgFyEf0AiHloWcWFSeoAAAAASUVORK5CYII='],
+};
+const FLOOR_PORTAL_SPRITE_META = Object.freeze({
+  frameW:64, frameH:64, frames:8, frameDuration:0.1, drawW:64, drawH:64,
+  anchorX:0.5, anchorY:1
+});
+function floorPortalSpriteFrame(portal){
+  const t=portal && Number.isFinite(portal.t) ? Math.max(0,portal.t) : 0;
+  const index=Math.floor(t/FLOOR_PORTAL_SPRITE_META.frameDuration+1e-9)%FLOOR_PORTAL_SPRITE_META.frames;
+  return {index,x:index*64,y:0,w:64,h:64,meta:FLOOR_PORTAL_SPRITE_META};
+}
 const CONSTELLATION_SPRITES = {};
 const ENEMY_SPRITE_META = {
   runner:{src:ENEMY_SPRITE_DATA.runner, scale:3.3333333333, stride:24, frames:[]},
@@ -1579,9 +1666,24 @@ function lootSpriteFrame(o){
   return {key,index,meta,x:index*meta.frameW,y:0,w:meta.frameW,h:meta.frameH};
 }
 const RARE_ITEM_SPRITES = {};
+const TOTEM_SPRITES = {};
+const ENEMY_STATUS_ICONS = typeof Image !== 'undefined' ? new Image() : null;
+if (ENEMY_STATUS_ICONS) ENEMY_STATUS_ICONS.src = ENEMY_STATUS_ICON_DATA;
+const FLOOR_PORTAL_SPRITE = typeof Image !== 'undefined' ? new Image() : null;
+if (FLOOR_PORTAL_SPRITE) FLOOR_PORTAL_SPRITE.src = FLOOR_PORTAL_SPRITE_DATA;
 function rareItemSpriteHTML(key, className=''){
   const data=RARE_ITEM_SPRITE_DATA[key], A=AMULETS[key];
   return data ? '<img class="rare-item-icon ' + className + '" src="' + data + '" alt="">' : (A ? A.ico : '');
+}
+function totemSpriteEntry(key, tier){
+  const rank=Math.max(1,Math.min(4,Number(tier)||1));
+  const data=TOTEM_SPRITE_DATA[key] && TOTEM_SPRITE_DATA[key][rank-1];
+  const sprite=TOTEM_SPRITES[key] && TOTEM_SPRITES[key][rank-1];
+  return {rank,data,sprite};
+}
+function totemSpriteHTML(key, tier, className=''){
+  const entry=totemSpriteEntry(key,tier), T=typeof TOTEMS !== 'undefined' && TOTEMS[key];
+  return entry.data ? '<img class="totem-icon ' + className + '" src="' + entry.data + '" alt="">' : (T ? T.ico : '');
 }
 /* В меню нужен один стабильный кадр того же листа, что лежит на земле:
    повторная data URI или отдельная UI-иконка со временем разошлись бы с добычей. */
@@ -1611,6 +1713,9 @@ if (typeof Image !== 'undefined'){
   }
   for (const key of Object.keys(RARE_ITEM_SPRITE_DATA)){
     const img = new Image(); img.src = RARE_ITEM_SPRITE_DATA[key]; RARE_ITEM_SPRITES[key] = img;
+  }
+  for (const [key,rows] of Object.entries(TOTEM_SPRITE_DATA)){
+    TOTEM_SPRITES[key] = rows.map(data => { const img=new Image(); img.src=data; return img; });
   }
 }
 const SHOOTER_PROJECTILE = typeof Image !== 'undefined' ? new Image() : null;
@@ -1677,6 +1782,7 @@ if (typeof Image !== 'undefined'){
   }
 }
 const MAGE_ORB_EXPLOSION_TIME = 0.42;
+const MAGE_EXPLOSION_ALPHA = 0.5;
 function mageAbilitySpriteFrame(key, progress){
   const meta=MAGE_ABILITY_SPRITE_META[key];
   if (!meta) return null;
@@ -1867,7 +1973,6 @@ const MODS = [
  show:()=>D.critCh>=100},
 {id:'crit.on_crit_shockwave',cat:'Криты',nm:'Ударная волна при крите',  kind:'flag', stat:'critWave',   r:[1,1], rar:2,
  nt:'волна по соседям на 20% фактически нанесённого критом урона; защита применяется отдельно'},
-{id:'crit.lucky',      cat:'Криты', nm:'Шанс крита считается дважды',   kind:'flag', stat:'critLucky',  r:[1,1], rar:2},
 {id:'crit.critical_mass',cat:'Криты',nm:'Критическая масса',             kind:'flag', stat:'criticalMass',r:[1,1],rar:1,
  nt:'Каждый некритический прямой удар даёт +1% к шансу крита следующего прямого удара. Критический удар обнуляет накопленный бонус.', hide:()=>D.noCrit},
 
@@ -1881,7 +1986,8 @@ const MODS = [
 {id:'shape.proj_count',cat:'Геометрия', nm:'Доп. снаряды',              kind:'flat', stat:'projN',      r:[1,1], rar:1, nt:'один из сильнейших модификаторов', wep:['proj'], noMin:true},
 {id:'shape.pierce',    cat:'Геометрия', nm:'Пробитие насквозь (N целей)',kind:'flat', stat:'pierce',    r:[1,2], wep:['proj']},
 {id:'shape.chain',     cat:'Геометрия', nm:'Отскоки на другие цели',    kind:'flat', stat:'chain',      r:[1,2], rar:1, wep:['proj']},
-{id:'shape.homing',    cat:'Геометрия', nm:'Самонаведение',             kind:'inc',  stat:'homing',     r:[35,70], rar:1, wep:['orb']},
+{id:'shape.homing',    cat:'Геометрия', nm:'Самонаведение',             kind:'inc',  stat:'homing',     r:[35,70], cap:100, rar:1, wep:['orb'],
+ hide:()=>D.homing>=1},
 {id:'shape.proj_speed',cat:'Геометрия', nm:'Скорость снарядов',         kind:'inc',  stat:'projSpd',    r:[15,30], wep:['proj','orb']},
 {id:'shape.overpressure',cat:'Геометрия',nm:'Сверхдавление',            kind:'flag', stat:'overpressure',r:[1,1], rar:1,
  nt:'каждая дополнительная цель одного уронного взрыва даёт ему +5% урона · учитывается до 5 дополнительных целей · одна синяя карточка',
@@ -1964,9 +2070,6 @@ const MODS = [
 {id:'cond.recently_killed',cat:'Условные',nm:'Урон после недавнего убийства',kind:'inc',stat:'afterKill',r:[3,7],int:true,
  nt:'каждая карточка даёт 3–7% · после убийства действует 1 секунду · значения складываются без потолка',
  tip:'<b>Когда срабатывает:</b> сразу после убийства любого врага.<br><b>Эффект:</b> весь подходящий урон получает накопленный процент бонуса ровно на 1 секунду.<br><b>Диапазон:</b> каждая карточка даёт целые 3–7%.<br><b>Накопление:</b> значения складываются без потолка; например, 4% + 6% = +10% урона на следующую секунду.<br><b>Обновление:</b> новое убийство снова выставляет таймер на 1 секунду; длительности не складываются.'},
-{id:'cond.per_second_in_combat',cat:'Условные',nm:'Урон за каждую секунду боя',kind:'inc',stat:'ramp',r:[2,4], rar:1, nt:'разгон с начала боя, потолок +40%, сбрасывается при зачистке',
- tip:'<b>Формула:</b> выбранное значение × прошедшее время боя в секундах, пока на арене есть хотя бы один живой враг. Бонус прибавляется к обычным процентам урона и растёт плавно, включая доли секунды.<br><b>Пример:</b> +2% даёт +20% через 10 сек и достигает потолка +40% через 20 сек.<br><b>Сброс:</b> сразу после зачистки, когда живых врагов не остаётся. Работает и на урон свиты.'},
-
 // --- Защита ---
 {id:'conv.armor_damage',cat:'Защита', nm:'БРОНЯ В УРОН',                kind:'flag', stat:'armorDmg',   r:[1,1], rar:2, w:45, unlock:true,
  nt:'каждые 100 брони превращаются в +12 к урону', show:()=>D.armor>=150},
@@ -2209,6 +2312,7 @@ const TOTEMS = {
   freeze:{nm:'ТОТЕМ ЗАМОРОЗКИ', col:'#7fd6ff', ico:'\u2744', st:'замороженным',  book:'cold'},
   poison:{nm:'ТОТЕМ ОТРАВЛЕНИЯ',col:'#8be04e', ico:'\u2623', st:'отравленным',   book:'poison'},
   blood: {nm:'ТОТЕМ КРОВИ',     col:'#e0405a', ico:'\u2620', st:'кровоточащим', book:'bleed'},
+  lightning:{nm:'ТОТЕМ МОЛНИИ', col:'#6fb3ff', ico:'\u26A1', st:'шокированным',  book:'shock'},
 };
 const TOTEM_KEYS = Object.keys(TOTEMS);
 /* Ранг тотема: 0 — нет, 1..4 — от малого до великого */
@@ -2658,7 +2762,7 @@ function newGame(weaponKey, control, subclassKey){
             elitePyroBurnT:0, elitePyroBurnTick:0, eliteAbyssBurnT:0, eliteAbyssBurnTick:0,
             eliteGuardSlowT:0, eliteGuardSlowStacks:0,
             moveT:0, predT:0, critChain:0, riposte:false, swiftT:0, spdKill:0, sprintT:0, lowHp:false, moving:false, faceX:1, faceY:0, spriteFace:1, heroWalkT:0,
-            stillT:0, combatT:0, killT:0, cheatCd:0, cheatSpeedT:0, healCd:0,
+            stillT:0, killT:0, cheatCd:0, cheatSpeedT:0, healCd:0,
             hitFlash:0, hpFlash:0, hpLag:1, hpLagFrom:1, hpLagTimer:0},
     enemies:[], shots:[], delayedShots:[], attackEchoes:[], eshots:[], orbs:[], fx:[], arcaneTraces:[], arcaneMines:[], repeatDetonations:[],
     parts:[],                                // пиксельные частицы
@@ -2822,7 +2926,7 @@ function recalc(){
   D.featherHoming = w.id === 'wpn.bow' ? G.picks.filter(x=>x.id==='archer.fletching').reduce((sum,x)=>{
     const v=Number.isFinite(x.v)?x.v:7; return sum+Math.round(3+(v-7)*0.4);
   },0) : 0;
-  D.homing  = (b.sum('homing')+D.featherHoming)/100;
+  D.homing  = Math.min(100,b.sum('homing')+D.featherHoming)/100;
   D.projSpd = (1 + (b.sum('projSpd')+D.featherSpeed)/100) * (amu('arrow') ? 1.5 : 1);
   D.arrowFlight = w.id === 'wpn.bow' ? 1+b.sum('arrowFlight')/100 : 1;
   D.acceleratedArrow = w.id === 'wpn.bow' ? b.sum('acceleratedArrow') : 0;
@@ -3037,6 +3141,9 @@ const ETYPES = {
 };
 /* Элита получает разновидность поверх базового типа. Командные аффиксы пачки
    остаются независимыми: пиромант может быть маяком, страж — бронированным. */
+const ELITE_GUARD_DASH_COOLDOWN = 4;
+const ELITE_GUARD_DASH_TIME = 0.36;
+const ELITE_GUARD_DASH_SPEED_MULT = 3.4;
 const ELITE_VARIANTS=Object.freeze({
   frostWolf:      {base:'runner',nm:'Морозный волк',          hit:'frost'},
   toxicRunner:    {base:'runner',nm:'Токсичный бегун',        hit:'poison'},
@@ -3068,7 +3175,7 @@ function applyEliteVariant(e, requested){
   if (def.runnerSpeed) e.spd=ETYPES.runner.spd*0.9*(1+G.bossKills*0.02);
   if (def.spdMul) e.spd*=def.spdMul;
   if (def.dmgMul) e.dmg*=def.dmgMul;
-  if (def.dash){ e.eliteDashCd=2; e.eliteDashT=0; e.eliteDashA=0; }
+  if (def.dash){ e.eliteDashCd=ELITE_GUARD_DASH_COOLDOWN; e.eliteDashT=0; e.eliteDashA=0; }
   return id;
 }
 function applyEliteContact(e){
@@ -3168,14 +3275,14 @@ function tickElitePlayerEffects(dt){
 function tickEliteAbility(e,dt,tgt){
   if (!e || e.eliteVariant!=='forgottenGuard') return false;
   tgt=G.player;                                      // страж всегда прорывается именно к герою
-  e.eliteDashCd=(e.eliteDashCd===undefined?2:e.eliteDashCd)-dt;
+  e.eliteDashCd=(e.eliteDashCd===undefined?ELITE_GUARD_DASH_COOLDOWN:e.eliteDashCd)-dt;
   if (e.eliteDashCd<=0 && e.eliteDashT<=0 && dist(e,tgt)>e.r+tgt.r+8){
-    e.eliteDashCd+=2; e.eliteDashT=0.12;
+    e.eliteDashCd+=ELITE_GUARD_DASH_COOLDOWN; e.eliteDashT=ELITE_GUARD_DASH_TIME;
     e.eliteDashA=Math.atan2(tgt.y-e.y,tgt.x-e.x);
     G.fx.push({t:'ring',x:e.x,y:e.y,r:e.r,max:e.r+25,life:0.16,col:'#9aa7b4'});
   }
   if (e.eliteDashT>0){
-    const step=e.spd*3.4*dt;
+    const step=e.spd*ELITE_GUARD_DASH_SPEED_MULT*dt;
     e.x=clamp(e.x+Math.cos(e.eliteDashA)*step,-ARENA+e.r,ARENA-e.r);
     e.y=clamp(e.y+Math.sin(e.eliteDashA)*step,-ARENA+e.r,ARENA-e.r);
     e.eliteDashT=Math.max(0,e.eliteDashT-dt);
@@ -3252,12 +3359,6 @@ function telegraphPath(spec){
     const nx=-dy/len*(spec.width||24)/2,ny=dx/len*(spec.width||24)/2;
     ctx.moveTo(spec.x+nx,spec.y+ny); ctx.lineTo(spec.x2+nx,spec.y2+ny);
     ctx.lineTo(spec.x2-nx,spec.y2-ny); ctx.lineTo(spec.x-nx,spec.y-ny); ctx.closePath();
-  } else if (spec.shape==='rift'){
-    const r=spec.r;
-    ctx.moveTo(spec.x-r,spec.y+r*0.20); ctx.lineTo(spec.x-r*0.62,spec.y-r*0.72);
-    ctx.lineTo(spec.x-r*0.24,spec.y+r*0.15); ctx.lineTo(spec.x+r*0.18,spec.y-r*0.88);
-    ctx.lineTo(spec.x+r*0.48,spec.y+r*0.06); ctx.lineTo(spec.x+r,spec.y-r*0.18);
-    ctx.lineTo(spec.x+r*0.68,spec.y+r*0.74); ctx.lineTo(spec.x-r*0.40,spec.y+r*0.82); ctx.closePath();
   } else {
     ctx.arc(spec.x,spec.y,spec.r,0,Math.PI*2);
   }
@@ -3795,7 +3896,6 @@ function tickBossSkill(e, dt){
         let hit=false;
         for (const r of T.rifts){
           if (dist(r,p) <= r.r+p.r) hit=true;
-          pushTelegraphTrace({shape:'rift',kind:'control',x:r.x,y:r.y,r:r.r});
           G.fx.push({t:'voidRiftBurst',x:r.x,y:r.y,r:r.r,life:0.20,max:0.20});
         }
         if (hit){
@@ -4421,6 +4521,7 @@ function conditionalInc(e, src){
     if (e.ail.freeze      > 0) inc += totemVal('freeze');
     if (e.dots.poison.dps > 0) inc += totemVal('poison');
     if (e.dots.bleed.dps  > 0) inc += totemVal('blood');
+    if (e.ail.shock        > 0) inc += totemVal('lightning');
   }
   // РАЗГОН: считаем полные двухсекундные отрезки непрерывного бега
   inc += momentumDamageInc(p);
@@ -4438,8 +4539,6 @@ function conditionalInc(e, src){
   if (p.killT > 0)           inc += b.sum('afterKill');
   const near = b.sum('perNear');
   if (near) inc += near * nearbyDamageEnemyCount(from);
-  const ramp = b.sum('ramp');
-  if (ramp) inc += Math.min(40, ramp * p.combatT);
   return inc;
 }
 
@@ -4538,15 +4637,12 @@ function damage(e, src){
     (src.rangedInc||0) + (src.minion ? boneFieldDamageInc() : 0))/100) * D.moreAll;
   if (src.minion) total *= MINION_DAMAGE_MULT;       // режет весь удар, включая унаследованные стихии
 
-  // Крит: два ролла при crit.lucky, сверхкрит сверху.
+  // Крит: один бросок базового шанса, сверхкрит сверху.
   // У свиты свой шанс (D.minCrit), в который уже вложена доля наследования
   const massDirect=D.criticalMass && !D.noCrit && src.direct;
   const critCh = Math.min(100,(src.minion ? D.minCrit : D.critCh)+(massDirect?(p.criticalMass||0):0));
   let isCrit = false;
-  if (critCh > 0){
-    isCrit = Math.random()*100 < critCh;
-    if (!isCrit && b.has('critLucky')) isCrit = Math.random()*100 < critCh;
-  }
+  if (critCh > 0) isCrit = Math.random()*100 < critCh;
   // КРИТИЧЕСКИЙ ПРИЦЕЛ и ЦЕПЬ КРИТОВ добавляют шанс поверх собранного
   let critBonus = 0;
   if (amu('critaim') && p.stillT > 1) critBonus += 25;
@@ -4823,7 +4919,7 @@ function takeTotem(key, silent=false){
   // ровно как с книгами, чтобы подъём не рвал темп боя.
   if (silent) return;
   if (tier === 1) showTotemModal(key, prev);
-  else pickupBanner(TOTEM_RANKS[tier-1] + ' ' + T.nm,
+  else pickupBanner(totemSpriteHTML(key,tier,'banner') + TOTEM_RANKS[tier-1] + ' ' + T.nm,
     '+' + TOTEM_VALS[tier-1] + '% урона по ' + T.st + '  ·  было +' + prev + '%', T.col);
 }
 
@@ -4833,7 +4929,7 @@ function showTotemModal(key, prev){
   const owned = TOTEM_KEYS.filter(k => totemTier(k) && k !== key);
   $('#ov').style.display = 'flex';
   $('#ov').innerHTML =
-    '<div id="amuico" style="color:' + T.col + '">' + T.ico + '</div>' +
+    '<div id="amuico" style="color:' + T.col + '">' + totemSpriteHTML(key,tier,'modal') + '</div>' +
     '<h1 style="color:' + T.col + ';letter-spacing:4px">' + TOTEM_RANKS[tier-1] + ' ' + T.nm + '</h1>' +
     '<h2>тотем · ранг ' + tier + ' из 4 · растёт от каждой следующей находки</h2>' +
     '<div style="max-width:640px;text-align:center;font-size:18.8px;line-height:1.6">' +
@@ -4845,7 +4941,7 @@ function showTotemModal(key, prev){
       '<div id="amuown"><div class="k" style="font-size:15px;letter-spacing:2px;margin-bottom:6px">ДРУГИЕ ТОТЕМЫ</div>' +
         '<div id="amulist">' + owned.map(k =>
           '<div class="pick" style="border-left:2px solid ' + TOTEMS[k].col + ';padding-left:7px">' +
-          TOTEMS[k].ico + ' ' + TOTEM_RANKS[totemTier(k)-1] + ' ' + TOTEMS[k].nm +
+          totemSpriteHTML(k,totemTier(k),'tiny') + TOTEM_RANKS[totemTier(k)-1] + ' ' + TOTEMS[k].nm +
           ' · +' + totemVal(k) + '%</div>').join('') + '</div></div>' : '') +
     '<button id="amok">ПРОДОЛЖИТЬ</button>';
   $('#amok').onclick = () => {
@@ -4949,7 +5045,7 @@ function showBookModal(key, prev){
     '<div class="row" style="font-size:17.5px"><span>' + a + '</span><b>' + b2 + '</b></div>').join('');
   $('#ov').style.display = 'flex';
   $('#ov').innerHTML =
-    '<div style="font-size:80px;line-height:1;color:' + B.col + '">' + B.ico + '</div>' +
+    '<div style="line-height:1;color:' + B.col + '">' + lootSpriteHTML(key,'modal') + '</div>' +
     '<h1 style="color:' + B.col + ';letter-spacing:4px">' + B.nm + '</h1>' +
     '<h2>тир ' + it.tier + (prev ? ' — повышена с +' + prev + unit : ' — первая находка') + '</h2>' +
     '<div style="max-width:620px;text-align:center;font-size:18.8px;line-height:1.6">' + B.desc.replace(/N/g, it.val + unit) + '</div>' +
@@ -5379,7 +5475,8 @@ function scheduleRepeatDetonation(x,y,r,hits){
   return blast;
 }
 function detonateRepeatedOrb(blast){
-  G.fx.push({t:'ring',x:blast.x,y:blast.y,r:8,max:blast.r,life:0.28,col:'#8f7dff'});
+  G.fx.push({t:'ring',x:blast.x,y:blast.y,r:8,max:blast.r,life:0.28,
+             col:'#8f7dff',alpha:MAGE_EXPLOSION_ALPHA});
   let hitCount=0;
   for (const hit of blast.hits){
     const e=hit.enemy;
@@ -5990,7 +6087,7 @@ function hurt(v, ignoreDefense, selfBlast, cause, sourceKind, sourceEnemy){
   const hpBefore=p.hp;
   G.stats.taken += v;
   if (v>0){ p.respiteT=0; p.respiteHealT=3; }
-  p.hp -= v; p.combatT = Math.max(p.combatT, 0);
+  p.hp -= v;
   if (v>0) triggerWarriorThorns(sourceEnemy,v);
   if (v>0 && sourceEnemy && D.ironFury){
     p.ironFuryPct=Math.min(25,(p.ironFuryPct||0)+5);
@@ -6323,7 +6420,6 @@ function update(dt){
   }
   p.stillT = p.moving ? 0 : p.stillT + dt;
   p.moveT  = p.moving ? p.moveT + dt : 0;            // РАЗГОН и МАРАФОНЕЦ считают непрерывный бег
-  p.combatT = G.enemies.length ? p.combatT + dt : 0;
   p.killT = Math.max(0, p.killT - dt);
   p.cheatCd = Math.max(0, p.cheatCd - dt);
   p.healCd  = Math.max(0, p.healCd  - dt);
@@ -7205,7 +7301,7 @@ function collectFloorLoot(){
     else if (o.totem){
       const T = TOTEMS[o.totem]; takeTotem(o.totem, true); finds++;
       const tier = totemTier(o.totem);
-      G.floorFinds.push({ico:T.ico, col:T.col, name:TOTEM_RANKS[tier-1] + ' ' + T.nm,
+      G.floorFinds.push({ico:totemSpriteHTML(o.totem,tier,'summary'), col:T.col, name:TOTEM_RANKS[tier-1] + ' ' + T.nm,
         detail:'ТОТЕМ · ранг ' + tier + ' из 4 · +' + TOTEM_VALS[tier-1] + '% урона по ' + T.st,
         tip:'Весь ваш урон по ' + T.st + ' целям увеличен на <b>+' + TOTEM_VALS[tier-1] + '%</b>. Действует и на удары свиты.' +
           (tier < 4 ? '<br>Следующая находка повысит тотем до <b>+' + TOTEM_VALS[tier] + '%</b>.' : '<br>Достигнут максимальный ранг.')});
@@ -7251,6 +7347,19 @@ function drawDemonicBlobSprite(x,y,progress,size,alpha=1){
   ctx.drawImage(DEMON_QUEEN_BLOB,frame.x,frame.y,frame.w,frame.h,x-size/2,y-size/2,size,size);
   ctx.restore(); return true;
 }
+function drawFloorPortalSprite(portal){
+  if (!portal || !FLOOR_PORTAL_SPRITE || !FLOOR_PORTAL_SPRITE.complete ||
+      !FLOOR_PORTAL_SPRITE.naturalWidth) return false;
+  const frame=floorPortalSpriteFrame(portal), meta=frame.meta;
+  // G.portal.x/y остаются центром механической зоны. Нижнюю привязку листа
+  // ставим на нижний край этой зоны, чтобы основание не прыгало между кадрами.
+  const baselineY=portal.y+meta.drawH/2;
+  ctx.save(); ctx.imageSmoothingEnabled=false;
+  ctx.drawImage(FLOOR_PORTAL_SPRITE,frame.x,frame.y,frame.w,frame.h,
+                portal.x-meta.drawW*meta.anchorX,baselineY-meta.drawH*meta.anchorY,
+                meta.drawW,meta.drawH);
+  ctx.restore(); return true;
+}
 function drawLootSprite(o){
   const f=lootSpriteFrame(o), sprite=f && LOOT_SPRITES[f.key];
   if (!f || !sprite || !sprite.complete || !sprite.naturalWidth) return false;
@@ -7261,6 +7370,15 @@ function drawLootSprite(o){
 }
 function drawRareItemSprite(o){
   const sprite=o && o.amu && RARE_ITEM_SPRITES[o.amu];
+  if (!sprite || !sprite.complete || !sprite.naturalWidth) return false;
+  ctx.save(); ctx.imageSmoothingEnabled=false;
+  ctx.drawImage(sprite,o.x-12,o.y-12,24,24);
+  ctx.restore(); return true;
+}
+function drawTotemSprite(o){
+  if (!o || !o.totem) return false;
+  // На земле показываем ранг, который предмет выдаст после подъёма.
+  const tier=Math.min(4,totemTier(o.totem)+1), entry=totemSpriteEntry(o.totem,tier), sprite=entry.sprite;
   if (!sprite || !sprite.complete || !sprite.naturalWidth) return false;
   ctx.save(); ctx.imageSmoothingEnabled=false;
   ctx.drawImage(sprite,o.x-12,o.y-12,24,24);
@@ -7327,25 +7445,37 @@ function enemyVisualTop(e){
   const sf=enemySpriteFrame(e);
   return sf ? sf.frame.ay * (e.r*sf.meta.scale/sf.frame.h) : e.r;
 }
-function enemySpriteMarks(e){
-  const marks=[], add=col => { if (col && marks.indexOf(col)<0) marks.push(col); };
-  if (e.hit > 0) add('#ffffff');
-  if (e.kind === 'elite') add('#ffd24a');
-  if (e.dots.fire.dps > 0) add('#ff7a2f');
-  if (e.plague) add('#b6df55');
-  if (e.ail.chill > 0 || e.frost) add('#7fd6ff');
-  if (e.ail.shock > 0) add('#ffe14a');
-  if (e.ail.freeze > 0) add('#ffffff');
-  if (e.pack) add(e.pack.col);
-  if (e.rage > 0) add('#ffd24a');
-  return marks;
+function enemyStatusIcons(e){
+  const dots=e.dots||{}, fire=dots.fire||{}, poison=dots.poison||{}, bleed=dots.bleed||{};
+  const ail=e.ail||{}, result=[];
+  const add=(key,active,stacks=0) => {
+    if (active) result.push({key,frame:ENEMY_STATUS_ICON_FRAMES[key],stacks:Math.max(0,Math.round(stacks||0))});
+  };
+  add('burning', fire.dps>0 || fire.n>=0.5, fire.n);
+  add('poison', poison.dps>0 || poison.n>=0.5, poison.n);
+  add('plague', !!e.plague);
+  add('chilled', ail.chill>0 || !!e.frost);
+  add('frozen', ail.freeze>0);
+  add('shocked', ail.shock>0);
+  add('bleeding', bleed.dps>0 || bleed.n>=0.5, bleed.n);
+  return result;
 }
-function drawEnemySpriteMarks(e){
-  const marks=enemySpriteMarks(e).slice(0,6), gap=8;
-  for (let i=0;i<marks.length;i++){
-    ctx.fillStyle=marks[i];
-    drawPoly(e.x + (i-(marks.length-1)/2)*gap, e.y-e.r-8, 3.2, 4, 0.785); ctx.fill();
-  }
+function drawEnemyStatusIcons(e){
+  const icons=enemyStatusIcons(e);
+  if (!icons.length || !ENEMY_STATUS_ICONS || !ENEMY_STATUS_ICONS.complete || !ENEMY_STATUS_ICONS.naturalWidth) return;
+  const size=12,gap=13,top=e.y-enemyVisualTop(e)-27;
+  ctx.save(); ctx.imageSmoothingEnabled=false;
+  icons.forEach((status,index) => {
+    const x=e.x+(index-(icons.length-1)/2)*gap, f=status.frame;
+    ctx.drawImage(ENEMY_STATUS_ICONS,f.x,f.y,f.w,f.h,x-size/2,top,size,size);
+    if (status.stacks>1){
+      const label=String(status.stacks);
+      ctx.font='bold 8px ui-monospace,monospace'; ctx.textAlign='right';
+      ctx.lineWidth=2; ctx.strokeStyle='#05070ddd'; ctx.strokeText(label,x+7,top+8);
+      ctx.fillStyle='#ffffff'; ctx.fillText(label,x+7,top+8);
+    }
+  });
+  ctx.restore();
 }
 function enemyTargetMarkerKind(e){ return enemySpriteFrame(e) ? 'chevron' : 'arcs'; }
 function drawEnemyTargetMarker(e){
@@ -7641,11 +7771,13 @@ function renderCanvasPass(pass,p,sx,sy){
 
   // Портал
   if (pass==='itemsProjectiles' && G.portal){
-    const t = G.portal.t;
-    ctx.strokeStyle = '#4fd1c5'; ctx.lineWidth = 2;
-    for (let i = 0; i < 3; i++){
-      const rr = G.portal.r * (0.5 + i*0.28) + Math.sin(t*3 + i)*4;
-      drawPoly(G.portal.x, G.portal.y, rr, 6, t*(i%2?1:-1)); ctx.stroke();
+    if (!drawFloorPortalSprite(G.portal)){
+      const t = G.portal.t;
+      ctx.strokeStyle = '#4fd1c5'; ctx.lineWidth = 2;
+      for (let i = 0; i < 3; i++){
+        const rr = G.portal.r * (0.5 + i*0.28) + Math.sin(t*3 + i)*4;
+        drawPoly(G.portal.x, G.portal.y, rr, 6, t*(i%2?1:-1)); ctx.stroke();
+      }
     }
   }
 
@@ -7715,10 +7847,10 @@ function renderCanvasPass(pass,p,sx,sy){
         ctx.fillStyle = A.col; ctx.fillText(A.ico, o.x, o.y + 4);
       }
     }
-    else if (o.totem){                                 // тотем: столбик с меткой стихии
+    else if (o.totem){                                 // тотем: ранговый PNG и сигнальный круг
       const T = TOTEMS[o.totem], pu = 0.7 + 0.3*Math.sin(G.time*4);
-      ctx.globalAlpha = pu; ctx.fillStyle = T.col;
-      drawPoly(o.x, o.y, 10, 3, -Math.PI/2); ctx.fill();
+      const drawn=drawTotemSprite(o);
+      if (!drawn){ ctx.globalAlpha = pu; ctx.fillStyle = T.col; drawPoly(o.x, o.y, 10, 3, -Math.PI/2); ctx.fill(); }
       ctx.globalAlpha = 1; ctx.strokeStyle = T.col; ctx.lineWidth = 2;
       ctx.beginPath(); ctx.arc(o.x, o.y, 16 + 3*pu, 0, 6.29); ctx.stroke();
     }
@@ -7815,10 +7947,8 @@ function renderCanvasPass(pass,p,sx,sy){
         width:44,remaining:T.markWarn,total:BOSS_VAMPIRE_WARN});
     }
     if (e.bossId === 'voidwrath' && T.rifts){
-      for (const r of T.rifts){
+      for (const r of T.rifts)
         drawVoidGroundRift(r.x,r.y,r.r,1-r.warn/BOSS_VOID_WARN,0.72);
-        drawTelegraph({shape:'rift',kind:'control',x:r.x,y:r.y,r:r.r,remaining:r.warn,total:BOSS_VOID_WARN});
-      }
     }
     if (e.bossId === 'minotaur' && T.chargeWarn > 0){
       const len=minotaurEdgeDistance(e,T.chargeA), ex=e.x+Math.cos(T.chargeA)*len, ey=e.y+Math.sin(T.chargeA)*len;
@@ -7858,47 +7988,24 @@ function renderCanvasPass(pass,p,sx,sy){
       ctx.fillStyle=e.hit>0?'#ffffff44':e.t.col+'22';
       if (!drawEnemySprite(e)){ drawShape(e.t.shape,e.x,e.y,e.r,e.rot); ctx.fill(); ctx.stroke(); }
     }
-    // У PNG-врагов старый геометрический контур не рисуется даже для элиты и
-    // попаданий: эти состояния показываются компактными ромбами над спрайтом.
+    // Статусы противника показываются только семью элементальными PNG-иконками.
+    // Попадание, элита, ярость и принадлежность к пачке отдельных меток не имеют.
 
     if (pass==='worldHud'){
-    // Индикаторы состояний
-    if (e.dots.fire.dps > 0 && !spriteDrawn){ ctx.strokeStyle = '#ff7a2f'; drawShape(e.t.shape,e.x,e.y,e.r+4,-e.rot); ctx.stroke(); }
-    if (e.plague && !spriteDrawn){ ctx.strokeStyle = '#b6df55'; ctx.lineWidth = 2; drawShape(e.t.shape,e.x,e.y,e.r+9,e.rot); ctx.stroke(); }
+    // Радиус ауры — телеграф механики, а не дополнительная метка состояния.
     if (e.ail.chill  > 0){
       ctx.strokeStyle = '#7fd6ff';
-      if (!spriteDrawn){ drawShape(e.t.shape,e.x,e.y,e.r+7,e.rot*0.5); ctx.stroke(); }
       // Радиус ауры виден, иначе игрок не поймёт, почему соседи вязнут
       ctx.globalAlpha = 0.13 + 0.07*Math.sin(G.time*3);
       ctx.beginPath(); ctx.arc(e.x, e.y, D.chillAuraR, 0, 6.29); ctx.stroke();
       ctx.globalAlpha = 1;
     }
-    if (e.frost){                                   // задетый аурой: бледная метка
-      if (!spriteDrawn){ ctx.strokeStyle = '#7fd6ff'; ctx.globalAlpha = 0.4;
-        drawShape(e.t.shape, e.x, e.y,e.r+5,-e.rot*0.5); ctx.stroke(); ctx.globalAlpha = 1; }
-    }
-    if (e.ail.shock  > 0 && !spriteDrawn){ ctx.strokeStyle = '#ffe14a'; ctx.beginPath(); ctx.arc(e.x,e.y,e.r+10,0,6.29); ctx.stroke(); }
-    if (e.ail.freeze > 0 && !spriteDrawn){ ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 3; drawPoly(e.x,e.y,e.r+5,6,0.4); ctx.stroke(); }
-    // Счётчики стаков: огонь, яд, кровь
-    const st = [];
-    if (e.dots.fire.n   >= 0.5) st.push(['\u25C6' + Math.round(e.dots.fire.n),   '#ff7a2f']);
-    if (e.dots.poison.n >= 0.5) st.push(['\u2620' + Math.round(e.dots.poison.n), '#8be04e']);
-    if (e.dots.bleed.n  >= 0.5) st.push(['\u2716' + Math.round(e.dots.bleed.n),  '#e0405a']);
-    if (st.length){
-      ctx.font = 'bold 13px ui-monospace,monospace'; ctx.textAlign = 'center';
-      st.forEach(([txt,col], si) => {
-        ctx.fillStyle = col;
-        ctx.fillText(txt, e.x + (si - (st.length-1)/2)*22, e.y + e.r + 13);
-      });
-    }
+    drawEnemyStatusIcons(e);
     }
 
-    // Пачка: кольцо в цвет группы и метки ролей. Кольцами каждый аффикс
-    // не показать — их бывает десять, поэтому список висит на панели внизу.
+    // У пачки остаются только необходимые метки активных ролей и телеграфы.
+    // Отдельная цветная метка принадлежности к пачке удалена.
     if (e.pack){
-      if (pass==='worldHud' && !spriteDrawn){ ctx.strokeStyle = e.pack.col; ctx.lineWidth = 2;
-        ctx.globalAlpha = 0.75; ctx.beginPath(); ctx.arc(e.x, e.y, e.r+6, 0, 6.29); ctx.stroke();
-        ctx.globalAlpha = 1; }
       if (e.roles.length){
         // Круги ролей рисуем по земле: игроку нужно видеть их границы, а не догадываться
         const bc = e.roles.indexOf('beacon')  >= 0 ? 180 : 0;
@@ -7919,12 +8026,7 @@ function renderCanvasPass(pass,p,sx,sy){
         drawTelegraph({shape:'target',kind:'warning',x:e.jumpTo.x,y:e.jumpTo.y,r:54,remaining:e.jumpT,total:0.5});
       }
     }
-    if (pass==='worldHud' && e.rage > 0){             // разогнан мстителями
-      if (!spriteDrawn){ ctx.strokeStyle = '#ffd24a'; ctx.globalAlpha = 0.5;
-        drawShape(e.t.shape, e.x, e.y,e.r+3,-e.rot); ctx.stroke(); ctx.globalAlpha = 1; }
-    }
     if (pass==='worldHud') drawHunterMark(e);
-    if (pass==='worldHud' && spriteDrawn) drawEnemySpriteMarks(e);
 
     // Аффиксы мини-босса: по кольцу на каждый, плюс телеграф тарана
     if (e.aff.length){
@@ -8036,16 +8138,17 @@ function renderCanvasPass(pass,p,sx,sy){
         const progress=clamp(1-f.life/f.max,0,0.999999);
         const frame=ARCANE_MINE_EXPLOSION_FRAMES[Math.min(7,Math.floor(progress*8))];
         const d=f.r*2;
-        ctx.imageSmoothingEnabled=false;
+        ctx.save(); ctx.globalAlpha=MAGE_EXPLOSION_ALPHA; ctx.imageSmoothingEnabled=false;
         ctx.drawImage(ARCANE_MINE_EXPLOSION,frame.x,frame.y,frame.w,frame.h,
                       f.x-d/2,f.y-d/2,d,d);
+        ctx.restore();
       }
     } else if (f.t === 'mageOrbExplosion'){
       const progress=clamp(1-f.life/f.max,0,0.999999),d=f.r*2;
       const drawMageEffect=(key,size,alpha)=>{
         const image=MAGE_ABILITY_SPRITES[key],frame=mageAbilitySpriteFrame(key,progress);
         if (!image || !image.complete || !image.naturalWidth || !frame) return false;
-        ctx.save(); ctx.globalAlpha=alpha; ctx.imageSmoothingEnabled=false;
+        ctx.save(); ctx.globalAlpha=alpha*MAGE_EXPLOSION_ALPHA; ctx.imageSmoothingEnabled=false;
         ctx.drawImage(image,frame.x,frame.y,frame.w,frame.h,
                       f.x-size/2,f.y-size/2,size,size); ctx.restore(); return true;
       };
@@ -8054,7 +8157,7 @@ function renderCanvasPass(pass,p,sx,sy){
       if (f.heart) drawMageEffect('heart',f.r,0.88);
       if (!baseDrawn){
         ctx.strokeStyle=f.variant==='remote'?'#b56cff':'#63dcff';
-        ctx.globalAlpha=clamp(f.life*3,0,1); ctx.lineWidth=3;
+        ctx.globalAlpha=clamp(f.life*3,0,1)*MAGE_EXPLOSION_ALPHA; ctx.lineWidth=3;
         ctx.beginPath(); ctx.arc(f.x,f.y,f.r,0,6.29); ctx.stroke(); ctx.globalAlpha=1;
       }
     } else if (f.t === 'telegraphTrace'){
@@ -8074,7 +8177,8 @@ function renderCanvasPass(pass,p,sx,sy){
       ctx.beginPath(); ctx.arc(f.x, f.y, f.r, 0, 6.29); ctx.stroke();
       ctx.globalAlpha = 1;
     } else if (f.t === 'ring'){
-      ctx.strokeStyle = f.col; ctx.globalAlpha = clamp(f.life*3,0,1); ctx.lineWidth = 3;
+      ctx.strokeStyle = f.col;
+      ctx.globalAlpha = clamp(f.life*3,0,1)*(f.alpha===undefined?1:f.alpha); ctx.lineWidth = 3;
       ctx.beginPath(); ctx.arc(f.x,f.y,f.r,0,6.29); ctx.stroke(); ctx.globalAlpha = 1;
     } else if (f.t === 'arc'){
       ctx.strokeStyle = f.col || '#ffb340'; ctx.globalAlpha = clamp(f.life*7,0,1); ctx.lineWidth = 5;
@@ -8102,10 +8206,7 @@ function renderCanvasPass(pass,p,sx,sy){
       }
     } else if (f.t === 'voidRiftBurst'){
       const progress=clamp(1-f.life/(f.max||0.20),0,0.999999);
-      if (!drawVoidGroundRift(f.x,f.y,f.r,progress,clamp(f.life*5,0,0.85))){
-        ctx.globalAlpha=clamp(f.life*4,0,0.6); ctx.fillStyle='#8e45e8';
-        ctx.beginPath(); ctx.arc(f.x,f.y,f.r,0,6.29); ctx.fill(); ctx.globalAlpha=1;
-      }
+      drawVoidGroundRift(f.x,f.y,f.r,progress,clamp(f.life*5,0,0.85));
     } else if (f.t === 'holySpear'){
       const progress=clamp(1-f.life/(f.max||0.38),0,0.999999);
       const frame=SERAPH_HOLY_SPEAR_FRAMES[Math.min(3,Math.floor(progress*4))];
@@ -8324,15 +8425,15 @@ function nearbyDamageEnemyCount(from=G && G.player){
 function activeCombatBuffs(p, nearby=nearbyWarriorEnemyCount(), damageNearby=nearbyDamageEnemyCount(p)){
   const buffs=[], bag=G && G.bag, stillPct=bag ? bag.sum('whStill') : 0,
     movingPct=bag ? bag.sum('whMove') : 0, perNear=bag ? bag.sum('perNear') : 0,
-    recentKillPct=bag ? bag.sum('afterKill') : 0, rampPct=bag ? bag.sum('ramp') : 0;
+    recentKillPct=bag ? bag.sum('afterKill') : 0;
   if (stillPct>0 && p.stillT>0.6) buffs.push(tr('Стоит на месте')+' - +'+stillPct+'% '+tr('урона'));
   if (movingPct>0 && p.moving) buffs.push(tr('В движении')+' - '+tr('урон')+' +'+movingPct+'%');
   if (perNear>0 && damageNearby>0) buffs.push(tr('Враги рядом')+' +'+Math.round(perNear*damageNearby)+'% '+tr('урона'));
   if (recentKillPct>0 && p.killT>0) buffs.push(tr('Недавнее убийство')+' - '+tr('урон')+' +'+recentKillPct+'% · '+impactNumber(Math.max(0,p.killT))+' '+tr('с осталось'));
   if (p.spdKill>0) buffs.push(tr('Недавнее убийство')+' +25% '+tr('скорости')+' - '+p.spdKill.toFixed(1)+' '+tr('секунд'));
+  if (amu('predator') && p.predT>0) buffs.push(tr('Глаз хищника')+' - +20% '+tr('урона')+' - '+p.predT.toFixed(1)+' '+tr('секунд'));
   const momentumPct=momentumDamageInc(p);
   if (momentumPct>0) buffs.push(tr('Разгон')+' +'+momentumPct+'% '+tr('урона'));
-  if (rampPct>0 && p.combatT>0) buffs.push(tr('Идёт бой')+' - '+tr('урон')+' +'+impactNumber(Math.min(40,rampPct*p.combatT))+'%');
   if (amu('critaim') && p.stillT>1) buffs.push(tr('Критический прицел')+' - +25% '+tr('к шансу критического удара'));
   if (D.steelCrowd>0) buffs.push(tr('Стальная толпа')+' +'+(D.steelCrowd*Math.min(6,nearby))+' '+tr('брони'));
   if (D.holdLine) buffs.push(tr('Глухая оборона')+' · '+tr('урон уменьшен на')+' '+(Math.min(5,nearby)*2)+'%');
@@ -8388,7 +8489,7 @@ function updateHud(){
     const T = TOTEMS[k];
     return '<div class="bk" style="border-color:' + T.col + ';color:' + T.col + '" title="' +
       TOTEM_RANKS[totemTier(k)-1] + ' ' + T.nm + '">' +
-      '<span class="ic">' + T.ico + '</span><span class="tr">+' + totemVal(k) + '%</span></div>';
+      '<span class="ic">' + totemSpriteHTML(k,totemTier(k),'hud') + '</span><span class="tr">+' + totemVal(k) + '%</span></div>';
   }).join('') +
   AMU_KEYS.filter(k => G.amu[k]).map(k => {
     const A = AMULETS[k];
@@ -8444,9 +8545,9 @@ const MINION_STATS = new Set([
   'igniteCh','chillCh','freeze','shockCh','tesla','poiCh','radiation','ailEff','ailDur',
   'knock','dizzy','stun','inferno',
   // Условные проценты; ближайшие враги считаются вокруг самого приспешника
-  'vsLow','vsFull','vsBoss','vsSlowed','whMove','whStill','perNear','afterKill','ramp',
+  'vsLow','vsFull','vsBoss','vsSlowed','whMove','whStill','perNear','afterKill',
   // Криты: шанс наследуется целиком, множитель и надстройки общие
-  'critCh','critMul','superCh','critWave','critLucky',
+  'critCh','critMul','superCh','critWave',
   // Скорости наследуются целиком
   'aspd','mspd',
   // Площадь: радиус взрыва приспешника при смерти и «Буйства демонов»
@@ -8536,12 +8637,10 @@ function cardImpactData(m, card){
     whStill:['conditionalHit','Средний удар без движения','Average hit while stationary',1],
     afterKill:['conditionalHit','Средний удар в течение 1 сек после убийства','Average hit for 1 sec after a kill',1],
     perNear:['conditionalHit','Средний удар при 8 врагах рядом','Average hit with 8 nearby enemies',8],
-    ramp:['conditionalHit','Средний удар через 10 сек боя','Average hit after 10 sec in combat',10],
   }[m.stat];
   if (conditional){
     const snap=skillImpactSnapshot(m), current=G.bag.sum(m.stat);
     let oldBonus=current*conditional[3], newBonus=(current+v)*conditional[3];
-    if (m.stat==='ramp'){ oldBonus=Math.min(40,oldBonus); newBonus=Math.min(40,newBonus); }
     const normal=G.weapon.noAttack?snap.minionHit:snap.hit;
     const denom=1+D.incAll/100, raw=Math.abs(denom)>1e-8?normal/denom:normal;
     const oldHit=raw*(1+(D.incAll+oldBonus)/100), newHit=raw*(1+(D.incAll+newBonus)/100);
@@ -8680,7 +8779,6 @@ const SKILL_TIPS = {
   'crit.multi':'<b>Когда срабатывает:</b> только на критическом попадании.<br><b>Эффект:</b> добавляет указанное число процентов к множителю критического урона.<br><b>Пример:</b> крит ×2,0 с бонусом +5 становится ×2,05: обычный удар на 100 нанесёт критом 205.',
   'crit.super_chance':'<b>Требование:</b> открывается при 100% обычного крита.<br><b>Когда срабатывает:</b> после критического удара бросается отдельный шанс сверхкрита.<br><b>Эффект:</b> сверхкрит удваивает уже критический урон и накладывает кровотечение на 3% силы удара в секунду; кровотечения складываются без предела.',
   'crit.on_crit_shockwave':'<b>Когда срабатывает:</b> каждый раз, когда ваш удар критует.<br><b>База волны:</b> 20% урона, который крит фактически снял с основной цели после её защиты; лишний урон сверх оставшегося HP не учитывается.<br><b>Цели:</b> только другие враги в радиусе 90; первоначальная цель исключается.<br><b>Защита соседей:</b> каждый отдельно применяет свою броню, панцирь, защиту пачки и особую защиту босса.<br><b>Важно:</b> волна сама не критует и не создаёт следующую критическую волну; радиус растёт от бонусов к области действия.',
-  'crit.lucky':'<b>Когда срабатывает:</b> при определении, будет ли удар критическим.<br><b>Эффект:</b> игра бросает шанс крита дважды и берёт лучший результат.<br><b>Пример:</b> при 30% крита вероятность получить хотя бы один успех становится 51%, а не 30%.',
   'spd.attack':'<b>Что меняет:</b> уменьшает задержку между автоатаками на указанный процент.<br><b>Пример:</b> +20% скорости атаки означает примерно в 1,2 раза больше атак за то же время.<br><b>Влияет:</b> на основную атаку и частоту ударов свиты там, где применяется её собственная скорость.',
   'spd.action':'<b>Что меняет:</b> это отдельный множитель скорости атаки, а не обычный процент.<br><b>Пример:</b> при 100% обычной скорости «×1,15» делает итог 115%; несколько таких множителей перемножаются.<br><b>Почему ценен:</b> складывается отдельно от карточек «Скорость атаки».',
   'mov.speed':'<b>Что меняет:</b> увеличивает скорость движения героя во все стороны.<br><b>Пример:</b> +10% означает, что одинаковая дистанция проходится примерно за 90% прежнего времени.<br><b>Не влияет:</b> на скорость снарядов, атаки, рывок и скорость свиты.',
@@ -8688,7 +8786,7 @@ const SKILL_TIPS = {
   'shape.proj_count':'<b>Что меняет:</b> каждая атака Лучника выпускает ещё один снаряд.<br><b>Эффект:</b> дополнительный снаряд наносит полный урон и может отдельно критовать, пробивать и накладывать эффекты.<br><b>Важно:</b> карточка доступна только Лучнику; Маг получает дополнительные основные снаряды только от общего классового роста.',
   'shape.pierce':'<b>Что меняет:</b> снаряд не исчезает после первой цели и может пройти ещё через указанное число врагов.<br><b>Пример:</b> «2 цели» позволяет после первого попадания задеть ещё двух врагов.<br><b>Важно:</b> один и тот же враг не получает повторный урон от того же пролёта.',
   'shape.chain':'<b>Когда срабатывает:</b> после попадания снаряда по врагу.<br><b>Эффект:</b> снаряд прыгает к указанному числу других ближайших целей.<br><b>Важно:</b> без «ЭКО-ОТСКОКОВ» каждый следующий прыжок теряет 25% урона.',
-  'shape.homing':'<b>Что меняет:</b> силу поворота летящего снаряда к ближайшему врагу.<br><b>Пример:</b> при большем значении стрела или сфера быстрее корректирует траекторию и реже пролетает мимо.<br><b>Не добавляет:</b> урон, скорость полёта или дальность.',
+  'shape.homing':'<b>Что меняет:</b> силу поворота летящего снаряда к ближайшему врагу.<br><b>Диапазон:</b> каждая карточка даёт 35–70%.<br><b>Предел:</b> суммарная сила не превышает 100%; последний выбор обрезается ровно до остатка, после чего карточка уходит из пула.<br><b>Не добавляет:</b> урон, скорость полёта или дальность.',
   'shape.proj_speed':'<b>Что меняет:</b> скорость полёта стрел и магических сфер.<br><b>Практически:</b> цель достигается быстрее, а движущемуся врагу сложнее уйти с траектории.<br><b>Не влияет:</b> на частоту выстрелов и скорость движения героя.',
   'shape.aoe_radius':'<b>Что меняет:</b> радиус взрывов, волн, луж и других эффектов по площади.<br><b>Пример:</b> +25% превращает радиус 100 в 125, а площадь покрытия становится заметно больше.<br><b>Не увеличивает:</b> размер обычной стрелы и дальность её полёта.',
   'shape.cleave_arc':'<b>Что меняет:</b> угол дугового удара клинком.<br><b>Эффект:</b> за один взмах можно задеть больше врагов, стоящих перед героем.<br><b>Не увеличивает:</b> дальность удара и урон по одной цели.',
@@ -9097,7 +9195,7 @@ function renderSheet(){
       '<h3>ТОТЕМЫ</h3>' +
       TOTEM_KEYS.filter(k => totemTier(k)).map(k =>
         '<div class="pick" style="border-left:2px solid ' + TOTEMS[k].col + ';padding-left:7px">' +
-        TOTEMS[k].ico + ' ' + TOTEM_RANKS[totemTier(k)-1] + ' ' + TOTEMS[k].nm +
+        totemSpriteHTML(k,totemTier(k),'tiny') + TOTEM_RANKS[totemTier(k)-1] + ' ' + TOTEMS[k].nm +
         '<br><i>+' + totemVal(k) + '% урона по ' + TOTEMS[k].st + ' целям' +
         (totemTier(k) < 4 ? ' · следующий ранг +' + TOTEM_VALS[totemTier(k)] + '%' : ' · максимум') +
         '</i></div>').join('')
@@ -9110,7 +9208,7 @@ function renderSheet(){
         return '<div class="k" style="font-size:12px;letter-spacing:2px;margin-top:7px">' +
           SLOTS[sl] + '</div>' +
           got.map(k => '<div class="pick" style="border-left:2px solid ' + AMULETS[k].col +
-            ';padding-left:7px">' + AMULETS[k].ico + ' ' + AMULETS[k].nm +
+            ';padding-left:7px">' + rareItemSpriteHTML(k,'tiny') + AMULETS[k].nm +
             '<br><i>' + AMULETS[k].nt + '</i></div>').join('');
       }).join('')
     : '') +
@@ -9152,7 +9250,7 @@ function renderInventory(){
   }).join('') : none;
   const totems = totemKeys.length ? totemKeys.map(k => {
     const T = TOTEMS[k], tier = totemTier(k);
-    return item(T.col, T.ico + ' ' + TOTEM_RANKS[tier-1] + ' ' + T.nm,
+    return item(T.col, totemSpriteHTML(k,tier,'inventory') + TOTEM_RANKS[tier-1] + ' ' + T.nm,
       '+' + totemVal(k) + '% урона по ' + T.st + ' целям · ранг ' + tier + '/4',
       'Следующая находка повышает ранг, пока не достигнут великий тотем.');
   }).join('') : none;
@@ -9916,7 +10014,7 @@ function startScreen(){
     brandHtml() + languageSwitchHtml() +
     '<div class="cards">' + PLAYABLE_CLASSES.map(k => {
       const w = WEAPONS[k], spriteKey = {bow:'archer', wand:'mage', necro:'necromancer', blade:'warrior'}[k];
-      return '<div class="card class-card" data-w="' + k + '">' +
+      return '<div class="card class-card" data-w="' + k + '" role="button" tabindex="0">' +
         '<div class="nm">' + w.nm + '</div>' +
         heroPreviewHTML(spriteKey, 'class-sprite') +
         '<div class="nt">' + w.desc + '</div>' +
@@ -9933,7 +10031,15 @@ function startScreen(){
   drawGraveIcon();
   bindLanguageSwitch();
   localizeTree($('#ov'));
-  document.querySelectorAll('#ov .card').forEach(el => el.onclick = () => subclassScreen(el.dataset.w));
+  document.querySelectorAll('#ov .class-card').forEach(el => {
+    const openClass = () => subclassScreen(el.dataset.w);
+    el.onclick = openClass;
+    el.onkeydown = e => {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      e.preventDefault();
+      openClass();
+    };
+  });
   $('#shopb').onclick = () => shopScreen(startScreen);
   $('#constb').onclick = () => constellationScreen(startScreen);
   $('#graveb').onclick = graveyardScreen;

@@ -256,9 +256,11 @@ ok('наземный Разлом Пустоты — индексированн�
   c.tickBossSkill(e,0.02);
   ok('взрыв Разлома Пустоты наносит 40% max HP только один раз', Math.abs(p.hp-D.life*0.60)<0.001);
   ok('Разлом замедляет на 60% ровно на секунду', p.bossSlowT===1 && p.bossSlowMul===0.40);
-  ok('каждый наземный разлом завершает четырёхкадровая вспышка',
+  ok('каждый разлом и его вспышка используют только четырёхкадровый PNG',
     G.fx.filter(f=>f.t==='voidRiftBurst' && f.max===0.20).length===3 &&
-    /VOID_GROUND_RIFT_FRAMES\s*=\s*\[0,1,2,3\]/.test(html)); }
+    /VOID_GROUND_RIFT_FRAMES\s*=\s*\[0,1,2,3\]/.test(html) &&
+    !/pushTelegraphTrace\(\{shape:'rift'/.test(html) &&
+    !/fillStyle='#8e45e8'/.test(html)); }
 
 { const c=loadGame('./PolyGrind.html',{random:()=>0.99}); c.newGame('bow','keys');
   const G=c.__api.G, e=c.spawnEnemy('boss','minotaur'); e.armor=0;

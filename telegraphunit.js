@@ -20,16 +20,17 @@ ok('через половину окна заполнена ровно поло�
 ok('непосредственно перед ударом заполнение достигает единицы',c.telegraphFill(0)===1);
 ok('геометрия поддерживает круг и коридор',
   /spec\.shape==='corridor'/.test(html) && /ctx\.arc\(spec\.x,spec\.y,spec\.r/.test(html));
-ok('геометрия поддерживает прицел и разлом',
-  /spec\.shape!=='target'/.test(html) && /spec\.shape==='rift'/.test(html));
+ok('в общей геометрии больше нет линейного контура разлома',
+  !/spec\.shape==='rift'/.test(html));
 ok('Козлиный демон использует круг урона',
   /shape:'circle',kind:'damage'.*BOSS_GOAT_AOE.*slamWarn/s.test(html));
 ok('Бегемот использует жёлтый прицел приземления',
   /shape:'target',kind:'warning'.*jumpX.*jumpWarn/s.test(html));
 ok('Вампир использует два красных коридора',
   (html.match(/shape:'corridor',kind:'damage',x:T\.markX/g)||[]).length>=2);
-ok('Гнев Пустоты использует фиолетовые разломы',
-  /shape:'rift',kind:'control'.*r\.warn/s.test(html));
+ok('Гнев Пустоты рисует лужи только PNG-спрайтом',
+  /drawVoidGroundRift\(r\.x,r\.y,r\.r,1-r\.warn\/BOSS_VOID_WARN,0\.72\)/.test(html) &&
+  !/shape:'rift'/.test(html));
 ok('Минотавр использует красный коридор натиска',
   /shape:'corridor',kind:'damage',x:e\.x,y:e\.y,x2:ex,y2:ey/.test(html));
 ok('Сераф использует красный прицел луча',

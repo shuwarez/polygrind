@@ -43,6 +43,107 @@ RARE_ITEM_SOURCES = {
     "bone": ("image16.png", "648d5f3ac51dfe55200b16495710e9103c08b8d8fd5da1ff2e1c4783aa3c041d"),
 }
 
+AMULET_ICON_SOURCES = {
+    "calm": ("image1.png", "d5f823e555a771a138f4b33355c0bdf1eebc4d9e2536357ab2e8422463e4472f"),
+    "runner": ("image3.png", "ce5f0497bfe67173d07807cdefd1c9f259bf2d9cf34c4f53711961311c8e5e94"),
+    "pulse": ("image5.png", "c73838880520f6c4e943c026326b358d87a89fc3c0dac1a634dcd83defe7ec8c"),
+    "predator": ("image7.png", "7077c25cc802ad5024a4e2f1ffde4c91e41c8b7a8384f43e8070c61431ed4878"),
+    "fullplate": ("image9.png", "ab89a964422ab14b65adcde03dc6083f44bc9f44a5da343a1ebb55b9ac98b458"),
+    "lastplate": ("image11.png", "c0a23ce05776fc1c4acb917a18cd033b188d43a804f68010c4ce16cdd53b35f8"),
+    "steel": ("image13.png", "6d384f7c7c475f72ae6e518bb4cfa05018368093d0630548de6469af3a1d7a3f"),
+    "swift": ("image15.png", "047b1eb5dcc4083c6d6ede5ae8c617402a72921dc07380f2d52184ea8e06cf4a"),
+    "survive": ("image17.png", "8281bcbdfaaa687e1836a206c06956a54b3c6dda01ca5df991e82dd1ab409eac"),
+}
+
+GLOVE_ICON_SOURCES = {
+    "claws": ("image1.png", "c29414680621cce6a07ad2a1cbdfcc6365b0db9efb2a7e74fba96778d6eafe57"),
+    "thunder": ("image2.png", "53d7da64cf1f77161c1b2fe275ac8fb01860cab22db14ccd9fe892142c76a8d3"),
+    "ricochet": ("image3.png", "144d437da8305f3f915d2cdb550dd2bfd799458705d146537473d95542687f81"),
+    "brute": ("image4.png", "629bda317e76848a14cf9ffb1737b7260e1d7b46e76ad2c983bbbeaab13f5458"),
+    "riposte": ("image5.png", "ab06345f50fc5ff2cd0ff30901c30563996fe8d3340721e16a5b241f558bbe47"),
+    "critmass": ("image6.png", "7399a122d294eb87d98fba9cc31004104e8a2f7cdfa192ba07c044fa9b878101"),
+    "critchain": ("image7.png", "8fc579fc8a743e25930dfc81695f24c3128126a4dcc6c8b89d65d9303bc6ab04"),
+    "shove": ("image8.png", "1ac530e669f21d80af442bbf14db40cc080c635614b7702159feab52bda5372d"),
+}
+
+BOOT_ICON_SOURCES = {
+    "lava": ("image1.png", "e6c965825560c25e65400a3aaeae4e30d2f0105a34d9a4bbd796f1ec23c0770e"),
+    "frost": ("image2.png", "aea8833129ef1842a4bbde13c322398d32e6b2d50a37855fac1cead9c09c915d"),
+    "momentum": ("image3.png", "576e5bae1523770a1e1ddd22f9624f55d4f02e02b78ae023d28588d29dd2b9a9"),
+    "marathon": ("image4.png", "e216da7372c5d0b03a45574b960cadfefdbba00acb1535ec4c92c92817c030fb"),
+    "panic": ("image5.png", "6bbbcc0be212e9b06172703a139bb50b6b9f7ee9957cd4333b767cd376dbaed7"),
+    "sprint": ("image6.png", "dffbf7a33ea9a3c38eb852e3c24ddee4dd5b53d996f2fb4790ef8d4c3ede73fd"),
+}
+
+RING_ICON_SOURCES = {
+    "exec": ("image1.png", "e0c7de3d0bdc536cf8c34608c8a8475665799c0800be9b3b64d5ceb825cdc4c4"),
+    "duel": ("image2.png", "35abc9452baa6894c11bef36377211ea69efaaa0fc8e8e547876e536506a5748"),
+    "reaper": ("image3.png", "a8dc8aef9b54d04c1ed0055268887ca545ff777010da04a85d2b380a29871783"),
+    "siege": ("image4.png", "1e7df305183e9246d330d90974d53c1a1dbb63c0dad798397ee4d79411dee17e"),
+    "headsman": ("image5.png", "8db1860f3b129bc351881a712496511aa3f32a95501f697f76044c6ef510f11f"),
+    "critaim": ("image6.png", "7e635d6658399e450b86ac4132558764c082944a60c1a09c24a98fa267cfc12b"),
+    "vacuum": ("image7.png", "95173b44e4d4d26a73ec9cee148cdceabcf93e75d6670852c5ed0c1e490de798"),
+    "looter": ("image8.png", "10f21cc52387ea47d56ecbfb385489fb5018fcf106a554f91d0a682eb600a1f0"),
+    "arrow": ("image9.png", "b5f6488c703e280e7208eea2ade8df0028aeca62c15e21c2e73ed5fe6fc241e5"),
+}
+
+RELIC_ICON_SOURCES = {
+    "trinity": ("image1.png", "e38e8b5869d714057cbf4c7bd736e9d4420edf8b09616a69ffd155d9661c9f20"),
+    "overload": ("image2.png", "c5d383b5bb96115e711ea7693d1187c4f063ab91174e8c2708425da5a4e176b8"),
+    "breath": ("image3.png", "11062bd57d1439d988fa68e782ebcbae0fa7c2bb559ad5523401e58b63007d26"),
+    "gravity": ("image4.png", "7567236c3240225d2a63ef16d559d8a88a8385dff2ebb2bf4b560d5fac8b3342"),
+    "warskel": ("image5.png", "698033d26ced77b35d10893063a7003a7eaaf15ab790e7d4ea2720ef7daa9206"),
+    "goldbag": ("image6.png", "d087aa014ec95cd0a8d5fd6c93a821ce5f5352d8bad1320f67ce388a7e681b17"),
+    "xpbag": ("image7.png", "d65157d7d189d5d9f7504bf19b8de886b4508db96e9339e9cf748ad7c63a0581"),
+}
+
+# Ячейки master-листа 4×3, которые действительно используются в игре.
+# Первый ряд начинается с elite, третий содержит rage/pack/hit/hunter mark —
+# эти пять не входят в элементальную индикацию и намеренно не упаковываются.
+ENEMY_STATUS_ICON_CELLS = (
+    ("burning", 1, 0),
+    ("poison", 2, 0),
+    ("plague", 3, 0),
+    ("chilled", 0, 1),
+    ("frozen", 1, 1),
+    ("shocked", 2, 1),
+    ("bleeding", 3, 1),
+)
+
+TOTEM_SPRITE_SOURCES = {
+    "fire": (
+        ("image1.png", "c95d807fc271616665f8593342241247b23c1e48cac1e3d6ee887ace7788fdd8"),
+        ("image2.png", "491d750803967e1d5f31025d5f1f88e65fcf1c4c50f1d1d67f259139058afcdf"),
+        ("image3.png", "acefd11b4be9b68d1c76345f8699521c987e740b87cc938c793d5838bc27e7a0"),
+        ("image4.png", "43ee9564d9e402f0b86b810c4c582c504c189c0cfd6ead57e9dd0f5aff45c929"),
+    ),
+    "freeze": (
+        ("image5.png", "98fcc540c5376c20201263971f9cedc220d162b2ec37fb3dc694403b317ef30a"),
+        ("image6.png", "333577aee51a4849b83dee95b9fa5259e9e0bfeae9f6a153c2d24a9e5e1a2f89"),
+        ("image7.png", "bedca9acc53f8057bf05d8ddeb03fff2bb65cfea097e86fba78084b6939d516e"),
+        ("image8.png", "c1ecbb7df94f1394f621e0e89146097c613f504bbb269f4f895304d65d5a1e96"),
+    ),
+    "poison": (
+        ("image9.png", "e50f2bf0a75f16dae4922ef850f6828bb1948910bba8fd9cf57cc51106fe949c"),
+        ("image10.png", "8ef19a78fe4e0faa988aee78fcaa3752fd862d028e52a1d648174d66c75cc54b"),
+        ("image11.png", "a1620f84a6cd8ca1e9fca50f9cbca7edac0f357c8dd9dfc77906370e7645f47f"),
+        ("image12.png", "9c381c810369be3b6106da322b15bffa432359ada4562a144e7e3638fc622bb6"),
+    ),
+    "blood": (
+        ("image13.png", "5e781e54703c931161eca232821db65b490fe5eb8178e1a30e44b23751d00478"),
+        ("image14.png", "807a1c6741bd8142e9eb9f71cc8485c64b83617d734c1f30d9749910ba3bcf5b"),
+        ("image15.png", "6515661b016316913d278b5f035f261d319d7bd06a2ac838907b702a68d2b70c"),
+        ("image16.png", "5f29d917ae21b4a84e2832954c071fa7a0c344495cca06d471115274418fba7c"),
+    ),
+}
+
+LIGHTNING_TOTEM_SPRITE_SOURCES = (
+    ("image1.png", "56c0a666299bf7a947963b6774853137471236e5d3800deac7beaa85a95bdfff"),
+    ("image2.png", "87a35500fc68a097eebc0b97e9c3f0e5c3b04142c0434fcdb273266646d1f75e"),
+    ("image3.png", "6bf7dfe693a8525b07ce78a06afb513b6989e7d32b132b1e94876c85722f005a"),
+    ("image4.png", "fd2f76dc62fd20da2c121caab4b7ffd1bd065ca738fbe7d630825a2a7704ced7"),
+)
+
 
 def indexed_png(image: Image.Image) -> bytes:
     """Свести RGBA к 15 непрозрачным цветам + одному прозрачному индексу."""
@@ -145,6 +246,49 @@ def rare_item_sprite(path: Path) -> bytes:
     crop = crop.resize(size, Image.Resampling.NEAREST)
     frame = Image.new("RGBA", (24, 24))
     frame.alpha_composite(crop, ((24 - size[0]) // 2, (24 - size[1]) // 2))
+    return indexed_png(frame)
+
+
+def enemy_status_icon_sheet(path: Path) -> bytes:
+    """Вырезать семь элементальных иконок из master 4×3 в лист 112×16."""
+    source = Image.open(path).convert("RGBA")
+    if source.width % 4 or source.height % 3:
+        raise SystemExit("Master индикаторов должен быть ровной сеткой 4×3")
+    cell_w, cell_h = source.width // 4, source.height // 3
+    sheet = Image.new("RGBA", (16 * len(ENEMY_STATUS_ICON_CELLS), 16))
+    for index, (_, column, row) in enumerate(ENEMY_STATUS_ICON_CELLS):
+        cell = source.crop((column * cell_w, row * cell_h,
+                            (column + 1) * cell_w, (row + 1) * cell_h))
+        sheet.alpha_composite(fit_frame(cell, (16, 16), padding=1), (index * 16, 0))
+    return indexed_png(sheet)
+
+
+def floor_portal_sprite_sheet(path: Path) -> bytes:
+    """Проверить и упаковать бесшовный лист портала 8×64 без масштабирования."""
+    source = Image.open(path).convert("RGBA")
+    if source.size != (512, 64):
+        raise SystemExit(
+            f"Лист портала должен быть 512×64 (8 кадров по 64×64), получено {source.size}")
+    for index in range(8):
+        frame = source.crop((index * 64, 0, (index + 1) * 64, 64))
+        if not frame.getchannel("A").getbbox():
+            raise SystemExit(f"Лист портала: кадр {index + 1} пуст")
+    return indexed_png(source)
+
+
+def totem_sprite(path: Path) -> bytes:
+    """Свести один rank-specific Master к прозрачной индексированной иконке 24×24."""
+    source = Image.open(path).convert("RGBA")
+    alpha = source.getchannel("A").point(lambda value: 255 if value >= 16 else 0)
+    box = alpha.getbbox()
+    if not box:
+        raise SystemExit(f"Пустой Master тотема: {path}")
+    crop = source.crop(box)
+    ratio = min(22 / crop.width, 22 / crop.height)
+    size = (max(1, round(crop.width * ratio)), max(1, round(crop.height * ratio)))
+    crop = crop.resize(size, Image.Resampling.NEAREST)
+    frame = Image.new("RGBA", (24, 24))
+    frame.alpha_composite(crop, ((24 - size[0]) // 2, 23 - size[1]))
     return indexed_png(frame)
 
 
@@ -648,17 +792,22 @@ def elite_variant_sheet(path: Path) -> bytes:
 
 def install_object_payloads(html: str, object_name: str, payload: dict[str, str]) -> str:
     """Добавить или заменить data URI внутри автономного JS-объекта."""
-    match = re.search(rf"const {re.escape(object_name)} = \{{.*?\n\}};", html, flags=re.S)
-    if not match:
-        raise SystemExit(f"Не найден объект {object_name}")
+    matches = list(re.finditer(
+        rf"const {re.escape(object_name)} = \{{.*?\n\}};", html, flags=re.S))
+    if len(matches) != 1:
+        raise SystemExit(f"Объект {object_name}: ожидался один якорь, найдено {len(matches)}")
+    match = matches[0]
     body = match.group(0)
     for key, value in payload.items():
         entry = f"  {key}:'data:image/png;base64,{value}',"
         pattern = rf"^\s*{re.escape(key)}:'data:image/png;base64,[^']+',\s*$"
-        if re.search(pattern, body, flags=re.M):
+        key_matches = list(re.finditer(pattern, body, flags=re.M))
+        if len(key_matches) == 1:
             body = re.sub(pattern, entry, body, count=1, flags=re.M)
+        elif len(key_matches) > 1:
+            raise SystemExit(f"{object_name}.{key}: найдено несколько ключей")
         else:
-            body = body[:-3] + entry + "\n};"
+            body = body[:-3] + "\n" + entry + "\n};"
     return html[:match.start()] + body + html[match.end():]
 
 
@@ -785,6 +934,56 @@ def main() -> None:
                         help="записать 16 статичных иконок редких предметов 24×24 в outputs")
     parser.add_argument("--install-rare-item-sprites", action="store_true",
                         help="проверить SHA-256, упаковать и встроить 16 редких предметов в HTML")
+    parser.add_argument("--amulet-icon-dir", type=Path,
+                        help="каталог word/media с Master-иконками image1,3,…,17 из DOCX")
+    parser.add_argument("--build-amulet-icons", action="store_true",
+                        help="записать девять статичных Master-иконок амулетов 24×24 в outputs")
+    parser.add_argument("--install-amulet-icons", action="store_true",
+                        help="проверить SHA-256 и встроить девять Master-иконок амулетов в HTML")
+    parser.add_argument("--glove-icon-dir", type=Path,
+                        help="каталог word/media с восемью иконками перчаток image1.png–image8.png из DOCX")
+    parser.add_argument("--build-glove-icons", action="store_true",
+                        help="записать восемь статичных иконок перчаток 24×24 в outputs")
+    parser.add_argument("--install-glove-icons", action="store_true",
+                        help="проверить SHA-256 и встроить восемь иконок перчаток в HTML")
+    parser.add_argument("--boot-icon-dir", type=Path,
+                        help="каталог word/media с шестью иконками ботинок image1.png–image6.png из DOCX")
+    parser.add_argument("--build-boot-icons", action="store_true",
+                        help="записать шесть статичных иконок ботинок 24×24 в outputs")
+    parser.add_argument("--install-boot-icons", action="store_true",
+                        help="проверить SHA-256 и встроить шесть иконок ботинок в HTML")
+    parser.add_argument("--ring-icon-dir", type=Path,
+                        help="каталог word/media с девятью иконками колец image1.png–image9.png из DOCX")
+    parser.add_argument("--build-ring-icons", action="store_true",
+                        help="записать девять статичных иконок колец 24×24 в outputs")
+    parser.add_argument("--install-ring-icons", action="store_true",
+                        help="проверить SHA-256 и встроить девять иконок колец в HTML")
+    parser.add_argument("--relic-icon-dir", type=Path,
+                        help="каталог word/media с семью иконками реликвий image1.png–image7.png из DOCX")
+    parser.add_argument("--build-relic-icons", action="store_true",
+                        help="записать семь статичных иконок реликвий 24×24 в outputs")
+    parser.add_argument("--install-relic-icons", action="store_true",
+                        help="проверить SHA-256 и встроить семь иконок реликвий в HTML")
+    parser.add_argument("--enemy-status-icons", type=Path,
+                        help="master-лист 4×3 с иконками состояний противников")
+    parser.add_argument("--build-enemy-status-icons", action="store_true",
+                        help="вырезать семь элементальных состояний в лист 112×16")
+    parser.add_argument("--install-enemy-status-icons", action="store_true",
+                        help="собрать и встроить лист элементальных состояний в HTML")
+    parser.add_argument("--floor-portal", type=Path,
+                        help="готовый лист портала 512×64: восемь кадров по 64×64")
+    parser.add_argument("--build-floor-portal", action="store_true",
+                        help="упаковать восьмикадровый портал в outputs")
+    parser.add_argument("--install-floor-portal", action="store_true",
+                        help="упаковать и встроить анимацию портала завершения этажа")
+    parser.add_argument("--totem-sprite-dir", type=Path,
+                        help="word/media с 16 Master-спрайтами четырёх существующих тотемов")
+    parser.add_argument("--lightning-totem-sprite-dir", type=Path,
+                        help="word/media с четырьмя Master-спрайтами тотема молнии")
+    parser.add_argument("--build-totem-sprites", action="store_true",
+                        help="собрать 20 rank-specific иконок тотемов 24×24 в outputs")
+    parser.add_argument("--install-totem-sprites", action="store_true",
+                        help="проверить SHA-256 и встроить пять тотемов по четыре ранга")
     parser.add_argument("--build-menu-assets", action="store_true",
                         help="записать компактные прозрачные листы логотипа и факела в outputs")
     parser.add_argument("--install-menu-assets", action="store_true",
@@ -895,6 +1094,108 @@ def main() -> None:
         }, separators=(",", ":")))
         return
 
+    if args.build_enemy_status_icons or args.install_enemy_status_icons:
+        if not args.enemy_status_icons:
+            parser.error("индикаторы врагов требуют --enemy-status-icons")
+        if not args.enemy_status_icons.is_file():
+            parser.error(f"не найден master индикаторов: {args.enemy_status_icons}")
+        generated = enemy_status_icon_sheet(args.enemy_status_icons)
+        output_dir = ROOT / "outputs"
+        output_dir.mkdir(exist_ok=True)
+        path = output_dir / "enemy-elemental-status-icons-7f-optimized.png"
+        path.write_bytes(generated)
+        if args.install_enemy_status_icons:
+            html = HTML.read_text(encoding="utf-8")
+            value = base64.b64encode(generated).decode("ascii")
+            html, count = re.subn(
+                r"(const ENEMY_STATUS_ICON_DATA = ')[^']*(';)",
+                rf"\g<1>data:image/png;base64,{value}\2", html, count=1)
+            if count != 1:
+                raise SystemExit(
+                    f"ENEMY_STATUS_ICON_DATA: ожидалась одна замена, получено {count}")
+            HTML.write_text(html, encoding="utf-8", newline="\n")
+        print(json.dumps({"path": str(path), "bytes": len(generated),
+                          "size": Image.open(io.BytesIO(generated)).size,
+                          "keys": [key for key, _, _ in ENEMY_STATUS_ICON_CELLS]},
+                         separators=(",", ":")))
+        return
+
+    if args.build_floor_portal or args.install_floor_portal:
+        if not args.floor_portal:
+            parser.error("портал завершения этажа требует --floor-portal")
+        if not args.floor_portal.is_file():
+            parser.error(f"не найден лист портала: {args.floor_portal}")
+        generated = floor_portal_sprite_sheet(args.floor_portal)
+        output_dir = ROOT / "outputs"
+        output_dir.mkdir(exist_ok=True)
+        path = output_dir / "floor-completion-portal-8f-optimized.png"
+        path.write_bytes(generated)
+        if args.install_floor_portal:
+            html = HTML.read_text(encoding="utf-8")
+            value = base64.b64encode(generated).decode("ascii")
+            html, count = re.subn(
+                r"(const FLOOR_PORTAL_SPRITE_DATA = ')[^']*(';)",
+                rf"\g<1>data:image/png;base64,{value}\2", html, count=1)
+            if count != 1:
+                raise SystemExit(
+                    f"FLOOR_PORTAL_SPRITE_DATA: ожидалась одна замена, получено {count}")
+            HTML.write_text(html, encoding="utf-8", newline="\n")
+        print(json.dumps({"path": str(path), "bytes": len(generated),
+                          "size": Image.open(io.BytesIO(generated)).size,
+                          "frames": 8, "frameMs": 100},
+                         separators=(",", ":")))
+        return
+
+    if args.build_totem_sprites or args.install_totem_sprites:
+        if not args.totem_sprite_dir or not args.lightning_totem_sprite_dir:
+            parser.error("тотемы требуют --totem-sprite-dir и --lightning-totem-sprite-dir")
+        specs = dict(TOTEM_SPRITE_SOURCES)
+        specs["lightning"] = LIGHTNING_TOTEM_SPRITE_SOURCES
+        roots = {key: args.totem_sprite_dir for key in TOTEM_SPRITE_SOURCES}
+        roots["lightning"] = args.lightning_totem_sprite_dir
+        sources: dict[str, list[Path]] = {}
+        for key, entries in specs.items():
+            sources[key] = []
+            for filename, expected in entries:
+                path = roots[key] / filename
+                if not path.is_file():
+                    parser.error(f"тотем {key}: не найден {path}")
+                actual = hashlib.sha256(path.read_bytes()).hexdigest()
+                if actual != expected:
+                    raise SystemExit(
+                        f"тотем {key} {filename}: SHA-256 {actual}, ожидался {expected}")
+                sources[key].append(path)
+        generated = {key: [totem_sprite(path) for path in paths]
+                     for key, paths in sources.items()}
+        output_dir = ROOT / "outputs"
+        output_dir.mkdir(exist_ok=True)
+        paths = {key: [output_dir / f"totem-{key}-r{rank}-optimized.png"
+                       for rank in range(1, 5)] for key in generated}
+        for key, images in generated.items():
+            for path, data in zip(paths[key], images):
+                path.write_bytes(data)
+        if args.install_totem_sprites:
+            html = HTML.read_text(encoding="utf-8")
+            rows = []
+            for key, images in generated.items():
+                values = ",".join(
+                    f"'data:image/png;base64,{base64.b64encode(data).decode('ascii')}'"
+                    for data in images)
+                rows.append(f"  {key}:[{values}],")
+            body = "const TOTEM_SPRITE_DATA = {\n" + "\n".join(rows) + "\n};"
+            html, count = re.subn(r"const TOTEM_SPRITE_DATA = \{.*?\n\};",
+                                  body, html, count=1, flags=re.S)
+            if count != 1:
+                raise SystemExit(
+                    f"TOTEM_SPRITE_DATA: ожидалась одна замена, получено {count}")
+            HTML.write_text(html, encoding="utf-8", newline="\n")
+        print(json.dumps({
+            key: {"paths": [str(path) for path in paths[key]],
+                  "bytes": [len(data) for data in images], "size": [24, 24]}
+            for key, images in generated.items()
+        }, separators=(",", ":")))
+        return
+
     if args.build_rare_item_sprites or args.install_rare_item_sprites:
         if not args.rare_item_dir:
             parser.error("редкие предметы требуют --rare-item-dir")
@@ -917,13 +1218,162 @@ def main() -> None:
             html = HTML.read_text(encoding="utf-8")
             payload = {key: base64.b64encode(data).decode("ascii")
                        for key, data in generated.items()}
-            body = "const RARE_ITEM_SPRITE_DATA = {\n" + "\n".join(
-                f"  {key}:'data:image/png;base64,{value}',"
-                for key, value in payload.items()) + "\n};"
-            html, count = re.subn(r"const RARE_ITEM_SPRITE_DATA = \{.*?\n\};",
-                                  body, html, flags=re.S)
-            if count != 1:
-                raise SystemExit(f"RARE_ITEM_SPRITE_DATA: ожидалась одна замена, получено {count}")
+            html = install_object_payloads(html, "RARE_ITEM_SPRITE_DATA", payload)
+            HTML.write_text(html, encoding="utf-8", newline="\n")
+        print(json.dumps({
+            key: {"path": str(paths[key]), "bytes": len(data),
+                  "size": Image.open(io.BytesIO(data)).size}
+            for key, data in generated.items()
+        }, separators=(",", ":")))
+        return
+
+    if args.build_amulet_icons or args.install_amulet_icons:
+        if not args.amulet_icon_dir:
+            parser.error("иконки амулетов требуют --amulet-icon-dir")
+        sources = {key: args.amulet_icon_dir / filename
+                   for key, (filename, _) in AMULET_ICON_SOURCES.items()}
+        for key, path in sources.items():
+            if not path.is_file():
+                parser.error(f"амулет {key}: не найден {path}")
+            expected = AMULET_ICON_SOURCES[key][1]
+            actual = hashlib.sha256(path.read_bytes()).hexdigest()
+            if actual != expected:
+                raise SystemExit(f"амулет {key}: SHA-256 {actual}, ожидался {expected}")
+        generated = {key: rare_item_sprite(path) for key, path in sources.items()}
+        output_dir = ROOT / "outputs"
+        output_dir.mkdir(exist_ok=True)
+        paths = {key: output_dir / f"amulet-{key}-optimized.png" for key in generated}
+        for key, path in paths.items():
+            path.write_bytes(generated[key])
+        if args.install_amulet_icons:
+            html = HTML.read_text(encoding="utf-8")
+            payload = {key: base64.b64encode(data).decode("ascii")
+                       for key, data in generated.items()}
+            html = install_object_payloads(html, "RARE_ITEM_SPRITE_DATA", payload)
+            HTML.write_text(html, encoding="utf-8", newline="\n")
+        print(json.dumps({
+            key: {"path": str(paths[key]), "bytes": len(data),
+                  "size": Image.open(io.BytesIO(data)).size}
+            for key, data in generated.items()
+        }, separators=(",", ":")))
+        return
+
+    if args.build_glove_icons or args.install_glove_icons:
+        if not args.glove_icon_dir:
+            parser.error("иконки перчаток требуют --glove-icon-dir")
+        sources = {key: args.glove_icon_dir / filename
+                   for key, (filename, _) in GLOVE_ICON_SOURCES.items()}
+        for key, path in sources.items():
+            if not path.is_file():
+                parser.error(f"перчатки {key}: не найден {path}")
+            expected = GLOVE_ICON_SOURCES[key][1]
+            actual = hashlib.sha256(path.read_bytes()).hexdigest()
+            if actual != expected:
+                raise SystemExit(f"перчатки {key}: SHA-256 {actual}, ожидался {expected}")
+        generated = {key: rare_item_sprite(path) for key, path in sources.items()}
+        output_dir = ROOT / "outputs"
+        output_dir.mkdir(exist_ok=True)
+        paths = {key: output_dir / f"glove-{key}-optimized.png" for key in generated}
+        for key, path in paths.items():
+            path.write_bytes(generated[key])
+        if args.install_glove_icons:
+            html = HTML.read_text(encoding="utf-8")
+            payload = {key: base64.b64encode(data).decode("ascii")
+                       for key, data in generated.items()}
+            html = install_object_payloads(html, "RARE_ITEM_SPRITE_DATA", payload)
+            HTML.write_text(html, encoding="utf-8", newline="\n")
+        print(json.dumps({
+            key: {"path": str(paths[key]), "bytes": len(data),
+                  "size": Image.open(io.BytesIO(data)).size}
+            for key, data in generated.items()
+        }, separators=(",", ":")))
+        return
+
+    if args.build_boot_icons or args.install_boot_icons:
+        if not args.boot_icon_dir:
+            parser.error("иконки ботинок требуют --boot-icon-dir")
+        sources = {key: args.boot_icon_dir / filename
+                   for key, (filename, _) in BOOT_ICON_SOURCES.items()}
+        for key, path in sources.items():
+            if not path.is_file():
+                parser.error(f"ботинки {key}: не найден {path}")
+            expected = BOOT_ICON_SOURCES[key][1]
+            actual = hashlib.sha256(path.read_bytes()).hexdigest()
+            if actual != expected:
+                raise SystemExit(f"ботинки {key}: SHA-256 {actual}, ожидался {expected}")
+        generated = {key: rare_item_sprite(path) for key, path in sources.items()}
+        output_dir = ROOT / "outputs"
+        output_dir.mkdir(exist_ok=True)
+        paths = {key: output_dir / f"boot-{key}-optimized.png" for key in generated}
+        for key, path in paths.items():
+            path.write_bytes(generated[key])
+        if args.install_boot_icons:
+            html = HTML.read_text(encoding="utf-8")
+            payload = {key: base64.b64encode(data).decode("ascii")
+                       for key, data in generated.items()}
+            html = install_object_payloads(html, "RARE_ITEM_SPRITE_DATA", payload)
+            HTML.write_text(html, encoding="utf-8", newline="\n")
+        print(json.dumps({
+            key: {"path": str(paths[key]), "bytes": len(data),
+                  "size": Image.open(io.BytesIO(data)).size}
+            for key, data in generated.items()
+        }, separators=(",", ":")))
+        return
+
+    if args.build_ring_icons or args.install_ring_icons:
+        if not args.ring_icon_dir:
+            parser.error("иконки колец требуют --ring-icon-dir")
+        sources = {key: args.ring_icon_dir / filename
+                   for key, (filename, _) in RING_ICON_SOURCES.items()}
+        for key, path in sources.items():
+            if not path.is_file():
+                parser.error(f"кольцо {key}: не найден {path}")
+            expected = RING_ICON_SOURCES[key][1]
+            actual = hashlib.sha256(path.read_bytes()).hexdigest()
+            if actual != expected:
+                raise SystemExit(f"кольцо {key}: SHA-256 {actual}, ожидался {expected}")
+        generated = {key: rare_item_sprite(path) for key, path in sources.items()}
+        output_dir = ROOT / "outputs"
+        output_dir.mkdir(exist_ok=True)
+        paths = {key: output_dir / f"ring-{key}-optimized.png" for key in generated}
+        for key, path in paths.items():
+            path.write_bytes(generated[key])
+        if args.install_ring_icons:
+            html = HTML.read_text(encoding="utf-8")
+            payload = {key: base64.b64encode(data).decode("ascii")
+                       for key, data in generated.items()}
+            html = install_object_payloads(html, "RARE_ITEM_SPRITE_DATA", payload)
+            HTML.write_text(html, encoding="utf-8", newline="\n")
+        print(json.dumps({
+            key: {"path": str(paths[key]), "bytes": len(data),
+                  "size": Image.open(io.BytesIO(data)).size}
+            for key, data in generated.items()
+        }, separators=(",", ":")))
+        return
+
+    if args.build_relic_icons or args.install_relic_icons:
+        if not args.relic_icon_dir:
+            parser.error("иконки реликвий требуют --relic-icon-dir")
+        sources = {key: args.relic_icon_dir / filename
+                   for key, (filename, _) in RELIC_ICON_SOURCES.items()}
+        for key, path in sources.items():
+            if not path.is_file():
+                parser.error(f"реликвия {key}: не найдена {path}")
+            expected = RELIC_ICON_SOURCES[key][1]
+            actual = hashlib.sha256(path.read_bytes()).hexdigest()
+            if actual != expected:
+                raise SystemExit(f"реликвия {key}: SHA-256 {actual}, ожидался {expected}")
+        generated = {key: rare_item_sprite(path) for key, path in sources.items()}
+        output_dir = ROOT / "outputs"
+        output_dir.mkdir(exist_ok=True)
+        paths = {key: output_dir / f"relic-{key}-optimized.png" for key in generated}
+        for key, path in paths.items():
+            path.write_bytes(generated[key])
+        if args.install_relic_icons:
+            html = HTML.read_text(encoding="utf-8")
+            payload = {key: base64.b64encode(data).decode("ascii")
+                       for key, data in generated.items()}
+            html = install_object_payloads(html, "RARE_ITEM_SPRITE_DATA", payload)
             HTML.write_text(html, encoding="utf-8", newline="\n")
         print(json.dumps({
             key: {"path": str(paths[key]), "bytes": len(data),

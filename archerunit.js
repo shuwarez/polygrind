@@ -32,8 +32,14 @@ function arrowHit(o,age,{first=true}={}){
   ok('Элементальное пробитие открывается на 50% траектории',mods.find(m=>m.id==='archer.elemental_pierce').show());
   ok('у новых строк есть английские пары',o.c.__api.localizationMissing().length===0);
   const homing=mods.find(m=>m.id==='shape.homing');
-  ok('обычная карточка Самонаведения удалена из пула Лучника',
-    o.c.allowedClassesForMod(homing).join(',')==='wand',o.c.allowedClassesForMod(homing).join(','));
+  o.G.bag.add('homing','inc',61); o.c.recalc();
+  const last=o.c.rollModValue(homing,()=>0.999999);
+  o.G.bag.add('homing','inc',last); o.c.recalc();
+  o.G.bag.add('homing','inc',50); o.c.recalc();
+  ok('Самонаведение доступно только Магу и имеет точный потолок 100%',
+    o.c.allowedClassesForMod(homing).join(',')==='wand' && homing.cap===100 &&
+    last===39 && o.D.homing===1 && homing.hide(),
+    o.c.allowedClassesForMod(homing).join(',')+' · последний выбор +'+last+'%');
 }
 function fixed(o){o.D.baseMin=o.D.baseMax=100;o.D.elem={fire:0,cold:0,lit:0,poi:0};o.D.incAll=0;o.D.moreAll=1;o.D.critCh=o.D.superCh=o.D.dblHit=o.D.knock=0;return o;}
 
