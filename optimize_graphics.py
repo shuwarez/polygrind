@@ -215,35 +215,45 @@ CLASS_FRAME_SOURCES = {
 }
 
 SUBCLASS_FRAME_SOURCES = {
-    "thief": ("word/media/image6.png", "aac7565a71d448c459e52d31aeb31c0c98c53e94302ef6776658a4480c416c56"),
-    "hunter": ("word/media/image8.png", "577a58526c4a2d8b0e4df3d53e6135e92b8ef35f3788b5488cb7d34c5cf6c343"),
-    "dancer": ("word/media/image10.png", "105a7d61ecfa288265dbb9c8f1c30796f1b3271ccf1aaac4828bb2e11c9c3744"),
-    "destroyer": ("word/media/image12.png", "e6226bc764879ceb93f50c52373312c6b2565c0f8d90037132c0eb819362fce2"),
-    "multiplier": ("word/media/image14.png", "8dfeb283cac5d7d6db27263747b2cd94db317b0b698ea40836fcf7a55815778e"),
-    "elementalist": ("word/media/image16.png", "2591fa0f92fa302cf33c00d7c8bbc3720ac59c41c4fbe42ff39bbb60692f0371"),
-    "graverobber": ("word/media/image18.png", "93d078a5ae5176bc764c97981adc85bcd1b9472fc129401ec43b4b02e821018e"),
-    "animator": ("word/media/image20.png", "2f2526056723328d3cb0e6d5a3f289b4b413b810e81c462a2ff220148d19ad4d"),
-    "venomancer": ("word/media/image22.png", "4360b83868f0b2bbb0a3234b0512afabd6d51ae58bc6149ac579ceedf8dcbfd7"),
-    "berserker": ("word/media/image24.png", "3dd49fb6a84112afc38ffd561b6e8689b7f08fbe9ac4f8a7cb17af3b77c0ddfd"),
-    "guardian": ("word/media/image26.png", "34d91e55a60ed729cbd87a7440abb2b7cf73ea7819f0d83f8508a00fdfa8b4d0"),
-    "swordmaster": ("word/media/image28.png", "2aa72b31b7cc30da73c9563c0305a0fcf7dfccc4c0acdae95b979ec0ff09f02b"),
+    "thief": ("thief.png", "e048b609183aecdd227e5c5f7660eebae404ae7b4f52cfa174372f1094f9bbe4"),
+    "hunter": ("hunter.png", "2646734140caf0f76b3fdf67753de267b2a7d739d04a585a1f36f95e1443f5f1"),
+    "dancer": ("dancer.png", "688f33cef2175494ef5d7fa0ddaac5f66272ed21a78c864fb6c0e3b383e1756e"),
+    "destroyer": ("destroyer.png", "047d599d33624b4189e58c882047930c457b406572c8ba1beefbd6084408100b"),
+    "multiplier": ("multiplier.png", "cf9832fef0432815558e3a1aa1c1d0976d31f01d7118b292da7593fc604d372b"),
+    "elementalist": ("elementalist.png", "ad68ce59963084f48eaac69a1141a148da28f351421319b7677b19c4cf6c48c4"),
+    "graverobber": ("graverobber.png", "0906839f93a0bdca56dca26cba38d044c4f2ccbf86ee9c2d0205126127dfd2d4"),
+    "animator": ("animator.png", "a9fda6732ac4c70e23d51e8612baea321e24fef99340fbcb8c321e7bc4833192"),
+    "venomancer": ("venomancer.png", "bdd868a23304abbd37f617b8b7feeecfb480ea4418ad47e5e81d7bdfc5b8497e"),
+    "berserker": ("berserker.png", "39959c78dbb3a54a77d1d9f640ac502431c1600e0d37655b7b4045bcfaa0ea12"),
+    "guardian": ("guardian.png", "e8a963e9e8176992347ab6d7f9e0245d782724a26d3e87d429993fc85ecdda7e"),
+    "swordmaster": ("swordmaster.png", "0c5b1eb557420111b2185b5fe82d590e6a74f2f3d9035dc977e65c8020436f2a"),
 }
 
-# Готовые игровые листы из отдельного handoff: четыре кадра 32×32, P-mode,
-# прозрачный индекс 0. Их нельзя масштабировать или повторно квантизировать.
+# 10-кадровые горизонтальные листы эмблем из handoff главного меню. Каждый
+# исходный кадр 256×256 уменьшается до 128×128: этого достаточно для HiDPI-
+# превью 96 CSS px, а декодированная память снижается в четыре раза.
+CLASS_ICON_SHEET_SOURCES = {
+    "archer": ("word/media/image7.png", "6a36a2ed8651dcabbaea497954ef1293ce4235327027967b4a33a42f11011a01"),
+    "mage": ("word/media/image8.png", "b8cd42482e6788eee8696daed421fb74a8545489109f4032cafec14b62855433"),
+    "necromancer": ("word/media/image9.png", "d056f844be0e3479fcba387fcacbac77127c029f66ef6b4c6daebb8c8c1415e9"),
+    "warrior": ("word/media/image10.png", "0b8b2c4c507dfb371d11322dacbb61ad239135414a10d3cbd08505b06f8a7637"),
+}
+
+# Готовые игровые листы V3: восемь кадров движения 32×32, P-mode и прозрачность.
+# Каждый кадр нормализован по центру и линии ног; повторный ресэмплинг запрещён.
 SUBCLASS_HERO_SPRITE_SOURCES = {
-    "thief": ("word/media/image1.png", "0d41142a3ce95cd0afd2ded46df8725e09d7f3f443c5a8ebd843a5b9cb13f8cb"),
-    "hunter": ("word/media/image2.png", "6ec80cef6fc002a2a7832d690ab4ae682999f2866124e7dfaf387024debfb35f"),
-    "dancer": ("word/media/image3.png", "29dff041fa2ccc593ddde33fdab12cb7fca30168fd5a789ad3338a777e1eccb3"),
-    "destroyer": ("word/media/image4.png", "2165fb363a659355b1cb69003e1ffaddd5cdbdebabb03408ac9f3ab28e942bf1"),
-    "multiplier": ("word/media/image5.png", "6c9bf2ae8cd0f7c1e864b0e9289dd265b14599cd44438d61759ce96ee6e8e73a"),
-    "elementalist": ("word/media/image6.png", "57ff07d24a9a6399b439fe5aeda8a75d656118d832bbd86d3f0172725979f516"),
-    "graverobber": ("word/media/image7.png", "3668cdc935759aac8eaa179ff34626d6ab39956047bce65680778c7da6870d90"),
-    "animator": ("word/media/image8.png", "45ea989633631a621c46df3bc20e7158faa5e8d7e84576897a0d30596618ab5e"),
-    "venomancer": ("word/media/image9.png", "d9019bfef4115a909b93ae222c1f3b4f3c05b04887f16caa764ad90c698486b7"),
-    "berserker": ("word/media/image10.png", "20f5ac623f299830ad37f8d046b3ca9f491291de71ee04eca1d65e29bc95b86e"),
-    "guardian": ("word/media/image11.png", "6d862cdf3b16d9e2bda9e52e18f0dd1c5f6f187ae15543d212c32a00159d7333"),
-    "swordmaster": ("word/media/image12.png", "14a1f6cbd767e82529bb9048aa1659c42f9ed4cab08ea4f57c090211ff5957f2"),
+    "thief": ("thief.png", "7b03378a3b4d624371e89cd4c6da3819e663d3257482bdc61340a6fc28d7882d"),
+    "hunter": ("hunter.png", "bb3882f70d1787c9cd28f5e567b94462e21eb1292aa0993fee9726b7ecee71a0"),
+    "dancer": ("dancer.png", "cd63754e504006157df876bbc150a5cad58948e8c680e3035034539e806d5b52"),
+    "destroyer": ("destroyer.png", "fd414ed3bc97beee9ded388427d1322c3bf0a743b77192a87e2bc6e37877b5ae"),
+    "multiplier": ("multiplier.png", "a0513a4712095db262aa06c9b20cdd574856a155924683c31d449ce9ce22ca52"),
+    "elementalist": ("elementalist.png", "d2e0e1a7680b11e54e0117e145f1f15bfb622484874cda11254f822159dfbe9d"),
+    "graverobber": ("graverobber.png", "886f97b9fa797cefd5999915cb12aecdf5ba3f160e5a354cc372dbd5a6931cd0"),
+    "animator": ("animator.png", "e89896abe45abe075fecfa661bec19ec0b59678f1e5aac1af8b0d227f915224e"),
+    "venomancer": ("venomancer.png", "ecd971a51e950baaed01b8336b7b0047ea6191e7169a571fd80acb398bf7b8c1"),
+    "berserker": ("berserker.png", "dcf24fbc4fb2aa41c30651dffd348cad05f508f135b861bb3bbb0c59053643c2"),
+    "guardian": ("guardian.png", "f962e140ef841adbb21c6e708e8dd0d1a5d697cde5433d6a7d6ccc98118416f4"),
+    "swordmaster": ("swordmaster.png", "452aed250255aa5c3839a5e1b3759dc977e2fcae2a14063a5381771e4444c628"),
 }
 
 # Готовые листы из handoff системы крови. Они уже имеют игровой размер,
@@ -256,10 +266,50 @@ BLOOD_SPRITE_SOURCES = {
     "mist": ("blood_mist_4f.png",
              "20373938f43fbb76cc12cb561dda6608d79fc55a3c5f7f15187bf350308bd645",
              (256, 64)),
+    "critSpray": ("blood_crit_spray_4f.png",
+                  "41a610189de18e62c0e5ae5566a0809fc237f7d3fd37c37de5fbef107e3e122b",
+                  (128, 32)),
     "decals": ("blood_decal_atlas_8x.png",
                "cd0ef52397dfed2e376f05545221fe14b136b678d106128ce0d1e11bafcbf174",
                (256, 128)),
 }
+
+# Статичные трупы из handoff DOCX. Исходники уже имеют конечные игровые
+# размеры и прозрачность; встраиваются побайтно, без ресэмплинга и перекраски.
+CORPSE_SPRITE_SOURCES = {
+    "blob": ("word/media/image1.png", "963811c5bc160f7f72fb9b76dfb9d10fa09ecf70afe8bf98d3206bc65140f8ff", (96, 54)),
+    "runner": ("word/media/image2.png", "26a786b7843366d311026a33cef0b0e4b3c0c368b239793ca3776aa9c26860cd", (96, 46)),
+    "tank": ("word/media/image3.png", "a5cc79b611798357f3f2b271420e88e61842a3fb3a7c512a5b916a9d0f0e3052", (96, 51)),
+    "shooter": ("word/media/image4.png", "a1063b45f0540c03a3795c1410d8ace3edc474709a5767accb3ea484beffe0aa", (84, 64)),
+    "frostWolf": ("word/media/image5.png", "982b2b39a6b6cb73ed99d6fa1ef746e24e0cbdc520308b80794752cfa6569542", (112, 54)),
+    "toxicRunner": ("word/media/image6.png", "1ef650ae929475f113a81cafa9e7c08cab445b04c7c0ac173c14d949f8a6c4cd", (112, 53)),
+    "cursedRogue": ("word/media/image7.png", "ad220e78f5b966050b6bac9c8ffbe1c9938df901e54fad1f59e36447a2301e4f", (112, 45)),
+    "skeletonWarrior": ("word/media/image8.png", "8b6b1652563652c61b9544d0b50c48566938e493dedc4fb015b97c1f78d06f57", (112, 50)),
+    "blightGrunt": ("word/media/image9.png", "39ee92d7a1600564ba9c3f38b1afddcd0215503f5e6941eaaad7d1ac233dbb33", (112, 52)),
+    "boneGargoyle": ("word/media/image10.png", "cbf3f3284badf41f3370dbf9b174483d724f9f4e441ba1fd643c1026a350c536", (112, 53)),
+    "fallenPyromancer": ("word/media/image11.png", "2da58035f23a29e4eff5c4d3918065bc24ee26fc2f2026afefdd909c4401ff07", (112, 68)),
+    "beholderSlave": ("word/media/image12.png", "7cc0678b49693c2704449da2a4f987cb785f0ff284400f7c391127556e50ffc9", (112, 67)),
+    "skeletonCrossbow": ("word/media/image13.png", "3a3c6ba3d96bf206f434c6495001f3906dd39f05c582ca71362b2e0a5ec53c24", (112, 46)),
+    "forgottenGuard": ("word/media/image14.png", "5ced20c539674ff3da260995a1e47434a8b6aa05f2e631d641aa2bcb954eb1d8", (112, 63)),
+    "abyssalExecutioner": ("word/media/image15.png", "0980449c06fbfb0eb75d1ed7926a777ee960923ae14932973ff16b14f95922bf", (112, 52)),
+    "plagueOgre": ("word/media/image16.png", "f682f7cf852de7efa26d93bd7751ba4aac3a5801738ae87fc89f662f8772d52e", (112, 57)),
+    "lich": ("word/media/image17.png", "075540628a321e45f6b41be83d8a8316c3538258aa511b771c3e5c2def27d071", (144, 60)),
+    "goat": ("word/media/image18.png", "a1f7accc304852d1f146d60bbeab1bc10921ad0bbecbe96a41a4942286594d84", (144, 68)),
+    "plague": ("word/media/image19.png", "099dd0954bda603460de1deb0748472f4a5bc58435c4af7a19b31d3f8c3cdced", (144, 66)),
+    "greed": ("word/media/image20.png", "f4f5ee9cd8b0cd2e95c75d4a0105d9741a4f44e45212ad3407a9c6541a7b41b0", (144, 66)),
+    "executioner": ("word/media/image21.png", "2b129f86f31538db01c34248bfa642245f9364cc74b9a765a3b83cc67651204b", (144, 57)),
+    "tyrant": ("word/media/image22.png", "322f090f64709183311f6a42e2cf421cc7600f2ac3edd9eb316f217e08e1cd69", (144, 71)),
+    "grave": ("word/media/image23.png", "5093fcdc82a92069bfe4b5efbb0b43d094820d9104aa59c8a153dcfcc83b48c0", (144, 62)),
+    "behemoth": ("word/media/image24.png", "88557d38cfa09f8c59db25e6354f30b92f2544c35527975742f6f251bcde531c", (144, 71)),
+    "vampire": ("word/media/image25.png", "de18106d4258c14421f1c393e9e17f2bebc896c0282135bf04549765c319216a", (144, 64)),
+    "voidwrath": ("word/media/image26.png", "29113e96500d32fc71a62adef002939211e315774dff185dba8bcb4af5c077ef", (144, 70)),
+    "minotaur": ("word/media/image27.png", "ed27cbf70777989bc4e1fbc15f25b5d6ac5543be223edd9658ae0965195ba7b7", (144, 67)),
+    "seraph": ("word/media/image28.png", "3795c89c4e174db3674735f7bd9299b49803aabf1e1a8451dbf5d1792719db4b", (144, 66)),
+    "matriarch": ("word/media/image29.png", "f41a5f0b7ce5428b54d3556b928d0f8ba1e993adad536391cd6b29736cc311f2", (144, 64)),
+    "demonqueen": ("word/media/image30.png", "b4ac1721a88e4ce4b09023885a6dc6f77d66463004ff5b1295754a7120f9f607", (144, 60)),
+}
+
+CORPSE_PUDDLE_ATLAS_SHA256 = "9236e97ebaf2e4cee306cf305d5eaaae47b2cdc1857b7b75c19cc9efc3f20049"
 
 SHOP_ICON_ATLAS_SOURCE_SHA256 = "f05fb7c14b4e46e542de12f103c8f8a41c059c7410211694b6408641a51843ad"
 
@@ -325,6 +375,19 @@ def indexed_rgba_png(image: Image.Image, colors: int = FRAME_PALETTE_COLORS) -> 
     # но итоговый PNG всё равно остаётся индексированным color type 3.
     pal.save(buffer, "PNG", optimize=True, compress_level=9, bits=8)
     return buffer.getvalue()
+
+
+def class_icon_sheet(source: Image.Image) -> bytes:
+    """Уменьшить 10 кадров эмблемы отдельно и собрать компактный лист 1280×128."""
+    rgba = source.convert("RGBA")
+    if rgba.size != (2560, 256):
+        raise ValueError(f"ожидался лист 2560×256, получен {rgba.size}")
+    sheet = Image.new("RGBA", (1280, 128))
+    for frame_index in range(10):
+        frame = rgba.crop((frame_index * 256, 0, (frame_index + 1) * 256, 256))
+        frame = frame.resize((128, 128), Image.Resampling.LANCZOS)
+        sheet.alpha_composite(frame, (frame_index * 128, 0))
+    return indexed_rgba_png(sheet)
 
 
 def fit_frame(source: Image.Image, size: tuple[int, int], padding: int = 1) -> Image.Image:
@@ -1253,22 +1316,34 @@ def main() -> None:
                         help="записать переданные прозрачные листы логотипа и/или факела в outputs")
     parser.add_argument("--install-menu-assets", action="store_true",
                         help="собрать переданные листы меню и встроить их data URI в автономный HTML")
+    parser.add_argument("--class-icon-docx", type=Path,
+                        help="DOCX handoff с четырьмя 10-кадровыми эмблемами классов")
+    parser.add_argument("--install-class-icon-sheets", action="store_true",
+                        help="проверить, уменьшить и встроить эмблемы классов в главное меню")
     parser.add_argument("--class-frame-docx", type=Path,
                         help="DOCX handoff с оригинальными V2-рамками классов")
     parser.add_argument("--install-class-frames", action="store_true",
                         help="проверить и встроить четыре V2-рамки классов в автономный HTML")
-    parser.add_argument("--subclass-frame-docx", type=Path,
-                        help="DOCX handoff с оригинальными рамками двенадцати подклассов")
+    parser.add_argument("--subclass-frame-asset-dir", type=Path,
+                        help="каталог с 12 готовыми рамками подклассов 320×400")
     parser.add_argument("--install-subclass-frames", action="store_true",
                         help="проверить и встроить двенадцать рамок подклассов в автономный HTML")
-    parser.add_argument("--subclass-hero-docx", type=Path,
-                        help="DOCX handoff с 12 готовыми четырёхкадровыми моделями подклассов")
+    parser.add_argument("--subclass-hero-asset-dir", type=Path,
+                        help="каталог с 12 готовыми восьмикадровыми листами подклассов 256×32")
     parser.add_argument("--install-subclass-hero-sprites", action="store_true",
                         help="без ресэмплинга проверить и встроить 12 моделей подклассов в HTML")
     parser.add_argument("--blood-asset-dir", type=Path,
                         help="каталог assets из handoff системы крови")
     parser.add_argument("--install-blood-assets", action="store_true",
                         help="проверить и без ресэмплинга встроить три листа крови в HTML")
+    parser.add_argument("--corpse-docx", type=Path,
+                        help="DOCX handoff с 30 отдельными прозрачными спрайтами трупов")
+    parser.add_argument("--install-corpse-sprites", action="store_true",
+                        help="проверить и без ресэмплинга встроить 30 трупов в HTML")
+    parser.add_argument("--corpse-puddle-asset-dir", type=Path,
+                        help="каталог с оптимизированным атласом шести кровавых луж")
+    parser.add_argument("--install-corpse-puddles", action="store_true",
+                        help="проверить и встроить атлас луж 6×64 в HTML")
     parser.add_argument("--optimize-embedded-frames", action="store_true",
                         help="переупаковать уже встроенные рамки в индексированные PNG на 128 цветов")
     parser.add_argument("--shop-icon-atlas", type=Path,
@@ -1367,6 +1442,45 @@ def main() -> None:
                         help="добавить шесть ranged/tank разновидностей элиты в автономный HTML")
     args = parser.parse_args()
 
+    if args.install_class_icon_sheets:
+        if not args.class_icon_docx or not args.class_icon_docx.is_file():
+            parser.error("эмблемы классов требуют существующий --class-icon-docx")
+        payload: dict[str, str] = {}
+        source_bytes = 0
+        optimized_bytes = 0
+        with zipfile.ZipFile(args.class_icon_docx) as archive:
+            for class_name, (member, expected_hash) in CLASS_ICON_SHEET_SOURCES.items():
+                data = archive.read(member)
+                actual_hash = hashlib.sha256(data).hexdigest()
+                if actual_hash != expected_hash:
+                    raise SystemExit(
+                        f"эмблема {class_name}: SHA-256 {actual_hash}, ожидался {expected_hash}")
+                image = Image.open(io.BytesIO(data))
+                if image.size != (2560, 256) or image.mode != "RGBA":
+                    raise SystemExit(
+                        f"эмблема {class_name}: ожидался RGBA 2560×256, получен {image.mode} {image.size}")
+                optimized = class_icon_sheet(image)
+                payload[class_name] = base64.b64encode(optimized).decode("ascii")
+                source_bytes += len(data)
+                optimized_bytes += len(optimized)
+        html = HTML.read_text(encoding="utf-8")
+        if "const CLASS_ICON_SHEET_DATA = {" not in html:
+            anchor = "const CLASS_FRAME_DATA = {"
+            if anchor not in html:
+                raise SystemExit("не найден якорь CLASS_FRAME_DATA для эмблем классов")
+            html = html.replace(anchor, "const CLASS_ICON_SHEET_DATA = {\n};\n\n" + anchor, 1)
+        html = install_object_payloads(html, "CLASS_ICON_SHEET_DATA", payload)
+        HTML.write_text(html.rstrip("\n") + "\n", encoding="utf-8", newline="\n")
+        print(json.dumps({
+            "installed": sorted(payload),
+            "sourceBytes": source_bytes,
+            "optimizedBytes": optimized_bytes,
+            "decodedBytes": len(payload) * 1280 * 128 * 4,
+            "paletteColors": FRAME_PALETTE_COLORS,
+            "target": str(HTML),
+        }, ensure_ascii=False))
+        return
+
     if args.optimize_embedded_frames:
         html = HTML.read_text(encoding="utf-8")
         html, class_stats = optimize_embedded_frame_family(
@@ -1420,6 +1534,70 @@ def main() -> None:
         }, ensure_ascii=False))
         return
 
+    if args.install_corpse_sprites:
+        if not args.corpse_docx or not args.corpse_docx.is_file():
+            parser.error("трупы требуют существующий --corpse-docx")
+        payload: dict[str, str] = {}
+        source_bytes = 0
+        with zipfile.ZipFile(args.corpse_docx) as archive:
+            for key, (member, expected_hash, expected_size) in CORPSE_SPRITE_SOURCES.items():
+                data = archive.read(member)
+                actual_hash = hashlib.sha256(data).hexdigest()
+                if actual_hash != expected_hash:
+                    raise SystemExit(
+                        f"труп {key}: SHA-256 {actual_hash}, ожидался {expected_hash}")
+                image = Image.open(io.BytesIO(data))
+                if image.size != expected_size or image.mode != "RGBA":
+                    raise SystemExit(
+                        f"труп {key}: ожидался RGBA {expected_size}, получен {image.mode} {image.size}")
+                if image.getchannel("A").getextrema()[0] != 0:
+                    raise SystemExit(f"труп {key}: отсутствует прозрачный фон")
+                payload[key] = base64.b64encode(data).decode("ascii")
+                source_bytes += len(data)
+        html = HTML.read_text(encoding="utf-8")
+        html = install_object_payloads(html, "CORPSE_SPRITE_DATA", payload)
+        HTML.write_text(html.rstrip("\n") + "\n", encoding="utf-8", newline="\n")
+        print(json.dumps({
+            "installed": list(payload),
+            "sourceBytes": source_bytes,
+            "resampled": False,
+            "target": str(HTML),
+        }, ensure_ascii=False))
+        return
+
+    if args.install_corpse_puddles:
+        if not args.corpse_puddle_asset_dir or not args.corpse_puddle_asset_dir.is_dir():
+            parser.error("лужи трупов требуют существующий --corpse-puddle-asset-dir")
+        path = args.corpse_puddle_asset_dir / "blood-puddle-atlas.png"
+        if not path.is_file():
+            parser.error(f"не найден атлас луж {path}")
+        data = path.read_bytes()
+        actual_hash = hashlib.sha256(data).hexdigest()
+        if actual_hash != CORPSE_PUDDLE_ATLAS_SHA256:
+            raise SystemExit(
+                f"атлас луж: SHA-256 {actual_hash}, ожидался {CORPSE_PUDDLE_ATLAS_SHA256}")
+        image = Image.open(io.BytesIO(data))
+        colors = image.getcolors(maxcolors=256) if image.mode == "P" else None
+        alpha = image.convert("RGBA").getchannel("A")
+        if image.size != (384, 64) or image.mode != "P" or not colors or len(colors) > 96:
+            raise SystemExit(
+                f"атлас луж: ожидался P 384×64 до 96 индексов, получен {image.mode} {image.size}")
+        if alpha.getextrema()[0] != 0 or any(
+                not alpha.crop((index * 64, 0, (index + 1) * 64, 64)).getbbox()
+                for index in range(6)):
+            raise SystemExit("атлас луж: прозрачность отсутствует либо найден пустой кадр")
+        html = HTML.read_text(encoding="utf-8")
+        html = install_object_payloads(
+            html, "CORPSE_PUDDLE_DATA", {"atlas": base64.b64encode(data).decode("ascii")})
+        HTML.write_text(html.rstrip("\n") + "\n", encoding="utf-8", newline="\n")
+        print(json.dumps({
+            "installed": ["small", "medium", "large", "flowing", "bones", "gore"],
+            "bytes": len(data),
+            "decodedBytes": 384 * 64 * 4,
+            "target": str(HTML),
+        }, ensure_ascii=False))
+        return
+
     if args.install_blood_assets:
         if not args.blood_asset_dir or not args.blood_asset_dir.is_dir():
             parser.error("система крови требует существующий --blood-asset-dir")
@@ -1457,33 +1635,35 @@ def main() -> None:
         return
 
     if args.install_subclass_hero_sprites:
-        if not args.subclass_hero_docx or not args.subclass_hero_docx.is_file():
-            parser.error("модели подклассов требуют существующий --subclass-hero-docx")
+        if not args.subclass_hero_asset_dir or not args.subclass_hero_asset_dir.is_dir():
+            parser.error("модели подклассов требуют существующий --subclass-hero-asset-dir")
         payload: dict[str, str] = {}
         source_bytes = 0
-        with zipfile.ZipFile(args.subclass_hero_docx) as archive:
-            for subclass_name, (member, expected_hash) in SUBCLASS_HERO_SPRITE_SOURCES.items():
-                data = archive.read(member)
-                actual_hash = hashlib.sha256(data).hexdigest()
-                if actual_hash != expected_hash:
-                    raise SystemExit(
-                        f"модель {subclass_name}: SHA-256 {actual_hash}, ожидался {expected_hash}")
-                image = Image.open(io.BytesIO(data))
-                colors = image.getcolors(maxcolors=256) if image.mode == "P" else None
-                transparency = image.info.get("transparency")
-                if image.size != (128, 32) or image.mode != "P" or not colors or len(colors) > 16:
-                    raise SystemExit(
-                        f"модель {subclass_name}: ожидался P 128×32 до 16 индексов, "
-                        f"получен {image.mode} {image.size}, цветов {len(colors) if colors else 'больше 256'}")
-                if transparency != 0:
-                    raise SystemExit(
-                        f"модель {subclass_name}: прозрачный индекс должен быть 0, получен {transparency}")
-                alpha = image.convert("RGBA").getchannel("A")
-                if any(not alpha.crop((frame * 32, 0, (frame + 1) * 32, 32)).getbbox()
-                       for frame in range(4)):
-                    raise SystemExit(f"модель {subclass_name}: найден пустой кадр")
-                payload[subclass_name] = base64.b64encode(data).decode("ascii")
-                source_bytes += len(data)
+        for subclass_name, (filename, expected_hash) in SUBCLASS_HERO_SPRITE_SOURCES.items():
+            path = args.subclass_hero_asset_dir / filename
+            if not path.is_file():
+                raise SystemExit(f"модель {subclass_name}: не найден {path}")
+            data = path.read_bytes()
+            actual_hash = hashlib.sha256(data).hexdigest()
+            if actual_hash != expected_hash:
+                raise SystemExit(
+                    f"модель {subclass_name}: SHA-256 {actual_hash}, ожидался {expected_hash}")
+            image = Image.open(io.BytesIO(data))
+            colors = image.getcolors(maxcolors=256) if image.mode == "P" else None
+            transparency = image.info.get("transparency")
+            transparent = transparency == 0 or (isinstance(transparency, bytes) and 0 in transparency)
+            if image.size != (256, 32) or image.mode != "P" or not colors or len(colors) > 64:
+                raise SystemExit(
+                    f"модель {subclass_name}: ожидался P 256×32 до 64 индексов, "
+                    f"получен {image.mode} {image.size}, цветов {len(colors) if colors else 'больше 256'}")
+            if not transparent:
+                raise SystemExit(f"модель {subclass_name}: отсутствует прозрачный индекс")
+            alpha = image.convert("RGBA").getchannel("A")
+            if any(not alpha.crop((frame * 32, 0, (frame + 1) * 32, 32)).getbbox()
+                   for frame in range(8)):
+                raise SystemExit(f"модель {subclass_name}: найден пустой кадр")
+            payload[subclass_name] = base64.b64encode(data).decode("ascii")
+            source_bytes += len(data)
         html = HTML.read_text(encoding="utf-8")
         if "const SUBCLASS_HERO_SPRITE_DATA = {" not in html:
             anchor = "const HERO_SPRITE_DATA = {"
@@ -1501,26 +1681,30 @@ def main() -> None:
         return
 
     if args.install_subclass_frames:
-        if not args.subclass_frame_docx or not args.subclass_frame_docx.is_file():
-            parser.error("рамки подклассов требуют существующий --subclass-frame-docx")
+        if not args.subclass_frame_asset_dir or not args.subclass_frame_asset_dir.is_dir():
+            parser.error("рамки подклассов требуют существующий --subclass-frame-asset-dir")
         payload: dict[str, str] = {}
         source_bytes = 0
-        optimized_bytes = 0
-        with zipfile.ZipFile(args.subclass_frame_docx) as archive:
-            for subclass_name, (member, expected_hash) in SUBCLASS_FRAME_SOURCES.items():
-                data = archive.read(member)
-                actual_hash = hashlib.sha256(data).hexdigest()
-                if actual_hash != expected_hash:
-                    raise SystemExit(
-                        f"рамка {subclass_name}: SHA-256 {actual_hash}, ожидался {expected_hash}")
-                image = Image.open(io.BytesIO(data))
-                if image.size != (270, 304) or image.mode != "RGBA":
-                    raise SystemExit(
-                        f"рамка {subclass_name}: ожидался RGBA 270×304, получен {image.mode} {image.size}")
-                optimized = indexed_rgba_png(image)
-                payload[subclass_name] = base64.b64encode(optimized).decode("ascii")
-                source_bytes += len(data)
-                optimized_bytes += len(optimized)
+        for subclass_name, (filename, expected_hash) in SUBCLASS_FRAME_SOURCES.items():
+            path = args.subclass_frame_asset_dir / filename
+            if not path.is_file():
+                raise SystemExit(f"рамка {subclass_name}: не найден {path}")
+            data = path.read_bytes()
+            actual_hash = hashlib.sha256(data).hexdigest()
+            if actual_hash != expected_hash:
+                raise SystemExit(
+                    f"рамка {subclass_name}: SHA-256 {actual_hash}, ожидался {expected_hash}")
+            image = Image.open(io.BytesIO(data))
+            colors = image.getcolors(maxcolors=256) if image.mode == "P" else None
+            transparency = image.info.get("transparency")
+            if (image.size != (320, 400) or image.mode != "P" or not colors or
+                    len(colors) > FRAME_PALETTE_COLORS or not isinstance(transparency, bytes) or
+                    0 not in transparency):
+                raise SystemExit(
+                    f"рамка {subclass_name}: ожидался прозрачный P 320×400 до "
+                    f"{FRAME_PALETTE_COLORS} индексов, получен {image.mode} {image.size}")
+            payload[subclass_name] = base64.b64encode(data).decode("ascii")
+            source_bytes += len(data)
         html = HTML.read_text(encoding="utf-8")
         if "const SUBCLASS_FRAME_DATA = {" not in html:
             anchor = "const CLASS_FRAME_DATA = {"
@@ -1532,7 +1716,7 @@ def main() -> None:
         print(json.dumps({
             "installed": sorted(payload),
             "sourceBytes": source_bytes,
-            "optimizedBytes": optimized_bytes,
+            "optimizedBytes": source_bytes,
             "paletteColors": FRAME_PALETTE_COLORS,
             "target": str(HTML),
         }, ensure_ascii=False))

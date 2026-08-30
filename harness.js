@@ -24,7 +24,11 @@ function loadGame(file, options={}){
              'findRateScale:FIND_RATE_SCALE,itemShare:AMU_SHARE*ITEM_DROP_SCALE/FIND_RATE_SCALE,' +
              'totemShare:TOTEM_SHARE*TOTEM_DROP_SCALE/FIND_RATE_SCALE}}, ' +
              'get SHOP(){return typeof SHOP!=="undefined"?SHOP:null}, ' +
-             'get AFFIXES(){return typeof BOSS_AFFIXES!=="undefined"?BOSS_AFFIXES:null} };\n';
+             'get AFFIXES(){return typeof BOSS_AFFIXES!=="undefined"?BOSS_AFFIXES:null}, ' +
+             'get CORPSE_SPRITE_DATA(){return CORPSE_SPRITE_DATA}, get CORPSE_PUDDLE_DATA(){return CORPSE_PUDDLE_DATA}, ' +
+             'corpseSpriteKey:(c)=>corpseSpriteKey(c), corpsePuddleVariant:()=>corpsePuddleVariant(), ' +
+             'leaveVisualCorpse:(e)=>leaveVisualCorpse(e), drawVisualCorpses:(l,t,r,b)=>drawVisualCorpses(l,t,r,b), ' +
+             'killEnemy:(e,i)=>killEnemy(e,i), buildFloor:()=>buildFloor() };\n';
 
   const noop = () => {};
   const el = new Proxy({style:{}, dataset:{}, innerHTML:'', textContent:'',

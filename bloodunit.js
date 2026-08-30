@@ -12,6 +12,7 @@ function size(png){ return png.length>=24?[png.readUInt32BE(16),png.readUInt32BE
 const expected={
   splash:['0c46d1b3fcfa342fa716f0dddad2883ec2330693d9c9dcbe22afcaae4a1a15c7',256,64],
   mist:['20373938f43fbb76cc12cb561dda6608d79fc55a3c5f7f15187bf350308bd645',256,64],
+  critSpray:['41a610189de18e62c0e5ae5566a0809fc237f7d3fd37c37de5fbef107e3e122b',128,32],
   decals:['cd0ef52397dfed2e376f05545221fe14b136b678d106128ce0d1e11bafcbf174',256,128],
 };
 for (const [key,[hash,w,h]] of Object.entries(expected)){
@@ -23,8 +24,8 @@ for (const [key,[hash,w,h]] of Object.entries(expected)){
 const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys');
 const G=c.__api.G,e=c.spawnEnemy('blob');
 ok('новая партия создаёт пустое состояние крови',Array.isArray(G.bloodFx) && G.bloodFx.length===0 && G.bloodStampN===0);
-ok('все восемь функций системы доступны',[
-  'initBloodFloor','clearBloodFloor','emitBloodHit','spawnBloodSplash','spawnBloodDrops',
+ok('все девять функций системы доступны',[
+  'initBloodFloor','clearBloodFloor','emitBloodHit','spawnBloodSplash','spawnCriticalBloodSpray','spawnBloodDrops',
   'stampBloodDecal','updateBloodFx','drawBloodGround','drawBloodFx'
 ].every(key=>typeof c[key]==='function'));
 
@@ -35,6 +36,15 @@ ok('кровь запускает только фактически снятый
 const afterHit=G.bloodFx.length;
 c.applyDamage(e,0,false,false);
 ok('нулевой урон не создаёт кровь',G.bloodFx.length===afterHit);
+
+G.bloodFx.length=0;
+c.applyDamage(e,1,true,false);
+const firstCritSprays=G.bloodFx.filter(f=>f.t==='critSpray').length;
+c.applyDamage(e,1,true,false);
+ok('каждый крит добавляет ровно один спрайтовый разлёт мелких брызг',
+  firstCritSprays===1 && G.bloodFx.filter(f=>f.t==='critSpray').length===2);
+ok('критический разлёт использует один короткоживущий объект вместо роя частиц',
+  G.bloodFx.filter(f=>f.t==='critSpray').every(f=>f.max<=0.27 && f.size<=56));
 
 G.bloodFx.length=0; e.bloodDotFxT=undefined;
 c.applyDamage(e,1,false,true);
@@ -54,10 +64,10 @@ const skeleton=c.spawnEnemy('pack',null,'skeletonWarrior');
 const lich=c.spawnEnemy('boss','lich');
 ok('скелеты и нежить получают не человеческую палитру',c.bloodMaterialForEnemy(skeleton)==='bone' && c.bloodMaterialForEnemy(lich)==='ichor');
 
-G.bloodFx=Array.from({length:150},()=>({t:'drop',x:0,y:0,z:2,vx:0,vy:0,vz:0,size:3,life:1,max:1,material:'blood'}));
+G.bloodFx=Array.from({length:300},()=>({t:'drop',x:0,y:0,z:2,vx:0,vy:0,vz:0,size:3,life:1,max:1,material:'blood'}));
 const capStamp=G.bloodStampN;
 c.emitBloodHit(e,1,{});
-ok('лимит временных частиц жёстко равен 150',G.bloodFx.length===150 && G.bloodStampN>capStamp,
+ok('лимит временных частиц жёстко равен 300',G.bloodFx.length===300 && G.bloodStampN>capStamp,
   `fx=${G.bloodFx.length}`);
 
 G.bloodFx=[{t:'drop',x:20,y:20,z:0,vx:0,vy:0,vz:-1,size:4,life:1,max:1,material:'blood'}];
@@ -75,4 +85,7 @@ ok('постоянный слой рисует только видимую вы�
   /drawImage\(G\.bloodGroundCanvas,sx,sy,sw,sh,left,top,sw,sh\)/.test(html));
 ok('изображения крови не создаются внутри кадровых функций',
   !c.drawBloodGround.toString().includes('new Image') && !c.drawBloodFx.toString().includes('new Image'));
+ok('критический разлёт рисуется одним кадром компактного листа',
+  /critSpray:\{frame:32,frames:4\}/.test(html) &&
+  /drawImage\(image,frame\*spriteMeta\.frame/.test(html));
 ok('кровь вызывается после вычисления реального dealt',/const dealt = Math\.max\(0, Math\.min\(amount, e\.hp\)\);[\s\S]{0,300}emitBloodHit\(e,dealt/.test(html));
