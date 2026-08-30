@@ -227,6 +227,9 @@ button:disabled{opacity:.35;cursor:default}
 .rare-item-icon.modal{width:clamp(48px,8vh,72px);height:clamp(48px,8vh,72px)}
 .rare-item-icon.tiny{width:18px;height:18px;margin-right:5px}.rare-item-icon.hud{width:18px;height:18px}
 .rare-item-icon.inventory{width:24px;height:24px;margin-right:7px}.rare-item-icon.summary{width:30px;height:30px}
+.loot-item-icon{display:inline-block;width:24px;height:24px;background-repeat:no-repeat;background-size:400% 100%;
+  background-position:left center;vertical-align:middle;image-rendering:pixelated}
+.loot-item-icon.summary{width:30px;height:30px}
 .overlay{gap:clamp(9px,2.2vh,22px)}
 /* Полоса прокрутки видимая: иначе непонятно, что список продолжается */
 #amulist::-webkit-scrollbar{width:8px}
@@ -1579,6 +1582,13 @@ const RARE_ITEM_SPRITES = {};
 function rareItemSpriteHTML(key, className=''){
   const data=RARE_ITEM_SPRITE_DATA[key], A=AMULETS[key];
   return data ? '<img class="rare-item-icon ' + className + '" src="' + data + '" alt="">' : (A ? A.ico : '');
+}
+/* В меню нужен один стабильный кадр того же листа, что лежит на земле:
+   повторная data URI или отдельная UI-иконка со временем разошлись бы с добычей. */
+function lootSpriteHTML(key, className=''){
+  const data=LOOT_SPRITE_DATA[key], meta=LOOT_SPRITE_META[key];
+  if (!data || !meta) return BOOKS[key] ? BOOKS[key].ico : '';
+  return '<span class="loot-item-icon ' + className + '" aria-hidden="true" style="background-image:url(' + data + ')"></span>';
 }
 if (typeof Image !== 'undefined'){
   for (const key of Object.keys(ENEMY_SPRITE_META)){
@@ -7204,7 +7214,7 @@ function collectFloorLoot(){
       const B = BOOKS[o.book], before = G.items[o.book] ? G.items[o.book].val : 0;
       takeBook(o.book, true); finds++;
       const it = G.items[o.book], unit = (B.pct || o.book === 'monster' || o.book === 'xp') ? '%' : '';
-      G.floorFinds.push({ico:B.ico, col:B.col, name:B.nm,
+      G.floorFinds.push({ico:lootSpriteHTML(o.book,'summary'), col:B.col, name:B.nm,
         detail:'КНИГА · тир ' + it.tier + ' · +' + it.val + unit + (before ? ' · было +' + before + unit : ''),
         tip:B.desc.replace(/N/g, it.val + unit) + (B.proc ? '<br>Текущий шанс срабатывания: <b>' + bookChance(o.book) + '%</b>.' : '')});
     }

@@ -36,7 +36,8 @@ const fresh = () => loadGame('./PolyGrind.html', {random:() => 0.5});
   ok('тотем сразу доставлен игроку', G.totems.fire === 1, String(G.totems.fire || 0));
   const ov = c.document.getElementById('ov');
   ok('автосбор показывает одну сводку всех находок', G.paused === true && G.floorFinds.length === 4 &&
-    ov.innerHTML.includes('ДОБЫЧА ЭТАЖА') && ov.innerHTML.includes('ЧЁРНОЕ ЗЕРКАЛО') && ov.innerHTML.includes('КНИГА ОГНЯ'));
+    ov.innerHTML.includes('ДОБЫЧА ЭТАЖА') && ov.innerHTML.includes('ЧЁРНОЕ ЗЕРКАЛО') && ov.innerHTML.includes('КНИГА ОГНЯ') &&
+    ov.innerHTML.includes('rare-item-icon summary') && ov.innerHTML.includes('loot-item-icon summary'));
   ok('сводка не теряет тотем и повторную книгу', ov.innerHTML.includes('ТОТЕМ ОГНЯ') && ov.innerHTML.includes('тир 2'));
   ok('каждая находка сохраняет полное описание',
     G.floorFinds.every(f => typeof f.tip === 'string' && f.tip.length > 20));
@@ -57,9 +58,12 @@ const fresh = () => loadGame('./PolyGrind.html', {random:() => 0.5});
     summarySource.includes('el.onmouseenter') && summarySource.includes('el.onfocus') && summarySource.includes('el.onblur'));
   c.innerWidth=1280; c.innerHeight=720;
   c.showFloorFindTip({clientX:100,clientY:100}, mirrorFind, null);
-  ok('всплывающая панель выводит имя, тип и эффект предмета',
-    ov.style.display === 'block' && ov.innerHTML.includes(mirrorFind.name) && ov.innerHTML.includes(mirrorFind.detail) &&
-    ov.innerHTML.includes(mirrorFind.tip));
+  const mirrorTipOk = ov.style.display === 'block' && ov.innerHTML.includes(mirrorFind.name) &&
+    ov.innerHTML.includes(mirrorFind.detail) && ov.innerHTML.includes(mirrorFind.tip) &&
+    ov.innerHTML.includes('rare-item-icon summary');
+  c.showFloorFindTip({clientX:100,clientY:100}, fireFinds[0], null);
+  ok('всплывающая панель выводит эффект предмета и спрайт книги', mirrorTipOk &&
+    ov.innerHTML.includes(fireFinds[0].name) && ov.innerHTML.includes('loot-item-icon summary'));
   const dashBefore=G.player.dashN; let prevented=false;
   c.handleGameKeyDown({code:'Space',key:' ',repeat:false,preventDefault(){prevented=true;}});
   ok('пробел закрывает сводку без рывка и возвращает игру',
