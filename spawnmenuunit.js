@@ -1,4 +1,4 @@
-/* Spawn Menu: K, полный каталог существ, близкая позиция и изоляция progression. */
+/* Spawn Menu: K, каталоги существ и находок, близкая позиция и изоляция progression. */
 const fs = require('fs');
 const {loadGame} = require('./harness');
 let n=0, fail=0;
@@ -20,6 +20,14 @@ ok('Spawn Menu строит отдельную строку для каждой 
   /Object\.keys\(ELITE_VARIANTS\).*data-spawn-elite/.test(html));
 ok('кнопки отдельных элит подключены к debugSpawnEliteVariant',
   /querySelectorAll\('\[data-spawn-elite\]'\)/.test(html) && /debugSpawnEliteVariant\(el\.dataset\.spawnElite\)/.test(html));
+ok('Spawn Menu строит каталожные разделы предметов, книг и тотемов',
+  html.includes("AMU_KEYS.map(k => spawnMenuRow(k, AMULETS[k].nm, 'data-spawn-item'))") &&
+  html.includes("BOOK_KEYS.map(k => spawnMenuRow(k, BOOKS[k].nm, 'data-spawn-book'))") &&
+  /TOTEM_KEYS\.map\([\s\S]*?data-spawn-totem/.test(html) && html.includes('ТОТЕМЫ · СЛЕДУЮЩИЙ РАНГ'));
+ok('кнопки находок подключены к отдельным безопасным debug-spawn функциям',
+  /querySelectorAll\('\[data-spawn-item\]'\)/.test(html) && /debugSpawnItem\(key\)/.test(html) &&
+  /querySelectorAll\('\[data-spawn-book\]'\)/.test(html) && /debugSpawnBook\(key\)/.test(html) &&
+  /querySelectorAll\('\[data-spawn-totem\]'\)/.test(html) && /debugSpawnTotem\(key\)/.test(html));
 
 { const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys');
   const G=c.__api.G;
@@ -84,6 +92,42 @@ ok('кнопки отдельных элит подключены к debugSpawnE
   ok('вся элитная пачка расположена рядом, но не внутри игрока', pk.members.every(e=>{
     const d=Math.hypot(e.x-G.player.x,e.y-G.player.y); return d>=100 && d<=250;
   })); }
+
+{ const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys');
+  const G=c.__api.G, itemKeys=Object.keys(c.__api.AMULETS), bookKeys=Object.keys(c.__api.BOOKS);
+  const totemKeys=['fire','freeze','poison','blood','lightning'];
+  const before={floor:G.floor,queue:G.spawnQueue,timer:G.spawnT,portal:G.portal,amu:Object.keys(G.amu).length,
+    books:Object.keys(G.items).length,totems:Object.keys(G.totems).length};
+  const items=itemKeys.map(k=>c.debugSpawnItem(k));
+  const books=bookKeys.map(k=>c.debugSpawnBook(k));
+  const totems=totemKeys.map(k=>c.debugSpawnTotem(k));
+  const made=items.concat(books,totems);
+  ok('все 93 каталожных предмета можно положить на землю через K',
+    itemKeys.length===93&&items.every((o,i)=>o&&o.amu===itemKeys[i]));
+  ok('все семь книг можно положить на землю через K',
+    bookKeys.length===7&&books.every((o,i)=>o&&o.book===bookKeys[i]));
+  ok('все пять типов тотемов можно положить на землю через K',
+    totems.every((o,i)=>o&&o.totem===totemKeys[i]));
+  ok('каждый debug-spawn находки добавляет ровно один канонический ground orb',
+    made.length===105&&made.every(o=>G.orbs.includes(o)&&o.r===9));
+  ok('все находки возникают на расстоянии 56–100 единиц от персонажа',made.every(o=>{
+    const d=Math.hypot(o.x-G.player.x,o.y-G.player.y); return d>=56&&d<=100;
+  }));
+  ok('все debug-находки остаются внутри арены',
+    made.every(o=>Math.abs(o.x)<=1500-18&&Math.abs(o.y)<=1500-18));
+  ok('создание находок не выдаёт их в инвентарь до фактического подбора',
+    Object.keys(G.amu).length===before.amu&&Object.keys(G.items).length===before.books&&Object.keys(G.totems).length===before.totems);
+  ok('создание находок не меняет wave progression',
+    G.floor===before.floor&&G.spawnQueue===before.queue&&G.spawnT===before.timer&&G.portal===before.portal);
+  const count=G.orbs.length;
+  ok('неизвестные ключи находок безопасно отклоняются',
+    c.debugSpawnItem('missing')===null&&c.debugSpawnBook('missing')===null&&c.debugSpawnTotem('missing')===null&&G.orbs.length===count); }
+
+{ const c=loadGame('./PolyGrind.html',{random:()=>0.125}); c.newGame('bow','keys');
+  const G=c.__api.G; G.player.x=1480; G.player.y=1480;
+  const o=c.debugSpawnItem(Object.keys(c.__api.AMULETS)[0]), d=Math.hypot(o.x-G.player.x,o.y-G.player.y);
+  ok('у края арены находка остаётся внутри радиуса 100 и границ мира',
+    d>=56&&d<=100&&Math.abs(o.x)<=1500-18&&Math.abs(o.y)<=1500-18); }
 
 { const c=loadGame('./PolyGrind.html',{random:()=>0.999}); c.newGame('bow','keys');
   const G=c.__api.G, before={floor:G.floor, queue:G.spawnQueue, timer:G.spawnT, portal:G.portal};

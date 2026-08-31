@@ -119,9 +119,9 @@ const randomSoundSelections=[0,.26,.51,.999].map((random,index)=>{
   const sounds=FakeMenuAudio.instances.slice(before,before+4);
   game.playArcherShotSound();
   return sounds.length===4 && sounds.every((sound,soundIndex)=>sound.plays===(soundIndex===index?1:0)) &&
-    sounds[index].currentTime===0 && sounds[index].volume===.1275 && sounds[index].preload==='auto';
+    sounds[index].currentTime===0 && Math.abs(sounds[index].volume-.095625)<1e-12 && sounds[index].preload==='auto';
 });
-ok('каждый выстрел случайно выбирает одну из четырёх вариаций без очереди',
+ok('каждый выстрел Лучника на 25% тише и выбирает одну из четырёх вариаций',
   randomSoundSelections.every(Boolean));
 const routedBefore=FakeMenuAudio.instances.length;
 const routedGame=loadGame('./PolyGrind.html',{Audio:FakeMenuAudio,random:()=>.51});
@@ -200,12 +200,14 @@ const filterGame=loadGame('./PolyGrind.html',{Audio:FakeMenuAudio});
 filterGame.window.AudioContext=FakeAttackFilterContext;
 filterGame.unlockSound(); filterGame.unlockSound();
 const attackFilterCtx=FakeAttackFilterContext.last;
-ok('все 12 атак дополнительно тише на 15% и проходят через high-pass 230 Hz',
+ok('атаки проходят через high-pass 230 Hz, Лучник дополнительно тише на 25%',
   attackFilterCtx.sources.length===12 && attackFilterCtx.filters.length===12 &&
   attackFilterCtx.filters.every(filter=>filter.type==='highpass' &&
     filter.frequency.events[0][0]===230 && Math.abs(filter.Q.events[0][0]-Math.SQRT1_2)<1e-12 &&
     filter.connected===attackFilterCtx.destination) &&
-  html.includes('const ATTACK_SOUND_LEVEL=0.255;') && html.includes('const ATTACK_SOUND_HIGH_PASS_HZ=230;'));
+  html.includes('const ATTACK_SOUND_LEVEL=0.255;') &&
+  html.includes('const ARCHER_ATTACK_SOUND_LEVEL=ATTACK_SOUND_LEVEL*0.75;') &&
+  html.includes('const ATTACK_SOUND_HIGH_PASS_HZ=230;'));
 const savedMusic=new Map(), musicStorage={
   getItem:key=>savedMusic.has(key)?savedMusic.get(key):null,
   setItem:(key,value)=>savedMusic.set(key,String(value)),
@@ -575,4 +577,5 @@ for (const key of ['bow','wand','blade']){
 ok('новые герои не требуют внешних runtime-assets',
   !/\b(?:src|href)=["'](?:\.\/|assets\/).*\.(?:png|webp|jpg)/i.test(html));
 ok('отрицательный RAF-delta не ломает кольцо призыва',
-  html.includes('Math.max(0, Math.min(0.05, (now - last)/1000))'));
+  html.includes('const rawFrameMs = Math.max(0, now-last);') &&
+  html.includes('const dt = Math.min(0.05, rawFrameMs/1000);'));

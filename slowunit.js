@@ -16,13 +16,13 @@ function foe(o,x=0,y=0,hp=1e9){
   return e;
 }
 function sourceBuild(kind){
-  const o=build(kind==='warlock'?'necro':'bow');
+  const o=build(kind==='bombardier'?'necro':'bow');
   if (kind==='chill') o.G.bag.add('chillCh','chance',1);
   if (kind==='book') o.G.items.cold={tier:1,val:3};
   if (kind==='boots') o.G.amu.frost=true;
   if (kind==='dizzy') o.G.bag.add('dizzy','flag',1);
   if (kind==='aura') o.G.bag.add('slowAura','flag',1);
-  if (kind==='warlock') o.G.bag.add('minWarl','flat',1);
+  if (kind==='bombardier') o.G.bag.add('minBomb','flat',1);
   o.c.recalc(); return o;
 }
 
@@ -41,7 +41,7 @@ console.log('Урон по замедленным');
 { const o=build();
   ok('без источника замедления обе новые карточки закрыты',
     !o.dmg.show() && !o.shatter.show()); }
-{ const sources=['chill','book','boots','warlock','dizzy','aura'];
+{ const sources=['chill','book','boots','bombardier','dizzy','aura'];
   const opened=sources.every(kind=>{ const o=sourceBuild(kind); return o.dmg.show() && o.shatter.show(); });
   ok('карточки открывают все шесть заявленных источников замедления',opened,sources.join(', ')); }
 { const o=sourceBuild('chill'), e=foe(o); o.G.bag.add('vsSlowed','inc',137); o.c.recalc(); e.ail.chill=1;

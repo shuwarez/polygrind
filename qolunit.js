@@ -123,7 +123,7 @@ const ok = (nm, cond, det) => console.log((cond ? '  ✓ ' : '  ✗ ') + nm.padE
      dropped + ' золота · ожидалось ' + expectedDrop);
   G.orbs.length = 0; G.enemies.length = 0; G.spawnQueue = 0; G.gold = 0;
   const floor = G.floor, p = G.player;
-  G.portal = {x:p.x,y:p.y,r:28,t:1}; c.update(0.01);
+  G.portal = {x:p.x,y:p.y,r:28,t:2}; c.update(0.01);
   const expectedFloor = Math.round((12+floor*6) * c.__api.D.goldFind * c.__api.D.goldGainMult);
   ok('ВОР: множитель усиливает награду за этаж', G.gold === expectedFloor,
      G.gold + ' золота · ожидалось ' + expectedFloor); }

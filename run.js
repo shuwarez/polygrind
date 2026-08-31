@@ -7,8 +7,8 @@ const COMMON_GOOD = new Set(['dmg','aspd','life','armor','mspd','critCh','critMu
   'onHit','onKill','regen','dr','drFlat','block','dodge','normalDr','majorDr','cheat']);
 const RANGED_GOOD = new Set(['dmgProj','projN','pierce','chain','ricochet','projSize','projSpd','far','homing']);
 const BLADE_GOOD = new Set(['dmgMelee','arc','close','perNear','knock','stun','dizzy','phasing','thorns','reflect']);
-const NECRO_GOOD = new Set(['minDmg','minAspd','minLife','minSpd','minCrit','minCount','minTier','minInherit',
-  'minBond','kBoneChallenge','minVamp','minBoom','minClaws','minFrenzy','minBath','minBoil','minBlink','minRaid']);
+const NECRO_GOOD = new Set(['minDmg','minAspd','minSpd','minCrit','minCount','minTier','minInherit',
+  'minBond','kBoneChallenge','minBoom','minClaws','minFrenzy','minBath','minBoil','minBlink','minRaid']);
 function cardScore(c, m){
   const w = c.__api.G.weapon, stat = m.stat;
   let score = COMMON_GOOD.has(stat) ? 5 : 1;

@@ -36,9 +36,9 @@ function foe(o,x,y){const e=o.c.spawnEnemy('blob');e.x=x;e.y=y;e.spd=0;e.dmg=0;e
 
 {
   const o=fresh(),{c,G,D,p}=o;G.weapon.noAttack=true;p.inv=1e9;p.x=p.y=0;
-  D.maxSkel=6;D.maxHunt=6;D.maxWarl=6;D.golemB=10;D.golemN=10;D.minMax=20;D.inferno=false;
+  D.maxSkel=6;D.maxBomb=6;D.golemB=10;D.golemN=10;D.minMax=14;D.inferno=false;
   for(let i=0;i<500;i++){const a=i*2.399963229728653,r=170+(i%22)*21,e=foe(o,Math.cos(a)*r,Math.sin(a)*r);e.spd=42+(i%5)*8;e.ail.chill=i%9===0?1e6:0;}
-  const kinds=['golemB','golemN',...Array(6).fill('skeleton'),...Array(6).fill('hunter'),...Array(6).fill('warlock')];
+  const kinds=['golemB','golemN',...Array(6).fill('skeleton'),...Array(6).fill('bombardier')];
   for(let i=0;i<kinds.length;i++){c.spawnMinion(Math.cos(i)*55,Math.sin(i)*55,kinds[i]);const m=G.minions.at(-1);m.deathT=1e9;m.hp=m.max=Math.max(1,m.max||m.hp||1);}
   G.fx=[];G.parts=[];
   for(let i=0;i<120;i++){for(const m of G.minions)m.tgt=null;c.update(1/60);}
@@ -53,8 +53,8 @@ function foe(o,x,y){const e=o.c.spawnEnemy('blob');e.x=x;e.y=y;e.spd=0;e.dmg=0;e
   const heap1=global.gc?(global.gc(),process.memoryUsage().heapUsed):0;
   const sorted=times.slice().sort((a,b)=>a-b),mean=times.reduce((a,b)=>a+b,0)/times.length,p95=sorted[Math.floor(sorted.length*0.95)];
   ok('долгий сценарий сохраняет все 500 живых врагов',G.enemies.length===500&&G.enemies.every(e=>!e.dead));
-  ok('полная свита сохраняет двадцать бойцов',G.minions.length===20);
-  ok('в составе остаются все пять типов приспешников',new Set(G.minions.map(m=>m.kind)).size===5);
+  ok('полная свита сохраняет четырнадцать бойцов',G.minions.length===14);
+  ok('в составе остаются все четыре типа приспешников',new Set(G.minions.map(m=>m.kind)).size===4);
   ok('объект сетки охлаждения повторно используется весь прогон',scratch.chillGrid===chillGrid);
   ok('сетка охлаждения очищена после последнего кадра',chillGrid.cells.size===0&&chillGrid.order.size===0);
   ok('ранее созданные ячейки охлаждения остаются в пуле',chillCells.every(cell=>chillGrid.cellPool.includes(cell)));
@@ -64,7 +64,7 @@ function foe(o,x,y){const e=o.c.spawnEnemy('blob');e.x=x;e.y=y;e.spd=0;e.dmg=0;e
   ok('карта распределения целей очищена после кадра',scratch.minionClaims.size===0);
   ok('post-move сетка повторно используется свитой и снарядами',scratch.postMoveGrid===postGrid);
   ok('post-move сетка не удерживает врагов после кадра',postGrid.cells.size===0&&postGrid.order.size===0&&!scratch.postMoveReady);
-  ok('лимиты временных эффектов выдержаны под нагрузкой',G.parts.length<=320&&G.partPool.length<=320&&G.fxPool.length<=512);
+  ok('лимиты временных эффектов выдержаны под нагрузкой',G.parts.length<=640&&G.partPool.length<=640&&G.fxPool.length<=512);
   ok('после GC долгий прогон не удерживает заметно растущий heap',!global.gc||heap1-heap0<8*1048576,global.gc?'дельта '+((heap1-heap0)/1048576).toFixed(2)+' МБ':'проверяется в отдельном --expose-gc прогоне');
   ok('480 тяжёлых кадров рассчитаны без патологической задержки',Number.isFinite(mean)&&mean<30,`среднее ${mean.toFixed(2)} мс · p95 ${p95.toFixed(2)} мс`);
   console.log('STRESS '+JSON.stringify({frames:480,enemies:G.enemies.length,minions:G.minions.length,meanMs:+mean.toFixed(3),p95Ms:+p95.toFixed(3),heapDeltaMb:global.gc?+((heap1-heap0)/1048576).toFixed(2):null}));

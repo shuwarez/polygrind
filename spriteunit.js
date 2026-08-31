@@ -1,6 +1,7 @@
 /* Четырёхкадровые PNG-враги: листы, кадры, движение и горизонтальный разворот. */
 const fs = require('fs');
 const crypto = require('crypto');
+const zlib = require('zlib');
 const {loadGame} = require('./sim');
 const ok = (nm, cond, det) => console.log((cond?'  \u2713 ':'  \u2717 ') + nm.padEnd(52) + (det||''));
 const html=fs.readFileSync('./PolyGrind.html','utf8');
@@ -22,6 +23,30 @@ const pngInfo = b => {
   if (b.length < 26) return {png:false,w:0,h:0,color:-1};
   return {png:b.subarray(0,8).toString('hex')==='89504e470d0a1a0a', w:b.readUInt32BE(16), h:b.readUInt32BE(20), color:b[25]};
 };
+const pngRgbaStats = b => {
+  const info=pngInfo(b);
+  if (!info.png || b[24]!==8 || b[25]!==6 || b[28]!==0) return {valid:false,colors:0,binaryAlpha:false};
+  const chunks=[];
+  for (let p=8;p+12<=b.length;){
+    const length=b.readUInt32BE(p), type=b.subarray(p+4,p+8).toString('ascii');
+    if (type==='IDAT') chunks.push(b.subarray(p+8,p+8+length));
+    p+=length+12;
+  }
+  const raw=zlib.inflateSync(Buffer.concat(chunks)), stride=info.w*4, previous=Buffer.alloc(stride);
+  const colors=new Set(), alpha=new Set(); let offset=0;
+  const paeth=(a,b2,c2)=>{ const p=a+b2-c2, pa=Math.abs(p-a), pb=Math.abs(p-b2), pc=Math.abs(p-c2); return pa<=pb&&pa<=pc?a:pb<=pc?b2:c2; };
+  for (let y=0;y<info.h;y++){
+    const filter=raw[offset++], source=raw.subarray(offset,offset+stride), row=Buffer.alloc(stride); offset+=stride;
+    for (let x=0;x<stride;x++){
+      const value=source[x], left=x>=4?row[x-4]:0, up=previous[x], upperLeft=x>=4?previous[x-4]:0;
+      row[x]=(value+(filter===0?0:filter===1?left:filter===2?up:filter===3?Math.floor((left+up)/2):filter===4?paeth(left,up,upperLeft):NaN))&255;
+    }
+    if (filter<0 || filter>4) return {valid:false,colors:0,binaryAlpha:false};
+    for (let x=0;x<stride;x+=4){ colors.add(row.readUInt32BE(x)); alpha.add(row[x+3]); }
+    row.copy(previous);
+  }
+  return {valid:offset===raw.length,colors:colors.size,binaryAlpha:[...alpha].every(v=>v===0||v===255)};
+};
 
 const spr=pngInfo(embeddedPng('runner')), core=pngInfo(embeddedPng('blob')),
       bastion=pngInfo(embeddedPng('tank')), shooter=pngInfo(embeddedPng('shooter'));
@@ -39,25 +64,28 @@ ok('стрела и сфера игрока — индексированные P
   arrow.png && arrow.w===12 && arrow.h===6 && arrow.color===3 && arrowBytes.length<250 &&
   mageShot.png && mageShot.w===32 && mageShot.h===8 && mageShot.color===3 && mageShotBytes.length<400,
   arrowBytes.length+' / '+mageShotBytes.length+' байт');
-const minionKeys=['skeleton','hunter','warlock','golemB','golemN'];
-const minionBytes=minionKeys.map(key=>embeddedObjectPng('MINION_SPRITE_DATA',key));
+const minionKeys=['skeleton','bombardier','golemB','golemN'];
+const minionAssetKeys=['skeleton','bombardier','golemB','golemN'];
+const minionBytes=minionAssetKeys.map(key=>embeddedObjectPng('MINION_SPRITE_DATA',key));
 const minionPng=minionBytes.map(pngInfo);
-ok('пять листов свиты встроены как индексированные четырёхкадровые PNG',
+ok('четыре листа актуальной свиты встроены как индексированные четырёхкадровые PNG',
   minionPng.every(info=>info.png && info.color===3) &&
-  JSON.stringify(minionPng.map(info=>[info.w,info.h]))===JSON.stringify([[96,24],[96,24],[96,24],[96,24],[72,18]]));
+  JSON.stringify(minionPng.map(info=>[info.w,info.h]))===JSON.stringify([[96,24],[96,24],[96,24],[72,18]]));
 ok('вся текстура свиты укладывается в 6 КБ',
   minionBytes.reduce((sum,data)=>sum+data.length,0)<6000,
   minionBytes.reduce((sum,data)=>sum+data.length,0)+' байт');
 
-const lootKeys=['pickupXp','pickupGold','fire','cold','shock','poison','bleed','xp','monster'];
-const lootBytes=lootKeys.map(embeddedPng), lootPng=lootBytes.map(pngInfo);
-ok('опыт, золото и семь книг встроены как индексированные PNG-листы по четыре кадра',
-  lootPng.every(info=>info.png && info.color===3) &&
-  JSON.stringify(lootPng.map(info=>[info.w,info.h]))===
-    JSON.stringify([[64,16],[64,16],[96,24],[96,24],[96,24],[96,24],[96,24],[96,24],[96,24]]));
-ok('все девять листов добычи вместе укладываются в 10 КБ',
-  lootBytes.reduce((sum,data)=>sum+data.length,0)<10000,
-  lootBytes.reduce((sum,data)=>sum+data.length,0)+' байт');
+const pickupKeys=['pickupXp','pickupGold'], bookKeys=['fire','cold','shock','poison','bleed','xp','monster'];
+const pickupBytes=pickupKeys.map(key=>embeddedObjectPng('LOOT_SPRITE_DATA',key));
+const bookBytes=bookKeys.map(key=>embeddedObjectPng('LOOT_SPRITE_DATA',key));
+const bookFloorBytes=bookKeys.map(key=>embeddedObjectPng('BOOK_FLOOR_SPRITE_DATA',key));
+const pickupPng=pickupBytes.map(pngInfo), bookPng=bookBytes.map(pngInfo), bookStats=bookBytes.map(pngRgbaStats),
+      bookFloorPng=bookFloorBytes.map(pngInfo);
+ok('опыт и золото сохраняют компактные индексированные четырёхкадровые листы',
+  pickupPng.every(info=>info.png && info.w===64 && info.h===16 && info.color===3));
+ok('семь книг встроены отдельными статичными RGBA PNG 128×128',
+  bookPng.every(info=>info.png && info.w===128 && info.h===128 && info.color===6) &&
+  bookStats.every(info=>info.valid && info.colors<=32 && info.binaryAlpha));
 
 const mageEffectKeys=['normal','remote','mini','residual','elemental','heart'];
 const mageEffectBytes=mageEffectKeys.map(embeddedPng), mageEffectPng=mageEffectBytes.map(pngInfo);
@@ -73,11 +101,11 @@ ok('семь элементальных индикаторов встроены 
   statusIconPng.png && statusIconPng.w===112 && statusIconPng.h===16 && statusIconPng.color===3 &&
   statusIconBytes.length<1000, statusIconBytes.length+' байт');
 const portalBytes=embeddedPng('FLOOR_PORTAL_SPRITE_DATA'), portalPng=pngInfo(portalBytes);
-ok('портал этажа встроен нативным RGBA-листом 8×128 без перекодирования',
-  portalPng.png && portalPng.w===1024 && portalPng.h===128 && portalPng.color===6 &&
-  portalBytes.length===199367 &&
+ok('портал этажа встроен оптимизированным 16-кадровым листом 2048×128',
+  portalPng.png && portalPng.w===2048 && portalPng.h===128 && portalPng.color===3 &&
+  portalBytes.length<70000 &&
   crypto.createHash('sha256').update(portalBytes).digest('hex')===
-    '13ee7db299978f4753c6bb63fe6466bdae3e1e69a6eac71d00e697851a868d8b',
+    'bd698c9ca47416c8e8f4fe72e69293503b8193898d8c8fd8de1eab03f2f40f8a',
   portalBytes.length+' байт');
 
 const groundPoolKeys=['tar','ogreAcid','bossAcid','boilingBlood','lavaTrail','frostTrail','venomAcid','tyrantFire'];
@@ -130,17 +158,35 @@ const embeddedRareItemPng = key => {
   return match ? Buffer.from(match[1], 'base64') : Buffer.alloc(0);
 };
 const rareItemBytes=supportedRareItemKeys.map(embeddedRareItemPng), rareItemPng=rareItemBytes.map(pngInfo);
-ok('93 предмета и элемента экипировки встроены как индексированные PNG 24×24',
-  rareItemPng.every(info=>info.png && info.w===24 && info.h===24 && info.color===3));
-ok('все 93 иконки различаются и вместе укладываются в 33 КБ',
+const rareItemStats=rareItemBytes.map(pngRgbaStats);
+const floorItemObject=(html.match(/const RARE_ITEM_FLOOR_SPRITE_DATA = \{([\s\S]*?)\n\};/)||[])[1]||'';
+const embeddedFloorItemPng = key => {
+  const match=floorItemObject.match(new RegExp('^\\s*'+key+":'data:image/png;base64,([^']+)'",'m'));
+  return match ? Buffer.from(match[1], 'base64') : Buffer.alloc(0);
+};
+const floorItemBytes=supportedRareItemKeys.map(embeddedFloorItemPng), floorItemPng=floorItemBytes.map(pngInfo);
+ok('93 предмета встроены отдельными RGBA PNG 128×128 с жёстким бюджетом',
+  rareItemPng.every(info=>info.png && info.w===128 && info.h===128 && info.color===6) &&
+  rareItemStats.every(info=>info.valid && info.colors<=32 && info.binaryAlpha));
+ok('все 93 новые иконки различаются, старые 24/64 px отсутствуют',
   new Set(rareItemBytes.map(data=>data.toString('base64'))).size===supportedRareItemKeys.length &&
-  rareItemBytes.reduce((sum,data)=>sum+data.length,0)<33000,
+  rareItemPng.every(info=>![24,64].includes(info.w) && ![24,64].includes(info.h)),
   rareItemBytes.reduce((sum,data)=>sum+data.length,0)+' байт');
-ok('вся экипировка берёт общий PNG на земле и во всех элементах интерфейса',
+ok('меню находки и все UI-элементы сохраняют канонический PNG 128×128',
   supportedRareItemKeys.every(key=>c.rareItemSpriteHTML(key,'hud').includes('rare-item-icon hud') &&
     c.rareItemSpriteHTML(key,'hud').includes(rareItemBytes[supportedRareItemKeys.indexOf(key)].toString('base64'))) &&
   Object.keys(c.__api.AMULETS).every(key=>supportedRareItemKeys.includes(key)) &&
   c.rareItemSpriteHTML('__missing__','hud')==='');
+ok('для всех 93 предметов встроены отдельные уникальные наземные PNG 24×24',
+  floorItemPng.every(info=>info.png&&info.w===24&&info.h===24&&info.color===3) &&
+  new Set(floorItemBytes.map(data=>data.toString('base64'))).size===supportedRareItemKeys.length &&
+  floorItemBytes.every((data,index)=>!data.equals(rareItemBytes[index])),
+  floorItemBytes.reduce((sum,data)=>sum+data.length,0)+' байт');
+ok('на полу используется только каталог 24×24, а pickup modal — исходный 128×128',
+  /const sprite=o && o\.amu && RARE_ITEM_FLOOR_SPRITES\[o\.amu\]/.test(html) &&
+  /ctx\.drawImage\(sprite,o\.x-12,o\.y-12,24,24\)/.test(html) &&
+  /pickupRevealHTML\(rareItemSpriteHTML\(key,'modal'\), A\.col, true\)/.test(html) &&
+  /"RARE_ITEM_FLOOR_SPRITE_DATA"[\s\S]{0,260}item_floor_sprite/.test(fs.readFileSync('./optimize_graphics.py','utf8')));
 const totemTypes=['fire','freeze','poison','blood','lightning'];
 const totemObject=(html.match(/const TOTEM_SPRITE_DATA = \{([\s\S]*?)\n\};/)||[])[1]||'';
 const totemBytes=totemTypes.flatMap(key => {
@@ -148,14 +194,15 @@ const totemBytes=totemTypes.flatMap(key => {
   return [...row.matchAll(/'data:image\/png;base64,([^']+)'/g)].map(match=>Buffer.from(match[1],'base64'));
 });
 const totemPng=totemBytes.map(pngInfo);
-ok('пять тотемов по четыре ранга встроены как индексированные PNG 24×24',
-  totemBytes.length===20 && totemPng.every(info=>info.png && info.w===24 && info.h===24 && info.color===3));
-ok('все 20 рангов различаются, укладываются в 10 КБ и используются в UI',
+const totemStats=totemBytes.map(pngRgbaStats);
+ok('пять тотемов по четыре ранга встроены отдельными RGBA PNG 128×128',
+  totemBytes.length===20 && totemPng.every(info=>info.png && info.w===128 && info.h===128 && info.color===6) &&
+  totemStats.every(info=>info.valid && info.colors<=32 && info.binaryAlpha));
+ok('все 20 рангов различаются и используют один источник в мире и UI',
   new Set(totemBytes.map(data=>data.toString('base64'))).size===20 &&
-  totemBytes.reduce((sum,data)=>sum+data.length,0)<10000 &&
   totemTypes.every(key=>[1,2,3,4].every(tier=>c.totemSpriteHTML(key,tier,'hud').includes('totem-icon hud'))) &&
   c.totemSpriteEntry('fire',0).rank===1 && c.totemSpriteEntry('fire',9).rank===4 &&
-  /function drawTotemSprite[\s\S]*?totemTier\(o\.totem\)\+1[\s\S]*?imageSmoothingEnabled=false/.test(html),
+  /function drawTotemSprite[\s\S]*?totemTier\(o\.totem\)\+1[\s\S]*?drawImage\(sprite,o\.x-64,o\.y-64,128,128\)/.test(html),
   totemBytes.reduce((sum,data)=>sum+data.length,0)+' байт');
 ok('эффекты Мага используют полные циклы 6/4/8 кадров',
   ['normal','remote','mini'].every(key=>[0,.2,.4,.6,.8,.999].map(p=>c.mageAbilitySpriteFrame(key,p).index).join(',')==='0,1,2,3,4,5') &&
@@ -188,13 +235,14 @@ ok('индикаторы врага содержат только семь эл�
   statuses.map(status=>status.key).join(',')==='burning,poison,plague,chilled,frozen,shocked,bleeding' &&
   statuses.map(status=>status.frame.index).join(',')==='0,1,2,3,4,5,6' &&
   statuses.map(status=>status.stacks).join(',')==='2,3,0,0,0,0,4');
-ok('портал проигрывает бесшовный цикл 8 кадров по 100 мс с нижней привязкой',
-  [0,.1,.2,.3,.4,.5,.6,.7,.8].map(t=>c.floorPortalSpriteFrame({t}).index).join(',')===
-    '0,1,2,3,4,5,6,7,0' &&
+ok('портал бесшовно зацикливает все 16 кадров',
+  [0,.08,.16,.24,.32,.4,.48,.56,.64,.72,.8,.88,.96,1.04,1.12,1.2,1.28,2.48,2.56].map(t=>c.floorPortalSpriteFrame({t}).index).join(',')===
+    '0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,0,15,0' &&
   c.floorPortalSpriteFrame({t:0}).meta.anchorX===0.5 &&
   c.floorPortalSpriteFrame({t:0}).meta.anchorY===1 &&
   c.floorPortalSpriteFrame({t:0}).w===128 && c.floorPortalSpriteFrame({t:0}).h===128 &&
-  c.floorPortalSpriteFrame({t:.7}).x===896 &&
+  c.floorPortalSpriteFrame({t:1.2}).x===1920 && c.floorPortalSpriteFrame({t:0}).meta.drawW===166 &&
+  !c.floorPortalReady({t:.59}) && c.floorPortalReady({t:.6}) &&
   html.includes('x:index*meta.frameW') && html.includes('w:meta.frameW,h:meta.frameH') &&
   /function drawFloorPortalSprite[\s\S]*?imageSmoothingEnabled=false[\s\S]*?drawImage\(FLOOR_PORTAL_SPRITE/.test(html));
 ok('круговой прицел PNG-врага заменён стрелками',
@@ -207,12 +255,37 @@ const lootFrames=[];
 for (const t of [0,.125,.25,.375,.5]){ G.time=t; lootFrames.push(c.lootSpriteFrame({book:'shock'}).index); }
 const bookModal=loadGame('./PolyGrind.html'); bookModal.newGame('wand','keys'); bookModal.takeBook('cold');
 const bookModalHtml=bookModal.document.getElementById('ov').innerHTML;
-ok('добыча и окно первой книги используют общий четырёхкадровый лист',
-  lootFrames.join(',')==='0,1,2,3,0' &&
+ok('книги используют уникальные 24×24 PNG на полу и канонические 128×128 в UI',
+  lootFrames.join(',')==='0,0,0,0,0' &&
   c.lootSpriteFrame({v:1}).key==='pickupXp' && c.lootSpriteFrame({gold:true,v:1}).key==='pickupGold' &&
-  c.lootSpriteFrame({book:'fire'}).meta.drawW===24 && c.lootSpriteFrame({amu:'ash'})===null &&
-  bookModalHtml.includes('loot-item-icon modal') && bookModalHtml.includes('data:image/png;base64') &&
-  !bookModalHtml.includes(bookModal.__api.BOOKS.cold.ico));
+  c.lootSpriteFrame({book:'fire'}).meta.drawW===128 && c.lootSpriteFrame({book:'fire'}).w===128 &&
+  c.lootSpriteFrame({amu:'ash'})===null &&
+  bookFloorPng.every(info=>info.png&&info.w===24&&info.h===24&&info.color===3) &&
+  new Set(bookFloorBytes.map(data=>data.toString('base64'))).size===bookKeys.length &&
+  bookFloorBytes.every((data,index)=>!data.equals(bookBytes[index])) &&
+  bookModalHtml.includes('loot-item-icon modal') && bookModalHtml.includes(bookBytes[1].toString('base64')) &&
+  !bookModalHtml.includes(bookFloorBytes[1].toString('base64')) &&
+  !bookModalHtml.includes(bookModal.__api.BOOKS.cold.ico) &&
+  /const sprite=o && o\.book && BOOK_FLOOR_SPRITES\[o\.book\]/.test(html) &&
+  /function drawBookFloorSprite[\s\S]*?drawImage\(sprite,o\.x-12,o\.y-12,24,24\)/.test(html) &&
+  /if \(o\.book\)\{[\s\S]{0,1800}drawBookFloorSprite\(o\)/.test(html) &&
+  !/\.loot-item-icon\{[^}]*background-size/.test(html) &&
+  !/fillText\((?:B|A)\.ico/.test(html) && html.includes("lootSpriteHTML(k,'hud')") &&
+  html.includes("lootSpriteHTML(k,'inventory')"));
+const itemModal=loadGame('./PolyGrind.html'); itemModal.newGame('bow','keys'); itemModal.takeAmulet('mirror');
+const itemModalHtml=itemModal.document.getElementById('ov').innerHTML;
+const totemModal=loadGame('./PolyGrind.html'); totemModal.newGame('wand','keys');
+totemModal.__api.G.items.fire={tier:1,val:3}; totemModal.takeTotem('fire');
+const totemModalHtml=totemModal.document.getElementById('ov').innerHTML;
+ok('предметное окно получает ровно в пять раз больше искристых частиц',
+  [bookModalHtml,totemModalHtml].every(markup=>(markup.match(/pickup-reveal__spark/g)||[]).length===14) &&
+  (itemModalHtml.match(/pickup-reveal__spark/g)||[]).length===70 &&
+  itemModalHtml.includes('class="pickup-reveal boosted"'));
+ok('предмет увеличен в 1,5 раза и окружён пятью отдельными эффектами',
+  (itemModalHtml.match(/pickup-reveal__effect/g)||[]).length===5 &&
+  !bookModalHtml.includes('pickup-reveal__effect')&&!totemModalHtml.includes('pickup-reveal__effect') &&
+  html.includes('@keyframes pickupIconPulse')&&html.includes('@keyframes pickupSpark')&&html.includes('@keyframes pickupEffect') &&
+  /\.rare-item-icon\.modal\{width:clamp\(144px,27vh,216px\)/.test(html));
 
 let lootAudio;
 class FakeAudioParam {
@@ -453,8 +526,9 @@ ok('настройки главного меню используют общие
 const escapeGame=loadGame('./PolyGrind.html',{random:()=>0});
 escapeGame.newGame('bow','keys');
 escapeGame.handleGameKeyDown({key:'Escape',code:'Escape',repeat:false,preventDefault(){}});
+escapeGame.handleGameKeyDown({key:'Escape',code:'Escape',repeat:true,preventDefault(){}});
 ok('Escape открывает настройки и автоповтор клавиши не переключает паузу',
-  escapeGame.__api.G.paused && /if \(\(k === 'p' \|\| k === 'escape'\) && !e\.repeat\)/.test(html));
+  escapeGame.__api.G.paused && /if \(k === 'escape' && !e\.repeat\)/.test(html));
 G.time=0; const projectileFrames=[];
 for (const t of [0,0.1,0.2,0.3]){ G.time=t; projectileFrames.push(c.enemyProjectileSpriteFrame({shotType:'shooter'}).index); }
 ok('текстура снаряда циклически использует четыре кадра без своего таймера',

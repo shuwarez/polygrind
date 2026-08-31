@@ -10,13 +10,13 @@ function foe(c,x,y,r=10){const e=c.spawnEnemy('blob');e.x=x;e.y=y;e.r=r;e.spd=0;
 function minion(kind,x=0,y=0){return{kind,x,y,r:kind==='golemB'?22:10,hp:100,max:100,dead:false,tgt:null,cd:99,rot:0,hit:0,born:1,deathT:999,slowT:0,slowMul:1,stunT:0,animT:0,spriteFace:1,hitN:0};}
 
 {
-  const {c,G,D}=fresh();D.golemB=1;D.golemN=1;D.maxSkel=1;D.maxHunt=1;D.maxWarl=1;
+  const {c,G,D}=fresh();D.golemB=1;D.golemN=1;D.maxSkel=1;D.maxBomb=1;
   ok('очередь сначала требует голема крови',c.needKind()==='golemB');
   G.minions.push(minion('golemB'));ok('после него очередь требует костяного голема',c.needKind()==='golemN');
   G.minions.push(minion('golemN'));ok('затем поднимается обычный скелет',c.needKind()==='skeleton');
-  G.minions.push(minion('skeleton'));ok('охотник идёт после заполнения скелетов',c.needKind()==='hunter');
-  G.minions.push(minion('hunter'));ok('колдун идёт после охотников',c.needKind()==='warlock');
-  G.minions.push(minion('warlock'));ok('полный состав не требует нового бойца',c.needKind()===null);
+  G.minions.push(minion('skeleton'));ok('бомбардир идёт сразу после заполнения скелетов',c.needKind()==='bombardier');
+  G.minions.push(minion('bombardier'));ok('полный состав не требует нового бойца',c.needKind()===null);
+  ok('очередь больше не содержит охотников и колдунов',!/'hunter'|'warlock'/.test(c.needKind.toString()));
 }
 
 {
@@ -25,7 +25,7 @@ function minion(kind,x=0,y=0){return{kind,x,y,r:kind==='golemB'?22:10,hp:100,max
   G.enemies=Array.from({length:500},(_,i)=>point((i*73)%2800-1400,(i*151)%2800-1400));
   ok('500 врагов не получают пассивное аггро от полного отряда',G.enemies.every(e=>e.tauntMinion==null));
   const e=point(0,0);
-  for(const kind of ['skeleton','hunter','warlock','golemN']){
+  for(const kind of ['skeleton','bombardier','golemN']){
     const m=minion(kind,10,0);G.minions=[m];
     ok(kind+' не запускает врождённую провокацию Голема крови',!c.rollBloodGolemTaunt(e,m));
   }
@@ -67,7 +67,7 @@ function minion(kind,x=0,y=0){return{kind,x,y,r:kind==='golemB'?22:10,hp:100,max
 
 {
   const {c,G,D}=fresh();G.amu.sealPack=true;D.boneField=5;G.bag.add('perNear','inc',1);
-  const m=minion('skeleton',0,0);G.minions=[m,minion('hunter'),minion('warlock'),minion('golemB')];
+  const m=minion('skeleton',0,0);G.minions=[m,minion('bombardier'),minion('golemB'),minion('golemN')];
   G.corpses=Array.from({length:9},(_,i)=>({x:i,y:0,life:10}));G.enemies=Array.from({length:10},(_,i)=>point(i*10,0));
   const snap=c.minionDamageSnapshot(m);
   ok('снимок фиксирует максимум Печати Стаи +32%',snap.minionSealPackPct===32);
@@ -78,7 +78,7 @@ function minion(kind,x=0,y=0){return{kind,x,y,r:kind==='golemB'?22:10,hp:100,max
 }
 
 {
-  const setup=()=>{const o=fresh(()=>0.99);o.G.amu.sealPack=true;o.D.boneField=5;o.G.bag.add('perNear','inc',3);const m=minion('skeleton',0,0);o.G.minions=[m,minion('hunter'),minion('warlock')];o.G.corpses=[{x:0,y:0,life:10},{x:2,y:0,life:10}];const e=foe(o.c,30,0);foe(o.c,60,0);return{...o,m,e};};
+  const setup=()=>{const o=fresh(()=>0.99);o.G.amu.sealPack=true;o.D.boneField=5;o.G.bag.add('perNear','inc',3);const m=minion('skeleton',0,0);o.G.minions=[m,minion('bombardier'),minion('golemB')];o.G.corpses=[{x:0,y:0,life:10},{x:2,y:0,life:10}];const e=foe(o.c,30,0);foe(o.c,60,0);return{...o,m,e};};
   const live=setup(),cached=setup(),hp1=live.e.hp,hp2=cached.e.hp;
   live.c.damage(live.e,{minion:live.m,direct:true});
   cached.c.damage(cached.e,{minion:cached.m,direct:true,...cached.c.minionDamageSnapshot(cached.m)});
@@ -98,6 +98,7 @@ function minion(kind,x=0,y=0){return{kind,x,y,r:kind==='golemB'?22:10,hp:100,max
   ok('тип для возрождения вычисляется один раз на кадр',/const neededKind=needKind\(\);[\s\S]{0,500}spawnMinion\(c\.x, c\.y, neededKind\)/.test(html));
   ok('список целей создаётся лениво только при переназначении',/function frameMinionCandidates\(\)[\s\S]{0,180}minionCandidatesReady/.test(html));
   ok('снаряды повторно используют построенную свитой сетку',/const enemyGrid=G\.shots\.length \? getPostMoveEnemyGrid\(\) : null/.test(html));
+  ok('взрыв бомбардира берёт цели из общей пространственной сетки',/function bombardierImpact\([\s\S]{0,500}enemyAreaCandidates\(enemyGrid,primary\.x,primary\.y,radius\)/.test(html));
   ok('перенос, вихрь и ярость используют локальные кандидаты',(html.match(/enemyAreaCandidates\(grid,[me]\.x,[me]\.y,R\)/g)||[]).length>=3);
   ok('50% бросок Голема крови находится только на основном прямом ударе',
     (html.match(/if \(m\.kind === 'golemB' && !e\.dead\) rollBloodGolemTaunt\(e, m\);/g)||[]).length===1&&/Math\.random\(\) >= 0\.50/.test(html));

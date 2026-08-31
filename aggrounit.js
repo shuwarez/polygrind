@@ -9,7 +9,7 @@ function foe(o,x=200,y=0){const e=o.c.spawnEnemy('blob');e.x=x;e.y=y;e.spd=100;e
 function movedWithoutHit(kind,role=null,minionX=300){const o=fresh(),m=minion(kind,minionX),e=foe(o);o.G.minions=[m];e.roles=role?[role]:[];o.c.update(0.1);return{...o,m,e};}
 
 {
-  for(const kind of ['skeleton','hunter','warlock','golemN']){
+  for(const kind of ['skeleton','bombardier','golemN']){
     const o=fresh(()=>0),m=minion(kind),e=foe(o);o.G.minions=[m];
     ok(kind+' не может вызвать врождённую провокацию Голема крови',!o.c.rollBloodGolemTaunt(e,m)&&e.tauntMinion===null);
   }
@@ -32,8 +32,7 @@ function movedWithoutHit(kind,role=null,minionX=300){const o=fresh(),m=minion(ki
 
 {
   ok('без удара враг идёт к игроку мимо близкого скелета',movedWithoutHit('skeleton').e.x<200);
-  ok('без удара враг идёт к игроку мимо близкого охотника',movedWithoutHit('hunter').e.x<200);
-  ok('без удара враг идёт к игроку мимо близкого колдуна',movedWithoutHit('warlock').e.x<200);
+  ok('без удара враг идёт к игроку мимо близкого бомбардира',movedWithoutHit('bombardier').e.x<200);
   ok('без удара враг идёт к игроку мимо Костяного голема',movedWithoutHit('golemN').e.x<200);
   ok('близкий Голем крови без удара не отвлекает врага',movedWithoutHit('golemB').e.x<200);
   ok('роль Охотник не создаёт пассивное аггро Голема крови',movedWithoutHit('golemB','hunter').e.x<200);

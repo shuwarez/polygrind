@@ -31,6 +31,12 @@ ok('чумной взрыв трупа доступен только Некро�
   keys('shape.explode_on_kill').join(',') === 'necro', keys('shape.explode_on_kill').join(','));
 ok('дополнительный снаряд с noMin помечен только луком Лучника',
   keys('shape.proj_count').join(',') === 'bow', keys('shape.proj_count').join(','));
+ok('обычные отскоки полностью исключены из пула Некроманта',
+  keys('shape.chain').join(',') === 'bow', keys('shape.chain').join(','));
+ok('ЭКО-ОТСКОКИ также не возвращают ветку Некроманту',
+  keys('shape.chain_retention').join(',') === 'bow', keys('shape.chain_retention').join(','));
+ok('скорость снарядов доступна Лучнику и Магу, но не Некроманту',
+  keys('shape.proj_speed').join(',') === 'bow,wand', keys('shape.proj_speed').join(','));
 ok('урон снарядов помечен только луком Лучника',
   keys('dmg.projectile').join(',') === 'bow', keys('dmg.projectile').join(','));
 ok('noMin-карточка без wep показывает всех, кроме Некроманта',

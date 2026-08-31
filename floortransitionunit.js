@@ -26,6 +26,24 @@ const fresh = () => loadGame('./PolyGrind.html', {random:() => 0.5});
   const expectedXp = 12 * D.xpGain;
   G.spawnQueue = 0; c.update(0.01);
   ok('после последнего врага портал появляется', !!G.portal);
+  const portalDistance=Math.hypot(G.portal.x-p.x,G.portal.y-p.y);
+  ok('портал появляется в радиусе 800–1000 от героя',portalDistance>=800&&portalDistance<=1000,
+    portalDistance.toFixed(2));
+  const edgePortal=c.floorPortalSpawnPosition({x:1390,y:1390});
+  ok('увеличенный портал целиком остаётся внутри арены',Math.abs(G.portal.x)<=1397&&Math.abs(G.portal.y)<=1397&&
+    Math.abs(edgePortal.x)<=1397&&Math.abs(edgePortal.y)<=1397&&
+    Math.abs(Math.hypot(edgePortal.x-1390,edgePortal.y-1390)-edgePortal.distance)<1e-6,
+    G.portal.x.toFixed(1)+', '+G.portal.y.toFixed(1));
+  ok('появление портала создаёт густой энергетический выброс',G.parts.length>=84&&G.fx.filter(f=>f.t==='ring').length>=3&&
+    c.drawFloorPortalEnergy(G.portal)===96,
+    'частиц '+G.parts.length);
+  ok('Canvas-защита отсекает отрицательные и повреждённые радиусы',
+    c.safeCanvasRadius(-1.36773)===0&&c.safeCanvasRadius(NaN)===0&&c.safeCanvasRadius(12.5)===12.5);
+  ok('RAF следующего кадра ставится до потенциально аварийной логики',
+    c.loop.toString().indexOf('requestAnimationFrame(loop)')<c.loop.toString().indexOf('try {'));
+  ok('рядом с героем доступен направленный указатель портала',
+    c.drawFloorPortalIndicator(G.portal,p)===true &&
+    c.drawFloorPortalIndicator.toString().includes('Math.atan2(dy,dx)'));
   ok('при появлении портала на арене не остаётся сфер', G.orbs.length === 0, String(G.orbs.length));
   ok('весь опыт сразу начислен игроку', Math.abs(G.xp-expectedXp) < 0.001,
     G.xp + ' / ' + expectedXp);
@@ -71,7 +89,7 @@ const fresh = () => loadGame('./PolyGrind.html', {random:() => 0.5});
 
   const floor = G.floor;
   G.corpses.push({x:111,y:222,life:9},{x:-333,y:444,life:4}); G.raiseT = 1.25;
-  p.x = G.portal.x; p.y = G.portal.y; p.dash = 0.2; G.portal.t = 1;
+  p.x = G.portal.x; p.y = G.portal.y; p.dash = 0.2; G.portal.t = 2;
   c.update(0.01);
   ok('касание портала переводит на следующий этаж', G.floor === floor + 1,
     floor + ' → ' + G.floor);

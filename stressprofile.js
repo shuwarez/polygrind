@@ -16,7 +16,7 @@ function setup(mode){
   G.shots=[];G.eshots=[];G.fx=[];G.parts=[];G.bloodFx=[];G.visualCorpses=[];
   G.items=[];G.orbs=[];G.pools=[];G.boils=[];G.acidPools=[];G.trails=[];
   G.weapon.noAttack=true;p.x=p.y=0;p.inv=1e9;p.hp=D.life;
-  D.maxSkel=6;D.maxHunt=6;D.maxWarl=6;D.golemB=10;D.golemN=10;D.minMax=20;
+  D.maxSkel=6;D.maxBomb=6;D.golemB=10;D.golemN=10;D.minMax=14;
   D.inferno=true;
   for(let i=0;i<500;i++){
     const e=c.spawnEnemy('blob'),a=i*2.399963229728653,r=170+(i%22)*21;
@@ -26,7 +26,7 @@ function setup(mode){
     if(i%17===0){e.dots.fire.dps=0.01;e.dots.fire.life=1e6;e.dots.fire.dur=1e6;e.infT=(i%5)*0.1;}
   }
   if(mode!=='enemy-only'){
-    const kinds=['golemB','golemN',...Array(6).fill('skeleton'),...Array(6).fill('hunter'),...Array(6).fill('warlock')];
+    const kinds=['golemB','golemN',...Array(6).fill('skeleton'),...Array(6).fill('bombardier')];
     for(let i=0;i<kinds.length;i++){
       c.spawnMinion(Math.cos(i)*55,Math.sin(i)*55,kinds[i]);
       const m=G.minions[G.minions.length-1];m.deathT=1e9;m.hp=m.max=Math.max(1,m.max||m.hp||1);

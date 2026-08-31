@@ -25,6 +25,8 @@ function loadGame(file, options={}){
              'totemShare:TOTEM_SHARE*TOTEM_DROP_SCALE/FIND_RATE_SCALE}}, ' +
              'get SHOP(){return typeof SHOP!=="undefined"?SHOP:null}, ' +
              'get AFFIXES(){return typeof BOSS_AFFIXES!=="undefined"?BOSS_AFFIXES:null}, ' +
+             'get FLOOR_TEXTURES(){return {data:FLOOR_TILE_DATA,names:FLOOR_TILE_NAMES,index:floorTextureIndex,patternIndex:floorPatternIndex}}, ' +
+             'selectFloorTexture:(i)=>selectRandomFloorPattern(i), ' +
              'get CORPSE_SPRITE_DATA(){return CORPSE_SPRITE_DATA}, get CORPSE_PUDDLE_DATA(){return CORPSE_PUDDLE_DATA}, ' +
              'corpseSpriteKey:(c)=>corpseSpriteKey(c), corpsePuddleVariant:()=>corpsePuddleVariant(), ' +
              'leaveVisualCorpse:(e)=>leaveVisualCorpse(e), drawVisualCorpses:(l,t,r,b)=>drawVisualCorpses(l,t,r,b), ' +

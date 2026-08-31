@@ -31,7 +31,7 @@ ok('все двенадцать функций системы доступны',
 
 const hp0=e.hp,fx0=G.bloodFx.length;
 const dealt=c.applyDamage(e,5,false,false);
-ok('кровь запускает только фактически снятый HP',dealt===5 && e.hp===hp0-5 && G.bloodFx.length>=fx0+3,
+ok('кровь запускает только фактически снятый HP',dealt===5 && e.hp===hp0-5 && G.bloodFx.length>=fx0+6,
   `dealt=${dealt} fx=${G.bloodFx.length}`);
 const afterHit=G.bloodFx.length;
 c.applyDamage(e,0,false,false);
@@ -41,16 +41,16 @@ G.bloodFx.length=0;
 c.applyDamage(e,1,true,false);
 const firstCritSprays=G.bloodFx.filter(f=>f.t==='critSpray').length;
 c.applyDamage(e,1,true,false);
-ok('каждый крит добавляет ровно один спрайтовый разлёт мелких брызг',
-  firstCritSprays===1 && G.bloodFx.filter(f=>f.t==='critSpray').length===2);
-ok('критический разлёт использует один короткоживущий объект вместо роя частиц',
+ok('каждый крит добавляет два спрайтовых разлёта мелких брызг',
+  firstCritSprays===2 && G.bloodFx.filter(f=>f.t==='critSpray').length===4);
+ok('каждый слой критического разлёта остаётся одним компактным объектом',
   G.bloodFx.filter(f=>f.t==='critSpray').every(f=>f.max<=0.27 && f.size<=56));
 
 G.bloodFx.length=0; e.bloodDotFxT=undefined;
 c.applyDamage(e,1,false,true);
 const firstDot=G.bloodFx.length;
 c.applyDamage(e,1,false,true);
-ok('частые DoT-тиki ограничены на одной цели',firstDot>=3 && G.bloodFx.length===firstDot,`fx=${firstDot}`);
+ok('частые DoT-тиki ограничены на одной цели',firstDot>=6 && G.bloodFx.length===firstDot,`fx=${firstDot}`);
 G.time+=0.19; c.applyDamage(e,1,false,true);
 ok('DoT снова виден после 0.18 секунды',G.bloodFx.length>firstDot);
 
@@ -84,10 +84,10 @@ const skeleton=c.spawnEnemy('pack',null,'skeletonWarrior');
 const lich=c.spawnEnemy('boss','lich');
 ok('скелеты и нежить получают не человеческую палитру',c.bloodMaterialForEnemy(skeleton)==='bone' && c.bloodMaterialForEnemy(lich)==='ichor');
 
-G.bloodFx=Array.from({length:300},()=>({t:'drop',x:0,y:0,z:2,vx:0,vy:0,vz:0,size:3,life:1,max:1,material:'blood'}));
+G.bloodFx=Array.from({length:600},()=>({t:'drop',x:0,y:0,z:2,vx:0,vy:0,vz:0,size:3,life:1,max:1,material:'blood'}));
 const capStamp=G.bloodStampN;
 c.emitBloodHit(e,1,{});
-ok('лимит временных частиц жёстко равен 300',G.bloodFx.length===300 && G.bloodStampN>capStamp,
+ok('лимит временных частиц жёстко равен 600',G.bloodFx.length===600 && G.bloodStampN>capStamp,
   `fx=${G.bloodFx.length}`);
 
 G.bloodFx=[{t:'drop',x:20,y:20,z:0,vx:0,vy:0,vz:-1,size:4,life:1,max:1,material:'blood'}];

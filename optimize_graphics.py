@@ -13,12 +13,13 @@ import base64
 import hashlib
 import io
 import json
+import math
 import re
 import zipfile
 from collections import deque
 from pathlib import Path
 
-from PIL import Image, ImageChops, ImageEnhance, ImageFilter
+from PIL import Image, ImageChops, ImageDraw, ImageEnhance, ImageFilter
 
 
 ROOT = Path(__file__).resolve().parent
@@ -26,6 +27,12 @@ HTML = ROOT / "PolyGrind.html"
 TRANSPARENT_INDEX = 15
 PALETTE_COLORS = 15
 FRAME_PALETTE_COLORS = 128
+ITEM_ICON_WIDTH = 128
+ITEM_ICON_HEIGHT = 128
+ITEM_ICON_MAX_RGBA_COLORS = 32
+ITEM_FLOOR_ICON_SIZE = 24
+BOOK_FLOOR_KEYS = ("fire", "cold", "shock", "poison", "bleed", "xp", "monster")
+ITEM_ICON_EXPECTED_COUNTS = {"item": 93, "book": 7, "totem": 20}
 
 RARE_ITEM_SOURCES = {
     "mirror": ("image1.png", "849ba0d0edbcf042cb35a650343dcb628de433182eb57b13c1dc8abbd3346e62"),
@@ -600,6 +607,30 @@ def rare_item_sprite(path: Path) -> bytes:
     return indexed_png(frame)
 
 
+def item_floor_sprite(data: bytes) -> bytes:
+    """Создать из канонической иконки находки читаемый наземный PNG ровно 24×24.
+
+    Силуэт вписывается в поле 22×22 с прозрачной рамкой. LANCZOS сводит крупные
+    детали к устойчивым цветовым пятнам, после чего палитра сокращается до семи
+    непрозрачных цветов. В игре результат увеличиваться не будет и рисуется с
+    отключённым smoothing, поэтому один пиксель PNG равен одному пикселю мира.
+    """
+    source = Image.open(io.BytesIO(data)).convert("RGBA")
+    alpha = source.getchannel("A").point(lambda value: 255 if value >= 16 else 0)
+    box = alpha.getbbox()
+    if not box:
+        raise SystemExit("Пустая каноническая иконка находки")
+    crop = source.crop(box)
+    content_size = ITEM_FLOOR_ICON_SIZE - 2
+    ratio = min(content_size / crop.width, content_size / crop.height)
+    size = (max(1, round(crop.width * ratio)), max(1, round(crop.height * ratio)))
+    crop = crop.resize(size, Image.Resampling.LANCZOS)
+    frame = Image.new("RGBA", (ITEM_FLOOR_ICON_SIZE, ITEM_FLOOR_ICON_SIZE))
+    frame.alpha_composite(crop, ((ITEM_FLOOR_ICON_SIZE - size[0]) // 2,
+                                 (ITEM_FLOOR_ICON_SIZE - size[1]) // 2))
+    return indexed_png(frame, opaque_colors=7, transparent_index=7, bits=4)
+
+
 def enemy_status_icon_sheet(path: Path) -> bytes:
     """Вырезать семь элементальных иконок из master 4×3 в лист 112×16."""
     source = Image.open(path).convert("RGBA")
@@ -614,26 +645,62 @@ def enemy_status_icon_sheet(path: Path) -> bytes:
     return indexed_png(sheet)
 
 
-FLOOR_PORTAL_SPRITE_SHA256 = "13ee7db299978f4753c6bb63fe6466bdae3e1e69a6eac71d00e697851a868d8b"
+FLOOR_PORTAL_MASTER_SHA256 = "017427f6b435e40df9eb9892fa46a2091c552758bff18ef1eb3ccacce77bb70c"
 
 
 def floor_portal_sprite_sheet(path: Path) -> bytes:
-    """Проверить и вернуть нативный RGBA-лист портала 8×128 без перекодирования."""
+    """Собрать бесшовный 16-кадровый цикл внутреннего вихря портала."""
     data = path.read_bytes()
     actual = hashlib.sha256(data).hexdigest()
-    if actual != FLOOR_PORTAL_SPRITE_SHA256:
+    if actual != FLOOR_PORTAL_MASTER_SHA256:
         raise SystemExit(
-            f"Лист портала: SHA-256 {actual}, ожидался {FLOOR_PORTAL_SPRITE_SHA256}")
-    source = Image.open(io.BytesIO(data))
-    if source.mode != "RGBA" or source.size != (1024, 128):
+            f"Master портала: SHA-256 {actual}, ожидался {FLOOR_PORTAL_MASTER_SHA256}")
+    source = Image.open(io.BytesIO(data)).convert("RGBA")
+    if source.size != (1254, 1254) or not source.getchannel("A").getbbox():
         raise SystemExit(
-            f"Лист портала должен быть RGBA 1024×128 (8 кадров по 128×128), "
+            f"Master портала должен быть непустым RGBA 1254×1254, "
             f"получено {source.mode} {source.size}")
-    for index in range(8):
-        frame = source.crop((index * 128, 0, (index + 1) * 128, 128))
-        if not frame.getchannel("A").getbbox():
-            raise SystemExit(f"Лист портала: кадр {index + 1} пуст")
-    return data
+    final = fit_frame(source, (128, 128), padding=4)
+    if not final.getchannel("A").point(lambda value: 255 if value >= 8 else 0).getbbox():
+        raise SystemExit("Master портала стал пустым после уменьшения")
+
+    # Вращаем только энергетический центр: основание, руны и каменное кольцо
+    # остаются неподвижными, а отсутствующий семнадцатый кадр продолжает первый.
+    center = (63, 65)
+    radius = 34
+    vortex_mask = Image.new("L", final.size)
+    ImageDraw.Draw(vortex_mask).ellipse(
+        (center[0] - radius, center[1] - radius,
+         center[0] + radius, center[1] + radius), fill=255)
+    vortex_mask = vortex_mask.filter(ImageFilter.GaussianBlur(1.15))
+
+    ring_mask = Image.new("L", final.size)
+    ring_draw = ImageDraw.Draw(ring_mask)
+    ring_draw.ellipse((center[0] - radius - 2, center[1] - radius - 2,
+                       center[0] + radius + 2, center[1] + radius + 2), fill=255)
+    ring_draw.ellipse((center[0] - radius + 2, center[1] - radius + 2,
+                       center[0] + radius - 2, center[1] + radius - 2), fill=0)
+    ring_mask = ring_mask.filter(ImageFilter.GaussianBlur(2.1))
+
+    sheet = Image.new("RGBA", (128 * 16, 128))
+    for index in range(16):
+        phase = index / 16
+        pulse = 0.5 + 0.5 * math.sin(phase * math.tau)
+        vortex = final.rotate(
+            -phase * 360, resample=Image.Resampling.BICUBIC,
+            center=center, expand=False)
+        vortex = ImageEnhance.Brightness(vortex).enhance(1.02 + pulse * 0.10)
+        vortex.putalpha(ImageChops.multiply(vortex.getchannel("A"), vortex_mask))
+
+        frame = final.copy()
+        glow_alpha = ring_mask.point(
+            lambda value, strength=0.34 + pulse * 0.28: round(value * strength))
+        glow = Image.new("RGBA", final.size, (45, 186, 255, 0))
+        glow.putalpha(glow_alpha)
+        frame.alpha_composite(glow)
+        frame.alpha_composite(vortex)
+        sheet.alpha_composite(frame, (index * 128, 0))
+    return indexed_rgba_png(sheet, colors=192)
 
 
 def totem_sprite(path: Path) -> bytes:
@@ -1230,6 +1297,144 @@ def install_object_payloads(html: str, object_name: str, payload: dict[str, str]
     return html[:match.start()] + body + html[match.end():]
 
 
+def replace_object_payloads(html: str, object_name: str,
+                            payload: dict[str, str | list[str]]) -> str:
+    """Полностью заменить каталог data URI, не оставляя старые ассеты и ключи."""
+    rows = []
+    for key, value in payload.items():
+        if isinstance(value, list):
+            encoded = ",".join(f"'data:image/png;base64,{part}'" for part in value)
+            rows.append(f"  {key}:[{encoded}],")
+        else:
+            rows.append(f"  {key}:'data:image/png;base64,{value}',")
+    body = f"const {object_name} = {{\n" + "\n".join(rows) + "\n};"
+    updated, count = re.subn(
+        rf"const {re.escape(object_name)} = \{{.*?\n\}};", body, html,
+        count=1, flags=re.S)
+    if count != 1:
+        raise SystemExit(f"{object_name}: ожидалась одна замена, получено {count}")
+    return updated
+
+
+def embedded_png_payloads(html: str, object_name: str) -> dict[str, bytes]:
+    """Извлечь плоский каталог встроенных PNG, проверяя каждый base64 payload."""
+    match = re.search(
+        rf"const {re.escape(object_name)} = \{{(.*?)\n\}};", html, flags=re.S)
+    if not match:
+        raise SystemExit(f"Не найден встроенный каталог {object_name}")
+    payload: dict[str, bytes] = {}
+    for key, encoded in re.findall(
+            r"^\s*([A-Za-z_$][\w$]*):'data:image/png;base64,([^']+)',\s*$",
+            match.group(1), flags=re.M):
+        try:
+            payload[key] = base64.b64decode(encoded, validate=True)
+        except ValueError as error:
+            raise SystemExit(f"{object_name}.{key}: повреждён base64: {error}") from error
+    if not payload:
+        raise SystemExit(f"Каталог {object_name} не содержит PNG")
+    return payload
+
+
+def runtime_catalog_keys(html: str, object_name: str, end_anchor: str) -> set[str]:
+    """Прочитать верхнеуровневые ключи декларативного runtime-каталога."""
+    match = re.search(
+        rf"const {re.escape(object_name)} = \{{(.*?)\n\}};\n{re.escape(end_anchor)}",
+        html, flags=re.S)
+    if not match:
+        raise SystemExit(f"Не найден каталог {object_name} перед {end_anchor}")
+    return set(re.findall(r"^\s{2}([A-Za-z_$][\w$]*):\s*\{", match.group(1), flags=re.M))
+
+
+def validate_item_icon_bundle(bundle_dir: Path, html: str) -> tuple[dict[str, bytes], dict[str, bytes], dict[str, list[bytes]]]:
+    """Проверить единый handoff предметов 128×128 и вернуть исходные PNG-байты.
+
+    Эти файлы уже являются финальными runtime-ресурсами: ресайз, квантизация и
+    правка alpha здесь запрещены, чтобы установленный art совпадал с handoff.
+    """
+    manifest_path = bundle_dir / "catalog_manifest.json"
+    if not manifest_path.is_file():
+        raise SystemExit(f"Не найден manifest предметных иконок: {manifest_path}")
+    records = json.loads(manifest_path.read_text(encoding="utf-8"))
+    if not isinstance(records, list):
+        raise SystemExit("catalog_manifest.json должен содержать массив записей")
+    counts = {kind: sum(record.get("kind") == kind for record in records)
+              for kind in ITEM_ICON_EXPECTED_COUNTS}
+    if counts != ITEM_ICON_EXPECTED_COUNTS:
+        raise SystemExit(
+            f"Неверный состав предметных иконок: {counts}, ожидался {ITEM_ICON_EXPECTED_COUNTS}")
+
+    keys = [record.get("key") for record in records]
+    if any(not isinstance(key, str) or not re.fullmatch(r"[A-Za-z_$][\w$]*", key)
+           for key in keys):
+        raise SystemExit("Manifest содержит пустой или недопустимый JS-ключ")
+    if len(keys) != len(set(keys)):
+        duplicates = sorted({key for key in keys if keys.count(key) > 1})
+        raise SystemExit(f"Manifest содержит дубли ключей: {duplicates}")
+
+    root = bundle_dir.resolve()
+    files: dict[str, tuple[str, bytes]] = {}
+    referenced: set[Path] = set()
+    for record in records:
+        key, kind = record["key"], record["kind"]
+        path = (bundle_dir / Path(record["path"])).resolve()
+        if root not in path.parents:
+            raise SystemExit(f"{key}: путь выходит за пределы bundle: {path}")
+        if not path.is_file():
+            raise SystemExit(f"{key}: не найден PNG {path}")
+        referenced.add(path)
+        data = path.read_bytes()
+        image = Image.open(io.BytesIO(data))
+        if image.mode != "RGBA" or image.size != (ITEM_ICON_WIDTH, ITEM_ICON_HEIGHT):
+            raise SystemExit(
+                f"{key}: ожидался RGBA {ITEM_ICON_WIDTH}×{ITEM_ICON_HEIGHT}, "
+                f"получен {image.mode} {image.size}")
+        rgba = image.convert("RGBA")
+        colors = set(rgba.get_flattened_data())
+        if len(colors) > ITEM_ICON_MAX_RGBA_COLORS:
+            raise SystemExit(
+                f"{key}: {len(colors)} RGBA-цветов, максимум {ITEM_ICON_MAX_RGBA_COLORS}")
+        alpha = set(rgba.getchannel("A").get_flattened_data())
+        if not alpha <= {0, 255}:
+            raise SystemExit(f"{key}: alpha должна быть бинарной, получено {sorted(alpha)}")
+        if rgba.getchannel("A").getbbox() is None:
+            raise SystemExit(f"{key}: прозрачный силуэт пуст")
+        if record.get("colors") != len(colors):
+            raise SystemExit(
+                f"{key}: manifest сообщает {record.get('colors')} цветов, фактически {len(colors)}")
+        files[key] = (kind, data)
+
+    icon_root = bundle_dir / "icons_128x128_max32_new_art"
+    actual = {path.resolve() for path in icon_root.rglob("*.png")}
+    if actual != referenced:
+        missing = sorted(str(path) for path in referenced - actual)
+        extra = sorted(str(path) for path in actual - referenced)
+        raise SystemExit(f"Покрытие manifest расходится с PNG: missing={missing}, extra={extra}")
+
+    runtime_items = runtime_catalog_keys(html, "AMULETS", "const AMU_KEYS")
+    runtime_books = runtime_catalog_keys(html, "BOOKS", "/* ---------- 3a-bis. АМУЛЕТЫ")
+    runtime_totems = runtime_catalog_keys(html, "TOTEMS", "const TOTEM_KEYS")
+    manifest_items = {key for key, (kind, _) in files.items() if kind == "item"}
+    manifest_books = {key for key, (kind, _) in files.items() if kind == "book"}
+    manifest_totems = {key.rsplit("_rank", 1)[0]
+                       for key, (kind, _) in files.items() if kind == "totem"}
+    for label, expected, actual_keys in (
+            ("items", runtime_items, manifest_items),
+            ("books", runtime_books, manifest_books),
+            ("totems", runtime_totems, manifest_totems)):
+        if expected != actual_keys:
+            raise SystemExit(
+                f"{label}: ключи runtime/manifest расходятся; "
+                f"missing={sorted(expected-actual_keys)}, extra={sorted(actual_keys-expected)}")
+
+    item_data = {key: data for key, (kind, data) in files.items() if kind == "item"}
+    book_data = {key: data for key, (kind, data) in files.items() if kind == "book"}
+    totem_data = {
+        key: [files[f"{key}_rank{rank}"][1] for rank in range(1, 5)]
+        for key in sorted(runtime_totems)
+    }
+    return item_data, book_data, totem_data
+
+
 def optimize_embedded_frame_family(html: str, object_name: str,
                                    keys: tuple[str, ...], size: tuple[int, int]) -> tuple[str, dict[str, int]]:
     """Переупаковать уже встроенные рамки; повторный запуск не ухудшает готовую палитру."""
@@ -1376,6 +1581,14 @@ def main() -> None:
     parser.add_argument("--book-bleed", type=Path)
     parser.add_argument("--book-xp", type=Path)
     parser.add_argument("--book-monster", type=Path)
+    parser.add_argument("--item-icon-bundle", type=Path,
+                        help="handoff-каталог с catalog_manifest.json и 120 PNG 128×128")
+    parser.add_argument("--validate-item-icons-128", action="store_true",
+                        help="проверить состав, RGBA, размер, цвета и alpha всех предметных PNG")
+    parser.add_argument("--install-item-icons-128", action="store_true",
+                        help="проверить и без перекодирования заменить предметы, книги и тотемы в HTML")
+    parser.add_argument("--install-item-floor-sprites-24", action="store_true",
+                        help="создать из встроенных предметов и книг отдельные наземные PNG 24×24")
     parser.add_argument("--build-loot-sprites", action="store_true",
                         help="записать компактные листы опыта, золота и семи книг в outputs")
     parser.add_argument("--install-loot-sprites", action="store_true",
@@ -1441,11 +1654,11 @@ def main() -> None:
     parser.add_argument("--install-enemy-status-icons", action="store_true",
                         help="собрать и встроить лист элементальных состояний в HTML")
     parser.add_argument("--floor-portal", type=Path,
-                        help="нативный RGBA-лист портала 1024×128: восемь кадров по 128×128")
+                        help="прозрачный master портала 1254×1254")
     parser.add_argument("--build-floor-portal", action="store_true",
-                        help="проверить и без перекодирования скопировать восьмикадровый портал в outputs")
+                        help="собрать бесшовную анимацию портала в 16 кадров по 128×128")
     parser.add_argument("--install-floor-portal", action="store_true",
-                        help="проверить и без перекодирования встроить анимацию портала завершения этажа")
+                        help="собрать и встроить 16-кадровый цикл портала завершения этажа")
     parser.add_argument("--totem-sprite-dir", type=Path,
                         help="word/media с 16 Master-спрайтами четырёх существующих тотемов")
     parser.add_argument("--lightning-totem-sprite-dir", type=Path,
@@ -1599,6 +1812,99 @@ def main() -> None:
     parser.add_argument("--install-elite-ranged-tank", action="store_true",
                         help="добавить шесть ranged/tank разновидностей элиты в автономный HTML")
     args = parser.parse_args()
+
+    legacy_item_icon_mode = any((
+        args.build_loot_sprites, args.install_loot_sprites,
+        args.build_rare_item_sprites, args.install_rare_item_sprites,
+        args.build_epic_item_icons, args.install_epic_item_icons,
+        args.build_legendary_item_icons, args.install_legendary_item_icons,
+        args.build_amulet_icons, args.install_amulet_icons,
+        args.build_glove_icons, args.install_glove_icons,
+        args.build_boot_icons, args.install_boot_icons,
+        args.build_ring_icons, args.install_ring_icons,
+        args.build_relic_icons, args.install_relic_icons,
+        args.build_totem_sprites, args.install_totem_sprites,
+    ))
+    if legacy_item_icon_mode:
+        parser.error(
+            "режимы предметных иконок 24×24 и четырёхкадровых книг удалены; "
+            "используйте --item-icon-bundle с --validate-item-icons-128 или "
+            "--install-item-icons-128")
+
+    if args.install_item_floor_sprites_24:
+        html = HTML.read_text(encoding="utf-8")
+        items = embedded_png_payloads(html, "RARE_ITEM_SPRITE_DATA")
+        loot = embedded_png_payloads(html, "LOOT_SPRITE_DATA")
+        missing_books = set(BOOK_FLOOR_KEYS) - loot.keys()
+        if missing_books:
+            raise SystemExit(f"LOOT_SPRITE_DATA: нет книг {sorted(missing_books)}")
+        floor_items = {key: item_floor_sprite(data) for key, data in items.items()}
+        floor_books = {key: item_floor_sprite(loot[key]) for key in BOOK_FLOOR_KEYS}
+        html = replace_object_payloads(
+            html, "RARE_ITEM_FLOOR_SPRITE_DATA",
+            {key: base64.b64encode(data).decode("ascii")
+             for key, data in floor_items.items()})
+        html = replace_object_payloads(
+            html, "BOOK_FLOOR_SPRITE_DATA",
+            {key: base64.b64encode(data).decode("ascii")
+             for key, data in floor_books.items()})
+        HTML.write_text(html.rstrip("\n") + "\n", encoding="utf-8", newline="\n")
+        print(json.dumps({
+            "items": len(floor_items), "books": len(floor_books),
+            "size": [ITEM_FLOOR_ICON_SIZE, ITEM_FLOOR_ICON_SIZE],
+            "bytes": sum(map(len, floor_items.values())) + sum(map(len, floor_books.values())),
+            "installed": True,
+        }, ensure_ascii=False, separators=(",", ":")))
+        return
+
+    if args.validate_item_icons_128 or args.install_item_icons_128:
+        if not args.item_icon_bundle or not args.item_icon_bundle.is_dir():
+            parser.error("иконки 128×128 требуют существующий --item-icon-bundle")
+        html = HTML.read_text(encoding="utf-8")
+        items, books, totems = validate_item_icon_bundle(args.item_icon_bundle, html)
+        if args.install_item_icons_128:
+            old_loot = {}
+            for key in ("pickupXp", "pickupGold"):
+                match = re.search(
+                    rf"^\s*{key}:'data:image/png;base64,([^']+)',\s*$",
+                    html, flags=re.M)
+                if not match:
+                    raise SystemExit(f"LOOT_SPRITE_DATA.{key}: не найден служебный pickup")
+                old_loot[key] = match.group(1)
+            html = replace_object_payloads(
+                html, "RARE_ITEM_SPRITE_DATA",
+                {key: base64.b64encode(data).decode("ascii")
+                 for key, data in items.items()})
+            html = replace_object_payloads(
+                html, "RARE_ITEM_FLOOR_SPRITE_DATA",
+                {key: base64.b64encode(item_floor_sprite(data)).decode("ascii")
+                 for key, data in items.items()})
+            html = replace_object_payloads(
+                html, "BOOK_FLOOR_SPRITE_DATA",
+                {key: base64.b64encode(item_floor_sprite(data)).decode("ascii")
+                 for key, data in books.items()})
+            html = replace_object_payloads(
+                html, "LOOT_SPRITE_DATA",
+                old_loot | {key: base64.b64encode(data).decode("ascii")
+                            for key, data in books.items()})
+            html = replace_object_payloads(
+                html, "TOTEM_SPRITE_DATA",
+                {key: [base64.b64encode(data).decode("ascii") for data in ranks]
+                 for key, ranks in totems.items()})
+            HTML.write_text(html.rstrip("\n") + "\n", encoding="utf-8", newline="\n")
+        total_bytes = sum(map(len, items.values())) + sum(map(len, books.values())) + sum(
+            len(data) for ranks in totems.values() for data in ranks)
+        print(json.dumps({
+            "items": len(items), "books": len(books),
+            "totemSprites": sum(map(len, totems.values())),
+            "total": len(items) + len(books) + sum(map(len, totems.values())),
+            "invalid": 0, "bytes": total_bytes,
+            "size": [ITEM_ICON_WIDTH, ITEM_ICON_HEIGHT],
+            "maxRgbaColors": ITEM_ICON_MAX_RGBA_COLORS,
+            "binaryAlpha": True, "resampled": False,
+            "installed": bool(args.install_item_icons_128),
+        }, ensure_ascii=False, separators=(",", ":")))
+        return
 
     if args.install_skill_card_frames:
         if not args.skill_card_frame_docx or not args.skill_card_frame_docx.is_file():
@@ -2368,7 +2674,7 @@ def main() -> None:
         generated = floor_portal_sprite_sheet(args.floor_portal)
         output_dir = ROOT / "outputs"
         output_dir.mkdir(exist_ok=True)
-        path = output_dir / "floor-completion-portal-8x128-lossless.png"
+        path = output_dir / "floor-completion-portal-16x128.png"
         path.write_bytes(generated)
         if args.install_floor_portal:
             html = HTML.read_text(encoding="utf-8")
@@ -2382,7 +2688,7 @@ def main() -> None:
             HTML.write_text(html, encoding="utf-8", newline="\n")
         print(json.dumps({"path": str(path), "bytes": len(generated),
                           "size": Image.open(io.BytesIO(generated)).size,
-                          "frames": 8, "frameMs": 100},
+                          "frames": 16, "frameMs": 80},
                          separators=(",", ":")))
         return
 

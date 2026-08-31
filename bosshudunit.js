@@ -20,7 +20,7 @@ ok('появление босса не меняет паузу и не созд�
 ok('Boss HUD является отдельным последним Canvas-проходом',
   /'worldHud','combatText','bossHud'/.test(html) && /if \(pass==='bossHud'\)/.test(html));
 ok('экранный Boss HUD рисуется без трансформации камеры',
-  html.indexOf("if (pass==='bossHud')")<html.indexOf('ctx.translate(W/2 - p.x'));
+  html.indexOf("if (pass==='bossHud')")<html.indexOf('ctx.scale(camera.scale,camera.scale)'));
 
 const collectSrc=between('function collectBossHudTargets()','function bossHudInfo');
 ok('активные боссы ищутся одним циклом без filter/map',

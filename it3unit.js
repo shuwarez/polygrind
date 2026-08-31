@@ -65,9 +65,9 @@ console.log('ПРОЧЕЕ');
   ok('стрела: +50% скорости снарядов', Math.abs(b.D.projSpd/a.D.projSpd - 1.5) < 0.01,
      a.D.projSpd.toFixed(2) + ' \u2192 ' + b.D.projSpd.toFixed(2));
   // дальность выстрела свиты не должна поехать
-  const rng = (o) => { const G = o.G; G.minions.length = 0; o.c.spawnMinion(undefined,undefined,'hunter');
+  const rng = (o) => { const G = o.G; G.minions.length = 0; o.c.spawnMinion(undefined,undefined,'bombardier');
     const m = G.minions[0]; G.shots.length = 0; const e = foe(o,'norm'); e.x = o.p.x+200; e.y = o.p.y;
-    o.c.minionShot(m, e, null); const s = G.shots[0]; return Math.hypot(s.vx,s.vy)*s.life; };
+    o.c.minionShot(m, e, 'fire'); const s = G.shots[0]; return Math.hypot(s.vx,s.vy)*s.life; };
   ok('дальность выстрела не изменилась', Math.abs(rng(a) - rng(b)) < 1,
      Math.round(rng(a)) + ' и ' + Math.round(rng(b))); }
 { const gold = (amu, kind, seed) => {

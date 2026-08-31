@@ -16,9 +16,9 @@ function enemy(o,x=0,y=0){const e=o.c.spawnEnemy('blob');e.x=x;e.y=y;e.hp=e.maxH
   const {c,G}=fresh();c.burst(0,0,10,'#fff',100,3,1);
   ok('обычный burst сохраняет прежнее прореживание вдвое',G.parts.length===5,'частиц '+G.parts.length);
   for(let i=0;i<200;i++)c.burst(0,0,20,'#fff',100,3,1);
-  ok('декоративные частицы имеют жёсткий предел 320',G.parts.length===320,'частиц '+G.parts.length);
+  ok('декоративные частицы имеют жёсткий предел 640',G.parts.length===640,'частиц '+G.parts.length);
   c.burst(0,0,1000,'#fff',100,3,1);
-  ok('на заполненном пределе новые частицы не раздувают массив',G.parts.length===320);
+  ok('на заполненном пределе новые частицы не раздувают массив',G.parts.length===640);
   c.pushTimedTelegraph({shape:'circle',kind:'damage',x:0,y:0,r:80},1);
   ok('предел частиц не затрагивает опасные телеграфы',G.fx.some(f=>f.t==='telegraph'));
 }
@@ -39,7 +39,7 @@ function enemy(o,x=0,y=0){const e=o.c.spawnEnemy('blob');e.x=x;e.y=y;e.hp=e.maxH
 {
   const {c,G}=fresh();G.parts=Array.from({length:700},()=>({x:0,y:0,vx:0,vy:0,life:0,max:1,sz:2,col:'#fff'}));
   c.updateParticles(0.1);
-  ok('пул частиц сам ограничен 320 объектами',G.parts.length===0&&G.partPool.length===320,'pool '+G.partPool.length);
+  ok('пул частиц сам ограничен 640 объектами',G.parts.length===0&&G.partPool.length===640,'pool '+G.partPool.length);
 }
 
 {

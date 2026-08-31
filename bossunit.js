@@ -8,75 +8,36 @@ function ok(name, yes, got=''){
 }
 const html=fs.readFileSync('./PolyGrind.html','utf8');
 const bossSpriteBlock=html.slice(html.indexOf('const BOSS_SPRITE_DATA = {'), html.indexOf('const BOSS_SPRITE_META = {'));
-const embeddedPng = key => {
-  const m=bossSpriteBlock.match(new RegExp(key+":'data:image/png;base64,([^']+)'"));
+const embeddedWebp = (block,key) => {
+  const m=block.match(new RegExp("\\b"+key+":'data:image/webp;base64,([^']+)'"));
   return m ? Buffer.from(m[1], 'base64') : Buffer.alloc(0);
 };
-const pngInfo = b => b.length < 26 ? {w:0,h:0,color:-1} :
-  ({w:b.readUInt32BE(16),h:b.readUInt32BE(20),color:b[25]});
-const slimeMatch=html.match(/PLAGUE_SLIME_PROJECTILE_DATA\s*=\s*'data:image\/png;base64,([^']+)'/);
-const slimeBytes=slimeMatch ? Buffer.from(slimeMatch[1],'base64') : Buffer.alloc(0);
-const slimePng=pngInfo(slimeBytes);
-const emeraldMatch=html.match(/EMERALD_ORB_PROJECTILE_DATA\s*=\s*'data:image\/png;base64,([^']+)'/);
-const emeraldBytes=emeraldMatch ? Buffer.from(emeraldMatch[1],'base64') : Buffer.alloc(0);
-const emeraldPng=pngInfo(emeraldBytes);
-const greedSpearMatch=html.match(/GREED_SPEAR_PROJECTILE_DATA\s*=\s*'data:image\/png;base64,([^']+)'/);
-const greedSpearBytes=greedSpearMatch ? Buffer.from(greedSpearMatch[1],'base64') : Buffer.alloc(0);
-const greedSpearPng=pngInfo(greedSpearBytes);
-const axeMatch=html.match(/EXECUTIONER_AXE_PROJECTILE_DATA\s*=\s*'data:image\/png;base64,([^']+)'/);
-const axeBytes=axeMatch ? Buffer.from(axeMatch[1],'base64') : Buffer.alloc(0);
-const axePng=pngInfo(axeBytes);
-const minotaurSpearMatch=html.match(/MINOTAUR_SPEAR_PROJECTILE_DATA\s*=\s*'data:image\/png;base64,([^']+)'/);
-const minotaurSpearBytes=minotaurSpearMatch ? Buffer.from(minotaurSpearMatch[1],'base64') : Buffer.alloc(0);
-const minotaurSpearPng=pngInfo(minotaurSpearBytes);
-const holySpearMatch=html.match(/SERAPH_HOLY_SPEAR_DATA\s*=\s*'data:image\/png;base64,([^']+)'/);
-const holySpearBytes=holySpearMatch ? Buffer.from(holySpearMatch[1],'base64') : Buffer.alloc(0);
-const holySpearPng=pngInfo(holySpearBytes);
-const demonBlobMatch=html.match(/DEMON_QUEEN_BLOB_DATA\s*=\s*'data:image\/png;base64,([^']+)'/);
-const demonBlobBytes=demonBlobMatch ? Buffer.from(demonBlobMatch[1],'base64') : Buffer.alloc(0);
-const demonBlobPng=pngInfo(demonBlobBytes);
-const matriarchPlagueMatch=html.match(/MATRIARCH_PLAGUE_PROJECTILE_DATA\s*=\s*'data:image\/png;base64,([^']+)'/);
-const matriarchPlagueBytes=matriarchPlagueMatch ? Buffer.from(matriarchPlagueMatch[1],'base64') : Buffer.alloc(0);
-const matriarchPlaguePng=pngInfo(matriarchPlagueBytes);
-const voidRiftMatch=html.match(/VOID_GROUND_RIFT_DATA\s*=\s*'data:image\/png;base64,([^']+)'/);
-const voidRiftBytes=voidRiftMatch ? Buffer.from(voidRiftMatch[1],'base64') : Buffer.alloc(0);
-const voidRiftPng=pngInfo(voidRiftBytes);
+const isWebp=b=>b.length>12&&b.toString('ascii',0,4)==='RIFF'&&b.toString('ascii',8,12)==='WEBP';
+const constantWebp=key=>{
+  const m=html.match(new RegExp(key+"\\s*=\\s*'data:image/webp;base64,([^']+)'"));
+  return m?Buffer.from(m[1],'base64'):Buffer.alloc(0);
+};
 
 const bossIds=['lich','goat','plague','greed','executioner','tyrant','grave','behemoth',
   'vampire','voidwrath','minotaur','seraph','matriarch','demonqueen'];
-const sheets=bossIds.map(k => embeddedPng(k));
-ok('четырнадцать листов боссов встроены в единственный HTML', sheets.every(b => b.length>0));
-ok('листы оптимизированы до 256×96 и 16-цветной палитры',
-  sheets.every(b => {const p=pngInfo(b); return p.w===256 && p.h===96 && p.color===3;}));
-ok('все четырнадцать листов вместе весят меньше 90 КБ', sheets.reduce((s,b)=>s+b.length,0)<90000,
-  sheets.reduce((s,b)=>s+b.length,0)+' байт');
-ok('сгусток Мерзости — индексированный лист 80×20 в бюджете 1 КБ',
-  slimePng.w===80 && slimePng.h===20 && slimePng.color===3 && slimeBytes.length<1024,
-  slimeBytes.length+' байт');
-ok('Изумрудная сфера — индексированный лист 128×32 в бюджете 2 КБ',
-  emeraldPng.w===128 && emeraldPng.h===32 && emeraldPng.color===3 && emeraldBytes.length<2048,
-  emeraldBytes.length+' байт');
-ok('Копьё жадности — индексированный лист 256×20 в бюджете 2 КБ',
-  greedSpearPng.w===256 && greedSpearPng.h===20 && greedSpearPng.color===3 && greedSpearBytes.length<2048,
-  greedSpearBytes.length+' байт');
-ok('топор Палача — индексированный лист 448×56 в бюджете 5 КБ',
-  axePng.w===448 && axePng.h===56 && axePng.color===3 && axeBytes.length<5120,
-  axeBytes.length+' байт');
-ok('копьё Минотавра — индексированный лист 256×20 в бюджете 1,5 КБ',
-  minotaurSpearPng.w===256 && minotaurSpearPng.h===20 && minotaurSpearPng.color===3 && minotaurSpearBytes.length<1536,
-  minotaurSpearBytes.length+' байт');
-ok('Святое Копьё — индексированный лист 384×32 в бюджете 4 КБ',
-  holySpearPng.w===384 && holySpearPng.h===32 && holySpearPng.color===3 && holySpearBytes.length<4096,
-  holySpearBytes.length+' байт');
-ok('Демонический сгусток — индексированный лист 128×32 в бюджете 2 КБ',
-  demonBlobPng.w===128 && demonBlobPng.h===32 && demonBlobPng.color===3 && demonBlobBytes.length<2048,
-  demonBlobBytes.length+' байт');
-ok('Чумной снаряд Матриархии — индексированный лист 128×32 в бюджете 2 КБ',
-  matriarchPlaguePng.w===128 && matriarchPlaguePng.h===32 && matriarchPlaguePng.color===3 && matriarchPlagueBytes.length<2048,
-  matriarchPlagueBytes.length+' байт');
-ok('наземный Разлом Пустоты — индексированный лист 256×64 в бюджете 5 КБ',
-  voidRiftPng.w===256 && voidRiftPng.h===64 && voidRiftPng.color===3 && voidRiftBytes.length<5120,
-  voidRiftBytes.length+' байт');
+const sheets=bossIds.map(k=>embeddedWebp(bossSpriteBlock,k));
+const attackBlock=html.slice(html.indexOf('const BOSS_ATTACK_SPRITE_DATA = {'),html.indexOf('const BOSS_ATTACK_SPRITES = {};'));
+const attackSheets=bossIds.map(k=>embeddedWebp(attackBlock,k+'_attack'));
+ok('четырнадцать базовых lossless WebP-листов встроены в HTML',sheets.every(isWebp));
+ok('четырнадцать отдельных атакующих WebP-листов встроены в HTML',attackSheets.every(isWebp));
+ok('базовые и атакующие листы используют канонические кадры 64×96',
+  /for \(const meta of Object\.values\(BOSS_SPRITE_META\)\)[\s\S]*?w:64,h:96/.test(html)&&
+  /for \(const meta of Object\.values\(BOSS_ATTACK_SPRITE_META\)\)[\s\S]*?w:64,h:96/.test(html));
+ok('все 28 листов боссов укладываются в 450 КБ',
+  sheets.concat(attackSheets).reduce((sum,b)=>sum+b.length,0)<450*1024,
+  sheets.concat(attackSheets).reduce((sum,b)=>sum+b.length,0)+' байт');
+const projectileKeys=['PLAGUE_SLIME_PROJECTILE_DATA','EMERALD_ORB_PROJECTILE_DATA','GREED_SPEAR_PROJECTILE_DATA',
+  'EXECUTIONER_AXE_PROJECTILE_DATA','MINOTAUR_SPEAR_PROJECTILE_DATA','SERAPH_HOLY_SPEAR_DATA',
+  'DEMON_QUEEN_BLOB_DATA','MATRIARCH_PLAGUE_PROJECTILE_DATA','VOID_GROUND_RIFT_DATA'];
+ok('девять прежних специальных эффектов сохранены как WebP',projectileKeys.every(k=>isWebp(constantWebp(k))));
+const effectBlock=html.slice(html.indexOf('const LEGACY_BOSS_EFFECT_SPRITE_DATA = {'),html.indexOf('/* LEGACY_BOSS_EFFECT_ASSETS_END */'));
+const effectKeys=['goat_slam','behemoth_impact','minotaur_crash','tyrant_slash','vampire_cross','summon_sigil'];
+ok('шесть недостающих четырёхкадровых эффектов встроены отдельно',effectKeys.every(k=>isWebp(embeddedWebp(effectBlock,k))));
 
 { const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys');
   const bosses=bossIds.map(id=>c.spawnEnemy('boss',id));

@@ -55,7 +55,36 @@ console.log('КОСТЯНОЙ СЛУГА');
 { const c=loadGame('./PolyGrind.html'); c.newGame('necro','keys'); c.setLanguage('ru'); c.renderSheet();
   const html=c.document.getElementById('sheet').innerHTML;
   ok('интерфейс показывает стартовый счётчик «Скелеты: 3/6»',
-    html.includes('Скелеты:</span><b>3/6'),html.match(/Скелеты[^<]*<\/span><b>[^<]*/)?.[0]||'нет'); }
+     html.includes('Скелеты:</span><b>3/6'),html.match(/Скелеты[^<]*<\/span><b>[^<]*/)?.[0]||'нет'); }
+{ const c=loadGame('./PolyGrind.html'); c.newGame('necro','keys'); const G=c.__api.G;
+  const bomb=c.__api.MODS.find(x=>x.id==='min.bombardiers');
+  ok('охотники и старая карта колдунов полностью удалены',!c.__api.MODS.some(x=>x.id==='min.hunters'||x.id==='min.warlocks')&&
+    !/'hunter'|'warlock'/.test(c.needKind.toString()));
+  ok('бомбардиры открываются сразу после максимума скелетов',bomb&&!bomb.show()&&
+    (G.bag.add('minCount','flat',3),c.recalc(),bomb.show())&&bomb.stat==='minBomb'); }
+{ const c=loadGame('./PolyGrind.html'); c.newGame('necro','keys'); const G=c.__api.G;
+  G.lvl=30;
+  const ids=Array.from({length:100},()=>c.rollCards()).flat().map(x=>x.id);
+  ok('отскоки и ЭКО-ОТСКОКИ не попадают в раздачу Некроманта',
+    !ids.includes('shape.chain')&&!ids.includes('shape.chain_retention'));
+  ok('скорость снарядов не попадает в раздачу Некроманта',
+    !ids.includes('shape.proj_speed')); }
+{ const c=loadGame('./PolyGrind.html'); c.newGame('necro','keys'); const G=c.__api.G;
+  const move=c.__api.MODS.find(x=>x.id==='min.move_speed');
+  const blink=c.__api.MODS.find(x=>x.id==='min.blink'),raid=c.__api.MODS.find(x=>x.id==='min.raid');
+  ok('скорость передвижения свиты даёт целые 5–13%',
+    move.r[0]===5&&move.r[1]===13&&move.int===true);
+  G.bag.add('minSpd','inc',39); c.recalc(); const blink39=blink.show();
+  G.bag.add('minSpd','inc',1); c.recalc(); const blink40=blink.show(),raid40=raid.show();
+  G.bag.add('minSpd','inc',39); c.recalc(); const raid79=raid.show();
+  G.bag.add('minSpd','inc',1); c.recalc(); const raid80=raid.show();
+  ok('Внезапный взрыв открывается на 40%, Астральный набег — на 80%',
+    !blink39&&blink40&&!raid40&&!raid79&&raid80);
+  const fresh=loadGame('./PolyGrind.html'); fresh.newGame('necro','keys');
+  const freshMove=fresh.__api.MODS.find(x=>x.id==='min.move_speed');
+  const panel=fresh.levelUnlockPanelHtml([{m:freshMove}]);
+  ok('блок связанных навыков показывает новые пороги 40% и 80%',
+    panel.includes('0 / 40%')&&panel.includes('0 / 80%')&&!panel.includes('0 / 100%')&&!panel.includes('0 / 200%')); }
 
 console.log('СТАТУСЫ ОТ УДАРА СВИТЫ');
 { const o = mk([['igniteCh',25]]);
@@ -123,17 +152,25 @@ console.log('БАЛАНС ВСЕЙ СВИТЫ');
   const ownerPath = avg(false), minionPath = avg(true);
   ok('весь прямой урон свиты уменьшен на 50%', Math.abs(minionPath/ownerPath-0.5) < 0.03,
      ownerPath.toFixed(1) + ' → ' + minionPath.toFixed(1)); }
-{ const o = mk([]); o.G.shots.length = 0; o.c.minionShot(o.m, o.e, null);
-  const s = o.G.shots[0];
-  ok('стрелы охотников сохраняют метку свиты', s && s.minion === o.m && s.mul === 0.20); }
-{ const o = mk([]); let procs = 0, dps = 0;
-  for (let i=0;i<600;i++){
-    o.e.dots.fire.dps=0; o.e.dots.fire.n=0;
-    if (o.c.applyMinionSpell(o.e, 'fire')){ procs++; dps = o.e.dots.fire.dps; }
-  }
-  const expected = o.c.avgHit()*0.20*0.5*0.20*o.D.ailEff;
-  ok('колдун: шанс эффекта 25% и половина урона', procs > 102 && procs < 198 && Math.abs(dps/expected-1)<0.001,
-     Math.round(procs/6) + '% · ' + dps.toFixed(2) + ' урона/сек'); }
+{ const o = mk([]); o.m.kind='bombardier'; o.G.shots.length=0; o.c.minionShot(o.m,o.e,'shock');
+  const s=o.G.shots[0];
+  ok('бомба несёт метку свиты, четверть урона и не пробивает цели',s&&s.minion===o.m&&s.bombardier&&
+    s.attackMul===0.25&&s.mul===o.D.minDmgMul&&s.pierce===0&&s.chain===0); }
+{ const o=mk([]); o.m.kind='bombardier'; o.D.baseMin=o.D.baseMax=100;o.D.elem={fire:0,cold:0,lit:0,poi:0};
+  o.D.incAll=0;o.D.moreAll=1;o.D.minCrit=o.D.superCh=o.D.dblHit=0;o.e.armor=0;
+  const near=o.c.spawnEnemy();near.x=o.e.x+45;near.y=o.e.y;near.hp=near.maxHp=1e9;near.armor=0;
+  const far=o.c.spawnEnemy();far.x=o.e.x+100;far.y=o.e.y;far.hp=far.maxHp=1e9;far.armor=0;
+  const hp=o.e.hp;o.c.damage(o.e,{mul:o.D.minDmgMul,minion:o.m,noDouble:true});const skeleton=hp-o.e.hp;o.e.hp=hp;
+  const count=o.c.bombardierImpact({bombardier:true,minion:o.m,spell:'fire',confinementPct:0},o.e);
+  const bomb=hp-o.e.hp;
+  ok('взрыв бомбардира наносит ровно 25% удара скелета',Math.abs(bomb/skeleton-0.25)<0.001,(bomb/skeleton).toFixed(3));
+  ok('малый радиус поражает соседнюю цель, но не дальнюю',count===2&&near.hp<near.maxHp&&far.hp===far.maxHp);
+  ok('собственный элементальный дебаф гарантирован каждой цели взрыва',o.e.dots.fire.dps>0&&near.dots.fire.dps>0); }
+{ const o=mk([]);const base=50;
+  o.c.applyBombardierDebuff(o.e,'fire',base);o.c.applyBombardierDebuff(o.e,'poison',base);
+  o.c.applyBombardierDebuff(o.e,'cold',base);o.c.applyBombardierDebuff(o.e,'shock',base);
+  ok('в пуле бомбардира работают огонь, яд, холод и электрошок',o.e.dots.fire.dps>0&&
+    o.e.dots.poison.dps>0&&o.e.ail.chill>0&&o.e.ail.shock>0); }
 { const o = mk([]); o.D.golemN = 1; let procs = 0, dps = 0;
   for (let i=0;i<600;i++){
     o.e.dots.bleed.dps=0; o.e.dots.bleed.n=0; o.c.boneGolemHit(o.e);
@@ -245,19 +282,19 @@ console.log('ПРЕДМЕТЫ И КНИГИ');
   ok('фиксированный урон книги от свиты тоже ×0.5', dps > 0 && Math.abs(dps/(o.D.bookPoiDps*0.5)-1)<0.001,
      dps.toFixed(2) + ' при базе ' + o.D.bookPoiDps.toFixed(2)); }
 
-console.log('ВАМПИРЫ ХОЗЯИНА');
-{ const o = mk([['minLife',50,'inc'],['minVamp',1]]);
-  o.m.hp = o.m.max*0.5; const before = o.m.hp;
-  const hp0 = o.p.hp = o.D.life*0.5;
-  hit(o);
-  ok('приспешник лечит себя', o.m.hp > before, '+' + Math.round(o.m.hp-before));
-  ok('хозяину не достаётся', o.p.hp === hp0); }
-{ const o = mk([['minLife',50,'inc'],['minVamp',1]]);
-  o.m.hp = o.m.max; hit(o);
-  ok('не лечит выше максимума', o.m.hp === o.m.max); }
-{ const o = mk([['minLife',40,'inc']]);
-  ok('до +50% здоровья карточка закрыта',
-     !o.c.__api.MODS.find(m=>m.id==='min.vampires').show()); }
+console.log('УДАЛЁННАЯ ВЕТКА ЗДОРОВЬЯ СВИТЫ');
+{ const c=loadGame('./PolyGrind.html');
+  ok('Здоровье приспешников и Вампиры хозяина удалены из каталога',
+    !c.__api.MODS.some(m=>m.id==='min.life'||m.id==='min.vampires')); }
+{ const base=mk([]),legacy=mk([['minLife',999,'inc']]);
+  ok('старое значение minLife больше не усиливает здоровье свиты',
+    Math.abs(base.D.minLife-legacy.D.minLife)<1e-9,base.D.minLife.toFixed(1)+' / '+legacy.D.minLife.toFixed(1)); }
+{ const o=mk([['minVamp',1]]);
+  o.m.hp=o.m.max*0.5; const before=o.m.hp; hit(o);
+  ok('старый флаг minVamp больше не лечит приспешника',o.m.hp===before); }
+{ const o=mk([['minLife',50,'inc'],['minVamp',1]]);
+  ok('удалённые производные параметры не создаются в recalc',
+    o.D.minLifeRaw===undefined&&o.D.minVamp===undefined); }
 
 console.log('ЛОРД СМЕРТИ');
 { const c = loadGame('./PolyGrind.html');
