@@ -1,8 +1,9 @@
 """Детерминированная упаковка растров PolyGrind в автономный HTML.
 
-Приоритеты: минимальный размер текстур/HTML и видеопамяти, затем качество.
-Пол намеренно не затрагивается. Все игровые листы сохраняются индексированными
-PNG максимум с 16 палитровыми индексами, включая прозрачный индекс.
+Приоритеты: минимальный размер текстур/HTML и видеопамяти без потери читаемости.
+Пол намеренно не затрагивается. Основные игровые листы сохраняются индексированными
+PNG максимум с 16 палитровыми индексами, включая прозрачный индекс; документированные
+исключения для детальных моделей, рамок и трупов имеют собственные бюджеты.
 """
 
 from __future__ import annotations
@@ -185,6 +186,8 @@ PUDDLE_SPRITE_SOURCES = {
 
 MENU_BACKGROUND_SOURCE_SHA256 = "3627a52e9cbd4739fbe9552cee51fab5adc240f1df17c438ef5ed78619d54192"
 MENU_BACKGROUND_WEBP_SHA256 = "571683ab685f6abbb3356031c5dcfbd4ec22d8753cb8ae8d3ab6a7dbe65d3c92"
+CONSTELLATION_OBSERVATORY_SOURCE_SHA256 = "05573d89ea12d0fb11fb88aac633720db173bcda2deec65bffa23beb9ff564eb"
+CONSTELLATION_OBSERVATORY_WEBP_SHA256 = "16430e2fa4221af9bc0c9cf1f3242e0beff5a479715ad83be1f5d0775a48f133"
 MENU_MUSIC_SHA256 = "077f237a32911f2ce4564cb39991cd2ec96d553e2ece6f87b8048dba4c0b9e2b"
 CONFIRM_SOUND_SHA256 = "300084b049183ca0e8da0938208a6db95ad9ee67254fe81b2138a28cbdc2d62e"
 HOVER_SOUND_SHA256 = "64b6e293a63d3e76658572c83f875f874a8b61842ed799238d41a1441a817f18"
@@ -229,6 +232,17 @@ SUBCLASS_FRAME_SOURCES = {
     "swordmaster": ("swordmaster.png", "0c5b1eb557420111b2185b5fe82d590e6a74f2f3d9035dc977e65c8020436f2a"),
 }
 
+# Пять готовых рамок карточек навыков из handoff. Исходник 304x194 не
+# подгоняется под одну высоту карточки: runtime использует его как CSS 9-slice,
+# поэтому углы остаются 1:1, а прямые участки адаптируются к содержимому.
+SKILL_CARD_FRAME_SOURCES = {
+    "common": ("word/media/image1.png", "2eab5929745b6f85b243502858d277f434b34fd65c8ed0de79ab241a23d759f4"),
+    "rare": ("word/media/image2.png", "3d87b3d1b08ab572c1f14f85391a702099f6621d9f182acb9f3fb9319e50ad0f"),
+    "epic": ("word/media/image3.png", "91408d0448ab5e93c2b85634e87750647a34c758e7b1f7f8cbdc408976393606"),
+    "key": ("word/media/image4.png", "744ac5e0d75a0214231860aedf116f89e774ce25f5567761de632442cead6138"),
+    "blood": ("word/media/image5.png", "a1b0dedc5cdf3a5cbd2b7f192727e256c7a5bb24809555047b585669169669b0"),
+}
+
 # 10-кадровые горизонтальные листы эмблем из handoff главного меню. Каждый
 # исходный кадр 256×256 уменьшается до 128×128: этого достаточно для HiDPI-
 # превью 96 CSS px, а декодированная память снижается в четыре раза.
@@ -239,21 +253,22 @@ CLASS_ICON_SHEET_SOURCES = {
     "warrior": ("word/media/image10.png", "0b8b2c4c507dfb371d11322dacbb61ad239135414a10d3cbd08505b06f8a7637"),
 }
 
-# Готовые игровые листы V3: восемь кадров движения 32×32, P-mode и прозрачность.
-# Каждый кадр нормализован по центру и линии ног; повторный ресэмплинг запрещён.
+# Готовые игровые листы V4: восемь кадров движения строго вправо 36×36.
+# Герои и их крупные превью — контролируемое исключение до 192 индексов:
+# повторный ресэмплинг/квантизация запрещены, меню использует те же PNG-байты.
 SUBCLASS_HERO_SPRITE_SOURCES = {
-    "thief": ("thief.png", "7b03378a3b4d624371e89cd4c6da3819e663d3257482bdc61340a6fc28d7882d"),
-    "hunter": ("hunter.png", "bb3882f70d1787c9cd28f5e567b94462e21eb1292aa0993fee9726b7ecee71a0"),
-    "dancer": ("dancer.png", "cd63754e504006157df876bbc150a5cad58948e8c680e3035034539e806d5b52"),
-    "destroyer": ("destroyer.png", "fd414ed3bc97beee9ded388427d1322c3bf0a743b77192a87e2bc6e37877b5ae"),
-    "multiplier": ("multiplier.png", "a0513a4712095db262aa06c9b20cdd574856a155924683c31d449ce9ce22ca52"),
-    "elementalist": ("elementalist.png", "d2e0e1a7680b11e54e0117e145f1f15bfb622484874cda11254f822159dfbe9d"),
-    "graverobber": ("graverobber.png", "886f97b9fa797cefd5999915cb12aecdf5ba3f160e5a354cc372dbd5a6931cd0"),
-    "animator": ("animator.png", "e89896abe45abe075fecfa661bec19ec0b59678f1e5aac1af8b0d227f915224e"),
-    "venomancer": ("venomancer.png", "ecd971a51e950baaed01b8336b7b0047ea6191e7169a571fd80acb398bf7b8c1"),
-    "berserker": ("berserker.png", "dcf24fbc4fb2aa41c30651dffd348cad05f508f135b861bb3bbb0c59053643c2"),
-    "guardian": ("guardian.png", "f962e140ef841adbb21c6e708e8dd0d1a5d697cde5433d6a7d6ccc98118416f4"),
-    "swordmaster": ("swordmaster.png", "452aed250255aa5c3839a5e1b3759dc977e2fcae2a14063a5381771e4444c628"),
+    "thief": ("thief.png", "c8618541a7146d630673dd553af7c2f509bb51d708601b185c072e764ca6cff5"),
+    "hunter": ("hunter.png", "9d549d76bf41e498372dd4cfb2b942999eca4095b347e62e76e2c7c94de25b18"),
+    "dancer": ("dancer.png", "c0bd26b4f3275181623667f3f79e28297c01e8fe36ce255f938723f8ab225258"),
+    "destroyer": ("destroyer.png", "e7302047110866e912865b23e0316ffc484c8d3181b33ba7bb8328c127cc8ff0"),
+    "multiplier": ("multiplier.png", "13210a1bb4e33bb0e83aad4d69b9f9cbc3295e9aeac93baa146bd4668f0d123c"),
+    "elementalist": ("elementalist.png", "feab017d267dbee08d5bc37a8e58930e1137da84fc6ed4c4fee446c8a6871d9f"),
+    "graverobber": ("graverobber.png", "bff9cf5ecf69ac81d7dd590309ee1b57c58fad1136deadc6b3cd3533b68ad1f4"),
+    "animator": ("animator.png", "b08d0a2f7b9153809dda2efc46574619dc91defadccfb1455307d960745dd490"),
+    "venomancer": ("venomancer.png", "55e30cf7c5f81a66ea6a4983ea23549cf7bb0b0e641912dfd91c24ec08eb71be"),
+    "berserker": ("berserker.png", "9dc847439b05ff7d02c71d969563247050f7767afd54d87fd6f3b44d4057300c"),
+    "guardian": ("guardian.png", "91379c86271516c8e0d0f8e6afc68b53ee91717054abace97145f783c8f1a34d"),
+    "swordmaster": ("swordmaster.png", "85ff4ec6e73ad9462530a4b2b8f428b91fbc783eaa29402c16b927db86d791f8"),
 }
 
 # Готовые листы из handoff системы крови. Они уже имеют игровой размер,
@@ -274,8 +289,10 @@ BLOOD_SPRITE_SOURCES = {
                (256, 128)),
 }
 
-# Статичные трупы из handoff DOCX. Исходники уже имеют конечные игровые
-# размеры и прозрачность; встраиваются побайтно, без ресэмплинга и перекраски.
+# Статичные трупы из handoff DOCX. Источники проверяются побайтно, затем для
+# runtime уменьшаются ровно вдвое и проходят alpha-aware очистку светлого matte.
+# Это устраняет белые пиксели на прозрачном контуре и совпадает с масштабом
+# живых монстров, сохраняя полноцветный RGBA без палитровой квантизации.
 CORPSE_SPRITE_SOURCES = {
     "blob": ("word/media/image1.png", "963811c5bc160f7f72fb9b76dfb9d10fa09ecf70afe8bf98d3206bc65140f8ff", (96, 54)),
     "runner": ("word/media/image2.png", "26a786b7843366d311026a33cef0b0e4b3c0c368b239793ca3776aa9c26860cd", (96, 46)),
@@ -310,6 +327,78 @@ CORPSE_SPRITE_SOURCES = {
 }
 
 CORPSE_PUDDLE_ATLAS_SHA256 = "9236e97ebaf2e4cee306cf305d5eaaae47b2cdc1857b7b75c19cc9efc3f20049"
+
+
+def corpse_bright_edge_cleanup(image: Image.Image) -> Image.Image:
+    """Replace neutral-white edge matte with nearby corpse color, never white."""
+    rgba = image.convert("RGBA")
+    source = rgba.load()
+    cleaned = rgba.copy()
+    target = cleaned.load()
+
+    def bright_neutral(pixel: tuple[int, int, int, int]) -> bool:
+        r, g, b, a = pixel
+        return a >= 8 and min(r, g, b) >= 185 and max(r, g, b) - min(r, g, b) <= 58
+
+    for y in range(rgba.height):
+        for x in range(rgba.width):
+            pixel = source[x, y]
+            if not bright_neutral(pixel):
+                if pixel[3] == 0 and pixel[:3] != (0, 0, 0):
+                    target[x, y] = (0, 0, 0, 0)
+                continue
+            edge = any(
+                source[nx, ny][3] < 8
+                for ny in range(max(0, y - 1), min(rgba.height, y + 2))
+                for nx in range(max(0, x - 1), min(rgba.width, x + 2))
+                if nx != x or ny != y
+            )
+            if not edge:
+                continue
+            replacement = None
+            for radius in range(1, 5):
+                candidates = []
+                for ny in range(max(0, y - radius), min(rgba.height, y + radius + 1)):
+                    for nx in range(max(0, x - radius), min(rgba.width, x + radius + 1)):
+                        candidate = source[nx, ny]
+                        if candidate[3] >= 48 and not bright_neutral(candidate):
+                            candidates.append(((nx - x) ** 2 + (ny - y) ** 2, candidate))
+                if candidates:
+                    replacement = min(candidates, key=lambda item: item[0])[1]
+                    break
+            if replacement:
+                target[x, y] = (*replacement[:3], pixel[3])
+            else:
+                target[x, y] = (0, 0, 0, 0)
+    return cleaned
+
+
+def corpse_half_size_png(image: Image.Image) -> bytes:
+    """Clean matte, alpha-aware downsample to 50%, then emit full RGBA PNG."""
+    clean = corpse_bright_edge_cleanup(image)
+    alpha = clean.getchannel("A")
+    premultiplied = Image.merge("RGBA", tuple(
+        ImageChops.multiply(clean.getchannel(channel), alpha) for channel in "RGB"
+    ) + (alpha,))
+    size = (clean.width // 2, (clean.height + 1) // 2)
+    resized = premultiplied.resize(size, Image.Resampling.LANCZOS)
+    pixels = []
+    for red, green, blue, out_alpha in resized.getdata():
+        if out_alpha <= 1:
+            pixels.append((0, 0, 0, 0))
+        else:
+            pixels.append((
+                min(255, round(red * 255 / out_alpha)),
+                min(255, round(green * 255 / out_alpha)),
+                min(255, round(blue * 255 / out_alpha)),
+                out_alpha,
+            ))
+    output = Image.new("RGBA", size)
+    output.putdata(pixels)
+    output = corpse_bright_edge_cleanup(output)
+    buffer = io.BytesIO()
+    output.save(buffer, "PNG", optimize=True, compress_level=9)
+    return buffer.getvalue()
 
 SHOP_ICON_ATLAS_SOURCE_SHA256 = "f05fb7c14b4e46e542de12f103c8f8a41c059c7410211694b6408641a51843ad"
 
@@ -481,17 +570,26 @@ def enemy_status_icon_sheet(path: Path) -> bytes:
     return indexed_png(sheet)
 
 
+FLOOR_PORTAL_SPRITE_SHA256 = "13ee7db299978f4753c6bb63fe6466bdae3e1e69a6eac71d00e697851a868d8b"
+
+
 def floor_portal_sprite_sheet(path: Path) -> bytes:
-    """Проверить и упаковать бесшовный лист портала 8×64 без масштабирования."""
-    source = Image.open(path).convert("RGBA")
-    if source.size != (512, 64):
+    """Проверить и вернуть нативный RGBA-лист портала 8×128 без перекодирования."""
+    data = path.read_bytes()
+    actual = hashlib.sha256(data).hexdigest()
+    if actual != FLOOR_PORTAL_SPRITE_SHA256:
         raise SystemExit(
-            f"Лист портала должен быть 512×64 (8 кадров по 64×64), получено {source.size}")
+            f"Лист портала: SHA-256 {actual}, ожидался {FLOOR_PORTAL_SPRITE_SHA256}")
+    source = Image.open(io.BytesIO(data))
+    if source.mode != "RGBA" or source.size != (1024, 128):
+        raise SystemExit(
+            f"Лист портала должен быть RGBA 1024×128 (8 кадров по 128×128), "
+            f"получено {source.mode} {source.size}")
     for index in range(8):
-        frame = source.crop((index * 64, 0, (index + 1) * 64, 64))
+        frame = source.crop((index * 128, 0, (index + 1) * 128, 128))
         if not frame.getchannel("A").getbbox():
             raise SystemExit(f"Лист портала: кадр {index + 1} пуст")
-    return indexed_png(source)
+    return data
 
 
 def totem_sprite(path: Path) -> bytes:
@@ -1299,11 +1397,11 @@ def main() -> None:
     parser.add_argument("--install-enemy-status-icons", action="store_true",
                         help="собрать и встроить лист элементальных состояний в HTML")
     parser.add_argument("--floor-portal", type=Path,
-                        help="готовый лист портала 512×64: восемь кадров по 64×64")
+                        help="нативный RGBA-лист портала 1024×128: восемь кадров по 128×128")
     parser.add_argument("--build-floor-portal", action="store_true",
-                        help="упаковать восьмикадровый портал в outputs")
+                        help="проверить и без перекодирования скопировать восьмикадровый портал в outputs")
     parser.add_argument("--install-floor-portal", action="store_true",
-                        help="упаковать и встроить анимацию портала завершения этажа")
+                        help="проверить и без перекодирования встроить анимацию портала завершения этажа")
     parser.add_argument("--totem-sprite-dir", type=Path,
                         help="word/media с 16 Master-спрайтами четырёх существующих тотемов")
     parser.add_argument("--lightning-totem-sprite-dir", type=Path,
@@ -1324,12 +1422,16 @@ def main() -> None:
                         help="DOCX handoff с оригинальными V2-рамками классов")
     parser.add_argument("--install-class-frames", action="store_true",
                         help="проверить и встроить четыре V2-рамки классов в автономный HTML")
+    parser.add_argument("--skill-card-frame-docx", type=Path,
+                        help="DOCX handoff с пятью цветными рамками карточек навыков")
+    parser.add_argument("--install-skill-card-frames", action="store_true",
+                        help="проверить и без перекодирования встроить пять 9-slice рамок навыков")
     parser.add_argument("--subclass-frame-asset-dir", type=Path,
                         help="каталог с 12 готовыми рамками подклассов 320×400")
     parser.add_argument("--install-subclass-frames", action="store_true",
                         help="проверить и встроить двенадцать рамок подклассов в автономный HTML")
     parser.add_argument("--subclass-hero-asset-dir", type=Path,
-                        help="каталог с 12 готовыми восьмикадровыми листами подклассов 256×32")
+                        help="каталог с 12 детальными восьмикадровыми листами подклассов 288×36")
     parser.add_argument("--install-subclass-hero-sprites", action="store_true",
                         help="без ресэмплинга проверить и встроить 12 моделей подклассов в HTML")
     parser.add_argument("--blood-asset-dir", type=Path,
@@ -1354,6 +1456,10 @@ def main() -> None:
                         help="исходный PNG 1672×941 с фоном главного меню")
     parser.add_argument("--install-menu-background", action="store_true",
                         help="сжать фон в WebP quality 35 и встроить его в CSS автономного HTML")
+    parser.add_argument("--constellation-observatory", type=Path,
+                        help="сгенерированный PNG 1536x1024 для нового меню созвездий")
+    parser.add_argument("--install-constellation-observatory", action="store_true",
+                        help="уменьшить, проверить и встроить фон астральной обсерватории")
     parser.add_argument("--menu-music", type=Path,
                         help="готовая OGG/Vorbis музыка главного меню")
     parser.add_argument("--install-menu-music", action="store_true",
@@ -1441,6 +1547,44 @@ def main() -> None:
     parser.add_argument("--install-elite-ranged-tank", action="store_true",
                         help="добавить шесть ranged/tank разновидностей элиты в автономный HTML")
     args = parser.parse_args()
+
+    if args.install_skill_card_frames:
+        if not args.skill_card_frame_docx or not args.skill_card_frame_docx.is_file():
+            parser.error("рамки навыков требуют существующий --skill-card-frame-docx")
+        payload: dict[str, str] = {}
+        source_bytes = 0
+        with zipfile.ZipFile(args.skill_card_frame_docx) as archive:
+            for rarity, (member, expected_hash) in SKILL_CARD_FRAME_SOURCES.items():
+                data = archive.read(member)
+                actual_hash = hashlib.sha256(data).hexdigest()
+                if actual_hash != expected_hash:
+                    raise SystemExit(
+                        f"рамка навыка {rarity}: SHA-256 {actual_hash}, ожидался {expected_hash}")
+                image = Image.open(io.BytesIO(data))
+                if image.size != (304, 194) or image.mode != "RGBA":
+                    raise SystemExit(
+                        f"рамка навыка {rarity}: ожидался RGBA 304x194, получен {image.mode} {image.size}")
+                if image.getchannel("A").getextrema()[0] != 0:
+                    raise SystemExit(f"рамка навыка {rarity}: отсутствует прозрачный центр/фон")
+                payload[rarity] = base64.b64encode(data).decode("ascii")
+                source_bytes += len(data)
+        html = HTML.read_text(encoding="utf-8")
+        if "const SKILL_CARD_FRAME_DATA = {" not in html:
+            anchor = "const CLASS_FRAME_DATA = {"
+            if anchor not in html:
+                raise SystemExit("не найден якорь CLASS_FRAME_DATA для рамок навыков")
+            html = html.replace(anchor, "const SKILL_CARD_FRAME_DATA = {\n};\n\n" + anchor, 1)
+        html = install_object_payloads(html, "SKILL_CARD_FRAME_DATA", payload)
+        HTML.write_text(html.rstrip("\n") + "\n", encoding="utf-8", newline="\n")
+        print(json.dumps({
+            "installed": sorted(payload),
+            "sourceBytes": source_bytes,
+            "runtimeBytes": source_bytes,
+            "resampled": False,
+            "nineSlice": True,
+            "target": str(HTML),
+        }, ensure_ascii=False))
+        return
 
     if args.install_class_icon_sheets:
         if not args.class_icon_docx or not args.class_icon_docx.is_file():
@@ -1552,7 +1696,14 @@ def main() -> None:
                         f"труп {key}: ожидался RGBA {expected_size}, получен {image.mode} {image.size}")
                 if image.getchannel("A").getextrema()[0] != 0:
                     raise SystemExit(f"труп {key}: отсутствует прозрачный фон")
-                payload[key] = base64.b64encode(data).decode("ascii")
+                runtime_data = corpse_half_size_png(image)
+                runtime_image = Image.open(io.BytesIO(runtime_data))
+                expected_runtime_size = (expected_size[0] // 2, (expected_size[1] + 1) // 2)
+                if runtime_image.mode != "RGBA" or runtime_image.size != expected_runtime_size:
+                    raise SystemExit(
+                        f"труп {key}: runtime ожидался RGBA {expected_runtime_size}, "
+                        f"получен {runtime_image.mode} {runtime_image.size}")
+                payload[key] = base64.b64encode(runtime_data).decode("ascii")
                 source_bytes += len(data)
         html = HTML.read_text(encoding="utf-8")
         html = install_object_payloads(html, "CORPSE_SPRITE_DATA", payload)
@@ -1560,7 +1711,10 @@ def main() -> None:
         print(json.dumps({
             "installed": list(payload),
             "sourceBytes": source_bytes,
-            "resampled": False,
+            "runtimeBytes": sum(len(base64.b64decode(data)) for data in payload.values()),
+            "scale": 0.5,
+            "alphaFringeCleanup": True,
+            "resampled": True,
             "target": str(HTML),
         }, ensure_ascii=False))
         return
@@ -1652,14 +1806,14 @@ def main() -> None:
             colors = image.getcolors(maxcolors=256) if image.mode == "P" else None
             transparency = image.info.get("transparency")
             transparent = transparency == 0 or (isinstance(transparency, bytes) and 0 in transparency)
-            if image.size != (256, 32) or image.mode != "P" or not colors or len(colors) > 64:
+            if image.size != (288, 36) or image.mode != "P" or not colors or len(colors) > 192:
                 raise SystemExit(
-                    f"модель {subclass_name}: ожидался P 256×32 до 64 индексов, "
+                    f"модель {subclass_name}: ожидался P 288×36 до 192 индексов, "
                     f"получен {image.mode} {image.size}, цветов {len(colors) if colors else 'больше 256'}")
             if not transparent:
                 raise SystemExit(f"модель {subclass_name}: отсутствует прозрачный индекс")
             alpha = image.convert("RGBA").getchannel("A")
-            if any(not alpha.crop((frame * 32, 0, (frame + 1) * 32, 32)).getbbox()
+            if any(not alpha.crop((frame * 36, 0, (frame + 1) * 36, 36)).getbbox()
                    for frame in range(8)):
                 raise SystemExit(f"модель {subclass_name}: найден пустой кадр")
             payload[subclass_name] = base64.b64encode(data).decode("ascii")
@@ -1743,6 +1897,49 @@ def main() -> None:
             "bytes": len(data),
             "target": str(HTML),
         }, ensure_ascii=False))
+        return
+
+    if args.install_constellation_observatory:
+        if not args.constellation_observatory or not args.constellation_observatory.is_file():
+            parser.error("обсерватория требует существующий --constellation-observatory")
+        source_data = args.constellation_observatory.read_bytes()
+        actual_source = hashlib.sha256(source_data).hexdigest()
+        if actual_source != CONSTELLATION_OBSERVATORY_SOURCE_SHA256:
+            raise SystemExit(
+                f"обсерватория: SHA-256 {actual_source}, ожидался {CONSTELLATION_OBSERVATORY_SOURCE_SHA256}")
+        source = Image.open(io.BytesIO(source_data)).convert("RGB")
+        if source.size != (1536, 1024):
+            raise SystemExit(f"обсерватория: ожидался размер 1536x1024, получен {source.size}")
+        runtime = source.resize((1280, 853), Image.Resampling.LANCZOS)
+        encoded = io.BytesIO()
+        runtime.save(encoded, "WEBP", quality=62, method=6)
+        data = encoded.getvalue()
+        actual_webp = hashlib.sha256(data).hexdigest()
+        if actual_webp != CONSTELLATION_OBSERVATORY_WEBP_SHA256:
+            raise SystemExit(
+                f"сжатая обсерватория: SHA-256 {actual_webp}, ожидался {CONSTELLATION_OBSERVATORY_WEBP_SHA256}")
+        output_dir = ROOT / "outputs"
+        output_dir.mkdir(exist_ok=True)
+        path = output_dir / "constellation-observatory.webp"
+        path.write_bytes(data)
+        html = HTML.read_text(encoding="utf-8")
+        value = base64.b64encode(data).decode("ascii")
+        html, count = re.subn(
+            r'(#constellations\{[^}]*?)(url\("(?:assets/generated/constellation-observatory-v1\.png|data:image/webp;base64,[A-Za-z0-9+/=]+)"\))',
+            lambda match: match.group(1) + f'url("data:image/webp;base64,{value}")',
+            html, count=1, flags=re.S)
+        if count != 1:
+            raise SystemExit(f"фон обсерватории в CSS: ожидалась одна замена, получено {count}")
+        HTML.write_text(html, encoding="utf-8", newline="\n")
+        print(json.dumps({
+            "source": str(args.constellation_observatory),
+            "sourceBytes": len(source_data),
+            "runtime": str(path),
+            "runtimeBytes": len(data),
+            "runtimeSize": [1280, 853],
+            "quality": 62,
+            "target": str(HTML),
+        }, ensure_ascii=False, separators=(",", ":")))
         return
 
     if args.install_menu_background:
@@ -2051,7 +2248,7 @@ def main() -> None:
         generated = floor_portal_sprite_sheet(args.floor_portal)
         output_dir = ROOT / "outputs"
         output_dir.mkdir(exist_ok=True)
-        path = output_dir / "floor-completion-portal-8f-optimized.png"
+        path = output_dir / "floor-completion-portal-8x128-lossless.png"
         path.write_bytes(generated)
         if args.install_floor_portal:
             html = HTML.read_text(encoding="utf-8")

@@ -347,18 +347,18 @@ const pngChunkData=(png,wanted)=>{
   return null;
 };
 const subclassSpriteExpected={
-  thief:[2841,'7B03378A3B4D624371E89CD4C6DA3819E663D3257482BDC61340A6FC28D7882D'],
-  hunter:[2874,'BB3882F70D1787C9CD28F5E567B94462E21EB1292AA0993FEE9726B7ECEE71A0'],
-  dancer:[2870,'CD63754E504006157DF876BBC150A5CAD58948E8C680E3035034539E806D5B52'],
-  destroyer:[2977,'FD414ED3BC97BEEE9DED388427D1322C3BF0A743B77192A87E2BC6E37877B5AE'],
-  multiplier:[2546,'A0513A4712095DB262AA06C9B20CDD574856A155924683C31D449CE9CE22CA52'],
-  elementalist:[2869,'D2E0E1A7680B11E54E0117E145F1F15BFB622484874CDA11254F822159DFBE9D'],
-  graverobber:[2855,'886F97B9FA797CEFD5999915CB12AECDF5BA3F160E5A354CC372DBD5A6931CD0'],
-  animator:[2772,'E89896ABE45ABE075FECFA661BEC19EC0B59678F1E5AAC1AF8B0D227F915224E'],
-  venomancer:[2672,'ECD971A51E950BAAED01B8336B7B0047EA6191E7169A571FD80ACB398BF7B8C1'],
-  berserker:[3134,'DCF24FBC4FB2AA41C30651DFFD348CAD05F508F135B861BB3BBB0C59053643C2'],
-  guardian:[2955,'F962E140EF841ADBB21C6E708E8DD0D1A5D697CDE5433D6A7D6CCC98118416F4'],
-  swordmaster:[2676,'452AED250255AA5C3839A5E1B3759DC977E2FCAE2A14063A5381771E4444C628'],
+  thief:[3923,'C8618541A7146D630673DD553AF7C2F509BB51D708601B185C072E764CA6CFF5'],
+  hunter:[4388,'9D549D76BF41E498372DD4CFB2B942999ECA4095B347E62E76E2C7C94DE25B18'],
+  dancer:[3939,'C0BD26B4F3275181623667F3F79E28297C01E8FE36CE255F938723F8AB225258'],
+  destroyer:[4279,'E7302047110866E912865B23E0316FFC484C8D3181B33BA7BB8328C127CC8FF0'],
+  multiplier:[4049,'13210A1BB4E33BB0E83AAD4D69B9F9CBC3295E9AEAC93BAA146BD4668F0D123C'],
+  elementalist:[3861,'FEAB017D267DBEE08D5BC37A8E58930E1137DA84FC6ED4C4FEE446C8A6871D9F'],
+  graverobber:[3936,'BFF9CF5ECF69AC81D7DD590309EE1B57C58FAD1136DEADC6B3CD3533B68AD1F4'],
+  animator:[3895,'B08D0A2F7B9153809DDA2EFC46574619DC91DEFADCCFB1455307D960745DD490'],
+  venomancer:[4015,'55E30CF7C5F81A66EA6A4983EA23549CF7BB0B0E641912DFD91C24EC08EB71BE'],
+  berserker:[4206,'9DC847439B05FF7D02C71D969563247050F7767AFD54D87FD6F3B44D4057300C'],
+  guardian:[3896,'91379C86271516C8E0D0F8E6AFC68B53EE91717054ABACE97145F783C8F1A34D'],
+  swordmaster:[4265,'85FF4EC6E73AD9462530A4B2B8F428B91FBC783EAA29402C16B927DB86D791F8'],
 };
 const subclassSpriteBlock=(html.match(/const SUBCLASS_HERO_SPRITE_DATA = \{(.*?)\n\};/s)||[])[1]||'';
 const subclassSprites=Object.fromEntries(
@@ -369,22 +369,26 @@ const subclassIds=Object.values(loadGame('./PolyGrind.html').__api.SUBCLASSES).f
 ok('12 моделей сопоставлены один-к-одному с id каталога SUBCLASSES',
   JSON.stringify(Object.keys(subclassSprites).sort())===JSON.stringify(Object.keys(subclassSpriteExpected).sort()) &&
   Object.keys(subclassSpriteExpected).every(id=>subclassIds.includes(id)) && subclassIds.length===12);
-ok('все модели — точные P-mode PNG 256×32: восемь кадров 32×32',
+ok('все модели — детальные P-mode PNG 288×36: восемь кадров 36×36',
   Object.entries(subclassSpriteExpected).every(([id,[bytes,hash]])=>{
     const png=subclassSprites[id], palette=png&&pngChunkData(png,'PLTE'), transparency=png&&pngChunkData(png,'tRNS');
-    return !!png && png.length===bytes && png.readUInt32BE(16)===256 && png.readUInt32BE(20)===32 &&
+    return !!png && png.length===bytes && png.readUInt32BE(16)===288 && png.readUInt32BE(20)===36 &&
       png[25]===3 && !!palette && palette.length/3<=256 && !!transparency && transparency.includes(0) &&
       crypto.createHash('sha256').update(png).digest('hex').toUpperCase()===hash;
   }), Object.values(subclassSprites).reduce((sum,png)=>sum+png.length,0)+' Б');
 ok('оптимизатор валидирует handoff и встраивает листы без ресэмплинга',
   optimizer.includes('SUBCLASS_HERO_SPRITE_SOURCES = {') &&
   optimizer.includes('--install-subclass-hero-sprites') && optimizer.includes('--subclass-hero-asset-dir') &&
+  optimizer.includes('image.size != (288, 36)') && optimizer.includes('len(colors) > 192') &&
+  optimizer.includes('alpha.crop((frame * 36, 0, (frame + 1) * 36, 36))') &&
   optimizer.includes('payload[subclass_name] = base64.b64encode(data)') &&
   !optimizer.includes('subclass_hero_sprite_sheet'));
-ok('runtime загружает 12 моделей один раз и сохраняет базовый fallback',
+ok('runtime загружает 12 моделей один раз; меню не получает ухудшенную копию',
   html.includes('const SUBCLASS_HERO_SPRITES = {};') &&
   html.includes('for (const key of Object.keys(SUBCLASS_HERO_SPRITE_DATA))') &&
   html.includes('heroSpriteFor(spriteKey, G.subclass)') &&
+  html.includes("preview.style.backgroundImage='url('+SUBCLASS_HERO_SPRITE_DATA[choice.id]+')'") &&
+  !html.includes('SUBCLASS_MENU_SPRITE_DATA') &&
   /return subclassSprite && subclassSprite\.complete && subclassSprite\.naturalWidth \?\s*subclassSprite : HERO_SPRITES\[key\]/.test(html));
 const classFrames=Object.fromEntries(
   [...classFrameBlock.matchAll(/^\s*(\w+):'data:image\/png;base64,([^']+)',\s*$/gm)]
@@ -431,11 +435,11 @@ ok('каждый экран класса получает ровно три пр
         (screen.match(/class="hero-preview sheet subclass-sprite"/g)||[]).length===3 &&
         !screen.includes('<div class="cat">подкласс</div>') && ids.every(id=>screen.includes('data-s="'+id+'"'));
     }) && html.includes("document.querySelectorAll('#ov .card').forEach(el => el.onclick"));
-ok('превью классов и подклассов — 96×96, бой — 64×64 без смены p.r',
-  /\.overlay\.menu \.class-subclass-preview\{[^}]*width:96px;height:96px/.test(html) &&
-  /\.subclass-card \.subclass-sprite\{\s*width:96px;height:96px/.test(html) &&
+ok('детальные превью классов и подклассов — ровно 3× до 108 px',
+  /\.overlay\.menu \.class-subclass-preview\{[^}]*width:108px;height:108px/.test(html) &&
+  /\.subclass-card \.subclass-sprite\{\s*width:108px;height:108px/.test(html) &&
   html.includes('const SUBCLASS_HERO_DRAW_SIZE = 64;') &&
-  html.includes('const SUBCLASS_HERO_FRAME_SIZE = 32;') &&
+  html.includes('const SUBCLASS_HERO_FRAME_SIZE = 36;') &&
   html.includes('const SUBCLASS_HERO_FRAME_COUNT = 8;') &&
   html.includes('const frameW = subclassActive ? SUBCLASS_HERO_FRAME_SIZE : meta.frameW') &&
   html.includes('-drawW/2, -drawH/2, drawW, drawH') &&
@@ -445,9 +449,11 @@ ok('общий menuTick анимирует модели без отдельны�
   html.includes("const count=subclass?SUBCLASS_HERO_FRAME_COUNT:4;") &&
   html.includes('const position=(frame*100/(count-1))') && html.includes('drawHeroPreviews(t);') &&
   !/function drawHeroPreviews[\s\S]*?(?:setInterval|setTimeout)/.test(html));
-ok('общий menuTick циклически показывает три подкласса и 8 кадров без таймеров',
+ok('главное меню медленно меняет три неподвижных подкласса без таймеров',
   html.includes("document.querySelectorAll('[data-class-subclass-preview]').forEach") &&
-  html.includes('Math.floor(t/1.6)%3') && html.includes('Math.floor(t*10)%SUBCLASS_HERO_FRAME_COUNT') &&
+  html.includes('const subclassIndex=still?0:Math.floor(t/4)%3;') &&
+  html.includes("const position='0 0';") &&
+  !/function drawClassSubclassPreviews[\s\S]*?Math\.floor\(t\*10\)/.test(html) &&
   html.includes('drawClassSubclassPreviews(t);') &&
   !/function drawClassSubclassPreviews[\s\S]*?(?:setInterval|setTimeout)/.test(html));
 
@@ -508,7 +514,8 @@ ok('меню анимирует свет неподвижного логотип
 ok('системное отключение анимаций оставляет первые кадры вывески',
   html.includes("matchMedia('(prefers-reduced-motion: reduce)').matches") &&
   (html.match(/reducedMenuMotion\(\)\?0:/g)||[]).length>=1 &&
-  html.includes('const still=reducedMenuMotion(),frame=still?0:'));
+  html.includes('const still=reducedMenuMotion(),frame=0;') &&
+  html.includes('const subclassIndex=still?0:Math.floor(t/4)%3;'));
 
 {
   const c=loadGame('./PolyGrind.html'); c.startScreen();
@@ -519,7 +526,7 @@ ok('системное отключение анимаций оставляет 
     !menu.includes('choose one of four classes') && !menu.includes('Each level-up offers a choice of') &&
     !menu.includes('flat values add together'));
 }
-ok('главное меню показывает классовую рамку, ходящего подкласса, название и описание',
+ok('главное меню показывает классовую рамку, статичного подкласса, название и описание',
   /'<img class="class-card-frame" src="' \+ CLASS_FRAME_DATA\[spriteKey\]/.test(html) &&
   html.includes('data-class-subclass-preview="1"') && html.includes('data-class-subclass-label="1"') &&
   /'<div class="nt">' \+ w\.desc \+ '<\/div><\/div>'/.test(html));

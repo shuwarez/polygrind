@@ -1,5 +1,6 @@
 /* Четырёхкадровые PNG-враги: листы, кадры, движение и горизонтальный разворот. */
 const fs = require('fs');
+const crypto = require('crypto');
 const {loadGame} = require('./sim');
 const ok = (nm, cond, det) => console.log((cond?'  \u2713 ':'  \u2717 ') + nm.padEnd(52) + (det||''));
 const html=fs.readFileSync('./PolyGrind.html','utf8');
@@ -67,9 +68,12 @@ ok('семь элементальных индикаторов встроены 
   statusIconPng.png && statusIconPng.w===112 && statusIconPng.h===16 && statusIconPng.color===3 &&
   statusIconBytes.length<1000, statusIconBytes.length+' байт');
 const portalBytes=embeddedPng('FLOOR_PORTAL_SPRITE_DATA'), portalPng=pngInfo(portalBytes);
-ok('портал этажа встроен индексированным листом 8×64 без изменения кадров',
-  portalPng.png && portalPng.w===512 && portalPng.h===64 && portalPng.color===3 &&
-  portalBytes.length<10000, portalBytes.length+' байт');
+ok('портал этажа встроен нативным RGBA-листом 8×128 без перекодирования',
+  portalPng.png && portalPng.w===1024 && portalPng.h===128 && portalPng.color===6 &&
+  portalBytes.length===199367 &&
+  crypto.createHash('sha256').update(portalBytes).digest('hex')===
+    '13ee7db299978f4753c6bb63fe6466bdae3e1e69a6eac71d00e697851a868d8b',
+  portalBytes.length+' байт');
 
 const groundPoolKeys=['tar','ogreAcid','bossAcid','boilingBlood','lavaTrail','frostTrail','venomAcid','tyrantFire'];
 const groundPoolObject=(html.match(/const GROUND_POOL_SPRITE_DATA = \{([\s\S]*?)\n\};/)||[])[1]||'';
@@ -184,6 +188,9 @@ ok('портал проигрывает бесшовный цикл 8 кадро
     '0,1,2,3,4,5,6,7,0' &&
   c.floorPortalSpriteFrame({t:0}).meta.anchorX===0.5 &&
   c.floorPortalSpriteFrame({t:0}).meta.anchorY===1 &&
+  c.floorPortalSpriteFrame({t:0}).w===128 && c.floorPortalSpriteFrame({t:0}).h===128 &&
+  c.floorPortalSpriteFrame({t:.7}).x===896 &&
+  html.includes('x:index*meta.frameW') && html.includes('w:meta.frameW,h:meta.frameH') &&
   /function drawFloorPortalSprite[\s\S]*?imageSmoothingEnabled=false[\s\S]*?drawImage\(FLOOR_PORTAL_SPRITE/.test(html));
 ok('круговой прицел PNG-врага заменён стрелками',
   c.enemyTargetMarkerKind({typeKey:'blob',animT:0})==='chevron' && c.enemyTargetMarkerKind({typeKey:'tank',animT:0})==='chevron' &&

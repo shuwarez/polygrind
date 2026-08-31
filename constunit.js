@@ -1,6 +1,7 @@
 /* Постоянная мета-прогрессия созвездий: счётчики, ранги и три награды. */
 const {loadGame} = require('./sim');
 const fs = require('fs');
+const crypto = require('crypto');
 const ok = (nm, cond, det) => console.log((cond?'  \u2713 ':'  \u2717 ') + nm.padEnd(50) + (det||''));
 const c = loadGame('./PolyGrind.html'), C = c.__api.CONSTELLATIONS, S = c.__api.STORE;
 const source = fs.readFileSync('./PolyGrind.html','utf8');
@@ -75,8 +76,21 @@ try{
 for (const id of ids){ cs.kills[id]=0; cs.ranks[id]=0; }
 c.constellationScreen(()=>{});
 let html=c.document.getElementById('ov').innerHTML;
-ok('экран рисует шесть карточек и десять узлов',
-  (html.match(/<article class="const-card"/g)||[]).length===6 && (html.match(/<i class="const-node/g)||[]).length===60);
+ok('обсерватория показывает шесть путей и десять узлов выбранного пути',
+  (html.match(/<button class="const-path/g)||[]).length===6 && (html.match(/<span class="const-node/g)||[]).length===10);
+ok('выбранный путь получает крупный спрайт и отдельную сцену',
+  html.includes('class="const-focus"') && html.includes('class="const-focus-icon" data-const-icon="runner" width="104" height="104"'));
+ok('только один путь отмечен выбранным для клавиатуры и скринридера',
+  (html.match(/aria-pressed="true"/g)||[]).length===1 && (html.match(/aria-pressed="false"/g)||[]).length===5);
+ok('шапка показывает открытые, готовые и накопленные звёздные данные',
+  html.includes('ОТКРЫТО ЗВЁЗД') && html.includes('ГОТОВО К ОТКРЫТИЮ') && html.includes('УБИЙСТВ ЗАПИСАНО'));
+ok('переключатель пути открывает крупный профиль Босса',
+  c.constellationSelect('boss',()=>{}) && c.document.getElementById('ov').innerHTML.includes('<h3>БОСС</h3>'));
+ok('неизвестный путь отклоняется и не ломает выбранный профиль',
+  !c.constellationSelect('missing',()=>{}) && c.document.getElementById('ov').innerHTML.includes('<h3>БОСС</h3>'));
+c.constellationScreen(()=>{}); html=c.document.getElementById('ov').innerHTML;
+ok('выбранный путь сохраняется после перестроения экрана', html.includes('<h3>БОСС</h3>'));
+c.constellationSelect('runner',()=>{});
 cs.kills.runner=100; c.constellationScreen(()=>{}); html=c.document.getElementById('ov').innerHTML;
 ok('готовый ранг показывает кнопку открытия', html.includes('data-const-id="runner"') && html.includes('>ОТКРЫТЬ РАНГ</button>'));
 {
@@ -124,3 +138,27 @@ ok('листы созвездий индексированы в 16 цветов 
   (elitePng.bytes+bossPng.bytes)+' байт');
 ok('рядовые созвездия переиспользуют игровые листы и анимируют четыре кадра',
   source.includes('const regular = ENEMY_SPRITE_META[it.id]') && source.includes('Math.floor(t*6') && source.includes('g.drawImage(sprite,frame*frameSize'));
+
+const backdropMatch=source.match(/#constellations\{[\s\S]*?url\("data:image\/webp;base64,([A-Za-z0-9+/=]+)"\)/);
+const backdrop=backdropMatch ? Buffer.from(backdropMatch[1],'base64') : Buffer.alloc(0);
+ok('новая обсерватория встроена одним компактным WebP 1280x853',
+  backdrop.length===53110 && crypto.createHash('sha256').update(backdrop).digest('hex')==='16430e2fa4221af9bc0c9cf1f3242e0beff5a479715ad83be1f5d0775a48f133',
+  backdrop.length+' байт');
+ok('runtime не зависит от внешнего PNG-концепта',
+  !source.includes('assets/generated/constellation-observatory-v1.png') &&
+  backdropMatch && source.split(backdropMatch[1]).length===2);
+const optimizer=fs.readFileSync('./optimize_graphics.py','utf8');
+ok('упаковщик воспроизводит размер, качество и оба SHA-256 обсерватории',
+  optimizer.includes('CONSTELLATION_OBSERVATORY_SOURCE_SHA256') &&
+  optimizer.includes('CONSTELLATION_OBSERVATORY_WEBP_SHA256') &&
+  optimizer.includes('source.resize((1280, 853), Image.Resampling.LANCZOS)') &&
+  optimizer.includes('runtime.save(encoded, "WEBP", quality=62, method=6)'));
+ok('арт обновляется максимум восемь раз в секунду и без кадровых массивов',
+  source.includes('const CONSTELLATION_DUST = Array.from({length:54}') &&
+  source.includes('const artFrame = Math.floor(t*8)') && source.includes('if (artFrame === constellationArtFrame) return'));
+ok('один renderer масштабирует существующие спрайты для списка и крупного профиля',
+  source.includes('const drawSize = Math.max(8,Math.min(w,h)-6)') &&
+  source.includes('g.imageSmoothingEnabled=false') && source.includes("data-const-icon=\"' + selected.id + '\""));
+ok('адаптив переводит пути в 3 колонки, а звёзды в сетку 5x2',
+  source.includes('.const-paths{display:grid;grid-template-columns:repeat(3,1fr)') &&
+  source.includes('.const-nodes{grid-template-columns:repeat(5,1fr);row-gap:13px}'));
