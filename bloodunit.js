@@ -24,9 +24,9 @@ for (const [key,[hash,w,h]] of Object.entries(expected)){
 const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys');
 const G=c.__api.G,e=c.spawnEnemy('blob');
 ok('новая партия создаёт пустое состояние крови',Array.isArray(G.bloodFx) && G.bloodFx.length===0 && G.bloodStampN===0);
-ok('все девять функций системы доступны',[
+ok('все двенадцать функций системы доступны',[
   'initBloodFloor','clearBloodFloor','emitBloodHit','spawnBloodSplash','spawnCriticalBloodSpray','spawnBloodDrops',
-  'stampBloodDecal','updateBloodFx','drawBloodGround','drawBloodFx'
+  'stampBloodDecal','stampBloodPuddle','maybeStampHealthBloodPuddle','updateBloodFx','drawBloodGround','drawBloodFx'
 ].every(key=>typeof c[key]==='function'));
 
 const hp0=e.hp,fx0=G.bloodFx.length;
@@ -55,10 +55,30 @@ G.time+=0.19; c.applyDamage(e,1,false,true);
 ok('DoT снова виден после 0.18 секунды',G.bloodFx.length>firstDot);
 
 G.bloodFx.length=0; G.bloodStampN=0;
-const victim=c.spawnEnemy('runner');
-c.applyDamage(victim,victim.hp+10,true,false);
-ok('смертельный удар сразу оставляет крупную декаль',victim.hp<=0 && G.bloodStampN>=1 && G.bloodFx.length>=2,
-  `stamps=${G.bloodStampN} fx=${G.bloodFx.length}`);
+const seedForPuddle=want=>{
+  for(let seed=1;seed<10000;seed++){
+    G.corpseRng=seed;
+    if((c.__api.corpsePuddleVariant()>=0)===want) return seed;
+  }
+  return 0;
+};
+const puddleSeed=seedForPuddle(true),noPuddleSeed=seedForPuddle(false);
+const wounded=c.spawnEnemy('tank'); wounded.maxHp=wounded.hp=100; G.corpseRng=puddleSeed;
+const halfStampStart=G.bloodStampN;
+c.applyDamage(wounded,51,false,false);
+const halfPoolWorks=wounded.hp===49 && wounded.bloodPuddleRolled && wounded.bloodPuddleSize===72 &&
+  wounded.bloodPuddleVariant>=0 && wounded.bloodPuddleVariant<6 && G.bloodStampN===halfStampStart+1;
+const halfStampAfter=G.bloodStampN; G.corpseRng=puddleSeed; c.applyDamage(wounded,1,false,false);
+const noSecondRoll=G.bloodStampN===halfStampAfter && wounded.bloodPuddleSize===72;
+const missed=c.spawnEnemy('blob'); missed.maxHp=100; missed.hp=60; G.corpseRng=noPuddleSeed;
+const missedStampStart=G.bloodStampN; c.applyDamage(missed,11,false,false); G.corpseRng=puddleSeed; c.applyDamage(missed,1,false,false);
+const failedRollStaysFinal=missed.bloodPuddleRolled && missed.bloodPuddleSize===0 && G.bloodStampN===missedStampStart;
+const victim=c.spawnEnemy('runner'); victim.maxHp=victim.hp=100; G.corpseRng=puddleSeed;
+const oneShotStampStart=G.bloodStampN; c.applyDamage(victim,110,true,false);
+const oneShotPoolWorks=victim.hp<=0 && victim.bloodPuddleSize===108 && G.bloodStampN===oneShotStampStart+2;
+ok('ниже 50% лужа бросается один раз, а ваншот увеличивает её ровно в полтора раза',
+  puddleSeed>0 && noPuddleSeed>0 && halfPoolWorks && noSecondRoll && failedRollStaysFinal && oneShotPoolWorks,
+  `half=${wounded.bloodPuddleSize} oneShot=${victim.bloodPuddleSize}`);
 
 const skeleton=c.spawnEnemy('pack',null,'skeletonWarrior');
 const lich=c.spawnEnemy('boss','lich');

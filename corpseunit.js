@@ -59,9 +59,11 @@ const atlas=payload('CORPSE_PUDDLE_DATA','atlas');
 ok('шесть луж собраны в один атлас 384×64',pngSize(atlas).join()==='384,64',pngSize(atlas).join('×'));
 ok('атлас луж индексированный, а не шесть полноцветных текстур',atlas[25]===3 && atlas.length<7000,`${atlas.length} B`);
 ok('встроен проверенный финальный атлас луж',crypto.createHash('sha256').update(atlas).digest('hex')==='9236e97ebaf2e4cee306cf305d5eaaae47b2cdc1857b7b75c19cc9efc3f20049');
-const puddleManifest=JSON.parse(fs.readFileSync('./assets/corpse-puddles/blood-puddle-manifest.json','utf8'));
-ok('manifest фиксирует шесть разных вариантов в нужном порядке',puddleManifest.frames.map(f=>f.key).join(',')==='small,medium,large,flowing,bones,gore');
-ok('каждый финальный вариант лужи занимает только 64×64',puddleManifest.frames.every(f=>f.size.join()==='64,64' && f.bytes<2500));
+ok('установщик фиксирует шесть вариантов луж в нужном порядке',
+  /"installed": \["small", "medium", "large", "flowing", "bones", "gore"\]/.test(optimizer));
+ok('установщик проверяет размер, палитру и непустые кадры 64×64',
+  /image\.size != \(384, 64\)/.test(optimizer) && /image\.mode != "P"/.test(optimizer) &&
+  /index \* 64, 0, \(index \+ 1\) \* 64, 64/.test(optimizer) && /for index in range\(6\)/.test(optimizer));
 
 const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys');
 let G=c.__api.G;
@@ -94,17 +96,19 @@ for (let i=0;i<20000;i++){
   const v=c.__api.corpsePuddleVariant();
   if (v<0) noPuddle++; else counts[v]++;
 }
-ok('вероятность лужи статистически равна 50%',noPuddle>9700 && noPuddle<10300,`без лужи ${noPuddle}/20000`);
-ok('случайный выбор реально использует все шесть вариантов',counts.every(n=>n>1500 && n<1850),counts.join('/'));
+ok('вероятность новой лужи крови статистически равна 50%',noPuddle>9700 && noPuddle<10300,`без лужи ${noPuddle}/20000`);
+ok('постоянный слой крови реально выбирает все шесть прежних вариантов',counts.every(n=>n>1500 && n<1850),counts.join('/'));
 ok('косметический RNG не сдвигает игровой Math.random',!/Math\.random\s*\(/.test(c.corpseRandom.toString()) && !/Math\.random\s*\(/.test(c.corpsePuddleVariant.toString()));
 
 c.newGame('bow','keys'); G=c.__api.G;
-G.visualCorpses.push({x:0,y:0,typeKey:'blob',puddle:0}); c.buildFloor();
+G.visualCorpses.push({x:0,y:0,typeKey:'blob'}); c.buildFloor();
 ok('смена этажа очищает декоративные трупы',G.visualCorpses.length===0);
 ok('слой трупов стоит над кровью пола и под телеграфами',/\['ground','bloodGround','corpses','telegraphs'/.test(html));
-ok('лужа рисуется перед телом тем же проходом',c.drawVisualCorpses.toString().indexOf('CORPSE_PUDDLE_ATLAS')<c.drawVisualCorpses.toString().indexOf('CORPSE_SPRITES'));
+ok('атлас шести луж теперь штампуется постоянным слоем, а не скрывается внутри трупа',
+  c.stampBloodPuddle.toString().includes('CORPSE_PUDDLE_ATLAS') &&
+  !c.drawVisualCorpses.toString().includes('CORPSE_PUDDLE_ATLAS'));
 
-G.visualCorpses=[{x:0,y:0,typeKey:'blob',puddle:0},{x:5000,y:5000,typeKey:'blob',puddle:0}];
+G.visualCorpses=[{x:0,y:0,typeKey:'blob'},{x:5000,y:5000,typeKey:'blob'}];
 ok('отрисовка отсекает трупы вне камеры',c.drawVisualCorpses(-100,-100,100,100)===1);
 ok('кадровая функция не создаёт Image и не вращает спрайты',!c.drawVisualCorpses.toString().includes('new Image') && !c.drawVisualCorpses.toString().includes('rotate('));
 ok('старые кресты G.corpses удалены из itemsProjectiles',!html.includes('for (const c of G.corpses){\n    const k = clamp(c.life/3'));

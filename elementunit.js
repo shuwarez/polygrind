@@ -27,8 +27,13 @@ const modsById = o => Object.fromEntries(o.c.__api.MODS.map(m=>[m.id,m]));
 console.log('СТИХИЙНЫЕ КАРТОЧКИ');
 { const o=build(), M=modsById(o);
   const ids=['ail.ignite.chance','ail.chill.chance','ail.shock.chance','ail.poison.chance'];
-  ok('все четыре шанса обычные, целые 1–5% с потолком 25%', ids.every(id=>{
-    const m=M[id]; return m.rar===undefined && m.int===true && m.r[0]===1 && m.r[1]===5 && m.cap===25;
+  ok('все четыре шанса обычные, целые 5–10% с потолком 25%', ids.every(id=>{
+    const m=M[id]; return m.rar===undefined && m.int===true && m.r[0]===5 && m.r[1]===10 && m.cap===25;
+  })); }
+{ const o=build(), M=modsById(o);
+  const ids=['ail.ignite.chance','ail.chill.chance','ail.shock.chance','ail.poison.chance'];
+  ok('бросок каждой стихийной карточки достигает границ 5% и 10%', ids.every(id=>{
+    const m=M[id]; return o.c.rollModValue(m,()=>0)===5 && o.c.rollModValue(m,()=>0.999999)===10;
   })); }
 { const o=build([['igniteCh',23]]), m=modsById(o)['ail.ignite.chance'];
   const v=o.c.rollModValue(m,()=>0.999);

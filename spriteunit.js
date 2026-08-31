@@ -13,6 +13,11 @@ const embeddedObjectPng = (objectName,key) => {
   const match=object.match(new RegExp('^\\s*'+key+":'data:image/png;base64,([^']+)'",'m'));
   return match ? Buffer.from(match[1], 'base64') : Buffer.alloc(0);
 };
+const embeddedAudioList = (objectName,key) => {
+  const object=(html.match(new RegExp('const '+objectName+' = \\{([\\s\\S]*?)\\n\\};'))||[])[1]||'';
+  const list=(object.match(new RegExp('\\b'+key+':\\[([\\s\\S]*?)\\n  \\]'))||[])[1]||'';
+  return [...list.matchAll(/data:audio\/ogg;base64,([^']+)/g)].map(m=>Buffer.from(m[1],'base64'));
+};
 const pngInfo = b => {
   if (b.length < 26) return {png:false,w:0,h:0,color:-1};
   return {png:b.subarray(0,8).toString('hex')==='89504e470d0a1a0a', w:b.readUInt32BE(16), h:b.readUInt32BE(20), color:b[25]};
@@ -232,7 +237,48 @@ class FakeAudioContext {
   createGain(){ const node=new FakeGain(); this.gains.push(node); return node; }
   createBiquadFilter(){ const node=new FakeGain(); node.type='lowpass'; node.frequency=new FakeAudioParam(); this.filters.push(node); return node; }
 }
-const soundGame=loadGame('./PolyGrind.html',{random:()=>0});
+let hitRandom=0;
+const playedMonsterHits=[];
+class FakeAudio {
+  constructor(src){ this.src=src; this.currentTime=0; this.volume=0; this.preload=''; }
+  pause(){}
+  play(){ playedMonsterHits.push(this.src); return {catch:()=>{}}; }
+}
+const coreHitBytes=embeddedAudioList('MONSTER_HIT_SOUND_DATA','blob');
+const coreHitUris=coreHitBytes.map(data=>'data:audio/ogg;base64,'+data.toString('base64'));
+const bastionHitBytes=embeddedAudioList('MONSTER_HIT_SOUND_DATA','tank');
+const bastionHitUris=bastionHitBytes.map(data=>'data:audio/ogg;base64,'+data.toString('base64'));
+const prismHitBytes=embeddedAudioList('MONSTER_HIT_SOUND_DATA','shooter');
+const prismHitUris=prismHitBytes.map(data=>'data:audio/ogg;base64,'+data.toString('base64'));
+const runnerHitBytes=embeddedAudioList('MONSTER_HIT_SOUND_DATA','runner');
+const runnerHitUris=runnerHitBytes.map(data=>'data:audio/ogg;base64,'+data.toString('base64'));
+const deathBytes=Object.fromEntries(['blob','tank','shooter','runner'].map(key=>
+  [key,embeddedAudioList('MONSTER_DEATH_SOUND_DATA',key)]));
+const deathUris=Object.fromEntries(Object.entries(deathBytes).map(([key,list])=>
+  [key,list.map(data=>'data:audio/ogg;base64,'+data.toString('base64'))]));
+const deathHashes={
+  blob:[
+    '421699278a2a96484b17a10fee89c3389abe1894a21e7eae660547f50bce6ec0',
+    'abe286fec84839209237dec066e661f7c70099a956922077949fb284e0250a89',
+    '58f48bd0a53dc152764e70058cc684438374e67afe29352e8d08fdd7ed97a92d',
+  ],
+  tank:[
+    '8fdd1512dbd6f0feccf9136aad65f95ce0a0fe847e73474a74bd70089953c177',
+    '5c37fa3d8eb9a2f6007cc3d9ff0491d1c3d5d6380a293e13a1ae8854b6e8d5c7',
+    '5a5353c94448e36e9c959383ac66e9de1a05734dc8336e7f14a8b629ee957d7d',
+  ],
+  shooter:[
+    'd864a7b420dc2ddfa98130ba0bd6d87522d6c4dceb1a4e3e71dd1c822429799a',
+    'f46aae1dc1dac30061eda6abc1c5aedd3f8ba9812b44fb1d4415780fbb18ce85',
+    '18fd66c181b58820bb70789d1b546c1e288c38e7345192c6253043842805adea',
+  ],
+  runner:[
+    'bef988b2d7bd6841009cf645e45e167dcba97954a1e7c0704ec51ea00c5a42bd',
+    '9b603a481623683e9026b3d52c03cb688e72f915a54232a8a83ecb407a2a9ac7',
+    '03fa60484b3da6f6060a17356dac0038d37cd5f7eb910f7c729922868c51c849',
+  ],
+};
+const soundGame=loadGame('./PolyGrind.html',{random:()=>hitRandom,Audio:FakeAudio});
 soundGame.window.AudioContext=FakeAudioContext; soundGame.unlockSound(); soundGame.newGame('bow','keys');
 const soundG=soundGame.__api.G, soundAt={x:12,y:34};
 const itemKey=Object.keys(soundGame.__api.AMULETS)[0];
@@ -252,21 +298,118 @@ soundGame.dropItem(soundAt,{pool:[],tot:['fire']},{itemShare:0,totemShare:1});
 ok('экипировка, книга и тотем проходят через общий звук выпадения',
   soundG.orbs.some(o=>o.amu) && soundG.orbs.some(o=>o.book) && soundG.orbs.some(o=>o.totem) && lootAudio.oscillators.length===9);
 lootAudio.currentTime+=0.41;
-const hitOscBefore=lootAudio.oscillators.length, hitGainBefore=lootAudio.gains.length;
-soundGame.playHitSound();
-const hitOsc=lootAudio.oscillators.at(-1), hitGain=lootAudio.gains.at(-1), hitFilter=lootAudio.filters.at(-1);
-ok('звук удара сохраняет осциллятор, фильтр и огибающую исходного HTML',
-  lootAudio.oscillators.length===hitOscBefore+1 && lootAudio.gains.length===hitGainBefore+1 &&
-  hitOsc.type==='triangle' && hitOsc.frequency.events.map(x=>x[1]).join(',')==='420,110' &&
-  hitFilter.type==='lowpass' && hitFilter.frequency.events[0][1]===1200 &&
-  hitGain.gain.events.map(x=>x[1]).join(',')==='0.04,0.0001' && Math.abs(hitOsc.stopped-hitOsc.started-0.025)<1e-9);
-soundGame.playHitSound();
-ok('одновременные попадания не складывают громкость hit marker', lootAudio.oscillators.length===hitOscBefore+1);
+const coreHitAssetsValid=
+  coreHitBytes.length===3 && coreHitBytes.every(data=>data.subarray(0,4).toString()==='OggS' && data.length<6000) &&
+  coreHitBytes.map(data=>crypto.createHash('sha256').update(data).digest('hex')).join(',')===
+    'ca674316e9968568d7e5d654b3e345ad148fb854d715232fce1d0d57735f51bc,'+
+    'b6c112ad757537c3d8244bafdcd3f8abe88ddcd1bf5a64cea26da68f21ceaa26,'+
+    '51d42e8d3ee876ea00434124902907a29909cee860761eb116ee00337af44247';
+const bastionHitAssetsValid=
+  bastionHitBytes.length===3 && bastionHitBytes.every(data=>data.subarray(0,4).toString()==='OggS' && data.length<6100) &&
+  bastionHitBytes.map(data=>crypto.createHash('sha256').update(data).digest('hex')).join(',')===
+    '42d0419c1e8d2be375196c5e77604a5630814d1ade1fe81188cd15b8685f8af0,'+
+    '6bad456ddff0a716e2b05e08e77646b32217d4d5278f94ac5f09d83204a8c1ff,'+
+    'a721688b3f10d64f76449b8cd03cbf5795d7a8e96924298499663814c3d537d4';
+const prismHitAssetsValid=
+  prismHitBytes.length===3 && prismHitBytes.every(data=>data.subarray(0,4).toString()==='OggS' && data.length<5100) &&
+  prismHitBytes.map(data=>crypto.createHash('sha256').update(data).digest('hex')).join(',')===
+    '1eaa3e719f18cb7f395e490d42d91885cda05efdf1678998d8a987fd1ec70a71,'+
+    '0a4db1f01d047e38ee1ce43190f3969e868a57d859510299b7f88b0f17068369,'+
+    'a13a5c2e5b1be3c137afb927f8d9106d785a811ef7c5ae97678e6e81ad19c7af';
+const runnerHitAssetsValid=
+  runnerHitBytes.length===3 && runnerHitBytes.every(data=>data.subarray(0,4).toString()==='OggS' && data.length<5500) &&
+  runnerHitBytes.map(data=>crypto.createHash('sha256').update(data).digest('hex')).join(',')===
+    'adf8a3016eb3e4738852ae94912cf34c42cd58475d879677773229a3cd3256bd,'+
+    '561788a5d210af84aad6fb8fc0f035728e180f620a098c9ce108d5fba9ce8d09,'+
+    '314157e93177df2ac565f0a31e906e2a00844fb7b8708dd990d453dd3658394b';
+const corePicksStart=playedMonsterHits.length;
+hitRandom=0; soundGame.playHitSound({typeKey:'blob'}); lootAudio.currentTime+=0.03;
+hitRandom=0.5; soundGame.playHitSound({typeKey:'blob'}); lootAudio.currentTime+=0.03;
+hitRandom=0.999999; soundGame.playHitSound({typeKey:'blob'});
 lootAudio.currentTime+=0.03;
-const hitEnemy=soundGame.spawnEnemy(); hitEnemy.hp=hitEnemy.maxHp=100; hitEnemy.armor=0; hitEnemy.ward=null; hitEnemy.bulwark=0;
+const coreElite=soundGame.spawnEnemy('pack',null,'skeletonWarrior');
+const eliteHitPlayCount=playedMonsterHits.length;
+soundGame.playHitSound(coreElite);
+const coreHitBankWorks=playedMonsterHits.slice(corePicksStart,corePicksStart+3).join('|')===coreHitUris.join('|') &&
+  coreElite.kind==='elite' && coreElite.typeKey==='blob' && playedMonsterHits.length===eliteHitPlayCount+1;
+lootAudio.currentTime+=0.03;
+const bastionPicksStart=playedMonsterHits.length;
+hitRandom=0; soundGame.playHitSound({typeKey:'tank'}); lootAudio.currentTime+=0.03;
+hitRandom=0.5; soundGame.playHitSound({typeKey:'tank'}); lootAudio.currentTime+=0.03;
+hitRandom=0.999999; soundGame.playHitSound({typeKey:'tank'});
+lootAudio.currentTime+=0.03;
+const bastionElite=soundGame.spawnEnemy('pack',null,'forgottenGuard');
+const bastionElitePlayCount=playedMonsterHits.length;
+soundGame.playHitSound(bastionElite);
+const bastionHitBankWorks=playedMonsterHits.slice(bastionPicksStart,bastionPicksStart+3).join('|')===bastionHitUris.join('|') &&
+  bastionElite.kind==='elite' && bastionElite.typeKey==='tank' && playedMonsterHits.length===bastionElitePlayCount+1;
+lootAudio.currentTime+=0.03;
+const prismPicksStart=playedMonsterHits.length;
+hitRandom=0; soundGame.playHitSound({typeKey:'shooter'}); lootAudio.currentTime+=0.03;
+hitRandom=0.5; soundGame.playHitSound({typeKey:'shooter'}); lootAudio.currentTime+=0.03;
+hitRandom=0.999999; soundGame.playHitSound({typeKey:'shooter'});
+lootAudio.currentTime+=0.03;
+const prismElite=soundGame.spawnEnemy('pack',null,'fallenPyromancer');
+const prismElitePlayCount=playedMonsterHits.length;
+soundGame.playHitSound(prismElite);
+const prismHitBankWorks=playedMonsterHits.slice(prismPicksStart,prismPicksStart+3).join('|')===prismHitUris.join('|') &&
+  prismElite.kind==='elite' && prismElite.typeKey==='shooter' && playedMonsterHits.length===prismElitePlayCount+1;
+lootAudio.currentTime+=0.03;
+const runnerPicksStart=playedMonsterHits.length;
+hitRandom=0; soundGame.playHitSound({typeKey:'runner'}); lootAudio.currentTime+=0.03;
+hitRandom=0.5; soundGame.playHitSound({typeKey:'runner'}); lootAudio.currentTime+=0.03;
+hitRandom=0.999999; soundGame.playHitSound({typeKey:'runner'});
+lootAudio.currentTime+=0.03;
+const runnerElite=soundGame.spawnEnemy('pack',null,'frostWolf');
+const runnerElitePlayCount=playedMonsterHits.length;
+soundGame.playHitSound(runnerElite);
+ok('три OGG всех четырёх семейств встроены точно, случайны и наследуются элитой',
+  coreHitAssetsValid && coreHitBankWorks && bastionHitAssetsValid &&
+  bastionHitBankWorks && prismHitAssetsValid && prismHitBankWorks && runnerHitAssetsValid &&
+  playedMonsterHits.slice(runnerPicksStart,runnerPicksStart+3).join('|')===runnerHitUris.join('|') &&
+  runnerElite.kind==='elite' && runnerElite.typeKey==='runner' && playedMonsterHits.length===runnerElitePlayCount+1 &&
+  !soundGame.playHitSound({typeKey:'missing'}));
+const hitPlayCount=playedMonsterHits.length;
+soundGame.playHitSound({typeKey:'blob'});
+ok('одновременные попадания не складывают громкость нового банка', playedMonsterHits.length===hitPlayCount);
+lootAudio.currentTime+=0.03;
+const hitEnemy=soundGame.spawnEnemy('blob'); hitEnemy.hp=hitEnemy.maxHp=100; hitEnemy.armor=0; hitEnemy.ward=null; hitEnemy.bulwark=0;
 const dealt=soundGame.applyDamage(hitEnemy,10,false,false);
-ok('фактический урон запускает звук и одноразовую вспышку PNG-врага',
-  dealt===10 && hitEnemy.hit===0.12 && lootAudio.oscillators.length===hitOscBefore+2 &&
+const hitDamageSoundWorked=dealt===10 && hitEnemy.typeKey==='blob' && hitEnemy.hit===0.12 &&
+  playedMonsterHits.length===hitPlayCount+1;
+const deathAssetsValid=Object.entries(deathBytes).every(([key,list])=>
+  list.length===3 && list.every(data=>data.subarray(0,4).toString()==='OggS' && data.length<6100) &&
+  list.map(data=>crypto.createHash('sha256').update(data).digest('hex')).join(',')===deathHashes[key].join(','));
+const deathElites={blob:coreElite,tank:bastionElite,shooter:prismElite,runner:runnerElite};
+let deathBanksWork=true;
+for (const key of ['blob','tank','shooter','runner']){
+  const start=playedMonsterHits.length;
+  for (const random of [0,0.5,0.999999]){
+    hitRandom=random;
+    soundGame.enemyDeathSfx({kind:'norm',typeKey:key});
+    lootAudio.currentTime+=0.04;
+  }
+  const eliteStart=playedMonsterHits.length;
+  soundGame.enemyDeathSfx(deathElites[key]);
+  lootAudio.currentTime+=0.04;
+  deathBanksWork=deathBanksWork &&
+    playedMonsterHits.slice(start,start+3).join('|')===deathUris[key].join('|') &&
+    playedMonsterHits.length===eliteStart+1;
+}
+const killedEnemy=soundGame.spawnEnemy('blob'); killedEnemy.hp=0;
+const killedEnemyIndex=soundG.enemies.indexOf(killedEnemy), killSoundStart=playedMonsterHits.length;
+soundGame.killEnemy(killedEnemy,killedEnemyIndex);
+const actualDeathHookWorks=killedEnemy.dead && playedMonsterHits.length===killSoundStart+1;
+lootAudio.currentTime+=0.04;
+const bossAudioStart=playedMonsterHits.length, bossToneStart=lootAudio.oscillators.length;
+soundGame.enemyDeathSfx({kind:'boss',typeKey:'tank'});
+const bossSoundPreserved=playedMonsterHits.length===bossAudioStart && lootAudio.oscillators.length===bossToneStart+1;
+lootAudio.currentTime+=0.04;
+const unknownDeathStart=playedMonsterHits.length;
+const unknownDeathSilent=!soundGame.enemyDeathSfx({kind:'norm',typeKey:'missing'}) && playedMonsterHits.length===unknownDeathStart;
+ok('фактический урон и смерть запускают свои звуки и одноразовую вспышку PNG-врага',
+  hitDamageSoundWorked && deathAssetsValid && deathBanksWork && actualDeathHookWorks &&
+  bossSoundPreserved && unknownDeathSilent &&
   /if \(e\.hit > 0\)[\s\S]*?ctx\.filter='brightness\(0\) saturate\(100%\) invert\(100%\)'/.test(html));
 ok('Escape-меню содержит общий ползунок 0–100 и кнопку отключения звуков',
   /id="pauseov"[\s\S]*?НАСТРОЙКИ[\s\S]*?id="sfxvolume"[^>]*min="0"[^>]*max="100"[^>]*value="50"[\s\S]*?id="sfxmute"/.test(html));

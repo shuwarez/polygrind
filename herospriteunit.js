@@ -214,9 +214,12 @@ const musicGame=loadGame('./PolyGrind.html',{Audio:FakeMenuAudio,localStorage:mu
 const menuAudio=FakeMenuAudio.instances.at(-1);
 const confirmAudio=FakeMenuAudio.instances.at(-2);
 const hoverAudio=FakeMenuAudio.instances.at(-3);
-ok('музыка по умолчанию циклична, загружается заранее и играет на 50%',
-  menuAudio && menuAudio.loop===true && menuAudio.volume===0.5 && menuAudio.preload==='auto' &&
-  menuAudio.src.startsWith('data:audio/ogg;base64,'));
+ok('музыка играет один раз, загружается заранее и повторяется после паузы 15 секунд',
+  menuAudio && menuAudio.loop===false && menuAudio.volume===0.5 && menuAudio.preload==='auto' &&
+  menuAudio.src.startsWith('data:audio/ogg;base64,') &&
+  html.includes('const MENU_MUSIC_REPLAY_DELAY_MS = 15000;') &&
+  html.includes("MENU_MUSIC.addEventListener('ended', scheduleMenuMusicReplay);") &&
+  html.includes('}, MENU_MUSIC_REPLAY_DELAY_MS);'));
 musicGame.startScreen();
 ok('главный экран показывает доступную кнопку и запускает включённую музыку',
   menuAudio.plays===1 && musicGame.document.getElementById('ov').innerHTML.includes('id="menumusicb"') &&
@@ -489,11 +492,14 @@ ok('две звезды стоят по сторонам текста Созве
   html.includes('id="conststarl" class="conststar"') &&
   html.includes('</small></span><canvas id="conststarr" class="conststar"></canvas>') &&
   !html.includes('id="constsigil"') && html.includes('.const-entry .conststar{width:32px;height:32px'));
-ok('звёзды мерцают в противофазе и собираются штатным конвейером меню',
+ok('монеты и звёзды статичны без наведения, а под курсором анимируются штатным конвейером меню',
   html.includes('CONSTELLATION_STAR_FPS = 8') &&
   html.includes('t*CONSTELLATION_STAR_FPS + i*4') &&
   html.includes('constellationStarTick(t);') &&
-  html.includes('reducedMenuMotion() ? 2 :') &&
+  html.includes("button.matches(':hover')") &&
+  html.includes(': 2+i*4') &&
+  html.includes("const button=$('#shopb');") &&
+  html.includes('frame = animate ? Math.floor((t*SHOP_COIN_FPS + i*2) % 4) : i*2') &&
   optimizer.includes('def menu_constellation_star_sheet') &&
   optimizer.includes('"constellationStar": "CONSTELLATION_STAR_STRIP"'));
 ok('меню анимирует свет неподвижного логотипа и огонь двух факелов',

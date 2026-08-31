@@ -209,6 +209,50 @@ MAGE_ATTACK_SOUND_SHA256 = (
     "442afd04d92987bb9eb4d90f1fd06b8dc93a62afcb673cdb6bcf98b19319ebed",
     "013d99d1bfdb688ad9e6f85e10c2bf579bbb9740f66855bacad76cbfba9c2417",
 )
+MONSTER_HIT_SOUND_SOURCES = {
+    "blob": (
+        ("core_hit/core_hit1.ogg", "ca674316e9968568d7e5d654b3e345ad148fb854d715232fce1d0d57735f51bc"),
+        ("core_hit/core_hit2.ogg", "b6c112ad757537c3d8244bafdcd3f8abe88ddcd1bf5a64cea26da68f21ceaa26"),
+        ("core_hit/core_hit3.ogg", "51d42e8d3ee876ea00434124902907a29909cee860761eb116ee00337af44247"),
+    ),
+    "tank": (
+        ("bastion_hit/bastion_hit1.ogg", "42d0419c1e8d2be375196c5e77604a5630814d1ade1fe81188cd15b8685f8af0"),
+        ("bastion_hit/bastion_hit2.ogg", "6bad456ddff0a716e2b05e08e77646b32217d4d5278f94ac5f09d83204a8c1ff"),
+        ("bastion_hit/bastion_hit3.ogg", "a721688b3f10d64f76449b8cd03cbf5795d7a8e96924298499663814c3d537d4"),
+    ),
+    "shooter": (
+        ("prism_hit/prism_hit1.ogg", "1eaa3e719f18cb7f395e490d42d91885cda05efdf1678998d8a987fd1ec70a71"),
+        ("prism_hit/prism_hit2.ogg", "0a4db1f01d047e38ee1ce43190f3969e868a57d859510299b7f88b0f17068369"),
+        ("prism_hit/prism_hit3.ogg", "a13a5c2e5b1be3c137afb927f8d9106d785a811ef7c5ae97678e6e81ad19c7af"),
+    ),
+    "runner": (
+        ("runner_hit/runner_hit1.ogg", "adf8a3016eb3e4738852ae94912cf34c42cd58475d879677773229a3cd3256bd"),
+        ("runner_hit/runner_hit2.ogg", "561788a5d210af84aad6fb8fc0f035728e180f620a098c9ce108d5fba9ce8d09"),
+        ("runner_hit/runner_hit3.ogg", "314157e93177df2ac565f0a31e906e2a00844fb7b8708dd990d453dd3658394b"),
+    ),
+}
+MONSTER_DEATH_SOUND_SOURCES = {
+    "blob": (
+        ("deaths/core_death/core_death1.ogg", "421699278a2a96484b17a10fee89c3389abe1894a21e7eae660547f50bce6ec0"),
+        ("deaths/core_death/core_death2.ogg", "abe286fec84839209237dec066e661f7c70099a956922077949fb284e0250a89"),
+        ("deaths/core_death/core_death3.ogg", "58f48bd0a53dc152764e70058cc684438374e67afe29352e8d08fdd7ed97a92d"),
+    ),
+    "tank": (
+        ("deaths/bastion_death/bastion_death1.ogg", "8fdd1512dbd6f0feccf9136aad65f95ce0a0fe847e73474a74bd70089953c177"),
+        ("deaths/bastion_death/bastion_death2.ogg", "5c37fa3d8eb9a2f6007cc3d9ff0491d1c3d5d6380a293e13a1ae8854b6e8d5c7"),
+        ("deaths/bastion_death/bastion_death3.ogg", "5a5353c94448e36e9c959383ac66e9de1a05734dc8336e7f14a8b629ee957d7d"),
+    ),
+    "shooter": (
+        ("deaths/prism_death/prism_death1.ogg", "d864a7b420dc2ddfa98130ba0bd6d87522d6c4dceb1a4e3e71dd1c822429799a"),
+        ("deaths/prism_death/prism_death2.ogg", "f46aae1dc1dac30061eda6abc1c5aedd3f8ba9812b44fb1d4415780fbb18ce85"),
+        ("deaths/prism_death/prism_death3.ogg", "18fd66c181b58820bb70789d1b546c1e288c38e7345192c6253043842805adea"),
+    ),
+    "runner": (
+        ("deaths/runner_death/runner_death1.ogg", "bef988b2d7bd6841009cf645e45e167dcba97954a1e7c0704ec51ea00c5a42bd"),
+        ("deaths/runner_death/runner_death2.ogg", "9b603a481623683e9026b3d52c03cb688e72f915a54232a8a83ecb407a2a9ac7"),
+        ("deaths/runner_death/runner_death3.ogg", "03fa60484b3da6f6060a17356dac0038d37cd5f7eb910f7c729922868c51c849"),
+    ),
+}
 
 CLASS_FRAME_SOURCES = {
     "archer": ("word/media/image3.png", "4413b6f02e7ae495f2215d055b79f178501face7647d971c60e40c2a40079307"),
@@ -1484,6 +1528,14 @@ def main() -> None:
                         help="четыре OGG/Vorbis вариации атаки Мага")
     parser.add_argument("--install-mage-attack-sounds", action="store_true",
                         help="проверить и встроить четыре атаки Мага в автономный HTML")
+    parser.add_argument("--monster-hit-sound-dir", type=Path,
+                        help="корневой каталог с папками звуков попадания по семействам монстров")
+    parser.add_argument("--install-monster-hit-sounds", action="store_true",
+                        help="проверить и встроить банки попаданий по семействам монстров")
+    parser.add_argument("--monster-death-sound-dir", type=Path,
+                        help="корневой каталог с папками звуков смерти по семействам монстров")
+    parser.add_argument("--install-monster-death-sounds", action="store_true",
+                        help="проверить и встроить банки смерти по семействам монстров")
     parser.add_argument("--emit-shooter-base64", action="store_true",
                         help="вывести JSON двух оптимизированных data payload без изменения HTML")
     parser.add_argument("--emit-player-projectile-base64", action="store_true",
@@ -1974,6 +2026,74 @@ def main() -> None:
         HTML.write_text(html, encoding="utf-8", newline="\n")
         print(json.dumps({"path": str(path), "bytes": len(data),
                           "base64Bytes": len(value)}, separators=(",", ":")))
+        return
+
+    if args.install_monster_hit_sounds:
+        if not args.monster_hit_sound_dir or not args.monster_hit_sound_dir.is_dir():
+            parser.error("звуки попаданий требуют существующий --monster-hit-sound-dir")
+        families = []
+        total_bytes = 0
+        for family, sources in MONSTER_HIT_SOUND_SOURCES.items():
+            payloads = []
+            for relative_path, expected_hash in sources:
+                path = args.monster_hit_sound_dir / relative_path
+                if not path.is_file():
+                    raise SystemExit(f"звук попадания {family}: не найден {path}")
+                data = path.read_bytes()
+                actual = hashlib.sha256(data).hexdigest()
+                if actual != expected_hash:
+                    raise SystemExit(
+                        f"звук попадания {family}: SHA-256 {actual}, ожидался {expected_hash}")
+                if not data.startswith(b"OggS") or b"vorbis" not in data[:512]:
+                    raise SystemExit(f"звук попадания {family}: ожидался контейнер OGG/Vorbis")
+                payloads.append("    'data:audio/ogg;base64," + base64.b64encode(data).decode("ascii") + "'")
+                total_bytes += len(data)
+            families.append("  " + family + ":[\n" + ",\n".join(payloads) + "\n  ]")
+        html = HTML.read_text(encoding="utf-8")
+        value = "{\n" + ",\n".join(families) + "\n}"
+        html, count = re.subn(
+            r"const MONSTER_HIT_SOUND_DATA = \{[\s\S]*?\n\};",
+            f"const MONSTER_HIT_SOUND_DATA = {value};", html, count=1)
+        if count != 1:
+            raise SystemExit(f"MONSTER_HIT_SOUND_DATA: ожидалась одна замена, получено {count}")
+        HTML.write_text(html, encoding="utf-8", newline="\n")
+        print(json.dumps({"families": list(MONSTER_HIT_SOUND_SOURCES),
+                          "files": sum(len(v) for v in MONSTER_HIT_SOUND_SOURCES.values()),
+                          "bytes": total_bytes}, ensure_ascii=False, separators=(",", ":")))
+        return
+
+    if args.install_monster_death_sounds:
+        if not args.monster_death_sound_dir or not args.monster_death_sound_dir.is_dir():
+            parser.error("звуки смерти требуют существующий --monster-death-sound-dir")
+        families = []
+        total_bytes = 0
+        for family, sources in MONSTER_DEATH_SOUND_SOURCES.items():
+            payloads = []
+            for relative_path, expected_hash in sources:
+                path = args.monster_death_sound_dir / relative_path
+                if not path.is_file():
+                    raise SystemExit(f"звук смерти {family}: не найден {path}")
+                data = path.read_bytes()
+                actual = hashlib.sha256(data).hexdigest()
+                if actual != expected_hash:
+                    raise SystemExit(
+                        f"звук смерти {family}: SHA-256 {actual}, ожидался {expected_hash}")
+                if not data.startswith(b"OggS") or b"vorbis" not in data[:512]:
+                    raise SystemExit(f"звук смерти {family}: ожидался контейнер OGG/Vorbis")
+                payloads.append("    'data:audio/ogg;base64," + base64.b64encode(data).decode("ascii") + "'")
+                total_bytes += len(data)
+            families.append("  " + family + ":[\n" + ",\n".join(payloads) + "\n  ]")
+        html = HTML.read_text(encoding="utf-8")
+        value = "{\n" + ",\n".join(families) + "\n}"
+        html, count = re.subn(
+            r"const MONSTER_DEATH_SOUND_DATA = \{[\s\S]*?\n\};",
+            f"const MONSTER_DEATH_SOUND_DATA = {value};", html, count=1)
+        if count != 1:
+            raise SystemExit(f"MONSTER_DEATH_SOUND_DATA: ожидалась одна замена, получено {count}")
+        HTML.write_text(html, encoding="utf-8", newline="\n")
+        print(json.dumps({"families": list(MONSTER_DEATH_SOUND_SOURCES),
+                          "files": sum(len(v) for v in MONSTER_DEATH_SOUND_SOURCES.values()),
+                          "bytes": total_bytes}, ensure_ascii=False, separators=(",", ":")))
         return
 
     if args.install_mage_attack_sounds:

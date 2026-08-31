@@ -25,5 +25,5 @@ ok('DOM HUD обновляется после всех Canvas-проходов',
 ok('очистка Canvas разрешена только ground-проходу',/pass==='ground' && !floorCoversView/.test(html));
 ok('предупреждения боссов изолированы в telegraphs',/if \(pass==='telegraphs'\)\{[\s\S]{0,400}\/\/ Все активные замахи/.test(html));
 ok('таран элиты также перенесён в telegraphs',/pass==='telegraphs' && e\.affT\.warn > 0/.test(html));
-ok('частицы и числа разделены по разным проходам',/pass==='impactEffects'\)\{\s*for \(const q of G\.parts\)/.test(html) &&
-   /pass==='combatText'\)\{\s*for \(const f of G\.fx\)/.test(html));
+ok('частицы и числа разделены по разным проходам',/pass==='impactEffects'\)\{\s*for \(const q of view\.parts\)/.test(html) &&
+   /pass==='combatText'\)\{\s*for \(const f of view\.combatFx\)/.test(html));

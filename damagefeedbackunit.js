@@ -93,8 +93,10 @@ function healing(G){ return G.fx.find(f=>f.t==='healNum'); }
   ok('лечение при полном HP не создаёт число', !healing(G)); }
 
 { const c=fresh(), G=c.__api.G, p=G.player;
-  p.hp-=2; c.dreadRecover(2); const n=healing(G);
-  ok('поток Ужасающего вампира использует зелёные числа', n && n.v==='+2'); }
+  p.hp-=2; c.dreadRecover(0.4); const premature=healing(G);
+  c.dreadRecover(0.6); const n=healing(G);
+  ok('поток Ужасающего вампира показывает только фактически накопленный целый HP',
+    !premature && n && n.v==='+1' && Math.abs(p.hp-(c.__api.D.life-1))<1e-9, n && n.v); }
 
 { const c=fresh(), p=c.__api.G.player;
   p.barrier=6.2; const txt=c.playerHealthText(p);
@@ -107,3 +109,36 @@ function healing(G){ return G.fx.find(f=>f.t==='healNum'); }
 { const html=fs.readFileSync('./PolyGrind.html','utf8');
   ok('мини-бар рисует голубой сегмент по сумме барьеров', /barrier=clamp\(totalPlayerBarrier\(p\)\/D\.life/.test(html) &&
     /fillStyle='#5ec2e0'.*w\*barrier,2/.test(html)); }
+
+/* DOM HUD: каждый селектор получает свой счётчик. Так тест видит не
+   только итоговый текст, но и повторные записи, которые раньше шли каждый RAF. */
+{ const c=fresh(),G=c.__api.G,selectors=['#hpbar','#hpbar i','#hpbar b','#hpbar span','#xpbar i',
+    '#lvl','#floor','#left','#goldbox','#warriorbuffs','#packbar','#books','#dpsinfo'];
+  const fallbackQuery=c.document.querySelector.bind(c.document);
+  const nodes=new Map(selectors.map(selector=>{
+    const writes={text:0,html:0,style:0,toggle:0},style=new Proxy({},
+      {set:(target,key,value)=>(writes.style++,target[key]=value,true)}),node={style,writes};
+    Object.defineProperty(node,'textContent',{set:value=>{ writes.text++; node.text=value; },get:()=>node.text});
+    Object.defineProperty(node,'innerHTML',{set:value=>{ writes.html++; node.html=value; },get:()=>node.html});
+    node.classList={toggle:()=>writes.toggle++};
+    return [selector,node];
+  }));
+  let hudQueries=0;
+  c.document.querySelector=selector=>{
+    const node=nodes.get(selector); if (node){ hudQueries++; return node; }
+    return fallbackQuery(selector);
+  };
+  const total=()=>[...nodes.values()].reduce((sum,node)=>sum+node.writes.text+node.writes.html+node.writes.style+node.writes.toggle,0);
+  c.updateHud(); const first=total(),firstQueries=hudQueries,
+    goldWrites=nodes.get('#goldbox').writes.html,booksWrites=nodes.get('#books').writes.html;
+  for(let i=0;i<120;i++){ G.time+=1/60; c.updateHud(); }
+  ok('HUD кэширует DOM-узлы и не пишет неизменные значения',
+    total()===first && hudQueries===firstQueries,
+    firstQueries+' первичных поисков · '+first+' записей · +'+(total()-first)+' повторных');
+  G.gold+=1; c.updateHud();
+  ok('изменение золота перезаписывает только свой HUD-блок',
+    nodes.get('#goldbox').writes.html===goldWrites+1 && nodes.get('#books').writes.html===booksWrites);
+  G.amu.fang=true; c.updateHud();
+  ok('смена экипировки немедленно пересобирает блок предметов',nodes.get('#books').writes.html===booksWrites+1);
+  const beforeRunReset=total(); c.newGame('bow','keys'); c.updateHud();
+  ok('новый забег сбрасывает HUD-кэш и записывает свежие значения',total()>beforeRunReset); }
