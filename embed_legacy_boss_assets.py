@@ -8,7 +8,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parent
-HTML_PATH = ROOT / "PolyGrind.html"
+HTML_PATH = ROOT / "GrimGrind.html"
 ASSETS = ROOT / "legacy_boss_assets" / "webp"
 
 BOSSES = (

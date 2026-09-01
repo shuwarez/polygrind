@@ -1,7 +1,7 @@
 /* Кладбище: миграция, запись реальных смертей, предел истории и экраны. */
 const {loadGame} = require('./sim');
 const ok = (nm, cond, det) => console.log((cond?'  \u2713 ':'  \u2717 ') + nm.padEnd(52) + (det||''));
-const c = loadGame('./PolyGrind.html'), S = c.__api.STORE;
+const c = loadGame('./GrimGrind.html'), S = c.__api.STORE;
 
 S.data = {gold:77, spent:0, best:3, unlocks:{}, shop:{}, economy:3, constellations:{kills:{},ranks:{}}};
 c.normalizeMeta(S.data);

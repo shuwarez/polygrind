@@ -4,7 +4,7 @@ const fs=require('fs');
 const crypto=require('crypto');
 const {loadGame}=require('./harness');
 const {imageInfo,embeddedObjectImage}=require('./asset_test_utils');
-const html=fs.readFileSync('./PolyGrind.html','utf8');
+const html=fs.readFileSync('./GrimGrind.html','utf8');
 const normal=['runner','blob','tank','shooter'];
 const elite=['frostWolf','toxicRunner','cursedRogue','skeletonWarrior','blightGrunt','boneGargoyle',
   'fallenPyromancer','beholderSlave','skeletonCrossbow','forgottenGuard','abyssalExecutioner','plagueOgre'];
@@ -30,7 +30,7 @@ ok('все атакующие листы сохраняют прозрачнос
 ok('16 атакующих листов имеют разные растры',
   new Set(sheets.map(b=>crypto.createHash('sha256').update(b).digest('hex'))).size===16);
 
-const c=loadGame('./PolyGrind.html');
+const c=loadGame('./GrimGrind.html');
 const baseNormal=normal.map(key=>c.enemySpriteMeta({kind:'norm',typeKey:key,animT:0}));
 const baseElite=elite.map(key=>c.enemySpriteMeta({kind:'elite',eliteVariant:key,animT:0}));
 ok('спокойные обычные монстры продолжают использовать прежние листы',
@@ -69,7 +69,7 @@ ok('после отдачи состояние очищается и возвр�
 const boss={kind:'boss',bossId:'lich',bossT:{},animT:0};
 ok('обычные attack-листы не могут подменить систему боссов',!c.startEnemyAttackVisual(boss,0.4)&&!boss.attackVisual);
 
-const live=loadGame('./PolyGrind.html');live.newGame('bow','keys');
+const live=loadGame('./GrimGrind.html');live.newGame('bow','keys');
 const G=live.__api.G,p=G.player;G.pending=0;G.enemies.length=0;G.spawnQueue=0;
 const spawned=[...normal.map(key=>live.spawnEnemy(key)),...elite.map(key=>live.spawnEnemy('pack',null,key))];
 ok('spawnEnemy инициализирует чистое состояние атаки у всех 16 типов',spawned.every(e=>e.attackVisual===null));

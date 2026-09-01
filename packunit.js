@@ -4,7 +4,7 @@ const {loadGame} = require('./sim');
 const DT = 1/60;
 
 function mk(affId, floor){
-  const c = loadGame('./PolyGrind.html');
+  const c = loadGame('./GrimGrind.html');
   c.newGame('bow','keys');
   const G = c.__api.G;
   G.floor = floor || 20; c.buildFloor();

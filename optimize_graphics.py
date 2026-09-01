@@ -23,7 +23,7 @@ from PIL import Image, ImageChops, ImageDraw, ImageEnhance, ImageFilter
 
 
 ROOT = Path(__file__).resolve().parent
-HTML = ROOT / "PolyGrind.html"
+HTML = ROOT / "GrimGrind.html"
 TRANSPARENT_INDEX = 15
 PALETTE_COLORS = 15
 FRAME_PALETTE_COLORS = 128

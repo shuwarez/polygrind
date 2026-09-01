@@ -1,7 +1,7 @@
 /* Ищем в recalc() другие чтения D.x до присвоения D.x — та же ловушка,
    что была с ядом: D живёт между вызовами, поэтому баг молчит. */
 const fs = require('fs');
-const src = fs.readFileSync('./PolyGrind.html','utf8');
+const src = fs.readFileSync('./GrimGrind.html','utf8');
 const body = src.match(/function recalc\(\)\{([\s\S]*?)\n\}/)[1];
 const assigned = new Set();
 let bad = [];

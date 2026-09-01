@@ -1,7 +1,7 @@
 /* Legacy boss visual upgrade: canonical sheets, action-state routing and impact effects. */
 const fs=require('fs');
 const {loadGame}=require('./harness');
-const html=fs.readFileSync('./PolyGrind.html','utf8');
+const html=fs.readFileSync('./GrimGrind.html','utf8');
 let n=0,fail=0;
 function ok(name,yes,got=''){n++;if(!yes)fail++;console.log((yes?'  ✓ ':'  ✗ ')+name.padEnd(70)+got);}
 const ids=['lich','goat','plague','greed','executioner','tyrant','grave','behemoth',
@@ -19,7 +19,7 @@ ok('базовые и атакующие листы имеют четыре ка
 ok('эффектные листы имеют четыре кадра 96×96',
   /LEGACY_BOSS_EFFECT_SPRITE_META[\s\S]*?frameW:96,frameH:96,frames:4/.test(html));
 
-const c=loadGame('./PolyGrind.html');c.newGame('bow','keys');
+const c=loadGame('./GrimGrind.html');c.newGame('bow','keys');
 const G=c.__api.G,p=G.player;G.enemies.length=0;p.x=0;p.y=0;p.inv=9999;
 const bosses=ids.map(id=>c.spawnEnemy('boss',id,null,0));
 ok('все 14 обновлённых моделей создаются штатным spawnEnemy',bosses.every((e,i)=>e.bossId===ids[i]));

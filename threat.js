@@ -27,7 +27,7 @@ const N = +(process.argv[2] || 5);
 console.log('неподвижный игрок в толпе, 45 сек · медиана по ' + N);
 console.log('этаж | урон/сек: было → стало | сильнейший удар: было → стало | секунд жизни: было → стало');
 for (const f of [10,20,30,40,50]){
-  const A = threat('/tmp/pg_before_scale.html', f, N), B = threat('./PolyGrind.html', f, N);
+  const A = threat('/tmp/pg_before_scale.html', f, N), B = threat('./GrimGrind.html', f, N);
   const sa = A.life/A.dps, sb = B.life/B.dps;
   console.log(String(f).padStart(4),
     '|', Math.round(A.dps).toString().padStart(5), '→', Math.round(B.dps).toString().padStart(5),

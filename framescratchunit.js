@@ -4,7 +4,7 @@ const fs=require('fs'),vm=require('vm'),{performance}=require('perf_hooks');
 let n=0,fail=0;
 const ok=(name,cond,detail='')=>{n++;if(!cond)fail++;console.log((cond?'  ✓ ':'  ✗ ')+name.padEnd(82)+detail);};
 function fresh(hero='necro'){
-  const c=loadGame('./PolyGrind.html',{random:()=>0.5});c.newGame(hero,'keys');
+  const c=loadGame('./GrimGrind.html',{random:()=>0.5});c.newGame(hero,'keys');
   const G=c.__api.G;G.enemies=[];G.minions=[];G.spawnQueue=0;G.packs=[];
   return{c,G,D:c.__api.D,p:G.player};
 }
@@ -98,7 +98,7 @@ const median=a=>a.slice().sort((x,y)=>x-y)[Math.floor(a.length/2)];
 }
 
 {
-  const html=fs.readFileSync('./PolyGrind.html','utf8');
+  const html=fs.readFileSync('./GrimGrind.html','utf8');
   ok('enemy-фаза больше не создаёт filter-массив охлаждённых',!/G\.enemies\.filter\(x\s*=>\s*x\.ail\.chill/.test(html));
   ok('горячая проверка амулетов больше не создаёт Object.keys',/if \(hasAnyAmulet\(\)\) tickAmulets\(dt\)/.test(html));
   ok('цветные DoT-числа не создают локальную emit-функцию',!/const emit\s*=\s*\(kind/.test(html));

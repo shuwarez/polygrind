@@ -16,7 +16,7 @@ function seededRng(seed){
   };
 }
 function mk(mods){
-  const c = loadGame('./PolyGrind.html', {random:seededRng(0xB11A57)});
+  const c = loadGame('./GrimGrind.html', {random:seededRng(0xB11A57)});
   c.newGame('necro','keys');
   const G = c.__api.G;
   G.lvl = 25;

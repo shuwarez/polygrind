@@ -6,7 +6,7 @@ const os = require('os');
 
 /* Проверка комплектности до запуска: если набора нет на диске, честно сказать
    какого именно, а не падать на первом же execSync с невнятной ошибкой. */
-const CORE = ['harness.js', 'sim.js', 'run.js', 'orderscan.js', 'PolyGrind.html'];
+const CORE = ['harness.js', 'sim.js', 'run.js', 'orderscan.js', 'GrimGrind.html'];
 const SUITES = [
   ['packunit',    25, 'пачки элиты: 18 аффиксов, роли, потолок лечения'],
   ['elitevariantunit',41, 'разновидности Бегунов/Ядер: спрайты, выбор, защита и контактные эффекты'],
@@ -88,7 +88,7 @@ if (missing.length){
   for (const f of missing) console.log('  ' + f);
   console.log('\nВсе они лежат в папке harness/ рядом с HANDOFF.md.');
   console.log('Для запуска нужны Node 18+ и один каталог, куда положены');
-  console.log('PolyGrind.html и содержимое harness/ без вложенности.');
+  console.log('GrimGrind.html и содержимое harness/ без вложенности.');
   process.exit(2);
 }
 

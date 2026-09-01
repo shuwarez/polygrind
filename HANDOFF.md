@@ -7,12 +7,12 @@
 
 ## 1. Модель проекта
 
-- Runtime целиком находится в `PolyGrind.html`.
+- Runtime целиком находится в `GrimGrind.html`.
 - Сборщика и npm-зависимостей нет.
 - Все шрифты и изображения встроены как data URI; внешний каталог ресурсов игре
   не требуется.
 - Английский и русский интерфейс работают из одного каталога канонических строк.
-- GitHub Pages получает только копию `PolyGrind.html` как `index.html`; Markdown,
+- GitHub Pages получает только копию `GrimGrind.html` как `index.html`; Markdown,
   тесты и локальные архивы в Pages-артефакт не входят.
 
 Основные служебные файлы:
@@ -40,7 +40,7 @@
 old versions/YYYY-MM-DD_HH-mm-ss_before-<краткое-описание>/
 ```
 
-Скопируйте туда текущий `PolyGrind.html` и добавьте `README.txt` с точным временем,
+Скопируйте туда текущий `GrimGrind.html` и добавьте `README.txt` с точным временем,
 причиной, исходной веткой и коммитом. Если меняются тесты, документация или
 упаковщик, их исходные версии также сохраняются рядом.
 
@@ -58,7 +58,7 @@ old versions/YYYY-MM-DD_HH-mm-ss_before-<краткое-описание>/
 - После правки механики сначала добавляется узкая воспроизводимая проверка, затем
   запускается полная регрессия.
 
-## 4. Архитектура `PolyGrind.html`
+## 4. Архитектура `GrimGrind.html`
 
 Файл организован смысловыми секциями; их заголовки надёжнее номеров строк:
 
@@ -344,7 +344,7 @@ node run-all.js
 Проверка синтаксиса встроенного JavaScript:
 
 ```powershell
-node -e "const fs=require('fs');const h=fs.readFileSync('PolyGrind.html','utf8');[...h.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/gi)].forEach(x=>new Function(x[1]));console.log('Syntax OK')"
+node -e "const fs=require('fs');const h=fs.readFileSync('GrimGrind.html','utf8');[...h.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/gi)].forEach(x=>new Function(x[1]));console.log('Syntax OK')"
 ```
 
 Точечные проверки выбираются по затронутой системе, но не заменяют `run-all.js`.
@@ -360,9 +360,9 @@ Markdown-таблицам.
 Доступные инструменты:
 
 ```powershell
-node classbalance.js ./PolyGrind.html 24 8
-node run.js ./PolyGrind.html 6
-node oneshot.js ./PolyGrind.html 7
+node classbalance.js ./GrimGrind.html 24 8
+node run.js ./GrimGrind.html 6
+node oneshot.js ./GrimGrind.html 7
 ```
 
 Результаты конкретного замера сохраняются локально вместе с контекстом seed и
@@ -415,7 +415,7 @@ baseline-файл, указанный внутри скрипта. Перед и
 `run-all.js`, полную регрессию и фактическую проверку клика/клавиши в браузере.
 
 Push в `main` запускает `.github/workflows/deploy.yml`. Workflow проверяет наличие
-`PolyGrind.html`, подставляет короткий SHA и публикует его как `index.html`.
+`GrimGrind.html`, подставляет короткий SHA и публикует его как `index.html`.
 
 Перед передачей результата:
 

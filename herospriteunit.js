@@ -2,7 +2,7 @@
 const fs = require('fs'), crypto = require('crypto');
 const {loadGame} = require('./sim');
 const {imageInfo}=require('./asset_test_utils');
-const html = fs.readFileSync('./PolyGrind.html','utf8');
+const html = fs.readFileSync('./GrimGrind.html','utf8');
 const optimizer = fs.readFileSync('./optimize_graphics.py','utf8');
 const ok = (nm, cond, det) => console.log((cond?'  \u2713 ':'  \u2717 ') + nm.padEnd(54) + (det||''));
 
@@ -116,7 +116,7 @@ class FakeMenuAudio {
 }
 const randomSoundSelections=[0,.26,.51,.999].map((random,index)=>{
   const before=FakeMenuAudio.instances.length;
-  const game=loadGame('./PolyGrind.html',{Audio:FakeMenuAudio,random:()=>random});
+  const game=loadGame('./GrimGrind.html',{Audio:FakeMenuAudio,random:()=>random});
   const sounds=FakeMenuAudio.instances.slice(before,before+4);
   game.playArcherShotSound();
   return sounds.length===4 && sounds.every((sound,soundIndex)=>sound.plays===(soundIndex===index?1:0)) &&
@@ -125,7 +125,7 @@ const randomSoundSelections=[0,.26,.51,.999].map((random,index)=>{
 ok('каждый выстрел Лучника на 25% тише и выбирает одну из четырёх вариаций',
   randomSoundSelections.every(Boolean));
 const routedBefore=FakeMenuAudio.instances.length;
-const routedGame=loadGame('./PolyGrind.html',{Audio:FakeMenuAudio,random:()=>.51});
+const routedGame=loadGame('./GrimGrind.html',{Audio:FakeMenuAudio,random:()=>.51});
 const routedSounds=FakeMenuAudio.instances.slice(routedBefore,routedBefore+4);
 routedGame.newGame('bow','keys','hunter');
 routedGame.__api.D.projN=4;
@@ -138,7 +138,7 @@ ok('один залп Лучника даёт один звук и общий mu
   /if \(w\.id==='wpn\.bow' && \(!src \|\| stepEcho\)\) playArcherShotSound\(\);/.test(html));
 const randomWarriorSelections=[0,.26,.51,.999].map((random,index)=>{
   const before=FakeMenuAudio.instances.length;
-  const game=loadGame('./PolyGrind.html',{Audio:FakeMenuAudio,random:()=>random});
+  const game=loadGame('./GrimGrind.html',{Audio:FakeMenuAudio,random:()=>random});
   const sounds=FakeMenuAudio.instances.slice(before+4,before+8);
   game.playWarriorAttackSound();
   return sounds.length===4 && sounds.every((sound,soundIndex)=>sound.plays===(soundIndex===index?1:0)) &&
@@ -147,7 +147,7 @@ const randomWarriorSelections=[0,.26,.51,.999].map((random,index)=>{
 ok('каждая атака Воина случайно выбирает одну из четырёх вариаций без очереди',
   randomWarriorSelections.every(Boolean));
 const warriorRouteBefore=FakeMenuAudio.instances.length;
-const warriorRouteGame=loadGame('./PolyGrind.html',{Audio:FakeMenuAudio,random:()=>.999});
+const warriorRouteGame=loadGame('./GrimGrind.html',{Audio:FakeMenuAudio,random:()=>.999});
 const warriorRouteSounds=FakeMenuAudio.instances.slice(warriorRouteBefore+4,warriorRouteBefore+8);
 warriorRouteGame.newGame('blade','keys','guardian');
 warriorRouteGame.__api.G.player.bladeN=2;
@@ -159,7 +159,7 @@ ok('один взмах Воина даёт один звук, волна не �
   /if \(w\.id==='wpn\.sword' && \(!src \|\| stepEcho\)\) playWarriorAttackSound\(\);/.test(html));
 const randomMageSelections=[0,.26,.51,.999].map((random,index)=>{
   const before=FakeMenuAudio.instances.length;
-  const game=loadGame('./PolyGrind.html',{Audio:FakeMenuAudio,random:()=>random});
+  const game=loadGame('./GrimGrind.html',{Audio:FakeMenuAudio,random:()=>random});
   const sounds=FakeMenuAudio.instances.slice(before+8,before+12);
   game.playMageAttackSound();
   return sounds.length===4 && sounds.every((sound,soundIndex)=>sound.plays===(soundIndex===index?1:0)) &&
@@ -168,7 +168,7 @@ const randomMageSelections=[0,.26,.51,.999].map((random,index)=>{
 ok('каждая атака Мага случайно выбирает одну из четырёх вариаций без очереди',
   randomMageSelections.every(Boolean));
 const mageRouteBefore=FakeMenuAudio.instances.length;
-const mageRouteGame=loadGame('./PolyGrind.html',{Audio:FakeMenuAudio,random:()=>.26});
+const mageRouteGame=loadGame('./GrimGrind.html',{Audio:FakeMenuAudio,random:()=>.26});
 const mageRouteSounds=FakeMenuAudio.instances.slice(mageRouteBefore+8,mageRouteBefore+12);
 mageRouteGame.newGame('wand','keys','destroyer');
 mageRouteGame.__api.D.projN=4;
@@ -197,7 +197,7 @@ class FakeAttackFilterContext {
     this.filters.push(node); return node;
   }
 }
-const filterGame=loadGame('./PolyGrind.html',{Audio:FakeMenuAudio});
+const filterGame=loadGame('./GrimGrind.html',{Audio:FakeMenuAudio});
 filterGame.window.AudioContext=FakeAttackFilterContext;
 filterGame.unlockSound(); filterGame.unlockSound();
 const attackFilterCtx=FakeAttackFilterContext.last;
@@ -213,7 +213,7 @@ const savedMusic=new Map(), musicStorage={
   getItem:key=>savedMusic.has(key)?savedMusic.get(key):null,
   setItem:(key,value)=>savedMusic.set(key,String(value)),
 };
-const musicGame=loadGame('./PolyGrind.html',{Audio:FakeMenuAudio,localStorage:musicStorage});
+const musicGame=loadGame('./GrimGrind.html',{Audio:FakeMenuAudio,localStorage:musicStorage});
 // Между UI-звуками теперь предварительно загружается level-up. Ищем экземпляры
 // по их data URI, а не по хрупкому порядковому смещению в общем Audio-банке.
 const menuAudio=FakeMenuAudio.instances.findLast(sound=>sound.src==='data:audio/ogg;base64,'+musicMatch[1]);
@@ -241,7 +241,7 @@ ok('верхняя панель главного меню содержит со�
   savedMusic.get('polygrind_sfx_muted')==='off' &&
   html.includes('languageSwitchHtml() + menuMusicButtonHtml() + menuSfxButtonHtml()') &&
   /function bindMenuSfxButton\(\)\{\s*const button=\$\('#menusfxtoggle'\); if \(button\) button\.onclick=toggleSfxMute;/.test(html));
-const mutedGame=loadGame('./PolyGrind.html',{Audio:FakeMenuAudio,localStorage:musicStorage}), mutedAudio=FakeMenuAudio.instances.at(-1);
+const mutedGame=loadGame('./GrimGrind.html',{Audio:FakeMenuAudio,localStorage:musicStorage}), mutedAudio=FakeMenuAudio.instances.at(-1);
 mutedGame.startScreen();
 ok('после повторной загрузки сохранённое выключение не запускает музыку',
   mutedAudio.plays===0 && mutedGame.document.getElementById('ov').innerHTML.includes('aria-pressed="false"') &&
@@ -369,7 +369,7 @@ const subclassSprites=Object.fromEntries(
   [...subclassSpriteBlock.matchAll(/^\s*(\w+):'data:image\/(?:png|webp);base64,([^']+)',\s*$/gm)]
     .map(match=>[match[1],Buffer.from(match[2],'base64')])
 );
-const subclassIds=Object.values(loadGame('./PolyGrind.html').__api.SUBCLASSES).flat().map(s=>s.id);
+const subclassIds=Object.values(loadGame('./GrimGrind.html').__api.SUBCLASSES).flat().map(s=>s.id);
 ok('12 моделей сопоставлены один-к-одному с id каталога SUBCLASSES',
   JSON.stringify(Object.keys(subclassSprites).sort())===JSON.stringify(Object.keys(subclassSpriteExpected).sort()) &&
   Object.keys(subclassSpriteExpected).every(id=>subclassIds.includes(id)) && subclassIds.length===12);
@@ -430,7 +430,7 @@ ok('длинные описания Мага и Воина уплотнены в
 ok('каждый экран класса получает ровно три правильные рамки подклассов',
   Object.entries({bow:['thief','hunter','dancer'],wand:['destroyer','multiplier','elementalist'],
     necro:['graverobber','animator','venomancer'],blade:['berserker','guardian','swordmaster']}).every(([wk,ids])=>{
-      const game=loadGame('./PolyGrind.html'); game.subclassScreen(wk);
+      const game=loadGame('./GrimGrind.html'); game.subclassScreen(wk);
       const screen=game.document.getElementById('ov').innerHTML;
       return (screen.match(/class="card subclass-card"/g)||[]).length===3 &&
         (screen.match(/class="subclass-card__frame"/g)||[]).length===3 &&
@@ -523,7 +523,7 @@ ok('системное отключение анимаций оставляет 
   html.includes('const subclassIndex=still?0:Math.floor(t/4)%3;'));
 
 {
-  const c=loadGame('./PolyGrind.html'); c.startScreen();
+  const c=loadGame('./GrimGrind.html'); c.startScreen();
   const menu=c.document.getElementById('ov').innerHTML;
   ok('меню показывает четыре чистые карточки без служебных пояснений',
     (menu.match(/class="card class-card"/g)||[]).length===4 && !menu.includes('wpn.') &&
@@ -540,10 +540,10 @@ ok('главный выбор — четыре рамки в ряд, 2×2 на �
   /@media\(max-width:1180px\) and \(min-width:761px\)[\s\S]*?grid-template-columns:repeat\(2,245px\)/.test(html) &&
   /@media\(max-width:760px\)[\s\S]*?\.overlay\.menu \.cards\.class-cards\{grid-template-columns:245px/.test(html));
 ok('описания классов короткие и не содержат внутренних имён параметров',
-  Object.values(loadGame('./PolyGrind.html').__api.WEAPONS).every(w=>w.desc.length<110 && !/wpn\.|min\.\*/.test(w.desc)));
+  Object.values(loadGame('./GrimGrind.html').__api.WEAPONS).every(w=>w.desc.length<110 && !/wpn\.|min\.\*/.test(w.desc)));
 
 function game(key){
-  const c=loadGame('./PolyGrind.html'); c.newGame(key,'keys');
+  const c=loadGame('./GrimGrind.html'); c.newGame(key,'keys');
   const G=c.__api.G; G.pending=0; G.spawnQueue=0; G.enemies.length=0;
   return {c,G,p:G.player};
 }

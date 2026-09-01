@@ -4,7 +4,7 @@ const ok = (nm, cond, det) => console.log((cond?'  \u2713 ':'  \u2717 ') + nm.pa
 const near = (a,b,eps=1e-6) => Math.abs(a-b)<eps;
 
 function build(random=()=>0, chance=0, strong=false){
-  const c=loadGame('./PolyGrind.html',{random}); c.newGame('bow','keys');
+  const c=loadGame('./GrimGrind.html',{random}); c.newGame('bow','keys');
   const G=c.__api.G; G.enemies.length=0;
   if (chance) G.bag.add('novaKill','chance',chance);
   if (strong) G.bag.add('novaKillStrong','flag',1);

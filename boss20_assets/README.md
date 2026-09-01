@@ -8,7 +8,7 @@
 
 - `previews/` — исходные иллюстрации из DOCX для визуальной сверки.
 - `sheets/` — восстановленные RGBA PNG, 256×96, четыре кадра по 64×96.
-- `webp/` — финальные lossless WebP базовых анимаций, встроенные в `PolyGrind.html`.
+- `webp/` — финальные lossless WebP базовых анимаций, встроенные в `GrimGrind.html`.
 - `generated_attack/source/` — сгенерированные дополнительные анимации атак.
 - `generated_attack/webp/` — нормализованные lossless WebP дополнительных анимаций.
 - `boss20_contact_sheet.png` и `generated_attack/attack_contact_sheet.png` — контактные листы для QA.
@@ -33,4 +33,4 @@ python embed_boss20_assets.py
 node boss20unit.js
 ```
 
-Игра не загружает эти файлы во время выполнения: финальные WebP встроены data URI непосредственно в однофайловый `PolyGrind.html`.
+Игра не загружает эти файлы во время выполнения: финальные WebP встроены data URI непосредственно в однофайловый `GrimGrind.html`.

@@ -1,10 +1,10 @@
 /* Фиксированный порядок Canvas-проходов и изоляция ключевых типов отрисовки. */
 const fs=require('fs');
 const {loadGame}=require('./sim');
-const html=fs.readFileSync('./PolyGrind.html','utf8');
+const html=fs.readFileSync('./GrimGrind.html','utf8');
 const ok=(nm,cond,det)=>console.log((cond?'  ✓ ':'  ✗ ')+nm.padEnd(56)+(det||''));
 
-const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys');
+const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys');
 const calls=[];
 c.renderCanvasPass=pass=>calls.push(pass);
 c.updateHud=()=>calls.push('domHud');

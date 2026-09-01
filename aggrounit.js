@@ -3,7 +3,7 @@ const {loadGame}=require('./sim');
 const fs=require('fs');
 let n=0,fail=0;
 const ok=(name,cond,detail='')=>{n++;if(!cond)fail++;console.log((cond?'  ✓ ':'  ✗ ')+name.padEnd(86)+detail);};
-function fresh(random=()=>0.5){const c=loadGame('./PolyGrind.html',{random});c.newGame('necro','keys');const G=c.__api.G;G.enemies=[];G.minions=[];G.spawnQueue=0;G.packs=[];G.weapon.noAttack=true;G.player.x=G.player.y=0;G.player.inv=999;return{c,G,D:c.__api.D,p:G.player};}
+function fresh(random=()=>0.5){const c=loadGame('./GrimGrind.html',{random});c.newGame('necro','keys');const G=c.__api.G;G.enemies=[];G.minions=[];G.spawnQueue=0;G.packs=[];G.weapon.noAttack=true;G.player.x=G.player.y=0;G.player.inv=999;return{c,G,D:c.__api.D,p:G.player};}
 function minion(kind,x=300,y=0,hp=1000){return{kind,x,y,r:kind==='golemB'?22:10,hp,max:hp,dead:false,tgt:null,cd:99,rot:0,hit:0,born:1,deathT:1e9,slowT:0,slowMul:1,stunT:0,animT:0,spriteFace:1,hitN:0};}
 function foe(o,x=200,y=0){const e=o.c.spawnEnemy('blob');e.x=x;e.y=y;e.spd=100;e.dmg=0;e.hp=e.maxHp=1e9;e.dead=false;e.armor=0;e.ward=null;e.bulwark=0;e.roles=[];e.cd2=0;return e;}
 function movedWithoutHit(kind,role=null,minionX=300){const o=fresh(),m=minion(kind,minionX),e=foe(o);o.G.minions=[m];e.roles=role?[role]:[];o.c.update(0.1);return{...o,m,e};}
@@ -71,7 +71,7 @@ function movedWithoutHit(kind,role=null,minionX=300){const o=fresh(),m=minion(ki
 }
 
 {
-  const html=fs.readFileSync('./PolyGrind.html','utf8');
+  const html=fs.readFileSync('./GrimGrind.html','utf8');
   ok('пассивный поиск Голема крови полностью удалён из горячего цикла',!/collectBloodGolems|minionThreatTarget|bloodGolems/.test(html));
   ok('провокация вызывается один раз сразу после основного урона Голема крови',
     (html.match(/if \(m\.kind === 'golemB' && !e\.dead\) rollBloodGolemTaunt\(e, m\);/g)||[]).length===1&&/damage\(e, \{mul, minion:m, direct:true,confinementPct,\.\.\.snap\}\);\s*if \(m\.kind === 'golemB' && !e\.dead\) rollBloodGolemTaunt\(e, m\);/.test(html));

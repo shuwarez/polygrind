@@ -2,7 +2,7 @@
 const fs=require('fs');
 const {loadGame}=require('./harness');
 const {imageInfo,embeddedImage}=require('./asset_test_utils');
-const html=fs.readFileSync('./PolyGrind.html','utf8');
+const html=fs.readFileSync('./GrimGrind.html','utf8');
 const ids=['fallenPyromancer','beholderSlave','skeletonCrossbow','forgottenGuard','abyssalExecutioner','plagueOgre'];
 const expectedBase={fallenPyromancer:'shooter',beholderSlave:'shooter',skeletonCrossbow:'shooter',
   forgottenGuard:'tank',abyssalExecutioner:'tank',plagueOgre:'tank'};
@@ -15,7 +15,7 @@ function payload(id){
   const image=embeddedImage(html,id);return image&&image.buffer;
 }
 function fresh(id){
-  const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys');
+  const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys');
   const G=c.__api.G; G.floor=5; G.enemies.length=0; G.spawnQueue=0;
   const e=c.spawnEnemy('pack',null,id);
   return {c,G,D:c.__api.D,p:G.player,e};
@@ -35,13 +35,13 @@ ok('каждый новый лист сохраняет прозрачность
 ok('каждый новый WebP весит меньше 3.5 КБ',sheets.every(b=>b.length<3500),sheets.map(b=>b.length).join('/')+' Б');
 ok('шесть новых разновидностей используют разные растры',new Set(sheets.map(b=>b.toString('base64'))).size===6);
 ok('runtime листает четыре отдельных кадра 48 px',ids.every(id=>{
-  const c=loadGame('./PolyGrind.html');
+  const c=loadGame('./GrimGrind.html');
   return [0,1,2,3].every(i=>c.enemySpriteFrame({kind:'elite',eliteVariant:id,animT:i}).frame.w===48);
 }));
 ok('пути новых исходных PNG не попали в runtime HTML',
   !/pyromancer_cultist\.png|beholder_slave\.png|acid_carrier\.png|D:\\DL\\CHROME/.test(html));
 
-{ const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys'); const G=c.__api.G; G.floor=5;G.enemies.length=0;
+{ const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys'); const G=c.__api.G; G.floor=5;G.enemies.length=0;
   const all=ids.map(id=>c.spawnEnemy('pack',null,id));
   ok('явный QA-spawn создаёт все шесть как элиту',all.every(e=>e.kind==='elite'));
   ok('QA-spawn сохраняет запрошенные id',all.every((e,i)=>e.eliteVariant===ids[i]));

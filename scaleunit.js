@@ -4,7 +4,7 @@ const {loadGame} = require('./sim');
 const ok = (nm, cond, det) => console.log((cond ? '  ✓ ' : '  ✗ ') + nm.padEnd(46) + (det || ''));
 
 function enemy(floor){
-  const c = loadGame('./PolyGrind.html');
+  const c = loadGame('./GrimGrind.html');
   c.newGame('bow', 'keys');
   const G = c.__api.G;
   G.floor = floor;
@@ -20,7 +20,7 @@ function enemy(floor){
   ok('HP +16%, урон +15% за этаж', hpOk && dmgOk,
      'HP ' + e.t.hp.toFixed(0) + ' → ' + e.hp.toFixed(0) + ', урон ' + e.t.dmg.toFixed(2) + ' → ' + e.dmg.toFixed(2)); }
 
-{ const c = loadGame('./PolyGrind.html'); c.newGame('bow','keys');
+{ const c = loadGame('./GrimGrind.html'); c.newGame('bow','keys');
   const T=c.__api.ETYPES, e=c.spawnEnemy(), boss=c.spawnEnemy('boss','lich');
   ok('скорости рядовых фиксированы, Лич использует 80.7',
     T.runner.spd===170 && T.blob.spd===120 && T.shooter.spd===75 && T.tank.spd===65 &&

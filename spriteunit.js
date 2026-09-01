@@ -5,7 +5,7 @@ const zlib = require('zlib');
 const {loadGame} = require('./sim');
 const {imageInfo}=require('./asset_test_utils');
 const ok = (nm, cond, det) => console.log((cond?'  \u2713 ':'  \u2717 ') + nm.padEnd(52) + (det||''));
-const html=fs.readFileSync('./PolyGrind.html','utf8');
+const html=fs.readFileSync('./GrimGrind.html','utf8');
 const embeddedPng = key => {
   const match=html.match(new RegExp(key+"\\s*[:=]\\s*'data:image/(?:png|webp);base64,([^']+)'"));
   return match ? Buffer.from(match[1], 'base64') : Buffer.alloc(0);
@@ -124,7 +124,7 @@ ok('листы наземных эффектов различаются и вм�
   groundPoolBytes.reduce((sum,data)=>sum+data.length,0)<18000,
   groundPoolBytes.reduce((sum,data)=>sum+data.length,0)+' байт');
 
-const c=loadGame('./PolyGrind.html');
+const c=loadGame('./GrimGrind.html');
 c.newGame('bow','keys','hunter');
 const poolG=c.__api.G;
 poolG.time=0; const poolFrame0=groundPoolKeys.map(key=>c.groundPoolSpriteFrame(key).index);
@@ -253,7 +253,7 @@ c.newGame('bow','keys','hunter');
 const G=c.__api.G, p=G.player, e=c.spawnEnemy();
 const lootFrames=[];
 for (const t of [0,.125,.25,.375,.5]){ G.time=t; lootFrames.push(c.lootSpriteFrame({book:'shock'}).index); }
-const bookModal=loadGame('./PolyGrind.html'); bookModal.newGame('wand','keys'); bookModal.takeBook('cold');
+const bookModal=loadGame('./GrimGrind.html'); bookModal.newGame('wand','keys'); bookModal.takeBook('cold');
 const bookModalHtml=bookModal.document.getElementById('ov').innerHTML;
 ok('книги используют уникальные 24×24 PNG на полу и канонические 128×128 в UI',
   lootFrames.join(',')==='0,0,0,0,0' &&
@@ -272,9 +272,9 @@ ok('книги используют уникальные 24×24 PNG на пол�
   !/\.loot-item-icon\{[^}]*background-size/.test(html) &&
   !/fillText\((?:B|A)\.ico/.test(html) && html.includes("lootSpriteHTML(k,'hud')") &&
   html.includes("lootSpriteHTML(k,'inventory')"));
-const itemModal=loadGame('./PolyGrind.html'); itemModal.newGame('bow','keys'); itemModal.takeAmulet('mirror');
+const itemModal=loadGame('./GrimGrind.html'); itemModal.newGame('bow','keys'); itemModal.takeAmulet('mirror');
 const itemModalHtml=itemModal.document.getElementById('ov').innerHTML;
-const totemModal=loadGame('./PolyGrind.html'); totemModal.newGame('wand','keys');
+const totemModal=loadGame('./GrimGrind.html'); totemModal.newGame('wand','keys');
 totemModal.__api.G.items.fire={tier:1,val:3}; totemModal.takeTotem('fire');
 const totemModalHtml=totemModal.document.getElementById('ov').innerHTML;
 ok('предметное окно получает ровно в пять раз больше искристых частиц',
@@ -351,7 +351,7 @@ const deathHashes={
     '03fa60484b3da6f6060a17356dac0038d37cd5f7eb910f7c729922868c51c849',
   ],
 };
-const soundGame=loadGame('./PolyGrind.html',{random:()=>hitRandom,Audio:FakeAudio});
+const soundGame=loadGame('./GrimGrind.html',{random:()=>hitRandom,Audio:FakeAudio});
 soundGame.window.AudioContext=FakeAudioContext; soundGame.unlockSound(); soundGame.newGame('bow','keys');
 const soundG=soundGame.__api.G, soundAt={x:12,y:34};
 const itemKey=Object.keys(soundGame.__api.AMULETS)[0];
@@ -492,7 +492,7 @@ const soundSaved=new Map(), soundStorage={
   getItem:key=>soundSaved.has(key)?soundSaved.get(key):null,
   setItem:(key,value)=>soundSaved.set(key,String(value)),
 };
-const settingsGame=loadGame('./PolyGrind.html',{random:()=>0,localStorage:soundStorage});
+const settingsGame=loadGame('./GrimGrind.html',{random:()=>0,localStorage:soundStorage});
 let settingsAudio;
 class SettingsAudioContext extends FakeAudioContext { constructor(){ super(); settingsAudio=this; } }
 settingsGame.window.AudioContext=SettingsAudioContext; settingsGame.unlockSound(); settingsGame.newGame('bow','keys');
@@ -506,7 +506,7 @@ settingsGame.playHitSound(); settingsGame.levelUpSfx();
 ok('кнопка отключения глушит каждый синтезированный игровой эффект',
   settingsGame.__api.SFX_SETTINGS.muted && !settingsGame.__api.SFX_SETTINGS.audible &&
   soundSaved.get('polygrind_sfx_muted')==='on' && settingsAudio.oscillators.length===mutedOscillators);
-const restoredSettings=loadGame('./PolyGrind.html',{random:()=>0,localStorage:soundStorage});
+const restoredSettings=loadGame('./GrimGrind.html',{random:()=>0,localStorage:soundStorage});
 ok('громкость и выключение звуков восстанавливаются после перезапуска',
   restoredSettings.__api.SFX_SETTINGS.volume===80 && restoredSettings.__api.SFX_SETTINGS.muted &&
   !restoredSettings.__api.SFX_SETTINGS.audible);
@@ -523,7 +523,7 @@ ok('настройки главного меню используют общие
   /\$\('#menusfxvolume'\)\.oninput=event=>setSfxVolume\(event\.target\.value\)/.test(html) &&
   /\$\('#menusfxmute'\)\.onclick=toggleSfxMute/.test(html) &&
   /\$\('#settingsback'\)\.onclick=\(\)=>runConfirmedMenuAction\(startScreen\)/.test(html));
-const escapeGame=loadGame('./PolyGrind.html',{random:()=>0});
+const escapeGame=loadGame('./GrimGrind.html',{random:()=>0});
 escapeGame.newGame('bow','keys');
 escapeGame.handleGameKeyDown({key:'Escape',code:'Escape',repeat:false,preventDefault(){}});
 escapeGame.handleGameKeyDown({key:'Escape',code:'Escape',repeat:true,preventDefault(){}});
@@ -543,19 +543,19 @@ ok('сфера Мага использует общий четырёхкадро
   c.playerProjectileSpriteFrame({spriteType:'reflected'})===null);
 
 const playerShotType = key => {
-  const game=loadGame('./PolyGrind.html'); game.newGame(key,'keys');
+  const game=loadGame('./GrimGrind.html'); game.newGame(key,'keys');
   const state=game.__api.G, target=game.spawnEnemy(); state.enemies=[target]; state.pending=0; state.spawnQueue=0;
   state.player.x=0; state.player.y=0; target.x=100; target.y=0; target.spd=0; game.attack();
   return state.shots[0] && state.shots[0].spriteType;
 };
 ok('штатные атаки Лучника и Мага получают свои sprite-маркеры',
   playerShotType('bow')==='arrow' && playerShotType('wand')==='mage');
-const minionGame=loadGame('./PolyGrind.html'); minionGame.newGame('bow','keys');
+const minionGame=loadGame('./GrimGrind.html'); minionGame.newGame('bow','keys');
 minionGame.minionShot({x:0,y:0},{x:100,y:0},false);
 minionGame.minionShot({x:0,y:0},{x:100,y:0},true);
 ok('охотник и колдун свиты используют те же канонические текстуры',
   minionGame.__api.G.shots[0].spriteType==='arrow' && minionGame.__api.G.shots[1].spriteType==='mage');
-const mageFx=loadGame('./PolyGrind.html'); mageFx.newGame('wand','keys');
+const mageFx=loadGame('./GrimGrind.html'); mageFx.newGame('wand','keys');
 const MFG=mageFx.__api.G, MFD=mageFx.__api.D;
 MFG.enemies=[]; MFG.fx=[];
 mageFx.explodePlayerOrb({x:10,y:20,orb:true,travel:0,hitSet:[]});

@@ -3,7 +3,7 @@ const {loadGame} = require('./sim');
 const ok = (nm, cond, det) => console.log((cond?'  \u2713 ':'  \u2717 ') + nm.padEnd(62) + (det||''));
 
 function mk(n=0){
-  const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys','hunter');
+  const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys','hunter');
   const G=c.__api.G;
   G.enemies.length=0; G.shots.length=0; G.spawnQueue=0; G.packs.length=0;
   if (n) G.bag.add('ricochet','flat',n);

@@ -2,7 +2,7 @@
 const {loadGame} = require('./sim');
 const ok = (nm, cond, det) => console.log((cond?'  \u2713 ':'  \u2717 ') + nm.padEnd(50) + (det||''));
 function mk(){
-  const c=loadGame('./PolyGrind.html'); c.newGame('blade','keys');
+  const c=loadGame('./GrimGrind.html'); c.newGame('blade','keys');
   const G=c.__api.G, p=G.player;
   G.enemies.length=0; G.spawnQueue=0; G.packs.length=0; p.aim=0;
   return {c,G,p};
@@ -31,10 +31,10 @@ function foe(o,x,y){
 }
 
 {
-  const fs=require('fs'), html=fs.readFileSync('./PolyGrind.html','utf8');
+  const fs=require('fs'), html=fs.readFileSync('./GrimGrind.html','utf8');
   const {imageInfo,embeddedObjectImage}=require('./asset_test_utils');
   const image=embeddedObjectImage(html,'HERO_SPRITE_DATA','warrior'),data=image&&image.buffer,info=imageInfo(data);
-  const c=loadGame('./PolyGrind.html');
+  const c=loadGame('./GrimGrind.html');
   ok('класс называется ВОИН', c.__api.WEAPONS.blade.nm==='ВОИН');
   ok('лист Воина встроен внутрь HTML', !!data && info.w===128 && info.h===32);
   ok('встроен прозрачный lossless WebP-лист Воина',info.lossless&&info.alpha&&data.length<1500,data?data.length+' Б':'нет данных');

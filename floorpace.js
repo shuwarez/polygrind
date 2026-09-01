@@ -30,7 +30,7 @@ function pace(file, floor, runs){
 const N = +(process.argv[2] || 5);
 console.log('этаж | сек на зачистку | пик врагов | золота с этажа | урона получено');
 for (const f of [10,20,30,40,50]){
-  const A = pace('/tmp/pg_before_scale2.html', f, N), B = pace('./PolyGrind.html', f, N);
+  const A = pace('/tmp/pg_before_scale2.html', f, N), B = pace('./GrimGrind.html', f, N);
   console.log(String(f).padStart(4),
     '| было', A.t.toFixed(0).padStart(3) + 'с  стало', B.t.toFixed(0).padStart(3) + 'с',
     '| было', String(A.peak).padStart(2), ' стало', String(B.peak).padStart(2),

@@ -5,7 +5,7 @@ let n=0,fail=0;
 const ok=(name,cond,detail='')=>{n++;if(!cond)fail++;console.log((cond?'  ✓ ':'  ✗ ')+name.padEnd(76)+detail);};
 const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
 const point=(x,y,r=10)=>({x,y,r,hp:1000,maxHp:1000,dead:false,kind:'norm'});
-function fresh(random){const c=loadGame('./PolyGrind.html',random?{random}:{});c.newGame('necro','keys');const G=c.__api.G;G.enemies=[];G.minions=[];G.spawnQueue=0;G.packs=[];return{c,G,D:c.__api.D,p:G.player};}
+function fresh(random){const c=loadGame('./GrimGrind.html',random?{random}:{});c.newGame('necro','keys');const G=c.__api.G;G.enemies=[];G.minions=[];G.spawnQueue=0;G.packs=[];return{c,G,D:c.__api.D,p:G.player};}
 function foe(c,x,y,r=10){const e=c.spawnEnemy('blob');e.x=x;e.y=y;e.r=r;e.spd=0;e.dmg=0;e.hp=e.maxHp=1e9;e.dead=false;e.kind='norm';e.armor=0;e.ward=null;e.bulwark=0;return e;}
 function minion(kind,x=0,y=0){return{kind,x,y,r:kind==='golemB'?22:10,hp:100,max:100,dead:false,tgt:null,cd:99,rot:0,hit:0,born:1,deathT:999,slowT:0,slowMul:1,stunT:0,animT:0,spriteFace:1,hitN:0};}
 
@@ -93,7 +93,7 @@ function minion(kind,x=0,y=0){return{kind,x,y,r:kind==='golemB'?22:10,hp:100,max
 }
 
 {
-  const html=fs.readFileSync('./PolyGrind.html','utf8');
+  const html=fs.readFileSync('./GrimGrind.html','utf8');
   ok('пассивный поиск агро Голема крови удалён',!/collectBloodGolems|minionThreatTarget|bloodGolems/.test(html));
   ok('тип для возрождения вычисляется один раз на кадр',/const neededKind=needKind\(\);[\s\S]{0,500}spawnMinion\(c\.x, c\.y, neededKind\)/.test(html));
   ok('список целей создаётся лениво только при переназначении',/function frameMinionCandidates\(\)[\s\S]{0,180}minionCandidatesReady/.test(html));

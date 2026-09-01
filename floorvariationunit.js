@@ -46,9 +46,9 @@ function luma(png){
   return total/count;
 }
 
-const html=fs.readFileSync('./PolyGrind.html','utf8');
+const html=fs.readFileSync('./GrimGrind.html','utf8');
 let randomCalls=0;
-const c=loadGame('./PolyGrind.html',{random:()=>{randomCalls++;return 0.25;}}),floor=c.__api.FLOOR_TEXTURES;
+const c=loadGame('./GrimGrind.html',{random:()=>{randomCalls++;return 0.25;}}),floor=c.__api.FLOOR_TEXTURES;
 const expectedNames=['slate','cracked','damp','temple','basalt','iron','ash','crystal','forge','frost'];
 const buffers=floor.data.map(uri=>Buffer.from(uri.slice(uri.indexOf(',')+1),'base64'));
 const embeddedInfo=buffers.map(imageInfo);

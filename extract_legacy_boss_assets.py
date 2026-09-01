@@ -11,7 +11,7 @@ from PIL import Image, ImageDraw
 
 
 ROOT = Path(__file__).resolve().parent
-HTML = (ROOT / "PolyGrind.html").read_text(encoding="utf-8")
+HTML = (ROOT / "GrimGrind.html").read_text(encoding="utf-8")
 OUT = ROOT / "legacy_boss_assets"
 BASE = OUT / "reference" / "base"
 EFFECTS = OUT / "reference" / "effects"

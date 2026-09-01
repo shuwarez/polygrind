@@ -2,7 +2,7 @@
 const {loadGame} = require('./sim');
 const ok = (nm, cond, det) => console.log((cond ? '  ✓ ' : '  ✗ ') + nm.padEnd(46) + (det || ''));
 
-{ const c = loadGame('./PolyGrind.html'); c.newGame('bow','keys');
+{ const c = loadGame('./GrimGrind.html'); c.newGame('bow','keys');
   const G=c.__api.G, base=c.__api.D.pickup;
   ok('карточка радиуса автоподбора удалена',
     !c.__api.MODS.some(m=>m.id==='loot.pickup_radius' || m.stat==='pickup'));
@@ -22,7 +22,7 @@ const ok = (nm, cond, det) => console.log((cond ? '  ✓ ' : '  ✗ ') + nm.padE
   ok('старый стат карточки больше не влияет на героя', c.__api.D.pickup===base,
      base+' → '+c.__api.D.pickup); }
 
-{ const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys');
+{ const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys');
   const G=c.__api.G,D=c.__api.D; G.enemies.length=0;G.spawnQueue=0;G.packs.length=0;
   G.bag.add('critLucky','flag',1);c.recalc();
   D.baseMin=D.baseMax=100;D.elem={fire:0,cold:0,lit:0,poi:0};D.incAll=0;D.moreAll=1;
@@ -32,7 +32,7 @@ const ok = (nm, cond, det) => console.log((cond ? '  ✓ ' : '  ✗ ') + nm.padE
   const crits=G.stats.crits;c.damage(e,{noDouble:true});c.Math.random=oldRandom;
   ok('старый флаг critLucky больше не даёт второй бросок',G.stats.crits===crits); }
 
-{ const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys');
+{ const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys');
   const G=c.__api.G,D=c.__api.D,p=G.player; G.enemies.length=0;G.spawnQueue=0;G.packs.length=0;
   G.bag.add('whLow','inc',999);c.recalc();
   D.baseMin=D.baseMax=100;D.elem={fire:0,cold:0,lit:0,poi:0};D.incAll=0;D.moreAll=1;D.critCh=D.superCh=D.dblHit=0;
@@ -40,7 +40,7 @@ const ok = (nm, cond, det) => console.log((cond ? '  ✓ ' : '  ✗ ') + nm.padE
   const hp=e.hp;c.damage(e,{});
   ok('старый стат whLow больше не влияет на урон',Math.abs((hp-e.hp)-100)<1e-9,(hp-e.hp)+' урона'); }
 
-{ const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys');
+{ const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys');
   const G=c.__api.G,D=c.__api.D,p=G.player; G.enemies.length=0;G.spawnQueue=0;G.packs.length=0;
   G.bag.add('close','inc',999);G.bag.add('far','inc',999);c.recalc();
   D.baseMin=D.baseMax=100;D.elem={fire:0,cold:0,lit:0,poi:0};D.incAll=0;D.moreAll=1;D.critCh=D.superCh=D.dblHit=0;
@@ -53,14 +53,14 @@ const ok = (nm, cond, det) => console.log((cond ? '  ✓ ' : '  ✗ ') + nm.padE
     Math.abs(nearDmg-100)<1e-9&&Math.abs(farDmg-100)<1e-9,
     'вблизи '+nearDmg+' · издалека '+farDmg); }
 
-{ const c=loadGame('./PolyGrind.html');c.newGame('bow','keys');
+{ const c=loadGame('./GrimGrind.html');c.newGame('bow','keys');
   const G=c.__api.G,D=c.__api.D,p=G.player;G.enemies.length=0;G.spawnQueue=0;G.packs.length=0;
   G.bag.add('recoup','flat',100);c.recalc();D.dodge=0;D.armor=0;p.hp=D.life;
   c.hurt(10,false,false,'ТЕСТ','norm');const afterHit=p.hp;c.update(1);
   ok('старый стат recoup больше не накапливает и не лечит',p.recoup===undefined&&p.hp===afterHit,
     afterHit.toFixed(1)+' HP'); }
 
-{ const c = loadGame('./PolyGrind.html'); c.newGame('bow','keys');
+{ const c = loadGame('./GrimGrind.html'); c.newGame('bow','keys');
   const G=c.__api.G, p=G.player;
   G.enemies.length=0; G.spawnQueue=1; G.spawnT=999;
   const orb={x:p.x+500,y:p.y,v:1}; G.orbs=[orb];
@@ -69,7 +69,7 @@ const ok = (nm, cond, det) => console.log((cond ? '  ✓ ' : '  ✗ ') + nm.padE
   ok('старый флаг magnet больше не ускоряет притягивание', Math.abs(moved-7.5)<0.01,
     moved.toFixed(1)+' единицы за 0,1 сек'); }
 
-{ const c = loadGame('./PolyGrind.html');
+{ const c = loadGame('./GrimGrind.html');
   c.__api.STORE.data.shop.vacuum = 10;
   c.newGame('bow', 'keys');
   const D = c.__api.D;
@@ -77,7 +77,7 @@ const ok = (nm, cond, det) => console.log((cond ? '  ✓ ' : '  ✗ ') + nm.padE
      D.pickup + ' → ' + D.lootPickup);
   ok('удалённый быстрый сбор больше не ускоряет притягивание', D.lootPull === 340, '340 → ' + D.lootPull); }
 
-{ const c = loadGame('./PolyGrind.html'); c.newGame('bow', 'keys');
+{ const c = loadGame('./GrimGrind.html'); c.newGame('bow', 'keys');
   const G = c.__api.G, D = c.__api.D, p = G.player, DT = 1/60;
   G.enemies.length = 0; G.spawnQueue = 0; G.keys = {d:true};
   ok('рывок: полный заряд на старте и откат 5 секунд', p.dashN === D.dashMax && D.dashCd === 5,
@@ -98,7 +98,7 @@ const ok = (nm, cond, det) => console.log((cond ? '  ✓ ' : '  ✗ ') + nm.padE
   ok('рывок: заряд не возвращается раньше пяти секунд', early === 0 && p.dashN === 1,
      'до: ' + early + ' · после: ' + p.dashN); }
 
-{ const c = loadGame('./PolyGrind.html');
+{ const c = loadGame('./GrimGrind.html');
   c.__api.STORE.data.shop = {dodge:40, sgold:100};
   c.newGame('bow','keys','thief');
   let G = c.__api.G; G.lvl = 25; c.recalc();
@@ -128,7 +128,7 @@ const ok = (nm, cond, det) => console.log((cond ? '  ✓ ' : '  ✗ ') + nm.padE
   ok('ВОР: множитель усиливает награду за этаж', G.gold === expectedFloor,
      G.gold + ' золота · ожидалось ' + expectedFloor); }
 
-{ const c = loadGame('./PolyGrind.html'); c.newGame('bow', 'keys');
+{ const c = loadGame('./GrimGrind.html'); c.newGame('bow', 'keys');
   const G = c.__api.G, totalAffixes = c.__api.AFFIXES.length;
   const inspect = f => {
     G.floor = f; c.buildFloor();
@@ -150,7 +150,7 @@ const ok = (nm, cond, det) => console.log((cond ? '  ✓ ' : '  ✗ ') + nm.padE
   ok('после 80-го потолок остаётся восемь аффиксов', plateau.bosses.length === 4 &&
      plateau.bosses.every(b => b.aff.length === totalAffixes), plateau.text); }
 
-{ const c = loadGame('./PolyGrind.html'); c.newGame('bow', 'keys');
+{ const c = loadGame('./GrimGrind.html'); c.newGame('bow', 'keys');
   const G = c.__api.G, boss = c.spawnEnemy('boss');
   c.killEnemy(boss, G.enemies.indexOf(boss));
   const e = c.spawnEnemy(), kind = e.kind === 'elite' ? 0.9 : 1;
@@ -158,12 +158,12 @@ const ok = (nm, cond, det) => console.log((cond ? '  ✓ ' : '  ✗ ') + nm.padE
      Math.abs(e.spd / (e.t.spd * kind) - 1.02) < 0.0001,
      'множитель ' + (e.spd / (e.t.spd * kind)).toFixed(4)); }
 
-{ const c = loadGame('./PolyGrind.html'); c.newGame('bow', 'keys');
+{ const c = loadGame('./GrimGrind.html'); c.newGame('bow', 'keys');
   c.hurt(1e6, false, false, 'ТЕСТОВЫЙ ИСТОЧНИК');
   ok('смерть хранит источник и полученный урон', c.__api.G.over &&
      c.__api.G.player.deathLog.cause === 'ТЕСТОВЫЙ ИСТОЧНИК' && c.__api.G.player.deathLog.dmg > 0); }
 
-{ const c = loadGame('./PolyGrind.html'); c.newGame('bow', 'keys');
+{ const c = loadGame('./GrimGrind.html'); c.newGame('bow', 'keys');
   const ru = [['KeyW','ц','w'],['KeyA','ф','a'],['KeyS','ы','s'],['KeyD','в','d']];
   ok('русская ЦФЫВ раскладка преобразуется в WASD',
     ru.every(([code,key,want]) => c.inputKey({code,key})===want));
@@ -177,7 +177,7 @@ const ok = (nm, cond, det) => console.log((cond ? '  ✓ ' : '  ✗ ') + nm.padE
     c.inputKey({code:'KeyC',key:'с'})==='c' && c.inputKey({code:'KeyV',key:'м'})==='v' &&
     c.inputKey({code:'KeyL',key:'д'})==='l' && c.inputKey({code:'KeyP',key:'з'})==='p'); }
 
-{ const c = loadGame('./PolyGrind.html'); c.newGame('bow', 'keys');
+{ const c = loadGame('./GrimGrind.html'); c.newGame('bow', 'keys');
   const G=c.__api.G, mods=['dmg.flat_all','dmg.inc_all','life.on_kill','dmg.more_all']
     .map(id=>c.__api.MODS.find(m=>m.id===id));
   const cards=mods.map((m,i)=>({m,v:i+1,val:'+'+(i+1)}));
@@ -193,7 +193,7 @@ const ok = (nm, cond, det) => console.log((cond ? '  ✓ ' : '  ✗ ') + nm.padE
   ok('клавиша 2 выбирает вторую карточку повышения уровня',
     second.prevented && G.pending===0 && G.picks.length===before+1 && G.picks.at(-1).id===mods[1].id); }
 
-{ const c = loadGame('./PolyGrind.html'); c.newGame('bow', 'keys');
+{ const c = loadGame('./GrimGrind.html'); c.newGame('bow', 'keys');
   const G=c.__api.G, mods=['dmg.flat_all','dmg.inc_all','life.on_kill','dmg.more_all']
     .map(id=>c.__api.MODS.find(m=>m.id===id));
   G.pending=1; G.levelUpCards=mods.map((m,i)=>({m,v:i+1,val:'+'+(i+1)}));
@@ -204,7 +204,7 @@ const ok = (nm, cond, det) => console.log((cond ? '  ✓ ' : '  ✗ ') + nm.padE
   ok('удержание игнорируется, одиночная 4 выбирает четвёртую карту',
     heldIgnored && G.pending===0 && G.picks.length===1 && G.picks[0].id===mods[3].id); }
 
-{ const c = loadGame('./PolyGrind.html'); c.newGame('bow', 'keys');
+{ const c = loadGame('./GrimGrind.html'); c.newGame('bow', 'keys');
   const G=c.__api.G, p=G.player;
   const event=(repeat=false)=>({code:'Space',key:' ',repeat,prevented:false,preventDefault(){this.prevented=true;}});
   G.pending=1; G.rerolls=1; c.showLevelUp();

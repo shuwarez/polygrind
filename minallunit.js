@@ -3,7 +3,7 @@ const {loadGame} = require('./sim');
 const DT = 1/60;
 const ok = (nm, cond, det) => console.log((cond?'  \u2713 ':'  \u2717 ') + nm.padEnd(48) + (det||''));
 function mk(mods, amus, options){
-  const c = loadGame('./PolyGrind.html', options);
+  const c = loadGame('./GrimGrind.html', options);
   c.newGame('necro','keys');
   const G = c.__api.G;
   G.lvl = 25;
@@ -32,44 +32,44 @@ const quarterOfCap = v => v > 0.02 && v < 0.11;
 const quarterOfStunCap = v => v > 0.07 && v < 0.18;
 
 console.log('КОСТЯНОЙ СЛУГА');
-{ const c=loadGame('./PolyGrind.html'),m=c.__api.MODS.find(x=>x.id==='min.count');
+{ const c=loadGame('./GrimGrind.html'),m=c.__api.MODS.find(x=>x.id==='min.count');
   ok('карточка переименована и имеет ровно три фиксированных ранга',m.nm==='Костяной слуга'&&
     m.kind==='flat'&&m.stat==='minCount'&&m.r[0]===1&&m.r[1]===1); }
-{ const c=loadGame('./PolyGrind.html'); c.newGame('necro','keys'); const G=c.__api.G;
+{ const c=loadGame('./GrimGrind.html'); c.newGame('necro','keys'); const G=c.__api.G;
   ok('Некромант начинает сразу с трёх скелетов',c.__api.D.maxSkel===3&&
     G.minions.length===3&&G.minions.every(m=>m.kind==='skeleton'),'живых '+G.minions.length+' · лимит '+c.__api.D.maxSkel); }
-{ const c=loadGame('./PolyGrind.html'); c.newGame('necro','keys'); c.setLanguage('ru');
+{ const c=loadGame('./GrimGrind.html'); c.newGame('necro','keys'); c.setLanguage('ru');
   const m=c.__api.MODS.find(x=>x.id==='min.count'),html=c.levelCardBodyHtml({m,v:1,val:'+1.0'});
   ok('первый ранг карточки показывает полный переход 3 → 4',html.includes('Максимум скелетов: +1')&&
     html.includes('Сейчас: 3 → 4')&&html.includes('Ранг: 1/3'),html.replace(/<[^>]+>/g,' · ')); }
-{ const c=loadGame('./PolyGrind.html'); c.newGame('necro','keys');
+{ const c=loadGame('./GrimGrind.html'); c.newGame('necro','keys');
   const m=c.__api.MODS.find(x=>x.id==='min.count'),html=c.levelCardBodyHtml({m,v:1,val:'+1.0'});
   ok('английская карточка сохраняет те же числа и подписи',html.includes('Maximum Skeletons: +1')&&
     html.includes('Current: 3 → 4')&&html.includes('Rank: 1/3')); }
-{ const c=loadGame('./PolyGrind.html'); c.newGame('necro','keys'); const G=c.__api.G,m=c.__api.MODS.find(x=>x.id==='min.count'),limits=[];
+{ const c=loadGame('./GrimGrind.html'); c.newGame('necro','keys'); const G=c.__api.G,m=c.__api.MODS.find(x=>x.id==='min.count'),limits=[];
   for(let i=0;i<3;i++){ G.bag.add('minCount','flat',1); c.recalc(); limits.push(c.__api.D.maxSkel); }
   ok('три выбора повышают предел строго 4 → 5 → 6',limits.join(',')==='4,5,6',limits.join(' → '));
   ok('после третьего ранга карточка сообщает максимум и скрывается',G.bag.flat('minCount')===3&&m.hide());
   ok('достигшая шести карточка полностью исчезает из случайной выдачи',
     Array.from({length:40},()=>c.rollCards()).flat().every(x=>x.id!=='min.count')); }
-{ const c=loadGame('./PolyGrind.html'); c.newGame('necro','keys'); c.setLanguage('ru'); c.renderSheet();
+{ const c=loadGame('./GrimGrind.html'); c.newGame('necro','keys'); c.setLanguage('ru'); c.renderSheet();
   const html=c.document.getElementById('sheet').innerHTML;
   ok('интерфейс показывает стартовый счётчик «Скелеты: 3/6»',
      html.includes('Скелеты:</span><b>3/6'),html.match(/Скелеты[^<]*<\/span><b>[^<]*/)?.[0]||'нет'); }
-{ const c=loadGame('./PolyGrind.html'); c.newGame('necro','keys'); const G=c.__api.G;
+{ const c=loadGame('./GrimGrind.html'); c.newGame('necro','keys'); const G=c.__api.G;
   const bomb=c.__api.MODS.find(x=>x.id==='min.bombardiers');
   ok('охотники и старая карта колдунов полностью удалены',!c.__api.MODS.some(x=>x.id==='min.hunters'||x.id==='min.warlocks')&&
     !/'hunter'|'warlock'/.test(c.needKind.toString()));
   ok('бомбардиры открываются сразу после максимума скелетов',bomb&&!bomb.show()&&
     (G.bag.add('minCount','flat',3),c.recalc(),bomb.show())&&bomb.stat==='minBomb'); }
-{ const c=loadGame('./PolyGrind.html'); c.newGame('necro','keys'); const G=c.__api.G;
+{ const c=loadGame('./GrimGrind.html'); c.newGame('necro','keys'); const G=c.__api.G;
   G.lvl=30;
   const ids=Array.from({length:100},()=>c.rollCards()).flat().map(x=>x.id);
   ok('отскоки и ЭКО-ОТСКОКИ не попадают в раздачу Некроманта',
     !ids.includes('shape.chain')&&!ids.includes('shape.chain_retention'));
   ok('скорость снарядов не попадает в раздачу Некроманта',
     !ids.includes('shape.proj_speed')); }
-{ const c=loadGame('./PolyGrind.html'); c.newGame('necro','keys'); const G=c.__api.G;
+{ const c=loadGame('./GrimGrind.html'); c.newGame('necro','keys'); const G=c.__api.G;
   const move=c.__api.MODS.find(x=>x.id==='min.move_speed');
   const blink=c.__api.MODS.find(x=>x.id==='min.blink'),raid=c.__api.MODS.find(x=>x.id==='min.raid');
   ok('скорость передвижения свиты даёт целые 5–13%',
@@ -80,7 +80,7 @@ console.log('КОСТЯНОЙ СЛУГА');
   G.bag.add('minSpd','inc',1); c.recalc(); const raid80=raid.show();
   ok('Внезапный взрыв открывается на 40%, Астральный набег — на 80%',
     !blink39&&blink40&&!raid40&&!raid79&&raid80);
-  const fresh=loadGame('./PolyGrind.html'); fresh.newGame('necro','keys');
+  const fresh=loadGame('./GrimGrind.html'); fresh.newGame('necro','keys');
   const freshMove=fresh.__api.MODS.find(x=>x.id==='min.move_speed');
   const panel=fresh.levelUnlockPanelHtml([{m:freshMove}]);
   ok('блок связанных навыков показывает новые пороги 40% и 80%',
@@ -188,12 +188,12 @@ console.log('БАЛАНС ВСЕЙ СВИТЫ');
      Math.round(procs/6) + '% · сила ' + force.toFixed(0)); }
 
 console.log('ПОЛЕ КОСТЕЙ');
-{ const c = loadGame('./PolyGrind.html');
+{ const c = loadGame('./GrimGrind.html');
   const m = c.__api.MODS.find(x=>x.id==='min.bone_field');
   ok('фиксированная одноразовая карточка доступна только Некроманту', !!m && m.kind==='flag' && m.stat==='boneField' &&
      m.r[0]===1 && m.r[1]===1 && m.rar===undefined && m.cap===undefined &&
      c.allowedClassesForMod(m).join(',')==='necro'); }
-{ const c=loadGame('./PolyGrind.html'); c.newGame('necro','keys'); const G=c.__api.G,m=c.__api.MODS.find(x=>x.id==='min.bone_field');
+{ const c=loadGame('./GrimGrind.html'); c.newGame('necro','keys'); const G=c.__api.G,m=c.__api.MODS.find(x=>x.id==='min.bone_field');
   const before=Array.from({length:80},()=>c.rollCards()).flat().some(x=>x.id===m.id);
   G.bag.add('boneField','flag',1); G.picks.push({id:m.id}); c.recalc();
   const after=Array.from({length:80},()=>c.rollCards()).flat().some(x=>x.id===m.id);
@@ -224,14 +224,14 @@ console.log('ПОЛЕ КОСТЕЙ');
      empty==='Поле костей +0% урона свиты', (active||'нет')+' · '+(empty||'нет')); }
 
 console.log('ЕСТЕСТВЕННАЯ СМЕРТЬ СВИТЫ');
-{ const c = loadGame('./PolyGrind.html'); c.newGame('necro','keys');
+{ const c = loadGame('./GrimGrind.html'); c.newGame('necro','keys');
   const G = c.__api.G; G.minions.length = 0;
   for (let i=0;i<8;i++) c.spawnMinion(undefined,undefined,'skeleton');
   const timers = G.minions.map(m => m.deathT);
   ok('каждый боец получает независимые 10–15 секунд', timers.every(t => t >= 10 && t <= 15) &&
      new Set(timers.map(t => t.toFixed(6))).size > 1,
      Math.min(...timers).toFixed(2) + '–' + Math.max(...timers).toFixed(2) + ' сек'); }
-{ const c = loadGame('./PolyGrind.html'); c.newGame('necro','keys','venomancer');
+{ const c = loadGame('./GrimGrind.html'); c.newGame('necro','keys','venomancer');
   const G = c.__api.G; G.bag.add('minBoom','flag',1); c.recalc();
   G.floor = 12; c.buildFloor(); G.enemies.length = 0; G.spawnQueue = 0; G.packs.length = 0;
   const m = G.minions[0], beforeCount = G.minions.length;
@@ -283,7 +283,7 @@ console.log('ПРЕДМЕТЫ И КНИГИ');
      dps.toFixed(2) + ' при базе ' + o.D.bookPoiDps.toFixed(2)); }
 
 console.log('УДАЛЁННАЯ ВЕТКА ЗДОРОВЬЯ СВИТЫ');
-{ const c=loadGame('./PolyGrind.html');
+{ const c=loadGame('./GrimGrind.html');
   ok('Здоровье приспешников и Вампиры хозяина удалены из каталога',
     !c.__api.MODS.some(m=>m.id==='min.life'||m.id==='min.vampires')); }
 { const base=mk([]),legacy=mk([['minLife',999,'inc']]);
@@ -297,7 +297,7 @@ console.log('УДАЛЁННАЯ ВЕТКА ЗДОРОВЬЯ СВИТЫ');
     o.D.minLifeRaw===undefined&&o.D.minVamp===undefined); }
 
 console.log('ЛОРД СМЕРТИ');
-{ const c = loadGame('./PolyGrind.html');
+{ const c = loadGame('./GrimGrind.html');
   ok('синяя карточка вампиризма свиты удалена', !c.__api.MODS.some(m=>m.id==='min.leech_to_owner'));
   const lord = c.__api.MODS.find(m=>m.id==='key.death_lord');
   ok('Лорд Смерти — оранжевый кейстоун Некроманта', !!lord && lord.rar===3 && lord.req==='min' && lord.kind==='flag'); }
@@ -324,7 +324,7 @@ console.log('ЛОРД СМЕРТИ');
   ok('обычный вампиризм больше не лечит от ударов свиты', o.D.leech>0 && o.p.hp===hp0); }
 
 console.log('КОСТЯНОЙ ВЫЗОВ');
-{ const c = loadGame('./PolyGrind.html');
+{ const c = loadGame('./GrimGrind.html');
   const old = c.__api.MODS.find(m=>m.id==='min.taunt');
   const key = c.__api.MODS.find(m=>m.id==='key.bone_challenge');
   ok('старая карточка удалена, новая — оранжевый кейстоун', !old && !!key && key.rar===3 && key.req==='min' && key.kind==='flag'); }

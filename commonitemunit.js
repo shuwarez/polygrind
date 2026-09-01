@@ -7,7 +7,7 @@ function ok(name,cond,detail=''){
   console.log((cond?'  ✓ ':'  ✗ ')+name.padEnd(66)+detail);
 }
 function fresh(weapon='bow',items=[],random=()=>0.99){
-  const c=loadGame('./PolyGrind.html',{random});
+  const c=loadGame('./GrimGrind.html',{random});
   c.newGame(weapon,'keys');
   const G=c.__api.G;
   for(const id of items) G.amu[id]=true;

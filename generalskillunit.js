@@ -3,7 +3,7 @@ const {loadGame}=require('./sim');
 const ok=(nm,cond,det)=>console.log((cond?'  ✓ ':'  ✗ ')+nm.padEnd(58)+(det||''));
 
 function fresh(weapon='bow',random=()=>0.99){
-  const c=loadGame('./PolyGrind.html',{random}); c.newGame(weapon,'keys');
+  const c=loadGame('./GrimGrind.html',{random}); c.newGame(weapon,'keys');
   const G=c.__api.G; G.enemies.length=0; G.spawnQueue=0; G.packs.length=0; G.pending=0;
   return c;
 }

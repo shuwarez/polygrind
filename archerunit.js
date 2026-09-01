@@ -3,7 +3,7 @@ const {loadGame}=require('./sim');
 let n=0,fail=0;
 function ok(name,cond,detail=''){ n++; if(!cond)fail++; console.log((cond?'  ✓ ':'  ✗ ')+name.padEnd(58)+detail); }
 function setup(random=()=>0.99){
-  const c=loadGame('./PolyGrind.html',{random}); c.newGame('bow','keys','hunter');
+  const c=loadGame('./GrimGrind.html',{random}); c.newGame('bow','keys','hunter');
   const G=c.__api.G,D=c.__api.D,p=G.player;
   G.enemies.length=0; G.spawnQueue=0; G.packs.length=0; G.portal=null;
   p.x=p.y=0; p.atkCd=99;
@@ -143,7 +143,7 @@ function fixed(o){o.D.baseMin=o.D.baseMax=100;o.D.elem={fire:0,cold:0,lit:0,poi:
 {
   const o=setup();o.G.bag.add('hunterMark','flag',1);o.c.recalc();const a=foe(o),b=foe(o),c=foe(o);
   o.G.time=0;o.c.markHunterTarget(a);o.G.time=1;o.c.markHunterTarget(b);o.G.time=2;o.c.markHunterTarget(c);
-  const html=require('fs').readFileSync('./PolyGrind.html','utf8');
+  const html=require('fs').readFileSync('./GrimGrind.html','utf8');
   ok('одновременно живут две метки, третья заменяет старейшую и рисует красный прицел',
     !o.c.hunterMarkActive(a)&&o.c.hunterMarkActive(b)&&o.c.hunterMarkActive(c)&&
     html.includes("ctx.strokeStyle='#ff3b4f'")&&html.includes("if (pass==='worldHud') drawHunterMark(e);"));
@@ -181,7 +181,7 @@ function fixed(o){o.D.baseMin=o.D.baseMax=100;o.D.elem={fire:0,cold:0,lit:0,poi:
   ok('синий след включается ровно с порога бонусного урона',early&&o.c.acceleratedArrowTrailActive(s));
   ok('след ограничен стрелами игрока и рисуется позади снаряда',
     !o.c.acceleratedArrowTrailActive({...s,playerArrow:false}) &&
-    /drawAcceleratedArrowTrail\(s\);[\s\S]{0,100}drawPlayerProjectileSprite/.test(require('fs').readFileSync('./PolyGrind.html','utf8')));
+    /drawAcceleratedArrowTrail\(s\);[\s\S]{0,100}drawPlayerProjectileSprite/.test(require('fs').readFileSync('./GrimGrind.html','utf8')));
 }
 
 {

@@ -5,7 +5,7 @@ const vm=require('vm');
 let n=0,fail=0;
 const ok=(name,cond,detail='')=>{n++;if(!cond)fail++;console.log((cond?'  ✓ ':'  ✗ ')+name.padEnd(78)+detail);};
 function fresh(amus=[],random=()=>0.99){
-  const c=loadGame('./PolyGrind.html',{random});c.newGame('bow','keys');
+  const c=loadGame('./GrimGrind.html',{random});c.newGame('bow','keys');
   const G=c.__api.G;G.enemies=[];G.spawnQueue=0;G.packs=[];
   for(const key of amus)G.amu[key]=true;
   c.recalc();return{c,G,D:c.__api.D,p:G.player};
@@ -131,7 +131,7 @@ function countIterations(G){
 }
 
 {
-  const html=fs.readFileSync('./PolyGrind.html','utf8');
+  const html=fs.readFileSync('./GrimGrind.html','utf8');
   ok('Последний свидетель остаётся живой проверкой каждой конкретной цели',/if \(isLastWitnessTarget\(e,src\)\)/.test(html));
   ok('отложенное Эхо сбрасывает снимок изменяемого окружения',/damageBossShardInc:undefined,damageDuelActive:undefined,damageNearbyCount:undefined/.test(html));
   ok('двойное попадание переносит уже разрешённый снимок',/damageBossShardInc:damageConditions\.damageBossShardInc[\s\S]{0,160}damageNearbyCount:damageConditions\.damageNearbyCount/.test(html));

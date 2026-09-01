@@ -4,7 +4,7 @@ const ok = (nm, cond, det) => console.log((cond?'  \u2713 ':'  \u2717 ') + nm.pa
 const near = (a,b,eps=1e-6) => Math.abs(a-b) < eps;
 
 function build(mods=[], random=()=>0){
-  const c=loadGame('./PolyGrind.html',{random});
+  const c=loadGame('./GrimGrind.html',{random});
   c.newGame('bow','keys','hunter');
   const G=c.__api.G;
   for (const [stat,value,kind] of mods) G.bag.add(stat,kind||'chance',value);
@@ -71,7 +71,7 @@ console.log('ДЕЙСТВИЕ СТАТУСОВ');
     B && B.el==='dLit' && B.proc===true && B.ico==='⚡' &&
     JSON.stringify(B.tiers)===JSON.stringify([[3,5],[6,8],[9,12]]) &&
     JSON.stringify(B.step)===JSON.stringify([3,5]) && o.c.__api.BOOKS.cold.el==='dCold'); }
-{ const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys','hunter');
+{ const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys','hunter');
   const G=c.__api.G; G.items.shock={tier:1,val:5}; G.bag.add('iLit','inc',20); c.recalc();
   ok('флэт книги молнии проходит через общий процентный множитель молнии', near(c.__api.D.elem.lit,6), c.__api.D.elem.lit.toFixed(1)); }
 { const o=build(), main=foe(o,60,0), nearPlayer=foe(o,90,0), nearMinion=foe(o,100,10);

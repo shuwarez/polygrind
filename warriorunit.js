@@ -4,7 +4,7 @@ const {loadGame} = require('./sim');
 const ok = (nm, cond, det) => console.log((cond?'  \u2713 ':'  \u2717 ') + nm.padEnd(54) + (det||''));
 
 function mk(subclass, lvl=20){
-  const c=loadGame('./PolyGrind.html'); c.newGame('blade','keys',subclass);
+  const c=loadGame('./GrimGrind.html'); c.newGame('blade','keys',subclass);
   const G=c.__api.G; G.lvl=lvl; c.recalc();
   G.enemies.length=0; G.spawnQueue=0; G.packs.length=0; G.portal=null;
   const p=G.player; p.hp=c.__api.D.life; p.aim=0; p.bladeN=0;
@@ -22,7 +22,7 @@ function fixedDamage(o, marked){
   const hp=e.hp; o.c.damage(e, marked?{warriorMelee:true}:{}); return hp-e.hp;
 }
 function orbitHit({subclass=null,lvl=1,inc=0,more=1,element=0,crit=0,double=0,ignite=0}={}){
-  const c=loadGame('./PolyGrind.html',{random:()=>0}); c.newGame('blade','keys',subclass);
+  const c=loadGame('./GrimGrind.html',{random:()=>0}); c.newGame('blade','keys',subclass);
   const G=c.__api.G, D=c.__api.D, p=G.player;
   G.lvl=lvl; G.bag.add('orbit','flat',1); c.recalc();
   G.enemies.length=0; G.spawnQueue=0; G.packs.length=0; G.portal=null;
@@ -37,15 +37,15 @@ function orbitHit({subclass=null,lvl=1,inc=0,more=1,element=0,crit=0,double=0,ig
 }
 
 {
-  const c=loadGame('./PolyGrind.html'), s=c.__api.SUBCLASSES.blade;
+  const c=loadGame('./GrimGrind.html'), s=c.__api.SUBCLASSES.blade;
   ok('каталог содержит три подкласса Воина', s.length===3 && s.map(x=>x.id).join(',')==='berserker,guardian,swordmaster' && s.map(x=>x.nm).join(',')==='БЕРСЕРК,СТРАЖ,МАСТЕР МЕЧА');
-  const html=fs.readFileSync('./PolyGrind.html','utf8');
+  const html=fs.readFileSync('./GrimGrind.html','utf8');
   ok('Воин возвращён в список игровых классов', html.includes("const PLAYABLE_CLASSES = ['bow','wand','necro','blade']"));
   ok('у новых строк есть английские пары', c.__api.localizationMissing().length===0);
 }
 
 {
-  const c=loadGame('./PolyGrind.html'), card=c.__api.MODS.find(x=>x.id==='shape.orbit');
+  const c=loadGame('./GrimGrind.html'), card=c.__api.MODS.find(x=>x.id==='shape.orbit');
   ok('Круговой орб остаётся синим и доступен только Воину', card.rar===1 && card.wep.length===1 && card.wep[0]==='melee' && /25%/.test(card.nt));
   let leaked=false;
   for (const cls of ['bow','wand','necro']){
@@ -56,7 +56,7 @@ function orbitHit({subclass=null,lvl=1,inc=0,more=1,element=0,crit=0,double=0,ig
 
   const plain=orbitHit();
   ok('касание орба наносит ровно 25% базовой автоатаки', Math.abs(plain.damage-25)<1e-9, plain.damage+' урона');
-  const radiusGame=loadGame('./PolyGrind.html'); radiusGame.newGame('blade','keys');
+  const radiusGame=loadGame('./GrimGrind.html'); radiusGame.newGame('blade','keys');
   radiusGame.__api.G.bag.add('orbit','flat',1); radiusGame.recalc();
   radiusGame.__api.G.player.x=radiusGame.__api.G.player.y=0; radiusGame.__api.G.orbitA=0;
   const radiusPos=radiusGame.orbitPos(0);
@@ -70,7 +70,7 @@ function orbitHit({subclass=null,lvl=1,inc=0,more=1,element=0,crit=0,double=0,ig
 }
 
 {
-  const c=loadGame('./PolyGrind.html'), card=c.__api.MODS.find(x=>x.id==='trig.on_damaged');
+  const c=loadGame('./GrimGrind.html'), card=c.__api.MODS.find(x=>x.id==='trig.on_damaged');
   ok('Ответный удар доступен только оружию Воина',
     card.kind==='flag' && card.stat==='retal' && card.wep.length===1 && card.wep[0]==='melee');
   let leaked=false;
@@ -82,7 +82,7 @@ function orbitHit({subclass=null,lvl=1,inc=0,more=1,element=0,crit=0,double=0,ig
 }
 
 {
-  const c=loadGame('./PolyGrind.html'), thorns=c.__api.MODS.find(x=>x.id==='dmg.thorns'),
+  const c=loadGame('./GrimGrind.html'), thorns=c.__api.MODS.find(x=>x.id==='dmg.thorns'),
     circle=c.__api.MODS.find(x=>x.id==='dmg.thorn_circle'),
     steps=c.__api.MODS.find(x=>x.id==='warrior.three_step'), fury=c.__api.MODS.find(x=>x.id==='warrior.iron_fury');
   ok('четыре новые карты имеют правильные тиры и доступны только Воину',
@@ -108,7 +108,7 @@ function orbitHit({subclass=null,lvl=1,inc=0,more=1,element=0,crit=0,double=0,ig
   const ah=attacker.hp, nh=neighbor.hp, dh=distant.hp;
   full.c.hurt(40,true,false,'ВРАГ · контакт','norm',attacker);
 
-  const ranged=loadGame('./PolyGrind.html'); ranged.newGame('bow','keys');
+  const ranged=loadGame('./GrimGrind.html'); ranged.newGame('bow','keys');
   ranged.__api.G.bag.add('thorns','inc',100); ranged.recalc();
   ok('Шипы отражают обе доли от ближних и дальних ударов, а круг бьёт соседей',
     Math.abs(quarter-35)<1e-9 && source.hp===beforeNoSource && full.D.thorns===100 &&

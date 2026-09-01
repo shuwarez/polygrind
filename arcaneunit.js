@@ -4,7 +4,7 @@ const ok = (nm,cond,det) => console.log((cond?'  \u2713 ':'  \u2717 ') + nm.padE
 const near = (a,b,eps=1e-6) => Math.abs(a-b)<eps;
 
 function build(strength=0){
-  const c=loadGame('./PolyGrind.html',{random:()=>0.5}); c.newGame('wand','keys','multiplier');
+  const c=loadGame('./GrimGrind.html',{random:()=>0.5}); c.newGame('wand','keys','multiplier');
   const G=c.__api.G; G.enemies.length=0; G.spawnQueue=0; G.packs.length=0; G.shots.length=0;
   if (strength) G.bag.add('arcanePull','inc',strength);
   c.recalc();
@@ -31,7 +31,7 @@ function orbResult(strength,mini=false){
 }
 
 console.log('АРКАННАЯ ИЛЛЮЗИЯ');
-{ const c=loadGame('./PolyGrind.html');
+{ const c=loadGame('./GrimGrind.html');
   ok('старая карточка размера снарядов отсутствует',
     !c.__api.MODS.some(m=>m.id==='shape.proj_size' || m.nm==='Размер снарядов')); }
 { const o=build();

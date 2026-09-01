@@ -3,7 +3,7 @@ const fs=require('fs');
 const {loadGame}=require('./harness');
 let n=0,fail=0;
 function ok(name,yes,got=''){n++;if(!yes)fail++;console.log((yes?'  \u2713 ':'  \u2717 ')+name.padEnd(68)+got);}
-const html=fs.readFileSync('./PolyGrind.html','utf8');
+const html=fs.readFileSync('./GrimGrind.html','utf8');
 
 ok('главное меню содержит отдельную кнопку DEV_ZONE',
   html.includes('id="devzoneb"')&&html.includes('<b>DEV_ZONE</b>')&&html.includes('ПУСТАЯ АРЕНА · K — SPAWN'));
@@ -12,7 +12,7 @@ ok('DEV_ZONE закреплена абсолютным позициониров�
 ok('кнопка подключена к прямому входу в тестовую арену',
   /\$\('#devzoneb'\)\.onclick = startDevZone/.test(html)&&/newGame\('bow','keys',null,true\)/.test(html));
 
-{const c=loadGame('./PolyGrind.html');c.startDevZone();const G=c.__api.G;
+{const c=loadGame('./GrimGrind.html');c.startDevZone();const G=c.__api.G;
   ok('DEV_ZONE запускает базового Лучника с клавиатурой без стартовой раздачи',
     G.devZone&&G.weapon.id==='wpn.bow'&&G.control==='keys'&&G.pending===0&&!G.paused&&!G.over);
   ok('при входе арена полностью пуста',
@@ -41,7 +41,7 @@ ok('кнопка подключена к прямому входу в тесто
   ok('повторная сборка этажа сохраняет DEV_ZONE пустой даже на boss-floor',
     !G.enemies.length&&!G.packs.length&&G.spawnQueue===0&&G.portal===null&&!c.floorCombatComplete());}
 
-{const c=loadGame('./PolyGrind.html');const S=c.__api.STORE;
+{const c=loadGame('./GrimGrind.html');const S=c.__api.STORE;
   S.data.gold=1234;S.data.best=17;S.data.graveyard=[{stamp:1}];S.data.constellations={kills:{blob:77},ranks:{}};
   c.startDevZone();const G=c.__api.G,e=c.debugSpawnEnemy('blob');c.killEnemy(e,G.enemies.indexOf(e));
   ok('убийства из спавнера не продвигают постоянные созвездия',S.data.constellations.kills.blob===77);
@@ -49,7 +49,7 @@ ok('кнопка подключена к прямому входу в тесто
   ok('смерть в DEV_ZONE не переносит тестовое золото в банк',S.data.gold===1234&&G.earned===0);
   ok('DEV_ZONE не меняет рекорд и не создаёт запись кладбища',S.data.best===17&&S.data.graveyard.length===1);}
 
-{const c=loadGame('./PolyGrind.html');c.newGame('bow','keys');const G=c.__api.G;
+{const c=loadGame('./GrimGrind.html');c.newGame('bow','keys');const G=c.__api.G;
   ok('обычный новый забег не получает флаг DEV_ZONE и сохраняет волны',!G.devZone&&G.spawnQueue>0);
   ok('в обычном забеге тестовый god mode нельзя включить',!c.toggleDevGodMode()&&!G.devGodMode);
   G.spawnQueue=0;G.enemies.length=0;

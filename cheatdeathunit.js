@@ -4,7 +4,7 @@ const {loadGame} = require('./sim');
 const ok = (nm, cond, det) => console.log((cond?'  \u2713 ':'  \u2717 ') + nm.padEnd(60) + (det||''));
 
 function fresh(random=()=>0.999999){
-  const c=loadGame('./PolyGrind.html',{random}); c.newGame('bow','keys',null);
+  const c=loadGame('./GrimGrind.html',{random}); c.newGame('bow','keys',null);
   const G=c.__api.G, p=G.player;
   G.enemies.length=0; G.spawnQueue=0; G.packs.length=0; G.portal=null;
   const baseSpeed=c.__api.D.mspd;
@@ -18,10 +18,10 @@ function trigger(o,ignoreDefense=true,selfBlast=false){
 }
 
 {
-  const c=loadGame('./PolyGrind.html'), m=c.__api.MODS.find(x=>x.id==='death.cheat');
+  const c=loadGame('./GrimGrind.html'), m=c.__api.MODS.find(x=>x.id==='death.cheat');
   ok('каталог: оранжевый уникальный флаг «ОБМАН СМЕРТИ»',
     m.nm==='ОБМАН СМЕРТИ' && m.kind==='flag' && m.stat==='cheat' && m.rar===3 && m.r[0]===1 && m.r[1]===1);
-  const html=fs.readFileSync('./PolyGrind.html','utf8');
+  const html=fs.readFileSync('./GrimGrind.html','utf8');
   ok('оранжевый тир карточки связан с CSS r-key',
     /\.card\.r-key[^\n]*#b55a2a/.test(html) && /const rc = r => \['','r-rare','r-epic','r-key'/.test(html));
 }

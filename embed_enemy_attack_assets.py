@@ -1,4 +1,4 @@
-"""Embed the normal and elite enemy attack sprite sheets into PolyGrind.html."""
+"""Embed the normal and elite enemy attack sprite sheets into GrimGrind.html."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parent
-HTML_PATH = ROOT / "PolyGrind.html"
+HTML_PATH = ROOT / "GrimGrind.html"
 ASSETS = ROOT / "enemy_attack_assets" / "webp"
 
 NORMAL = ("runner", "blob", "tank", "shooter")

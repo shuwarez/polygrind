@@ -2,7 +2,7 @@
 const fs=require('fs');
 const {loadGame}=require('./harness');
 const {imageInfo,embeddedImage}=require('./asset_test_utils');
-const html=fs.readFileSync('./PolyGrind.html','utf8');
+const html=fs.readFileSync('./GrimGrind.html','utf8');
 const ids=['frostWolf','toxicRunner','cursedRogue','skeletonWarrior','blightGrunt','boneGargoyle'];
 const expectedBase={frostWolf:'runner',toxicRunner:'runner',cursedRogue:'runner',
   skeletonWarrior:'blob',blightGrunt:'blob',boneGargoyle:'blob'};
@@ -15,7 +15,7 @@ function payload(id){
   const image=embeddedImage(html,id);return image&&image.buffer;
 }
 function fresh(id){
-  const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys');
+  const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys');
   const G=c.__api.G; G.floor=5; G.enemies.length=0; G.spawnQueue=0;
   const e=c.spawnEnemy('pack',null,id);
   return {c,G,D:c.__api.D,p:G.player,e};
@@ -39,10 +39,10 @@ ok('каждый оптимизированный WebP весит меньше 3
   sheets.map(b=>b.length).join('/')+' Б');
 ok('шесть разновидностей не дублируют один и тот же растр',new Set(sheets.map(b=>b.toString('base64'))).size===6);
 ok('runtime-метаданные листают четыре отдельных кадра 48 px',ids.every(id=>{
-  const c=loadGame('./PolyGrind.html');
+  const c=loadGame('./GrimGrind.html');
   return [0,1,2,3].every(i=>c.enemySpriteFrame({kind:'elite',eliteVariant:id,animT:i}).frame.w===48);
 }));
-{ const c=loadGame('./PolyGrind.html');
+{ const c=loadGame('./GrimGrind.html');
   const elite=c.enemySpriteFrame({kind:'elite',eliteVariant:'frostWolf',typeKey:'runner',animT:0}).meta;
   const normal=c.enemySpriteFrame({kind:'norm',typeKey:'runner',animT:0}).meta;
   ok('элитная разновидность выбирает отдельный sprite meta',elite!==normal&&elite.scale===3.15);
@@ -50,7 +50,7 @@ ok('runtime-метаданные листают четыре отдельных 
 ok('пути исходных PNG не попали в runtime HTML',
   !/D:\\DL\\CHROME|ice_wolf\.png|toxic_runner\.png|skeleton warrior\.png/.test(html));
 
-{ const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys'); const G=c.__api.G; G.floor=5; G.enemies.length=0;
+{ const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys'); const G=c.__api.G; G.floor=5; G.enemies.length=0;
   const all=ids.map(id=>c.spawnEnemy('pack',null,id));
   ok('явный QA-spawn создаёт все шесть именно как элиту',all.every(e=>e.kind==='elite'));
   ok('явный QA-spawn сохраняет запрошенный id',all.every((e,i)=>e.eliteVariant===ids[i]));
@@ -104,12 +104,12 @@ ok('пути исходных PNG не попали в runtime HTML',
   ok('Воин-скелет получает от игрока дополнительно на 15% меньше',Math.abs(playerA/playerB-0.85)<1e-9);
   ok('снижение Воина-скелета не режет урон свиты',Math.abs(minionA/minionB-1)<1e-9); }
 
-{ const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys'); const G=c.__api.G; G.floor=20;G.enemies.length=0;
+{ const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys'); const G=c.__api.G; G.floor=20;G.enemies.length=0;
   const sample=[]; for(let i=0;i<120;i++) sample.push(c.spawnEnemy('pack'));
   ok('случайная элита каждого базового типа получает разновидность',sample.every(e=>!!e.eliteVariant));
   ok('случайная выборка достигает Бегунов и Ядер',sample.some(e=>e.typeKey==='runner'&&e.eliteVariant)&&sample.some(e=>e.typeKey==='blob'&&e.eliteVariant)); }
 
-{ const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys'); const G=c.__api.G;G.floor=20;G.enemies.length=0;G.packs.length=0;
+{ const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys'); const G=c.__api.G;G.floor=20;G.enemies.length=0;G.packs.length=0;
   const pk=c.spawnPack(20);
   ok('разновидности сосуществуют с прежними аффиксами пачки',pk.aff.length===4&&pk.members.every(e=>e.pack===pk&&e.kind==='elite'));
   const source=c.spawnEnemy('pack',null,'toxicRunner'),copy=c.packClone(source,{hp:0.4,r:0.8,dmg:0.75});

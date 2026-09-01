@@ -4,7 +4,7 @@ const ok = (nm, cond, det) => console.log((cond ? '  ✓ ' : '  ✗ ') + nm.padE
 // Переход этажа проверяет очередь интерфейса, а не распределение случайных
 // боссов и находок. Фиксированный поток не даёт редкому боссу подмешать в
 // заранее собранную добычу собственную гарантированную находку.
-const fresh = () => loadGame('./PolyGrind.html', {random:() => 0.5});
+const fresh = () => loadGame('./GrimGrind.html', {random:() => 0.5});
 
 { const c = fresh(); c.newGame('bow', 'keys');
   const G = c.__api.G, D = c.__api.D, p = G.player;

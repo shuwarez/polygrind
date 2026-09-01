@@ -5,7 +5,7 @@ const {imageInfo,embeddedImage}=require('./asset_test_utils');
 const ok = (nm, cond, det) => console.log((cond?'  \u2713 ':'  \u2717 ') + nm.padEnd(58) + (det||''));
 
 function mage(subclass, level, flat=0){
-  const c = loadGame('./PolyGrind.html');
+  const c = loadGame('./GrimGrind.html');
   c.newGame('wand','keys',subclass);
   const G = c.__api.G;
   G.lvl = level;
@@ -15,7 +15,7 @@ function mage(subclass, level, flat=0){
 }
 
 console.log('ОБЩИЕ СНАРЯДЫ МАГА');
-{ const c=loadGame('./PolyGrind.html');
+{ const c=loadGame('./GrimGrind.html');
   const all=c.__api.SUBCLASSES.wand;
   ok('описания всех трёх подклассов сообщают общий бонус',
      all.length===3 && all.every(s=>s.desc.includes('+1 снаряд каждые 15 уровней'))); }
@@ -32,7 +32,7 @@ for (const [id,nm] of [['destroyer','Разрушитель'],['multiplier','М�
 { const m=mage('multiplier',20).D.projN;
   ok('Мультипликатор больше не получает личный снаряд от уровня', m===2,
      m + ' снаряда на 20-м уровне'); }
-{ const desc=loadGame('./PolyGrind.html').__api.SUBCLASSES.wand.find(s=>s.id==='multiplier').desc;
+{ const desc=loadGame('./GrimGrind.html').__api.SUBCLASSES.wand.find(s=>s.id==='multiplier').desc;
   ok('описание Мультипликации фиксирует задержку, шанс, урон и радиус',
      desc.includes('35% шанс') && desc.includes('через 0,1 сек') && desc.includes('−80% урона') && desc.includes('радиусом взрыва 60%')); }
 { const o=mage('multiplier',15), p=o.G.player; p.aim=0; o.G.shots.length=0;
@@ -66,7 +66,7 @@ for (const [id,nm] of [['destroyer','Разрушитель'],['multiplier','М�
      !miss.G.shots.some(s=>s.miniOrb) && !other.G.shots.some(s=>s.miniOrb) &&
      !miss.G.delayedShots.length && !other.G.delayedShots.length); }
 { const impact=miniOrb=>{
-    const c=loadGame('./PolyGrind.html',{random:()=>0.05}); c.newGame('wand','keys','multiplier');
+    const c=loadGame('./GrimGrind.html',{random:()=>0.05}); c.newGame('wand','keys','multiplier');
     const G=c.__api.G, D=c.__api.D, p=G.player;
     G.enemies.length=0; G.spawnQueue=0; G.packs.length=0; G.shots.length=0; p.aim=0;
     c.attack();
@@ -83,19 +83,19 @@ for (const [id,nm] of [['destroyer','Разрушитель'],['multiplier','М�
   ok('мини-сфера реально наносит 20% урона и взрывается на 60% радиуса',
      Math.abs(mini.damage/normal.damage-0.20)<1e-6 && Math.abs(mini.radius/normal.radius-0.60)<1e-9,
      (mini.damage/normal.damage*100).toFixed(0)+'% урона · '+(mini.radius/normal.radius*100).toFixed(0)+'% радиуса'); }
-{ const c=loadGame('./PolyGrind.html');
+{ const c=loadGame('./GrimGrind.html');
   const mod=c.__api.MODS.find(m=>m.id==='shape.proj_count');
   ok('карточка дополнительных снарядов исключена из пула Мага',
      JSON.stringify(mod.wep)==='["proj"]' && mod.noMin===true,
      'доступ: ' + JSON.stringify(mod.wep)); }
-{ const c=loadGame('./PolyGrind.html');
+{ const c=loadGame('./GrimGrind.html');
   const mod=c.__api.MODS.find(m=>m.id==='shape.proj_size');
   ok('карточка размера снарядов полностью удалена из каталога', !mod); }
 { let seed=0x51a2b3c4;
   const random=()=>((seed=(Math.imul(seed,1664525)+1013904223)>>>0)/4294967296);
   const seenSize={}, seenIllusion={};
   for (const cls of ['wand','bow','necro','blade']){
-    const c=loadGame('./PolyGrind.html',{random}); c.newGame(cls,'keys',null);
+    const c=loadGame('./GrimGrind.html',{random}); c.newGame(cls,'keys',null);
     seenSize[cls]=false; seenIllusion[cls]=false;
     for(let i=0;i<300;i++) for (const m of c.rollCards()){
       if(m.id==='shape.proj_size') seenSize[cls]=true;
@@ -105,14 +105,14 @@ for (const [id,nm] of [['destroyer','Разрушитель'],['multiplier','М�
   ok('в раздачах размер исчез, а Арканная иллюзия появляется только у Мага',
      !Object.values(seenSize).some(Boolean) && seenIllusion.wand && !seenIllusion.bow && !seenIllusion.necro && !seenIllusion.blade,
      JSON.stringify({size:seenSize,illusion:seenIllusion})); }
-{ const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys','hunter');
+{ const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys','hunter');
   c.__api.G.lvl=20; c.recalc();
   ok('общий бонус не распространяется на другие классы', c.__api.D.projN===1,
      c.__api.D.projN + ' снаряд у Лучника без карточек'); }
 
 console.log('НОВЫЕ ВЕТКИ МАГА');
 function arena(random=()=>0.99){
-  const c=loadGame('./PolyGrind.html',{random}); c.newGame('wand','keys','elementalist');
+  const c=loadGame('./GrimGrind.html',{random}); c.newGame('wand','keys','elementalist');
   const G=c.__api.G;
   G.enemies.length=0; G.spawnQueue=0; G.packs.length=0; G.shots.length=0; G.fx.length=0; G.arcaneTraces.length=0; G.arcaneMines.length=0; G.repeatDetonations.length=0;
   return {c,G,get D(){return c.__api.D}};
@@ -125,7 +125,7 @@ function orbAt(o,x=0,y=0,travel=0,attackMul=1){
   return {x,y,travel,attackMul,aoeScale:1,orb:true,hitSet:[]};
 }
 
-{ const c=loadGame('./PolyGrind.html'), ids=['mage.blast_heart','mage.elemental_explosion','mage.residual_arcana','mage.overheated_orb','mage.remote_detonation','mage.arcane_mine','mage.repeat_detonation'];
+{ const c=loadGame('./GrimGrind.html'), ids=['mage.blast_heart','mage.elemental_explosion','mage.residual_arcana','mage.overheated_orb','mage.remote_detonation','mage.arcane_mine','mage.repeat_detonation'];
   const mods=ids.map(id=>c.__api.MODS.find(m=>m.id===id));
   ok('каталог содержит все семь новых карточек Мага', mods.every(Boolean) && mods.every(m=>m.wep[0]==='orb' && m.noMin));
   ok('Мина и Повторная детонация — синие одноразовые, Элементальный взрыв — красный',
@@ -194,7 +194,7 @@ function orbAt(o,x=0,y=0,travel=0,attackMul=1){
      mini && mini.travel.toFixed(1)); }
 
 console.log('АРКАННАЯ МИНА');
-{ const mageOnly=arena(), bow=loadGame('./PolyGrind.html');
+{ const mageOnly=arena(), bow=loadGame('./GrimGrind.html');
   add(mageOnly,'arcaneMine','flag',1); bow.newGame('bow','keys','hunter'); bow.__api.G.bag.add('arcaneMine','flag',1); bow.recalc();
   ok('Арканная мина активируется только со сферой Мага', mageOnly.D.arcaneMine===true && bow.__api.D.arcaneMine===false); }
 { const o=arena(); add(o,'arcaneMine','flag',1); o.G.player.aim=0; o.c.attack();
@@ -242,7 +242,7 @@ console.log('АРКАННАЯ МИНА');
      '20% урона · 60% радиуса'); }
 
 console.log('ПОВТОРНАЯ ДЕТОНАЦИЯ');
-{ const mageOnly=arena(), plain=arena(), bow=loadGame('./PolyGrind.html');
+{ const mageOnly=arena(), plain=arena(), bow=loadGame('./GrimGrind.html');
   add(mageOnly,'repeatDetonation','flag',1); bow.newGame('bow','keys','hunter'); bow.__api.G.bag.add('repeatDetonation','flag',1); bow.recalc();
   plain.c.explodePlayerOrb(orbAt(plain));
   ok('Повторная детонация активируется только картой и сферой Мага',
@@ -278,7 +278,7 @@ console.log('ПОВТОРНАЯ ДЕТОНАЦИЯ');
   o.c.tickRepeatDetonations(0.25); o.c.tickRepeatDetonations(1);
   ok('новая цель не получает чужой повторный урон, а третий взрыв не создаётся',
      newcomer.hp===hp && o.G.repeatDetonations.length===0); }
-{ const html=fs.readFileSync('./PolyGrind.html','utf8');
+{ const html=fs.readFileSync('./GrimGrind.html','utf8');
   const embedded=key=>embeddedImage(html,key).buffer;
   const mine=embedded('ARCANE_MINE_SPRITE_DATA'), blast=embedded('ARCANE_MINE_EXPLOSION_DATA');
   // Проверяем самодостаточный runtime, а не локальные outputs: они намеренно игнорируются Git.

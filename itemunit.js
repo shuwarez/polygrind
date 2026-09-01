@@ -2,7 +2,7 @@
 const {loadGame} = require('./sim');
 const DT = 1/60;
 function mk(ids, floor){
-  const c = loadGame('./PolyGrind.html');
+  const c = loadGame('./GrimGrind.html');
   c.newGame('bow','keys');
   const G = c.__api.G;
   for (const i of [].concat(ids)) G.amu[i] = true;

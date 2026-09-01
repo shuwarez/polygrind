@@ -3,7 +3,7 @@ const {loadGame} = require('./sim');
 const DT = 1/60;
 const ok = (nm, cond, det) => console.log((cond?'  \u2713 ':'  \u2717 ') + nm.padEnd(44) + (det||''));
 function mk(amus, mods){
-  const c = loadGame('./PolyGrind.html');
+  const c = loadGame('./GrimGrind.html');
   c.newGame('necro','keys');
   const G = c.__api.G;
   G.lvl = 25;
@@ -211,7 +211,7 @@ console.log('КОНТРОЛЬ И УТИЛИТА');
      Math.round(a.D.pickup) + ' \u2192 ' + Math.round(b.D.pickup)); }
 { const a = mk([]), b = mk('warskel');
   ok('боевые скелеты: +25% темпа', b.D.skelAspd === 1.25 && a.D.skelAspd === 1); }
-{ const c = loadGame('./PolyGrind.html'); c.newGame('bow','keys');
+{ const c = loadGame('./GrimGrind.html'); c.newGame('bow','keys');
   const G = c.__api.G;
   let seen = false;
   for (let i=0;i<20000 && !seen;i++){ G.orbs.length = 0; G.amu = {}; c.dropItem({x:0,y:0});
