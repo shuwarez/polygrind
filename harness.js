@@ -8,6 +8,7 @@ function loadGame(file, options={}){
   // let/const в vm НЕ попадают в глобальный объект — пробрасываем мостом.
   const js = m[1] + '\n;this.__api = { get G(){return G}, get D(){return D}, ' +
              'get MODS(){return MODS}, get BOOKS(){return BOOKS}, get AMULETS(){return AMULETS}, ' +
+             'get TOTEMS(){return TOTEMS}, get BOSS_TYPES(){return BOSS_TYPES}, get BOSS_KEYS(){return BOSS_KEYS}, ' +
              'get WEAPONS(){return WEAPONS}, get SUBCLASSES(){return SUBCLASSES}, get ETYPES(){return ETYPES}, ' +
              'get STORE(){return Store}, get PACKS(){return PACK_AFFIXES}, ' +
              'get SFX_SETTINGS(){return {volume:SFX_VOLUME,muted:SFX_MUTED,audible:sfxAudible()}}, ' +
@@ -33,9 +34,16 @@ function loadGame(file, options={}){
              'killEnemy:(e,i)=>killEnemy(e,i), buildFloor:()=>buildFloor() };\n';
 
   const noop = () => {};
+  const gradient = () => ({addColorStop:noop});
+  const canvasContext = () => new Proxy({
+    createLinearGradient:gradient, createRadialGradient:gradient, createConicGradient:gradient,
+    createPattern:()=>({setTransform:noop}), measureText:text=>({width:String(text||'').length*8}),
+    getImageData:(x=0,y=0,w=1,h=1)=>({data:new Uint8ClampedArray(Math.max(0,w*h*4)),width:w,height:h}),
+    isPointInPath:()=>false, isPointInStroke:()=>false,
+  }, {get:(t,k)=> k in t ? t[k] : noop, set:(t,k,v)=>{t[k]=v;return true;}});
   const el = new Proxy({style:{}, dataset:{}, innerHTML:'', textContent:'',
     clientWidth:1280, clientHeight:720, width:1280, height:720,
-    getContext:()=>new Proxy({}, {get:()=>noop, set:()=>true}),
+    getContext:canvasContext,
     addEventListener:noop, getBoundingClientRect:()=>({left:0,top:0}),
     classList:{add:noop, remove:noop, toggle:noop}},
     {get:(t,k)=> k in t ? t[k] : noop, set:(t,k,v)=>{ t[k]=v; return true; }});

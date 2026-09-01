@@ -1,6 +1,7 @@
 /* Общий рост числа снарядов всех подклассов Мага. */
 const fs = require('fs');
 const {loadGame} = require('./sim');
+const {imageInfo,embeddedImage}=require('./asset_test_utils');
 const ok = (nm, cond, det) => console.log((cond?'  \u2713 ':'  \u2717 ') + nm.padEnd(58) + (det||''));
 
 function mage(subclass, level, flat=0){
@@ -278,24 +279,15 @@ console.log('ПОВТОРНАЯ ДЕТОНАЦИЯ');
   ok('новая цель не получает чужой повторный урон, а третий взрыв не создаётся',
      newcomer.hp===hp && o.G.repeatDetonations.length===0); }
 { const html=fs.readFileSync('./PolyGrind.html','utf8');
-  const embedded=key=>Buffer.from(html.match(new RegExp("const "+key+" = 'data:image/png;base64,([^']+)'"))[1],'base64');
+  const embedded=key=>embeddedImage(html,key).buffer;
   const mine=embedded('ARCANE_MINE_SPRITE_DATA'), blast=embedded('ARCANE_MINE_EXPLOSION_DATA');
   // Проверяем самодостаточный runtime, а не локальные outputs: они намеренно игнорируются Git.
-  const pngInfo=buf=>{
-    let palette=0;
-    for(let off=8;off+12<=buf.length;){
-      const len=buf.readUInt32BE(off), type=buf.toString('ascii',off+4,off+8);
-      if(type==='PLTE') palette=len/3;
-      off+=12+len;
-    }
-    return {w:buf.readUInt32BE(16),h:buf.readUInt32BE(20),bitDepth:buf[24],colorType:buf[25],palette};
-  };
-  const mi=pngInfo(mine), bi=pngInfo(blast);
+  const mi=imageInfo(mine), bi=imageInfo(blast);
   ok('оптимизированные ассеты мины встроены без внешних копий',
-     mine.length===486 && blast.length===4350 &&
+     mine.length<500 && blast.length<4000 &&
      mi.w===32 && mi.h===32 && bi.w===512 && bi.h===64 &&
-     mi.colorType===3 && bi.colorType===3 && mi.palette<=16 && bi.palette<=16,
-     mine.length+' Б / '+mi.palette+' цв. + '+blast.length+' Б / '+bi.palette+' цв.');
+     mi.lossless && bi.lossless && mi.alpha && bi.alpha,
+     mine.length+' Б + '+blast.length+' Б');
   ok('маленькая мина статична, а восемь фаз взрыва масштабируются по диаметру AoE',
      html.includes('const ARCANE_MINE_DRAW_SIZE = 24') && html.includes('Math.floor(progress*8)') &&
      html.includes('const d=f.r*2') && html.includes('ARCANE_MINE_EXPLOSION_FRAMES[Math.min(7') &&

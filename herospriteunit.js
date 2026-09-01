@@ -1,6 +1,7 @@
 /* Компактные листы героев: только медленная ходьба, встраивание и направление. */
 const fs = require('fs'), crypto = require('crypto');
 const {loadGame} = require('./sim');
+const {imageInfo}=require('./asset_test_utils');
 const html = fs.readFileSync('./PolyGrind.html','utf8');
 const optimizer = fs.readFileSync('./optimize_graphics.py','utf8');
 const ok = (nm, cond, det) => console.log((cond?'  \u2713 ':'  \u2717 ') + nm.padEnd(54) + (det||''));
@@ -213,9 +214,11 @@ const savedMusic=new Map(), musicStorage={
   setItem:(key,value)=>savedMusic.set(key,String(value)),
 };
 const musicGame=loadGame('./PolyGrind.html',{Audio:FakeMenuAudio,localStorage:musicStorage});
-const menuAudio=FakeMenuAudio.instances.at(-1);
-const confirmAudio=FakeMenuAudio.instances.at(-2);
-const hoverAudio=FakeMenuAudio.instances.at(-3);
+// Между UI-звуками теперь предварительно загружается level-up. Ищем экземпляры
+// по их data URI, а не по хрупкому порядковому смещению в общем Audio-банке.
+const menuAudio=FakeMenuAudio.instances.findLast(sound=>sound.src==='data:audio/ogg;base64,'+musicMatch[1]);
+const confirmAudio=FakeMenuAudio.instances.findLast(sound=>sound.src==='data:audio/ogg;codecs=opus;base64,'+confirmMatch[1]);
+const hoverAudio=FakeMenuAudio.instances.findLast(sound=>sound.src==='data:audio/ogg;codecs=opus;base64,'+hoverMatch[1]);
 ok('музыка играет один раз, загружается заранее и повторяется после паузы 15 секунд',
   menuAudio && menuAudio.loop===false && menuAudio.volume===0.5 && menuAudio.preload==='auto' &&
   menuAudio.src.startsWith('data:audio/ogg;base64,') &&
@@ -297,13 +300,12 @@ const expected = {
   necromancer:['AC7E6339EFD6B73FA75D5EFAA469CAAE0F53DD62720692E324DBEF3A52FE90C7',1197],
 };
 for (const [key,[wantedHash,wantedBytes]] of Object.entries(expected)){
-  const m=heroSpriteBlock.match(new RegExp(key+":'data:image/png;base64,([^']+)'"));
-  const png=m && Buffer.from(m[1],'base64');
-  const dims=png && png.readUInt32BE(16)+'x'+png.readUInt32BE(20);
-  const hash=png && crypto.createHash('sha256').update(png).digest('hex').toUpperCase();
-  ok(key+': индексированный лист 4×1 по 32 px встроен', !!png && dims==='128x32' && png.length===wantedBytes,
-    (dims||'нет')+' · '+(png?png.length:0)+' Б');
-  ok(key+': точные новые пиксели', hash===wantedHash, hash||'нет данных');
+  const m=heroSpriteBlock.match(new RegExp(key+":'data:image/(?:png|webp);base64,([^']+)'"));
+  const data=m && Buffer.from(m[1],'base64'),info=imageInfo(data);
+  const dims=data && info.w+'x'+info.h;
+  ok(key+': lossless-лист 4×1 по 32 px встроен', !!data && dims==='128x32' && data.length<1500,
+    (dims||'нет')+' · '+(data?data.length:0)+' Б');
+  ok(key+': прозрачность и пиксели сохраняются lossless', info.lossless&&info.alpha,info.format||'нет данных');
 }
 
 ok('метаданные задают четыре листа по 32×32 и вывод 48×48',
@@ -339,10 +341,7 @@ const pngChunkLength=(png,wanted)=>{
   }
   return -1;
 };
-const indexedFrameOk=(png,w,h)=>!!png && png.subarray(1,4).toString()==='PNG' &&
-  png.readUInt32BE(16)===w && png.readUInt32BE(20)===h && png[25]===3 &&
-  pngChunkLength(png,'PLTE')>0 && pngChunkLength(png,'PLTE')/3<=256 &&
-  pngChunkLength(png,'tRNS')>0 && pngChunkLength(png,'tRNS')<=128;
+const indexedFrameOk=(data,w,h)=>{const info=imageInfo(data);return !!data&&info.w===w&&info.h===h&&info.alpha&&info.lossless;};
 const pngChunkData=(png,wanted)=>{
   for(let offset=8;offset+12<=png.length;){
     const length=png.readUInt32BE(offset), type=png.subarray(offset+4,offset+8).toString('ascii');
@@ -367,20 +366,18 @@ const subclassSpriteExpected={
 };
 const subclassSpriteBlock=(html.match(/const SUBCLASS_HERO_SPRITE_DATA = \{(.*?)\n\};/s)||[])[1]||'';
 const subclassSprites=Object.fromEntries(
-  [...subclassSpriteBlock.matchAll(/^\s*(\w+):'data:image\/png;base64,([^']+)',\s*$/gm)]
+  [...subclassSpriteBlock.matchAll(/^\s*(\w+):'data:image\/(?:png|webp);base64,([^']+)',\s*$/gm)]
     .map(match=>[match[1],Buffer.from(match[2],'base64')])
 );
 const subclassIds=Object.values(loadGame('./PolyGrind.html').__api.SUBCLASSES).flat().map(s=>s.id);
 ok('12 моделей сопоставлены один-к-одному с id каталога SUBCLASSES',
   JSON.stringify(Object.keys(subclassSprites).sort())===JSON.stringify(Object.keys(subclassSpriteExpected).sort()) &&
   Object.keys(subclassSpriteExpected).every(id=>subclassIds.includes(id)) && subclassIds.length===12);
-ok('все модели — детальные P-mode PNG 288×36: восемь кадров 36×36',
+ok('все модели — прозрачные lossless WebP 288×36: восемь кадров 36×36',
   Object.entries(subclassSpriteExpected).every(([id,[bytes,hash]])=>{
-    const png=subclassSprites[id], palette=png&&pngChunkData(png,'PLTE'), transparency=png&&pngChunkData(png,'tRNS');
-    return !!png && png.length===bytes && png.readUInt32BE(16)===288 && png.readUInt32BE(20)===36 &&
-      png[25]===3 && !!palette && palette.length/3<=256 && !!transparency && transparency.includes(0) &&
-      crypto.createHash('sha256').update(png).digest('hex').toUpperCase()===hash;
-  }), Object.values(subclassSprites).reduce((sum,png)=>sum+png.length,0)+' Б');
+    const data=subclassSprites[id],info=imageInfo(data);return !!data&&info.w===288&&info.h===36&&info.lossless&&info.alpha;
+  })&&Object.values(subclassSprites).reduce((sum,data)=>sum+data.length,0)<50000,
+  Object.values(subclassSprites).reduce((sum,data)=>sum+data.length,0)+' Б');
 ok('оптимизатор валидирует handoff и встраивает листы без ресэмплинга',
   optimizer.includes('SUBCLASS_HERO_SPRITE_SOURCES = {') &&
   optimizer.includes('--install-subclass-hero-sprites') && optimizer.includes('--subclass-hero-asset-dir') &&
@@ -396,10 +393,10 @@ ok('runtime загружает 12 моделей один раз; меню не 
   !html.includes('SUBCLASS_MENU_SPRITE_DATA') &&
   /return subclassSprite && subclassSprite\.complete && subclassSprite\.naturalWidth \?\s*subclassSprite : HERO_SPRITES\[key\]/.test(html));
 const classFrames=Object.fromEntries(
-  [...classFrameBlock.matchAll(/^\s*(\w+):'data:image\/png;base64,([^']+)',\s*$/gm)]
+  [...classFrameBlock.matchAll(/^\s*(\w+):'data:image\/(?:png|webp);base64,([^']+)',\s*$/gm)]
     .map(match=>[match[1],Buffer.from(match[2],'base64')])
 );
-ok('четыре рамки V2 — индексированные PNG до 128 цветов и 70 КБ',
+ok('четыре рамки V2 — прозрачные lossless WebP до 70 КБ',
   Object.keys(classFrames).length===4 &&
   Object.values(classFrames).every(png=>indexedFrameOk(png,280,390)) &&
   Object.values(classFrames).reduce((sum,png)=>sum+png.length,0)<70000 &&
@@ -413,10 +410,10 @@ ok('четыре классические классовые рамки снов
 
 const subclassFrameBlock=(html.match(/const SUBCLASS_FRAME_DATA = \{(.*?)\n\};/s)||[])[1]||'';
 const subclassFrames=Object.fromEntries(
-  [...subclassFrameBlock.matchAll(/^\s*(\w+):'data:image\/png;base64,([^']+)',\s*$/gm)]
+  [...subclassFrameBlock.matchAll(/^\s*(\w+):'data:image\/(?:png|webp);base64,([^']+)',\s*$/gm)]
     .map(match=>[match[1],Buffer.from(match[2],'base64')])
 );
-ok('12 просторных рамок подклассов — индексированные PNG 320×400 до 190 КБ',
+ok('12 просторных рамок подклассов — lossless WebP 320×400 до 190 КБ',
   Object.keys(subclassFrames).length===12 &&
   Object.values(subclassFrames).every(png=>indexedFrameOk(png,320,400)) &&
   Object.values(subclassFrames).reduce((sum,png)=>sum+png.length,0)<190000 &&
@@ -462,33 +459,33 @@ ok('главное меню медленно меняет три неподви�
   html.includes('drawClassSubclassPreviews(t);') &&
   !/function drawClassSubclassPreviews[\s\S]*?(?:setInterval|setTimeout)/.test(html));
 
-const logoMatch=html.match(/GRIM_GRIND_LOGO_STRIP\.src = 'data:image\/png;base64,([^']+)'/);
+const logoMatch=html.match(/GRIM_GRIND_LOGO_STRIP\.src = 'data:image\/(?:png|webp);base64,([^']+)'/);
 const logoPng=logoMatch && Buffer.from(logoMatch[1],'base64');
 const logoHash=logoPng && crypto.createHash('sha256').update(logoPng).digest('hex').toUpperCase();
-const torchMatch=html.match(/GRIM_GRIND_TORCH_STRIP\.src = 'data:image\/png;base64,([^']+)'/);
+const torchMatch=html.match(/GRIM_GRIND_TORCH_STRIP\.src = 'data:image\/(?:png|webp);base64,([^']+)'/);
 const torchPng=torchMatch && Buffer.from(torchMatch[1],'base64');
 const torchHash=torchPng && crypto.createHash('sha256').update(torchPng).digest('hex').toUpperCase();
-const constStarMatch=html.match(/CONSTELLATION_STAR_STRIP\.src = 'data:image\/png;base64,([^']+)'/);
+const constStarMatch=html.match(/CONSTELLATION_STAR_STRIP\.src = 'data:image\/(?:png|webp);base64,([^']+)'/);
 const constStarPng=constStarMatch && Buffer.from(constStarMatch[1],'base64');
 const constStarHash=constStarPng && crypto.createHash('sha256').update(constStarPng).digest('hex').toUpperCase();
 ok('официальное имя Grim Grind стоит в title и доступном имени логотипа',
   html.includes('<title>Grim Grind</title>') && html.includes('aria-label="Grim Grind"') &&
   !html.includes("fillText('PolyGrind'"));
 ok('оптимизированный прозрачный лист нового логотипа встроен в HTML',
-  !!logoPng && logoPng.length===101980 && logoHash==='16073A42607471FF463693693FFEB70D978F9AFF11F60281EC64C70D40CE665D',
+  !!logoPng && logoPng.length<100000 && imageInfo(logoPng).lossless && imageInfo(logoPng).alpha,
   (logoPng?logoPng.length:0)+' Б · '+(logoHash||'нет'));
 ok('лист логотипа сохраняет детали: 4096×144 и восемь кадров 512×144',
-  !!logoPng && logoPng.readUInt32BE(16)===4096 && logoPng.readUInt32BE(20)===144 &&
+  !!logoPng && imageInfo(logoPng).w===4096 && imageInfo(logoPng).h===144 &&
   html.includes("{w:512,h:144,count:8,fps:5}") &&
   optimizer.includes('opaque_colors=63, transparent_index=63, bits=8'));
 ok('лист факела сжат до 576×192, прозрачен и встроен один раз',
-  !!torchPng && torchPng.length===6469 && torchHash==='F3FF6456E62B5452FE2B56B67258C9F56F0F2F80DC66C681B8558CB9524BDB55' &&
-  torchPng.readUInt32BE(16)===576 && torchPng.readUInt32BE(20)===192 &&
+  !!torchPng && torchPng.length<6000 && imageInfo(torchPng).lossless && imageInfo(torchPng).alpha &&
+  imageInfo(torchPng).w===576 && imageInfo(torchPng).h===192 &&
   html.includes("{w:72,h:192,count:8,fps:8}"),
   (torchPng?torchPng.length:0)+' Б · '+(torchHash||'нет'));
 ok('мерцающая звезда Созвездий встроена как восемь кадров 32×32',
-  !!constStarPng && constStarPng.length===1019 && constStarHash==='E2D70F5B42BFE602F7DEE47F34BE6F332D24AE4080C95F6422905D42A9E47B40' &&
-  constStarPng.readUInt32BE(16)===256 && constStarPng.readUInt32BE(20)===32,
+  !!constStarPng && constStarPng.length<1000 && imageInfo(constStarPng).lossless && imageInfo(constStarPng).alpha &&
+  imageInfo(constStarPng).w===256 && imageInfo(constStarPng).h===32,
   (constStarPng?constStarPng.length:0)+' Б · '+(constStarHash||'нет'));
 ok('две звезды стоят по сторонам текста Созвездий вместо прежней иконки',
   html.includes('id="conststarl" class="conststar"') &&

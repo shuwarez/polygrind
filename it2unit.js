@@ -146,7 +146,10 @@ console.log('СТИХИИ И КРИТЫ');
   o.p.stillT = 2;
   let crits = 0;
   for (let i=0;i<3000;i++){ const n0 = o.G.fx.length; o.c.damage(e, {});
-    if (o.G.fx.some(f=>f.t==='num'&&f.crit)) crits++; o.G.fx.length = 0; }
+    if (o.G.fx.some(f=>f.t==='num'&&f.crit)) crits++;
+    // Тест вручную очищает визуальную очередь, поэтому обязан синхронно
+    // освобождать новый бюджет чисел; в игре это делает updateTransientEffects().
+    o.G.fx.length = 0;o.G.transientFxCounts.num=0; }
   ok('критический прицел: +25% шанса', crits/3000 > 0.20 && crits/3000 < 0.32,
      (crits/30).toFixed(1) + '% критов'); }
 { const o = mk('critaim');

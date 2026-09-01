@@ -2,6 +2,7 @@
 const {loadGame} = require('./sim');
 const fs = require('fs');
 const crypto = require('crypto');
+const {imageInfo,embeddedObjectImage}=require('./asset_test_utils');
 const ok = (nm, cond, det) => console.log((cond?'  \u2713 ':'  \u2717 ') + nm.padEnd(50) + (det||''));
 const c = loadGame('./PolyGrind.html'), C = c.__api.CONSTELLATIONS, S = c.__api.STORE;
 const source = fs.readFileSync('./PolyGrind.html','utf8');
@@ -125,16 +126,15 @@ ok('dev-кнопка видна и отключается без активны�
   html.includes('id="constreset" disabled') && html.includes('>УБРАТЬ БОНУСЫ</button>') &&
   html.includes('Убийства сохранятся — доступные узлы можно открыть заново.'));
 
-const constellationPng = key => {
-  const m=source.match(new RegExp(key+":'data:image/png;base64,([^']+)'"));
-  const b=m ? Buffer.from(m[1],'base64') : Buffer.alloc(0);
-  return b.length>=26 ? {bytes:b.length,w:b.readUInt32BE(16),h:b.readUInt32BE(20),color:b[25]} : {bytes:0};
+const constellationImage = key => {
+  const image=embeddedObjectImage(source,'CONSTELLATION_SPRITE_DATA',key),b=image?image.buffer:Buffer.alloc(0);
+  return {bytes:b.length,...imageInfo(b)};
 };
-const elitePng=constellationPng('elite'), bossPng=constellationPng('boss');
+const elitePng=constellationImage('elite'), bossPng=constellationImage('boss');
 ok('элита и босс получили отдельные прозрачные листы 4×48',
-  elitePng.w===192 && elitePng.h===48 && bossPng.w===192 && bossPng.h===48);
-ok('листы созвездий индексированы в 16 цветов и весят меньше 6 КБ',
-  elitePng.color===3 && bossPng.color===3 && elitePng.bytes+bossPng.bytes<6000,
+  elitePng.w===192 && elitePng.h===48 && bossPng.w===192 && bossPng.h===48 && elitePng.alpha && bossPng.alpha);
+ok('листы созвездий упакованы lossless WebP и весят меньше 6 КБ',
+  elitePng.lossless && bossPng.lossless && elitePng.bytes+bossPng.bytes<6000,
   (elitePng.bytes+bossPng.bytes)+' байт');
 ok('рядовые созвездия переиспользуют игровые листы и анимируют четыре кадра',
   source.includes('const regular = ENEMY_SPRITE_META[it.id]') && source.includes('Math.floor(t*6') && source.includes('g.drawImage(sprite,frame*frameSize'));

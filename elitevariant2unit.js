@@ -1,6 +1,7 @@
 /* Вторая пачка разновидностей элиты: Призмы и Бастионы. */
 const fs=require('fs');
 const {loadGame}=require('./harness');
+const {imageInfo,embeddedImage}=require('./asset_test_utils');
 const html=fs.readFileSync('./PolyGrind.html','utf8');
 const ids=['fallenPyromancer','beholderSlave','skeletonCrossbow','forgottenGuard','abyssalExecutioner','plagueOgre'];
 const expectedBase={fallenPyromancer:'shooter',beholderSlave:'shooter',skeletonCrossbow:'shooter',
@@ -11,10 +12,8 @@ function ok(name,yes,detail=''){
   console.log((yes?'  \u2713 ':'  \u2717 ')+name.padEnd(68)+detail);
 }
 function payload(id){
-  const m=html.match(new RegExp('\\b'+id+":'data:image/png;base64,([^']+)'"));
-  return m&&Buffer.from(m[1],'base64');
+  const image=embeddedImage(html,id);return image&&image.buffer;
 }
-function pngInfo(buf){ return {w:buf.readUInt32BE(16),h:buf.readUInt32BE(20),bits:buf[24],color:buf[25]}; }
 function fresh(id){
   const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys');
   const G=c.__api.G; G.floor=5; G.enemies.length=0; G.spawnQueue=0;
@@ -28,12 +27,12 @@ ok('Призма и Бастион получают по три разновид
   /shooter:\['fallenPyromancer','beholderSlave','skeletonCrossbow'\]/.test(html)&&
   /tank:\['forgottenGuard','abyssalExecutioner','plagueOgre'\]/.test(html));
 
-const sheets=ids.map(payload),infos=sheets.map(pngInfo);
+const sheets=ids.map(payload),infos=sheets.map(imageInfo);
 ok('все шесть новых листов встроены в автономный HTML',sheets.every(Boolean));
 ok('каждый новый лист имеет четыре кадра 48×48',infos.every(x=>x.w===192&&x.h===48));
-ok('новые листы индексированы четырьмя битами',infos.every(x=>x.bits===4&&x.color===3));
-ok('каждый новый лист сохраняет прозрачный индекс',sheets.every(b=>b.includes(Buffer.from('tRNS'))));
-ok('каждый новый PNG весит меньше 3.5 КБ',sheets.every(b=>b.length<3500),sheets.map(b=>b.length).join('/')+' Б');
+ok('новые листы упакованы в lossless WebP',infos.every(x=>x.format==='webp'&&x.lossless));
+ok('каждый новый лист сохраняет прозрачность',infos.every(x=>x.alpha));
+ok('каждый новый WebP весит меньше 3.5 КБ',sheets.every(b=>b.length<3500),sheets.map(b=>b.length).join('/')+' Б');
 ok('шесть новых разновидностей используют разные растры',new Set(sheets.map(b=>b.toString('base64'))).size===6);
 ok('runtime листает четыре отдельных кадра 48 px',ids.every(id=>{
   const c=loadGame('./PolyGrind.html');

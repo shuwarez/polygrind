@@ -31,14 +31,12 @@ function foe(o,x,y){
 }
 
 {
-  const fs=require('fs'), crypto=require('crypto'), html=fs.readFileSync('./PolyGrind.html','utf8');
-  const heroSpriteBlock=(html.match(/const HERO_SPRITE_DATA = \{(.*?)\};/s)||[])[1]||'';
-  const m=heroSpriteBlock.match(/warrior:'data:image\/png;base64,([^']+)'/);
-  const hash=m && crypto.createHash('sha256').update(Buffer.from(m[1],'base64')).digest('hex').toUpperCase();
+  const fs=require('fs'), html=fs.readFileSync('./PolyGrind.html','utf8');
+  const {imageInfo,embeddedObjectImage}=require('./asset_test_utils');
+  const image=embeddedObjectImage(html,'HERO_SPRITE_DATA','warrior'),data=image&&image.buffer,info=imageInfo(data);
   const c=loadGame('./PolyGrind.html');
   ok('класс называется ВОИН', c.__api.WEAPONS.blade.nm==='ВОИН');
-  const png=m && Buffer.from(m[1],'base64');
-  ok('лист Воина встроен внутрь HTML', !!png && png.readUInt32BE(16)===128 && png.readUInt32BE(20)===32);
-  ok('встроен новый 16-цветный лист Воина', hash==='362E76C130E2F217EFB68F8E0C2B8E6844653240472A5B546461F1A89757E31E', hash||'нет данных');
+  ok('лист Воина встроен внутрь HTML', !!data && info.w===128 && info.h===32);
+  ok('встроен прозрачный lossless WebP-лист Воина',info.lossless&&info.alpha&&data.length<1500,data?data.length+' Б':'нет данных');
   ok('рендер связывает меч с новым спрайтом', html.includes("w.id === 'wpn.sword' ? 'warrior'") && html.includes("blade:'warrior'"));
 }

@@ -1,6 +1,7 @@
 /* Первая пачка разновидностей элиты: Бегуны и Ядра. */
 const fs=require('fs');
 const {loadGame}=require('./harness');
+const {imageInfo,embeddedImage}=require('./asset_test_utils');
 const html=fs.readFileSync('./PolyGrind.html','utf8');
 const ids=['frostWolf','toxicRunner','cursedRogue','skeletonWarrior','blightGrunt','boneGargoyle'];
 const expectedBase={frostWolf:'runner',toxicRunner:'runner',cursedRogue:'runner',
@@ -11,10 +12,8 @@ function ok(name,yes,detail=''){
   console.log((yes?'  \u2713 ':'  \u2717 ')+name.padEnd(66)+detail);
 }
 function payload(id){
-  const m=html.match(new RegExp('\\b'+id+":'data:image/png;base64,([^']+)'"));
-  return m&&Buffer.from(m[1],'base64');
+  const image=embeddedImage(html,id);return image&&image.buffer;
 }
-function pngInfo(buf){ return {w:buf.readUInt32BE(16),h:buf.readUInt32BE(20),bits:buf[24],color:buf[25]}; }
 function fresh(id){
   const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys');
   const G=c.__api.G; G.floor=5; G.enemies.length=0; G.spawnQueue=0;
@@ -31,12 +30,12 @@ ok('Бегун и Ядро получают по три разновидност
 ok('разновидности этого пака не назначаются Бастиону и Призме',
   ids.every(id=>new RegExp(id+":\\s*\\{base:'(?:runner|blob)'").test(html)));
 
-const sheets=ids.map(payload),infos=sheets.map(pngInfo);
+const sheets=ids.map(payload),infos=sheets.map(imageInfo);
 ok('все шесть листов встроены в автономный HTML',sheets.every(Boolean));
 ok('каждый лист имеет четыре кадра 48×48',infos.every(x=>x.w===192&&x.h===48));
-ok('листы индексированы четырьмя битами — максимум 16 цветов',infos.every(x=>x.bits===4&&x.color===3));
-ok('каждый лист сохраняет прозрачный индекс',sheets.every(b=>b.includes(Buffer.from('tRNS'))));
-ok('каждый оптимизированный PNG весит меньше 3.5 КБ',sheets.every(b=>b.length<3500),
+ok('листы упакованы в lossless WebP',infos.every(x=>x.format==='webp'&&x.lossless));
+ok('каждый лист сохраняет прозрачность',infos.every(x=>x.alpha));
+ok('каждый оптимизированный WebP весит меньше 3.5 КБ',sheets.every(b=>b.length<3500),
   sheets.map(b=>b.length).join('/')+' Б');
 ok('шесть разновидностей не дублируют один и тот же растр',new Set(sheets.map(b=>b.toString('base64'))).size===6);
 ok('runtime-метаданные листают четыре отдельных кадра 48 px',ids.every(id=>{

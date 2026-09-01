@@ -81,6 +81,18 @@ function enemy(o,x=0,y=0){const e=o.c.spawnEnemy('blob');e.x=x;e.y=y;e.hp=e.maxH
 }
 
 {
+  const o=fresh(),e=enemy(o);
+  for(let i=0;i<1400;i++)o.c.pushDamageNumber(e,1,true);
+  for(let i=0;i<700;i++)o.c.statusText(e,'TEST','#fff');
+  ok('числа урона имеют отдельный визуальный потолок 1024',o.G.fx.filter(f=>f.budgetKind==='num').length===1024);
+  ok('подписи статусов имеют отдельный визуальный потолок 512',o.G.fx.filter(f=>f.budgetKind==='status').length===512);
+  o.c.pushTimedTelegraph({shape:'circle',kind:'damage',x:0,y:0,r:80},1);
+  ok('визуальные потолки не блокируют обязательные телеграфы',o.G.fx.some(f=>f.t==='telegraph'));
+  o.c.updateTransientEffects(2);
+  ok('счётчики визуального бюджета освобождаются после истечения',o.G.transientFxCounts.num===0&&o.G.transientFxCounts.status===0);
+}
+
+{
   const {c,G}=fresh();c.pushScreenShake(0.08,2.5);c.pushScreenShake(0.15,7.5);c.pushScreenShake(0.10,3);
   const shakes=G.fx.filter(f=>f.t==='shake');
   ok('одновременные тряски объединяются в один объект',shakes.length===1);

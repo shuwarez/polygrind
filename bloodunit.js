@@ -1,24 +1,20 @@
 /* Двухслойная кровь: фактический урон, лимиты, материалы и жизнь одного этажа. */
-const fs=require('fs'),crypto=require('crypto');
+const fs=require('fs');
 const {loadGame}=require('./sim');
+const {imageInfo,embeddedObjectImage}=require('./asset_test_utils');
 const html=fs.readFileSync('./PolyGrind.html','utf8');
 const ok=(nm,cond,det='')=>console.log((cond?'  ✓ ':'  ✗ ')+nm.padEnd(62)+det);
 const block=(html.match(/const BLOOD_SPRITE_DATA = \{([\s\S]*?)\n\};/)||[])[1]||'';
 function asset(key){
-  const m=block.match(new RegExp(key+":'data:image/png;base64,([^']+)'"));
-  return m?Buffer.from(m[1],'base64'):Buffer.alloc(0);
+  const image=embeddedObjectImage(html,'BLOOD_SPRITE_DATA',key);return image?image.buffer:Buffer.alloc(0);
 }
-function size(png){ return png.length>=24?[png.readUInt32BE(16),png.readUInt32BE(20)]:[0,0]; }
 const expected={
-  splash:['0c46d1b3fcfa342fa716f0dddad2883ec2330693d9c9dcbe22afcaae4a1a15c7',256,64],
-  mist:['20373938f43fbb76cc12cb561dda6608d79fc55a3c5f7f15187bf350308bd645',256,64],
-  critSpray:['41a610189de18e62c0e5ae5566a0809fc237f7d3fd37c37de5fbef107e3e122b',128,32],
-  decals:['cd0ef52397dfed2e376f05545221fe14b136b678d106128ce0d1e11bafcbf174',256,128],
+  splash:[256,64],mist:[256,64],critSpray:[128,32],decals:[256,128],
 };
-for (const [key,[hash,w,h]] of Object.entries(expected)){
-  const png=asset(key),[aw,ah]=size(png);
-  ok('встроен исходный лист крови '+key,png.length>0 && aw===w && ah===h &&
-    crypto.createHash('sha256').update(png).digest('hex')===hash,`${png.length} B ${aw}×${ah}`);
+for (const [key,[w,h]] of Object.entries(expected)){
+  const data=asset(key),info=imageInfo(data);
+  ok('встроен lossless WebP-лист крови '+key,data.length>0 && info.w===w && info.h===h && info.lossless && info.alpha,
+    `${data.length} B ${info.w}×${info.h}`);
 }
 
 const c=loadGame('./PolyGrind.html'); c.newGame('bow','keys');

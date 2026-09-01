@@ -1,7 +1,8 @@
 /* «Первый шаг»: дорогая постоянная покупка выдаёт обычные выборы навыков
    до первого боя. Проверяем сам каталог, рост цены и число стартовых выборов. */
 const {loadGame} = require('./sim');
-const fs = require('fs'), crypto = require('crypto');
+const fs = require('fs');
+const {imageInfo,embeddedImage}=require('./asset_test_utils');
 const ok = (nm, cond, det) => console.log((cond ? '  ✓ ' : '  ✗ ') + nm.padEnd(44) + (det || ''));
 
 const c = loadGame('./PolyGrind.html');
@@ -169,9 +170,8 @@ for (const rank of [1, 5]){
 
 { const html=fs.readFileSync('./PolyGrind.html','utf8'), design=loadGame('./PolyGrind.html');
   design.shopScreen(()=>{}); const screen=design.document.getElementById('ov').innerHTML;
-  const atlasMatch=html.match(/const SHOP_ICON_ATLAS_DATA = 'data:image\/png;base64,([^']+)'/);
-  const atlas=atlasMatch&&Buffer.from(atlasMatch[1],'base64');
-  const atlasHash=atlas&&crypto.createHash('sha256').update(atlas).digest('hex').toUpperCase();
+  const atlasImage=embeddedImage(html,'SHOP_ICON_ATLAS_DATA');
+  const atlas=atlasImage&&atlasImage.buffer,atlasInfo=imageInfo(atlas);
   ok('магазин оформлен как кузнечная dark-fantasy лавка',
     screen.includes('class="shop-header"') && screen.includes('class="shop-crest"') &&
     screen.includes('class="shop-seal"') && screen.includes('ЛАВКА ВЕЧНЫХ УЛУЧШЕНИЙ') &&
@@ -184,9 +184,8 @@ for (const rank of [1, 5]){
     ['attack','health','defense','farm','qol'].every(id=>screen.includes('data-cat="'+id+'"')) &&
     (screen.match(/class="shopcat-mark"/g)||[]).length===5 &&
     html.includes('@media(max-width:650px)') && html.includes('.overlay.shop-menu'));
-  ok('сгенерированный атлас 5×4 сжат и встроен одной PNG-копией',
-    !!atlas && atlas.length===23414 && atlas.readUInt32BE(16)===240 && atlas.readUInt32BE(20)===192 &&
-    atlasHash==='B193543C091CAC74C807E232128999C916F382ED9CCBB298BE84033E7BF859F2' &&
+  ok('сгенерированный атлас 5×4 сжат и встроен одной lossless WebP-копией',
+    !!atlas && atlas.length<22000 && atlasInfo.w===240 && atlasInfo.h===192 && atlasInfo.lossless && atlasInfo.alpha &&
     (screen.match(/class="shop-icon-style"/g)||[]).length===1 && !html.includes('const SHOP_RUNES ='),
     (atlas?atlas.length:0)+' Б');
   ok('все 18 товаров и пять разделов используют предметные спрайты',

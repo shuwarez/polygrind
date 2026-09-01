@@ -1,6 +1,7 @@
 /* Десять бесшовных вариантов пола и независимый выбор на каждом buildFloor(). */
 const fs=require('fs'),crypto=require('crypto'),zlib=require('zlib');
 const {loadGame}=require('./harness');
+const {imageInfo}=require('./asset_test_utils');
 let n=0,fail=0;
 function ok(name,yes,got=''){n++;if(!yes)fail++;console.log((yes?'  \u2713 ':'  \u2717 ')+name.padEnd(72)+got);}
 
@@ -50,26 +51,28 @@ let randomCalls=0;
 const c=loadGame('./PolyGrind.html',{random:()=>{randomCalls++;return 0.25;}}),floor=c.__api.FLOOR_TEXTURES;
 const expectedNames=['slate','cracked','damp','temple','basalt','iron','ash','crystal','forge','frost'];
 const buffers=floor.data.map(uri=>Buffer.from(uri.slice(uri.indexOf(',')+1),'base64'));
-const decoded=buffers.map(decodeIndexedPng);
+const embeddedInfo=buffers.map(imageInfo);
+const files=fs.readdirSync('./floor_textures').filter(x=>x.endsWith('.png')).sort();
+const sourceBuffers=files.map(name=>fs.readFileSync('./floor_textures/'+name));
+const decoded=sourceBuffers.map(decodeIndexedPng);
 
 ok('в HTML встроено ровно десять вариантов пола',floor.data.length===10,String(floor.data.length));
 ok('пять handoff-вариантов и пять авторских имеют стабильные имена',JSON.stringify(floor.names)===JSON.stringify(expectedNames));
-ok('все десять data URI являются PNG',floor.data.every(x=>x.startsWith('data:image/png;base64,')));
+ok('все десять data URI являются WebP Q90',floor.data.every(x=>x.startsWith('data:image/webp;base64,')));
 ok('все изображения уникальны',new Set(buffers.map(x=>crypto.createHash('sha256').update(x).digest('hex'))).size===10);
-ok('каждая текстура имеет точный размер 512x512',decoded.every(x=>x.w===512&&x.h===512));
-ok('каждая текстура хранится как индексированный PNG',decoded.every(x=>x.color===3));
-ok('индексы палитры имеют глубину 8 бит',decoded.every(x=>x.depth===8));
-ok('PNG не используют interlace',decoded.every(x=>x.interlace===0));
-ok('каждый встроенный PNG меньше 220 КБ',buffers.every(x=>x.length<220*1024),String(Math.max(...buffers.map(x=>x.length))));
+ok('каждая встроенная текстура имеет точный размер 512x512',embeddedInfo.every(x=>x.w===512&&x.h===512));
+ok('встроенные текстуры используют сжатый lossy WebP',embeddedInfo.every(x=>x.format==='webp'&&!x.lossless));
+ok('рабочие исходники сохраняют индексированную палитру',decoded.every(x=>x.color===3&&x.depth===8));
+ok('рабочие PNG не используют interlace',decoded.every(x=>x.interlace===0));
+ok('каждый встроенный WebP меньше 80 КБ',buffers.every(x=>x.length<80*1024),String(Math.max(...buffers.map(x=>x.length))));
 const lumas=decoded.map(luma);
 ok('яркость десяти полов выровнена',Math.min(...lumas)>40&&Math.max(...lumas)<43,lumas.map(x=>x.toFixed(1)).join(','));
 ok('левый и правый края всех тайлов совпадают',decoded.every(x=>x.rows.every(row=>row[0]===row[x.w-1])));
 ok('верхний и нижний края всех тайлов совпадают',decoded.every(x=>x.rows[0].equals(x.rows[x.h-1])));
 ok('общая проверка шва даёт нулевую ошибку',decoded.every(x=>edgeError(x)===0));
 
-const files=fs.readdirSync('./floor_textures').filter(x=>x.endsWith('.png')).sort();
 ok('в floor_textures сохранены все десять рабочих PNG',files.length===10,String(files.length));
-ok('рабочие PNG побайтно совпадают со встроенными data URI',files.every((name,i)=>fs.readFileSync('./floor_textures/'+name).equals(buffers[i])));
+ok('WebP Q90 заметно легче рабочих PNG',buffers.reduce((a,b)=>a+b.length,0)<sourceBuffers.reduce((a,b)=>a+b.length,0)*0.25);
 
 const before=randomCalls;
 for(let i=0;i<10;i++){c.__api.selectFloorTexture(i);if(c.__api.FLOOR_TEXTURES.index!==i)fail++;}
