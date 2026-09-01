@@ -29,6 +29,15 @@ for (const [id,nm] of [['destroyer','Разрушитель'],['multiplier','М�
 { const d=mage('destroyer',30).D.projN, e=mage('elementalist',30).D.projN;
   ok('на 30-м Разрушитель и Элементалист получают общие +2', d===3 && e===3,
      d + ' / ' + e + ' снаряда'); }
+{ const o=mage('destroyer',50); o.G.bag.add('aoeR','inc',100); o.c.recalc();
+  ok('радиус Разрушителя складывается с обычными процентами радиуса',
+    Math.abs(o.D.aoeR-2.50)<1e-9,'×'+o.D.aoeR.toFixed(2)); }
+{ const o=mage('elementalist',10);
+  for(const stat of ['dFire','dCold','dLit','dPoi'])o.G.bag.add(stat,'flat',100);
+  o.c.recalc();
+  ok('Элементалист получает +3% к четырём стихиям за уровень',
+    ['fire','cold','lit','poi'].every(k=>Math.abs(o.D.elem[k]-130)<1e-9),
+    Object.values(o.D.elem).map(x=>x.toFixed(0)).join('/')); }
 { const m=mage('multiplier',20).D.projN;
   ok('Мультипликатор больше не получает личный снаряд от уровня', m===2,
      m + ' снаряда на 20-м уровне'); }

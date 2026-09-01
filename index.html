@@ -1277,7 +1277,7 @@ const EN_UI_PAIRS = [
 
   /* Типы карточек и подсказки */
   ["к урону плюсом", "added as flat damage"], ["суммируется в процентах", "additive percentage"],
-  ["отдельный множитель", "separate multiplier"], ["шанс", "chance"], ["свойство", "property"],
+  ["общий more-множитель", "shared more multiplier"], ["шанс", "chance"], ["свойство", "property"],
   ["В этой карточке:", "This card grants:"], ["сейчас:", "current:"], ["ДЕЙСТВУЕТ И НА СВИТУ", "ALSO AFFECTS MINIONS"],
   ["ПЕРЕБРОСИТЬ", "REROLL"], ["ПРОБЕЛ", "SPACE"], ["ПОДРОБНЫЕ ПОДСКАЗКИ: ВКЛ", "DETAILED TOOLTIPS: ON"],
   ["ПОДРОБНЫЕ ПОДСКАЗКИ: ВЫКЛ", "DETAILED TOOLTIPS: OFF"],
@@ -1320,7 +1320,7 @@ const EN_UI_PAIRS = [
   ["Вихрь когтей", "Claw Whirlwind"], ["каждый 10-й удар · 20% по радиусу", "every 10th hit · 20% area damage"],
   ["Кровавая баня", "Bloodbath"], ["10% ударов свиты", "10% of minion hits"], ["Кипящая кровь", "Boiling Blood"],
   ["5% на лужу радиусом", "5% chance for a pool with radius"], ["5% текущего здоровья в секунду", "5% current health per second"],
-  ["Кислота веномансера", "Venomancer Acid"], ["3 сек · 15% текущего здоровья/сек", "3 sec · 15% current health/sec"],
+  ["Кислота веномансера", "Venomancer Acid"], ["2 сек · 5% текущего здоровья/сек", "2 sec · 5% current health/sec"],
   ["Трупов на земле", "Corpses on the Ground"], ["ТОТЕМЫ", "TOTEMS"], ["следующий ранг", "next rank"], ["максимум", "maximum"],
   ["ПРЕДМЕТЫ:", "ITEMS:"], ["НАЙДЕННЫЕ КНИГИ", "BOOKS FOUND"], ["срабатывает", "procs at"],
   ["ВЗЯТО МОДИФИКАТОРОВ:", "MODIFIERS TAKEN:"], ["Пока ничего не найдено.", "Nothing found yet."],
@@ -1386,7 +1386,7 @@ const EN_UI_PAIRS = [
   ["ДОСТУПНО ОТКРЫТИЙ:", "UNLOCKS AVAILABLE:"], ["Каждое повышение уровня — выбор из", "Each level-up offers a choice of"],
   ["ДОСТУПНО:", "AVAILABLE TO:"],
   ["четырёх", "four"], ["трёх", "three"], ["модификаторов реального каталога.", "modifiers from the actual catalog."],
-  ["flat складывается · inc суммируется в один процент · more множится отдельно.", "flat values add together · inc values combine into one percentage · more multipliers multiply separately."],
+  ["flat складывается · inc суммируется в один процент · more складывается в отдельную общую корзину.", "flat values add together · inc values combine into one percentage · more bonuses add within a separate shared bucket."],
   ["выберите подкласс · его бонусы растут с каждым уровнем", "choose a subclass · its bonuses grow with every level"],
   ["подкласс", "subclass"], ["НАЗАД К ВЫБОРУ КЛАССА", "BACK TO CLASS SELECTION"],
   ["КЛАВИАТУРА", "KEYBOARD"], ["Движение на WASD или стрелках. Точный контроль остановки — удобно для билдов на стрельбу с места.", "Move with WASD or the arrow keys. Precise stopping control is ideal for stationary-ranged builds."],
@@ -1427,7 +1427,7 @@ const EN_TEXT = Object.freeze(Object.fromEntries([
   ["Случайно −5…−15% входящего урона от элитных врагов и боссов за выбор; суммируется до −25%.", "Grants 5–15% less incoming damage from elites and bosses per pick; stacks up to 25%."],
   ["+N ко всему урону", "+N to All Damage"], ["+% ко всему урону", "+% to All Damage"],
   ["Множитель урона", "Damage Multiplier"],
-  ["самый ценный тип — множится, а не складывается", "the most valuable type: multiplicative instead of additive"],
+  ["бонусы more складываются в общей корзине, которая применяется один раз после обычных процентов", "more bonuses add in a shared bucket that is applied once after regular percentages"],
   ["Урон по площади", "Area Damage"], ["Урон снарядов", "Projectile Damage"],
   ["За выбор даёт целые +7–13%; суммируется без потолка.", "Each pick grants an integer +7–13%; stacks without a cap."],
   ["Только для Лучника. За выбор даёт целые +5–10%; суммируется без потолка.", "Archer only. Each pick grants an integer +5–10%; stacks without a cap."],
@@ -1486,10 +1486,10 @@ const EN_TEXT = Object.freeze(Object.fromEntries([
   ["Шанс наложить: Поджог", "Chance to Ignite"], ["поджог наносит 20% полного удара в секунду в течение 3 секунд", "Ignite deals 20% of the full hit per second for 3 seconds"],
   ["ИНФЕРНО", "INFERNO"], ["горящие враги поджигают всех вокруг себя на 3 секунды — пожар идёт по толпе сам", "burning enemies ignite everything around them for 3 seconds, letting the fire spread through the crowd"],
   ["+N к урону: Холод", "+N Cold Damage"], ["+% к урону: Холод", "+% Cold Damage"],
-  ["Шанс наложить: Охлаждение", "Chance to Chill"], ["на 0,5 сек: −15% скорости, +10% входящего урона и дополнительный удар на 10%; соседи замедляются на 5%", "for 0.5 sec: −15% speed, +10% damage taken, and an extra hit for 10%; nearby enemies are slowed by 5%"],
-  ["ЗАМОРОЗКА", "FREEZE"], ["каждое охлаждение имеет 1% шанс полностью остановить цель на 1 секунду; замороженная цель получает ещё +10% урона", "each Chill has a 1% chance to stop the target completely for 1 second; a frozen target takes an additional 10% damage"],
+  ["Шанс наложить: Охлаждение", "Chance to Chill"], ["на 0,5 сек: −15% скорости, +10% в общую корзину входящего урона и дополнительный удар на 10%; соседи замедляются на 5%", "for 0.5 sec: −15% speed, +10% to the shared damage-taken bucket, and an extra hit for 10%; nearby enemies are slowed by 5%"],
+  ["ЗАМОРОЗКА", "FREEZE"], ["каждое охлаждение имеет 1% шанс полностью остановить цель на 1 секунду; заморозка добавляет +10% в общую корзину входящего урона", "each Chill has a 1% chance to stop the target completely for 1 second; Freeze adds +10% to the shared damage-taken bucket"],
   ["+N к урону: Молния", "+N Lightning Damage"], ["широкий разброс", "wide damage range"], ["+% к урону: Молния", "+% Lightning Damage"],
-  ["Шанс разряда молнии", "Lightning Discharge Chance"], ["разряд бьёт до 5 соседей на 15% удара, а Шок на 1 секунду даёт цели +10% входящего урона", "the discharge strikes up to 5 nearby enemies for 15% of the hit, while Shock makes the target take 10% more damage for 1 second"],
+  ["Шанс разряда молнии", "Lightning Discharge Chance"], ["разряд бьёт до 5 соседей на 15% удара, а Шок на 1 секунду добавляет +10% в общую корзину входящего урона", "the discharge strikes up to 5 nearby enemies for 15% of the hit, while Shock adds +10% to the shared damage-taken bucket for 1 second"],
   ["ТЕСЛА", "TESLA"], ["разряд бьёт до 20 соседей на 25% силы удара", "the discharge strikes up to 20 nearby enemies for 25% of the hit"],
   ["+N к урону: Яд", "+N Poison Damage"], ["+% к урону: Яд", "+% Poison Damage"],
   ["Шанс наложить: Отравление", "Chance to Poison"], ["стакается, не тратит время боя", "stacks without consuming attack time"],
@@ -1569,7 +1569,7 @@ const EN_TEXT = Object.freeze(Object.fromEntries([
   ["ЛОРД СМЕРТИ", "DEATH LORD"], ["0,1% всего фактически нанесённого свитой урона восстанавливает здоровье Некроманта", "0.1% of all damage actually dealt by minions restores the Necromancer's health"],
   ["Часть урона по вам идёт приспешнику", "Part of Damage Taken Is Redirected to a Minion"], ["потолок ветки — 50%. На пятидесяти открываются КРОВНЫЕ УЗЫ", "this branch is capped at 50%. At 50%, unlocks BLOOD TIES"],
   ["КРОВНЫЕ УЗЫ", "BLOOD TIES"], ["каждое попадание по вам приводит свиту в ярость: вдвое больше урона следующие 3 секунды", "each hit you take enrages your minions, doubling their damage for the next 3 seconds"],
-  ["Свита наследует % ваших статов", "Minions Inherit % of Your Stats"], ["урон и здоровье масштабируются от вас", "damage and health scale from your stats"],
+  ["Свита наследует % ваших статов", "Minions Inherit % of Your Stats"], ["добавляет процентные пункты к общей корзине урона свиты, а также усиливает наследование здоровья и критического шанса", "adds percentage points to the shared Minion Damage bucket and also improves inherited Health and Critical Chance"],
   ["Повышение ранга призываемых", "Upgrade Summoned Minions"], ["+60% здоровья и +45% урона всей свите", "+60% health and +45% damage to all minions"],
   ["Некромантская связь", "Necromantic Bond"], ["40% урона по вам уходит свите, но свита бьёт в полтора раза сильнее", "40% of damage taken is redirected to your minions, but minions deal 50% more damage"],
   ["Стеклянная пушка", "Glass Cannon"], ["+60% урона (more), но −40% макс. здоровья", "60% more damage, but −40% maximum health"],
@@ -1586,11 +1586,11 @@ const EN_TEXT = Object.freeze(Object.fromEntries([
   ["МАГ", "MAGE"], ["Магические сферы взрываются по площади и несут силу стихий.", "Magical orbs explode over an area and carry elemental power."],
   ["НЕКРОМАНТ", "NECROMANCER"], ["Не атакует сам. Поднимает павших врагов скелетами и сражается силами свиты.", "Does not attack directly. Raises fallen enemies as Skeletons and fights through minions."],
   ["ВОР", "THIEF"], ["+2% ко всему получаемому золоту за уровень и +1% к скорости передвижения за уровень.", "+2% to all gold gained per level and +1% Movement Speed per level."],
-  ["ОХОТНИК", "HUNTER"], ["+1% скорости атаки за уровень.", "+1% Attack Speed per level."],
-  ["БОЕВОЙ ТАНЦОР", "BATTLE DANCER"], ["+1 рывок (всего 2) и +1 брони за уровень; бонус брони до 60.", "+1 Dash charge (2 total) and +1 Armor per level, up to +60 Armor."],
-  ["БЕРСЕРК", "BERSERKER"], ["+1% к урону ближних атак за уровень. При здоровье ниже 40% получает +20% скорости атаки.", "+1% Melee Attack Damage per level. Below 40% Health, gains +20% Attack Speed."],
-  ["СТРАЖ", "GUARDIAN"], ["+0,75% максимального здоровья за уровень. Круговая волна, задевшая хотя бы трёх врагов, даёт барьер на 6% здоровья; перезарядка 4 сек.", "+0.75% Maximum Health per level. A circular wave that hits at least three enemies grants a barrier equal to 6% of Maximum Health; 4 sec cooldown."],
-  ["МАСТЕР МЕЧА", "SWORDMASTER"], ["+1% к радиусу круговой волны и +1,5% к силе её отбрасывания за уровень, до +60% и +90%. С 30-го уровня волна оглушает обычных врагов на 0,35 сек.", "+1% circular wave radius and +1.5% wave knockback force per level, capped at +60% and +90%. From level 30, the wave Stuns normal enemies for 0.35 sec."],
+  ["ОХОТНИК", "HUNTER"], ["+1% скорости атаки каждые 5 уровней.", "+1% Attack Speed every 5 levels."],
+  ["БОЕВОЙ ТАНЦОР", "BATTLE DANCER"], ["+1 рывок, +1 к увороту за каждый уровень и +1% к максимальному здоровью каждые 5 уровней.", "+1 Dash charge, +1 Dodge per level, and +1% Maximum Health every 5 levels."],
+  ["БЕРСЕРК", "BERSERKER"], ["+1% к урону за уровень. +2 здоровья за попадание каждые 5 уровней.", "+1% Damage per level. +2 Health per hit every 5 levels."],
+  ["СТРАЖ", "GUARDIAN"], ["+1% максимального здоровья за уровень. Круговая волна, задевшая хотя бы двух врагов, даёт барьер на 8% здоровья; перезарядка 3 сек. Каждые 5 уровней восстанавливает ещё 5 здоровья раз в 5 сек.", "+1% Maximum Health per level. A circular wave that hits at least two enemies grants a barrier equal to 8% of Maximum Health; 3 sec cooldown. Every 5 levels, restores 5 more Health every 5 sec."],
+  ["МАСТЕР МЕЧА", "SWORDMASTER"], ["+3% к радиусу круговой волны и +3% к силе её отбрасывания каждые 2 уровня, до +50% и +80%. С 20-го уровня волна оглушает обычных и элитных врагов на 0,4 сек.", "+3% circular wave radius and +3% wave knockback force every 2 levels, capped at +50% and +80%. From level 20, the wave Stuns normal and elite enemies for 0.4 sec."],
   ["Длинное лезвие", "Long Blade"], ["+10–25% к дальности обычного взмаха. Складывается до +60%. Не увеличивает радиус круговой волны.", "+10–25% normal swing reach. Stacks up to +60%. Does not increase circular wave radius."],
   ["СМЕРТЕЛЬНЫЙ РАДИУС", "DEADLY RADIUS"], ["Увеличивает радиус круговой волны на 80%.", "Increases circular wave radius by 80%."],
   ["Стальная толпа", "Steel Crowd"], ["+2–3 брони за каждого врага в радиусе 300. Учитывается максимум 6 врагов. Значения карточек складываются до 10 брони за врага.", "+2–3 Armor per enemy within 300 range. Up to 6 enemies count. Card values stack up to 10 Armor per enemy."],
@@ -1657,10 +1657,10 @@ const EN_TEXT = Object.freeze(Object.fromEntries([
   ["БАРЬЕР СТРАЖА", "GUARDIAN BARRIER"],
   ["МАГ РАЗРУШЕНИЯ", "DESTRUCTION MAGE"], ["+1% ко всем радиусам за уровень. Как и любой Маг, получает +1 снаряд каждые 15 уровней.", "+1% to all radii per level. Like every Mage, gains +1 projectile every 15 levels."],
   ["МАГ МУЛЬТИПЛИКАЦИИ", "MULTIPLICATION MAGE"], ["Каждая обычная сфера имеет 35% шанс через 0,1 сек выпустить вслед за собой мини-сферу с −80% урона и радиусом взрыва 60% от обычного. Как и любой Маг, получает +1 снаряд каждые 15 уровней.", "Each normal orb has a 35% chance to release a trailing mini-orb 0.1 sec later, with 80% less damage and 60% of the normal explosion radius. Like every Mage, gains +1 projectile every 15 levels."],
-  ["МАГ ЭЛЕМЕНТАЛИСТ", "ELEMENTALIST MAGE"], ["+1% к урону огнём, холодом, молнией и ядом за уровень. Как и любой Маг, получает +1 снаряд каждые 15 уровней.", "+1% Fire, Cold, Lightning, and Poison damage per level. Like every Mage, gains +1 projectile every 15 levels."],
+  ["МАГ ЭЛЕМЕНТАЛИСТ", "ELEMENTALIST MAGE"], ["+3% к урону огнём, холодом, молнией и ядом за уровень. Как и любой Маг, получает +1 снаряд каждые 15 уровней.", "+3% Fire, Cold, Lightning, and Poison damage per level. Like every Mage, gains +1 projectile every 15 levels."],
   ["ГРАБИТЕЛЬ МОГИЛ", "GRAVE ROBBER"], ["+1% скорости персонажа и свиты за уровень.", "+1% character and minion speed per level."],
   ["АНИМАТОР", "ANIMATOR"], ["+1 дополнительный скелет каждые 20 уровней.", "+1 additional Skeleton every 20 levels."],
-  ["ВЕНОМАНСЕР", "VENOMANCER"], ["Павший миньон оставляет кислоту на 3 сек: 15% текущего HP цели в секунду.", "A fallen minion leaves acid for 3 sec, dealing 15% of the target's current HP per second."],
+  ["ВЕНОМАНСЕР", "VENOMANCER"], ["Павший миньон оставляет кислоту на 2 сек: 5% текущего HP цели в секунду.", "A fallen minion leaves acid for 2 sec, dealing 5% of the target's current HP per second."],
   ["КНИГА ОГНЯ", "BOOK OF FIRE"], ["+N урона огнём всем атакам — вашим и свиты. При срабатывании поджигает: 20% от удара в секунду, 3 сек, стакается", "+N Fire damage to all your and your minions' attacks. On proc, Ignites for 20% of the hit per second for 3 sec; stacks"],
   ["КНИГА ЛЬДА", "BOOK OF ICE"], ["+N урона холодом всем атакам. При срабатывании охлаждает на 0,5 сек и наносит ещё 10% удара", "+N Cold damage to all attacks. On proc, Chills for 0.5 sec and deals another 10% of the hit"],
   ["КНИГА МОЛНИИ", "BOOK OF LIGHTNING"], ["+N урона молнией всем атакам — вашим и свиты. При срабатывании накладывает Шок на 1 секунду и выпускает обычный электрический разряд", "+N Lightning damage to all your and your minions' attacks. On proc, applies Shock for 1 second and releases a normal lightning discharge"],
@@ -1739,7 +1739,7 @@ function englishSkillTip(m, card){
   const formula = {
     flat:'<b>Stacking:</b> the value is added directly before percentage bonuses.',
     inc:'<b>Stacking:</b> added to other increased percentages, then applied to the base value.',
-    more:'<b>Stacking:</b> a separate multiplier applied after increased percentages; multiple more multipliers multiply.',
+    more:'<b>Stacking:</b> added to a shared more bucket, which is applied once after increased percentages.',
     chance:'<b>Roll:</b> an independent chance on every eligible event.',
     flag:'<b>Duration:</b> this unique property remains active until the end of the current run.'
   }[m.kind] || '';
@@ -3861,7 +3861,7 @@ const MODS = [
 // --- Урон, общие ---
 {id:'dmg.flat_all',    cat:'Урон', nm:'+N ко всему урону',              kind:'flat', stat:'dmg',        r:[3,7], rar:1},
 {id:'dmg.inc_all',     cat:'Урон', nm:'+% ко всему урону',              kind:'inc',  stat:'dmg',        r:[12,22], rar:1},
-{id:'dmg.more_all',    cat:'Урон', nm:'Множитель урона',                kind:'more', stat:'dmg',        r:[14,20], rar:2, nt:'самый ценный тип — множится, а не складывается'},
+{id:'dmg.more_all',    cat:'Урон', nm:'Множитель урона',                kind:'more', stat:'dmg',        r:[14,20], rar:2, nt:'бонусы more складываются в общей корзине, которая применяется один раз после обычных процентов'},
 {id:'dmg.aoe',         cat:'Урон', nm:'Урон по площади',                kind:'inc',  stat:'dmgAoe',     r:[7,13], int:true, wep:['orb'],
  nt:'За выбор даёт целые +7–13%; суммируется без потолка.'},
 {id:'dmg.projectile',  cat:'Урон', nm:'Урон снарядов',                  kind:'inc',  stat:'dmgProj',   r:[5,10], int:true, wep:['proj'], noMin:true,
@@ -4014,13 +4014,13 @@ const MODS = [
 {id:'dt.cold.flat',    cat:'Холод',  nm:'+N к урону: Холод',            kind:'flat', stat:'dCold',      r:[3,7], rar:1, show:()=>D.chillCh>0},
 {id:'dt.cold.inc',     cat:'Холод',  nm:'+% к урону: Холод',            kind:'inc',  stat:'iCold',      r:[20,35], show:()=>D.chillCh>0},
 {id:'ail.chill.chance',cat:'Холод',  nm:'Шанс наложить: Охлаждение',    kind:'chance',stat:'chillCh',   r:[5,10], int:true, cap:25,
- nt:'на 0,5 сек: −15% скорости, +10% входящего урона и дополнительный удар на 10%; соседи замедляются на 5%', hide:()=>D.chillCh>=25},
+ nt:'на 0,5 сек: −15% скорости, +10% в общую корзину входящего урона и дополнительный удар на 10%; соседи замедляются на 5%', hide:()=>D.chillCh>=25},
 {id:'ail.freeze.chance',cat:'Холод', nm:'ЗАМОРОЗКА',                    kind:'flag', stat:'freeze',     r:[1,1], rar:2, w:45,
- nt:'каждое охлаждение имеет 1% шанс полностью остановить цель на 1 секунду; замороженная цель получает ещё +10% урона', show:()=>D.chillCh>=25},
+ nt:'каждое охлаждение имеет 1% шанс полностью остановить цель на 1 секунду; заморозка добавляет +10% в общую корзину входящего урона', show:()=>D.chillCh>=25},
 {id:'dt.lightning.flat',cat:'Молния',nm:'+N к урону: Молния',           kind:'flat', stat:'dLit',       r:[2,12], rar:1, nt:'широкий разброс', show:()=>D.shockCh>0},
 {id:'dt.lightning.inc',cat:'Молния', nm:'+% к урону: Молния',           kind:'inc',  stat:'iLit',       r:[20,35], show:()=>D.shockCh>0},
 {id:'ail.shock.chance',cat:'Молния', nm:'Шанс разряда молнии',          kind:'chance',stat:'shockCh',   r:[5,10], int:true, cap:25,
- nt:'разряд бьёт до 5 соседей на 15% удара, а Шок на 1 секунду даёт цели +10% входящего урона', hide:()=>D.shockCh>=25},
+ nt:'разряд бьёт до 5 соседей на 15% удара, а Шок на 1 секунду добавляет +10% в общую корзину входящего урона', hide:()=>D.shockCh>=25},
 {id:'ail.shock.tesla', cat:'Молния', nm:'ТЕСЛА',                        kind:'flag', stat:'tesla',      r:[1,1], rar:2, w:45,
  nt:'разряд бьёт до 20 соседей на 25% силы удара', show:()=>D.shockCh>=25},
 {id:'dt.poison.flat',  cat:'Яд',     nm:'+N к урону: Яд',               kind:'flat', stat:'dPoi',       r:[3,8], rar:1, show:()=>D.poiCh>0},
@@ -4150,7 +4150,7 @@ const MODS = [
 {id:'min.blood_ties',   cat:'Свита', nm:'КРОВНЫЕ УЗЫ',                     kind:'flag', stat:'bloodTies', r:[1,1], rar:4, w:45, req:'min', unlock:true,
  show:()=>D.minBondRaw>=50,
  nt:'каждое попадание по вам приводит свиту в ярость: вдвое больше урона следующие 3 секунды'},
-{id:'min.inherit',      cat:'Свита', nm:'Свита наследует % ваших статов',kind:'flat', stat:'minInherit',r:[20,35], rar:2, req:'min', nt:'урон и здоровье масштабируются от вас'},
+{id:'min.inherit',      cat:'Свита', nm:'Свита наследует % ваших статов',kind:'flat', stat:'minInherit',r:[20,35], rar:2, req:'min', nt:'добавляет процентные пункты к общей корзине урона свиты, а также усиливает наследование здоровья и критического шанса'},
 {id:'min.tier_up',      cat:'Свита', nm:'Повышение ранга призываемых',   kind:'flag', stat:'minTier',  r:[1,1], rar:2, req:'min', nt:'+60% здоровья и +45% урона всей свите'},
 {id:'key.share_with_minions',cat:'Кейстоун',nm:'Некромантская связь',    kind:'flag', stat:'kBond',    r:[1,1], rar:3, req:'min', nt:'40% урона по вам уходит свите, но свита бьёт в полтора раза сильнее'},
 
@@ -4198,34 +4198,37 @@ const PLAYABLE_CLASSES = ['bow','wand','necro','blade'];
 const SUBCLASSES = {
   bow: [
     {id:'thief',  nm:'ВОР',            ico:'◈', desc:'+2% ко всему получаемому золоту за уровень и +1% к скорости передвижения за уровень.'},
-    {id:'hunter', nm:'ОХОТНИК',        ico:'⌁', desc:'+1% скорости атаки за уровень.'},
-    {id:'dancer', nm:'БОЕВОЙ ТАНЦОР',  ico:'✦', desc:'+1 рывок (всего 2) и +1 брони за уровень; бонус брони до 60.'},
+    {id:'hunter', nm:'ОХОТНИК',        ico:'⌁', desc:'+1% скорости атаки каждые 5 уровней.'},
+    {id:'dancer', nm:'БОЕВОЙ ТАНЦОР',  ico:'✦', desc:'+1 рывок, +1 к увороту за каждый уровень и +1% к максимальному здоровью каждые 5 уровней.'},
   ],
   wand: [
     {id:'destroyer',     nm:'МАГ РАЗРУШЕНИЯ',    ico:'◉', desc:'+1% ко всем радиусам за уровень. Как и любой Маг, получает +1 снаряд каждые 15 уровней.'},
     {id:'multiplier',    nm:'МАГ МУЛЬТИПЛИКАЦИИ',ico:'✣', desc:'Каждая обычная сфера имеет 35% шанс через 0,1 сек выпустить вслед за собой мини-сферу с −80% урона и радиусом взрыва 60% от обычного. Как и любой Маг, получает +1 снаряд каждые 15 уровней.'},
-    {id:'elementalist',  nm:'МАГ ЭЛЕМЕНТАЛИСТ',  ico:'◇', desc:'+1% к урону огнём, холодом, молнией и ядом за уровень. Как и любой Маг, получает +1 снаряд каждые 15 уровней.'},
+    {id:'elementalist',  nm:'МАГ ЭЛЕМЕНТАЛИСТ',  ico:'◇', desc:'+3% к урону огнём, холодом, молнией и ядом за уровень. Как и любой Маг, получает +1 снаряд каждые 15 уровней.'},
   ],
   necro: [
     {id:'graverobber', nm:'ГРАБИТЕЛЬ МОГИЛ', ico:'⚑', desc:'+1% скорости персонажа и свиты за уровень.'},
     {id:'animator',    nm:'АНИМАТОР',       ico:'☠', desc:'+1 дополнительный скелет каждые 20 уровней.'},
-    {id:'venomancer',  nm:'ВЕНОМАНСЕР',     ico:'☣', desc:'Павший миньон оставляет кислоту на 3 сек: 15% текущего HP цели в секунду.'},
+    {id:'venomancer',  nm:'ВЕНОМАНСЕР',     ico:'☣', desc:'Павший миньон оставляет кислоту на 2 сек: 5% текущего HP цели в секунду.'},
   ],
   blade: [
-    {id:'berserker',  nm:'БЕРСЕРК',      ico:'⚔', desc:'+1% к урону ближних атак за уровень. При здоровье ниже 40% получает +20% скорости атаки.'},
-    {id:'guardian',   nm:'СТРАЖ',        ico:'⬟', desc:'+0,75% максимального здоровья за уровень. Круговая волна, задевшая хотя бы трёх врагов, даёт барьер на 6% здоровья; перезарядка 4 сек.'},
-    {id:'swordmaster',nm:'МАСТЕР МЕЧА',  ico:'◎', desc:'+1% к радиусу круговой волны и +1,5% к силе её отбрасывания за уровень, до +60% и +90%. С 30-го уровня волна оглушает обычных врагов на 0,35 сек.'},
+    {id:'berserker',  nm:'БЕРСЕРК',      ico:'⚔', desc:'+1% к урону за уровень. +2 здоровья за попадание каждые 5 уровней.'},
+    {id:'guardian',   nm:'СТРАЖ',        ico:'⬟', desc:'+1% максимального здоровья за уровень. Круговая волна, задевшая хотя бы двух врагов, даёт барьер на 8% здоровья; перезарядка 3 сек. Каждые 5 уровней восстанавливает ещё 5 здоровья раз в 5 сек.'},
+    {id:'swordmaster',nm:'МАСТЕР МЕЧА',  ico:'◎', desc:'+3% к радиусу круговой волны и +3% к силе её отбрасывания каждые 2 уровня, до +50% и +80%. С 20-го уровня волна оглушает обычных и элитных врагов на 0,4 сек.'},
   ],
 };
 
 /* ---------- 3. СУМКА МОДИФИКАТОРОВ И РАСЧЁТ ХАРАКТЕРИСТИК ---------- */
+/* Общее правило стаков: одинаково сформулированные накопительные бонусы одного
+   стата складываются в одну корзину. Отдельный множитель разрешён только для
+   уникального изменения правил, заметного условия или явного штрафа. */
 /* Сумка хранит по каждому стату три накопителя: flat, inc, more.
-   Итог = (База + Σflat) × (1 + Σinc/100) × Π(1 + more_i/100)         */
+   Итог = (База + Σflat) × (1 + Σinc/100) × (1 + Σmore/100)          */
 function Bag(){ this.s = {}; }
 Bag.prototype.get = function(k){ return this.s[k] || (this.s[k] = {flat:0, inc:0, more:1}); };
 Bag.prototype.add = function(k, kind, v){
   const e = this.get(k);
-  if (kind === 'more') e.more *= (1 + v/100);       // more перемножается — самый ценный тип
+  if (kind === 'more') e.more += v/100;             // more складывается в отдельную общую корзину
   else if (kind === 'inc') e.inc += v;              // inc складывается в один множитель
   else e.flat += v;                                  // flat и chance просто суммируются
 };
@@ -5210,7 +5213,7 @@ function newGame(weaponKey, control, subclassKey, devZone=false){
     player:{x:0,y:0,vx:0,vy:0,r:13,hp:100,inv:0,dash:0,dashCd:0,dashN:0,
             atkCd:0, aim:0, dashHits:[], leechPool:0, leechFlows:[], dreadShield:0, barrier:0, reserveBarrier:0, reserveBarrierT:0,
             respiteT:0, respiteHealT:3, criticalMass:0, attackEchoN:0, perfectRhythmHeroN:0, perfectRhythmMinionN:0,
-            hitN:0, bladeN:0, groundbreakerWaveN:0, guardianCd:0, berserkLow:false,
+            hitN:0, bladeN:0, groundbreakerWaveN:0, guardianCd:0, guardianHealT:5,
             returnShotN:0, hunterMarkN:0, mirrorVolleyN:0,
             copperNoAttackT:0, copperReady:false, tallyN:0, tallyT:0, draftReady:false, satinReady:false,
             eclipseReady:false, marchingActive:false, secondWindKills:0, reactionCritUntil:0, ledgerStacks:0,
@@ -5284,10 +5287,16 @@ function recalc(){
   const berserker = sub === 'berserker', guardian = sub === 'guardian', swordmaster = sub === 'swordmaster';
   const thiefMove = thief ? 1 + G.lvl/100 : 1;
   const graveMove = graverobber ? 1 + G.lvl/100 : 1;
+  const subclassLifeInc = guardian ? G.lvl
+    : dancer ? Math.floor(G.lvl/5) : 0;
 
   // --- Живучесть ---
-  D.life   = b.calc('life', 100 + G.lvl*4) * (glass ? 0.6 : 1) * (guardian ? 1 + G.lvl*0.0075 : 1);
+  const lifeEntry = b.s.life;
+  D.life   = (100 + G.lvl*4 + (lifeEntry ? lifeEntry.flat : 0))
+           * (1 + ((lifeEntry ? lifeEntry.inc : 0) + subclassLifeInc)/100)
+           * (lifeEntry ? lifeEntry.more : 1) * (glass ? 0.6 : 1);
   D.regen  = b.calc('regen', 0) + D.life * b.flat('regenPct')/100;
+  D.guardianHeal = guardian ? Math.floor(G.lvl/5)*5 : 0;
   D.respite = b.has('respite');
   D.durabilityReserve = b.has('durabilityReserve');
   if (G.player){
@@ -5297,7 +5306,7 @@ function recalc(){
   D.hobnailedActive=!!(amu('hobnailedSoles') && G.player && G.player.hobnailedActive);
   D.trailfindersActive=!!(amu('trailfinders') && G.player && G.player.trailfinderActive);
   const armorBase = unburd ? 0 : b.calc('armor', 0) + (amu('golem') ? 50 : 0)
-    + (D.hobnailedActive ? 20 : 0) + (dancer ? Math.min(60, G.lvl) : 0);
+    + (D.hobnailedActive ? 20 : 0);
   D.armor  = unsheathedBlade ? 0 : armorBase * (livingFortress ? 1.30 : 1);
   // Две отдельные ветки защиты от рангов врагов. Это множители после общей
   // защиты: −25% означает, что от соответствующего врага проходит 75% урона.
@@ -5305,7 +5314,7 @@ function recalc(){
   D.majorDr  = clamp(b.sum('majorDr'), 0, 25);
   D.drShop = 0;
   D.drFlat = b.flat('drFlat');
-  D.dodge  = livingFortress ? 0 : clamp(b.flat('dodge') * (acro ? 2 : 1), 0, 70);
+  D.dodge  = livingFortress ? 0 : clamp((b.flat('dodge') + (dancer ? G.lvl : 0)) * (acro ? 2 : 1), 0, 70);
   D.thornsRaw = w.type === 'melee' ? clamp(b.sum('thorns'), 0, 100) : 0;
   D.thorns = D.thornsRaw * (livingFortress ? 2 : 1);
   D.thornCircle = w.type === 'melee' && b.has('thornCircle');
@@ -5329,14 +5338,18 @@ function recalc(){
   D.incAll = (b.s.dmg ? b.s.dmg.inc : 0) + (w.type==='melee'? b.sum('dmgMelee') : 0)
            + (w.type!=='melee'? b.sum('dmgProj') : 0) + (w.type==='orb'? b.sum('dmgAoe') : 0)
            + (D.ironFury && G.player && G.player.ironFuryT>0 ? G.player.ironFuryPct||0 : 0);
-  // Берсерк усиливает только прямой взмах Воина. В общий D.incAll бонус не
-  // входит, иначе заодно разгонит самостоятельные взрывы, следы и DoT.
-  D.warriorMeleeInc = berserker ? G.lvl : 0;
+  // Новый Берсерк получает общий процент урона: формулировка больше не
+  // ограничивает бонус только прямым взмахом Воина.
+  if (berserker) D.incAll += G.lvl;
+  D.warriorMeleeInc = 0;
+  D.berserkerHitHeal = berserker ? Math.floor(G.lvl/5)*2 : 0;
   D.warriorMeleeMore = unsheathedBlade ? 1.40 : 1;
   D.moreAll = (b.s.dmg ? b.s.dmg.more : 1) * (glass?1.6:1) * (noCrit?1.5:1) * (heavy?4:1) * (flurry?0.5:1);
 
-  const phys = w.dmg[0] + G.lvl*0.45 + b.flat('dmg');
-  const physMax = w.dmg[1] + G.lvl*0.7 + b.flat('dmg');
+  // Уровень и этаж сами по себе не усиливают удар: рост урона приходит только
+  // из выбранных карточек, предметов и явно заявленных особенностей подкласса.
+  const phys = w.dmg[0] + b.flat('dmg');
+  const physMax = w.dmg[1] + b.flat('dmg');
   D.baseMin = phys;  D.baseMax = physMax;
   // «Надёжный удар» поднимает только нижнюю границу к верхней. Максимум не
   // уменьшается, поэтому карточка действительно повышает средний урон.
@@ -5352,7 +5365,7 @@ function recalc(){
   const aAll  = amu('crown') ? 50 : 0;
   const aFire = (amu('ash') ? 35 : 0) + aAll, aCold = (amu('ice') ? 35 : 0) + aAll,
         aPoi  = (amu('plague') ? 35 : 0) + aAll, aLit = aAll;
-  const subElement = elementalist ? G.lvl : 0;
+  const subElement = elementalist ? G.lvl*3 : 0;
   D.elem = {                                          // каждая стихия считается отдельно
     fire: (b.flat('dFire') + bk('fire')) * (1 + (b.sum('iFire')+aFire+subElement)/100),
     cold: (b.flat('dCold') + bk('cold')) * (1 + (b.sum('iCold')+aCold+subElement)/100),
@@ -5387,13 +5400,23 @@ function recalc(){
              * (P && P.cheatSpeedT > 0 ? 1.50 : 1)
              * (amu('runner') && P && P.moving ? 1.20 : 1);
   D.counterTempoPerHit = w.type === 'melee' ? clamp(b.sum('counterTempo'),0,50) : 0;
-  D.aspd  = b.calc('aspd', 1) * (heavy?0.5:1) * (flurry?2:1) * (unburd?1.25:1)
-          * (amu('clock') ? 1.10 : 1) * (amu('claws') ? 1.20 : 1) * (amu('brute') ? 0.90 : 1)
-          * (amu('titansHands') && w.id==='wpn.sword' ? 0.65 : 1)
-          * rush * (hunter ? 1 + G.lvl/100 : 1) * (berserker && P && P.berserkLow ? 1.20 : 1)
-          * (1 + (P && P.counterTempoT > 0 ? P.counterTempoPct||0 : 0)/100)
-          * (1 + (P && P.overheatedT > 0 ? P.overheatedPct||0 : 0)/100)
-          * (amu('tallyGloves') && P && P.tallyT>0 ? 1.20 : 1)
+  /* Обычные положительные множители скорости атаки живут в одной корзине.
+     Карточка more, Охотник, предметы и временные стаки добавляют процентные
+     пункты, а не перемножают друг друга. Кейстоуны и штрафы остаются отдельными:
+     они меняют правило билда, а не являются ещё одним накопительным бонусом. */
+  const aspdEntry=b.s.aspd;
+  const ordinaryAttackSpeedPct = (amu('clock') ? 10 : 0) + (amu('claws') ? 20 : 0)
+    + (amu('swift') && P && P.swiftT > 0 ? 20 : 0)
+    + (amu('survive') && P && P.hp/Math.max(1,D.life) < 0.30 ? 20 : 0)
+    + (hunter ? Math.floor(G.lvl/5) : 0)
+    + (P && P.counterTempoT > 0 ? P.counterTempoPct||0 : 0)
+    + (P && P.overheatedT > 0 ? P.overheatedPct||0 : 0)
+    + (amu('tallyGloves') && P && P.tallyT>0 ? 20 : 0);
+  D.attackSpeedMore = (aspdEntry ? aspdEntry.more : 1) + ordinaryAttackSpeedPct/100;
+  D.aspd  = (1 + (aspdEntry ? aspdEntry.flat : 0))
+          * (1 + (aspdEntry ? aspdEntry.inc : 0)/100) * D.attackSpeedMore
+          * (heavy?0.5:1) * (flurry?2:1) * (unburd?1.25:1)
+          * (amu('brute') ? 0.90 : 1) * (amu('titansHands') && w.id==='wpn.sword' ? 0.65 : 1)
           * timeDebtSpeed * (livingFortress ? 0.80 : 1);
   const marchDeadActive=amu('marchDead') && w.minions;
   D.mspd  = b.calc('mspd', 235) * (acro?1.15:1) * (unburd?1.35:1) * rush * dash
@@ -5442,7 +5465,8 @@ function recalc(){
   D.remoteBlast = w.type === 'orb' ? b.sum('remoteBlast') : 0;
   D.arcaneMine = w.type === 'orb' && b.has('arcaneMine');
   D.repeatDetonation = w.type === 'orb' && b.has('repeatDetonation');
-  D.aoeR    = (1 + b.sum('aoeR')/100) * (destroyer ? 1 + G.lvl/100 : 1);
+  // Разрушитель и обычные +% радиуса описывают один стат, поэтому складываются.
+  D.aoeR    = 1 + (b.sum('aoeR') + (destroyer ? G.lvl : 0))/100;
   if (b.has('aoeToDmg')) D.incAll += (D.aoeR-1)*60;      // conv.aoe_to_damage
   // Площадные радиусы: считаются здесь один раз на смену билда, а не в кадре
   D.shockR     = SHOCK_RANGE    * D.aoeR;   // разлёт молний при шоке
@@ -5457,8 +5481,9 @@ function recalc(){
   D.groundbreaker = w.type === 'melee' && b.has('groundbreaker');
   D.openWound = w.type === 'melee' ? b.sum('openWound') : 0;
   D.berserker = berserker; D.guardian = guardian; D.swordmaster = swordmaster;
-  D.warriorWaveRadius = swordmaster ? 1 + Math.min(60, G.lvl)/100 : 1;
-  D.warriorWaveKnock  = swordmaster ? 1 + Math.min(90, G.lvl*1.5)/100 : 1;
+  const swordmasterStep = Math.floor(G.lvl/2)*3;
+  D.warriorWaveRadius = swordmaster ? 1 + Math.min(50, swordmasterStep)/100 : 1;
+  D.warriorWaveKnock  = swordmaster ? 1 + Math.min(80, swordmasterStep)/100 : 1;
   D.orbitN      = clamp(Math.round(b.flat('orbit')), 0, 10);   // круговые орбы, потолок 10
   D.novaKillBase = clamp(b.flat('novaKill'), 0, 50);
   D.novaKillStrong = b.has('novaKillStrong');
@@ -5539,8 +5564,15 @@ function recalc(){
   D.golemB    = D.hasMin ? clamp(Math.round(b.flat('golemBlood')), 0, 10) : 0;
   D.golemN    = D.hasMin ? clamp(Math.round(b.flat('golemBone')),  0, 10) : 0;
   D.minMax    = D.maxSkel + D.maxBomb + (D.golemB?1:0) + (D.golemN?1:0);
-  D.minDmgMul = 0.42 * (1 + b.sum('minDmg')/100) * (1 + D.minInherit) * (b.has('kBond') ? 1.5 : 1)
-                * (D.minTier ? 1.45 : 1);
+  /* Свита получает весь уже собранный прирост урона хозяина, но её собственный
+     +% урона и карточка наследования добавляются к этому приросту, а не ещё раз
+     умножают готовый удар. Уникальные Кровные узы и старший ранг остаются more. */
+  const minionReferenceHit=Math.max(1e-9,(D.baseMin+D.baseMax)/2+D.elem.fire+D.elem.cold+D.elem.lit+D.elem.poi);
+  const ownerAverageHit=Math.max(1e-9,avgHit());
+  const ownerDamageFactor=ownerAverageHit/minionReferenceHit;
+  const minionDamageFactor=ownerDamageFactor+b.sum('minDmg')/100+D.minInherit;
+  D.minDmgMul = 0.42 * (minionReferenceHit/ownerAverageHit) * minionDamageFactor
+                * (b.has('kBond') ? 1.5 : 1) * (D.minTier ? 1.45 : 1);
   /* ГОЛЕМ КРОВИ. На первом уровне бьёт вдвое реже скелета и втрое сильнее,
      дальше растёт урон и понемногу темп. Считается от D.minDmgMul, поэтому
      вбирает все карточки урона свиты, наследование и «Кровные узы».
@@ -5579,16 +5611,15 @@ function recalc(){
      к тому, что скелет бьёт ровно дважды в секунду на старте. Множитель 1.5,
      которым это делалось раньше, убран: числа в цикле теперь честные секунды,
      и «0.5» читается как полсекунды, а не как «0.78, делённое на полтора». */
-  /* Свита наследует скорости хозяина ЦЕЛИКОМ и без всяких условий: если игрок
-     разогнался, армия разгоняется вместе с ним. Карточка «Свита наследует %
-     ваших статов» тут ни при чём — она про урон, здоровье и крит.
-     Обрати внимание: сюда заходит и D.aspd целиком, то есть кейстоуны тоже.
-     «Тяжёлый удар» (вдвое медленнее) замедлит и свиту, «Шквал» — ускорит. */
+  /* Свита наследует весь итоговый прирост/штраф скорости хозяина, но складывает
+     его со своими процентами от базового темпа. Поэтому +100% хозяина и +100%
+     свиты дают ×3, а не ×4. Кейстоуны хозяина по-прежнему входят через D.aspd. */
   const marchingActive=!!(amu('marchingGreaves') && P && P.marchingActive);
-  D.minAspd   = (1 + b.sum('minAspd')/100) * D.aspd * (marchingActive?1.10:1);
+  D.minAspd   = Math.max(0.05,D.aspd + b.sum('minAspd')/100 + (marchingActive?0.10:0));
   D.skelAspd  = amu('warskel') ? 1.25 : 1;      // БОЕВЫЕ СКЕЛЕТЫ: только рядовые скелеты
-  D.minSpd    = 610 * (1 + b.sum('minSpd')/100) * (D.mspd/235) / thiefMove * (marchingActive?1.20:1)
-              * (marchDeadActive ? 1.80/0.70 : 1);
+  const ownerMoveFactor=(D.mspd/235)/thiefMove/(marchDeadActive?0.70:1);
+  D.minSpd    = 610 * Math.max(0.05,ownerMoveFactor + b.sum('minSpd')/100 + (marchingActive?0.20:0))
+              * (marchDeadActive ? 1.80 : 1);
   D.minSlowImmune=!!marchDeadActive;
   /* Шанс крита свиты. Раньше твой собственный шанс доходил до приспешников
      только через карточку наследования, то есть обе критовые ветки при её
@@ -7641,11 +7672,12 @@ function damage(e, src){
   } else if (!noProcs && amu('critchain')) p.critChain = 0;   // цепь рвётся на первом же некрите
   // Урон в размере % от максимального HP цели — против «жирных»
   if (b.flat('pctHp')) total += e.maxHp * b.flat('pctHp')/100;
-  // Стихийный контроль оставляет небольшие отдельные множители. Полная заморозка
-  // добавляет свой x1.10 поверх x1.10 охлаждения, пока оба статуса активны.
-  if (e.ail.shock > 0) total *= SHOCK_TAKEN;
-  if (e.ail.chill > 0) total *= CHILL_TAKEN;
-  if (e.ail.freeze > 0) total *= FREEZE_TAKEN;
+  // Одинаковые +% входящего урона от стихийных статусов складываются, после чего
+  // общая damage-taken корзина применяется один раз. Сильные уникальные условия
+  // ниже (Палач, Контрудар, Дуэль) остаются самостоятельными множителями.
+  const statusTakenInc=(e.ail.shock>0?SHOCK_TAKEN_INC:0)
+    +(e.ail.chill>0?CHILL_TAKEN_INC:0)+(e.ail.freeze>0?FREEZE_TAKEN_INC:0);
+  if(statusTakenInc) total*=1+statusTakenInc;
   // РУКА ПАЛАЧА: множитель поверх формулы, иначе удвоение растворилось бы
   if (amu('headsman') && e.hp/e.maxHp < 0.15) total *= 2;
   // КОНТРУДАР: заряд тратится на первый же удар игрока, свите не достаётся
@@ -7714,6 +7746,8 @@ function damage(e, src){
     else if (D.leechInstant) heal(lv);
     else p.leechPool = (p.leechPool||0) + lv;
   }
+  if (D.berserkerHitHeal && dealt>0 && src.direct && src.heroDirect && !src.minion && !src.itemDamage)
+    heal(D.berserkerHitHeal);
   if (D.onHit) heal(D.onHit);
   applyBookAilments(e, total,
     (src.minion ? MINION_AILMENT_CHANCE_MULT : 1) * (hunterMarked?2:1),
@@ -8409,10 +8443,10 @@ const SHOCK_BASE_SHARE = 0.15, SHOCK_TESLA_SHARE = 0.25, SHOCK_DURATION = 1;
 const SLOW_AURA_BASE = 260, INFERNO_BASE = 110;
 /* Охлаждение — короткий ослабленный удар контроля: 15% прямого замедления,
    5% соседям, x1.10 входящего урона и 10% дополнительного урона от атаки. */
-const CHILL_AURA_R = 96, CHILL_SLOW = 0.15, CHILL_AURA_SLOW = 0.05, CHILL_TAKEN = 1.10;
+const CHILL_AURA_R = 96, CHILL_SLOW = 0.15, CHILL_AURA_SLOW = 0.05, CHILL_TAKEN_INC = 0.10;
 const CHILL_DURATION = 0.5, CHILL_DAMAGE_SHARE = 0.10;
 const COLD_SHATTER_RADIUS = 180, COLD_SHATTER_DURATION = 0.7;
-const SHOCK_TAKEN = 1.10, FREEZE_TAKEN = 1.10;
+const SHOCK_TAKEN_INC = 0.10, FREEZE_TAKEN_INC = 0.10;
 const FREEZE_CHANCE = 0.01, FREEZE_DURATION = 1;
 const IGNITE_DPS_SHARE = 0.20, POISON_DPS_SHARE = 0.15;
 const OVERPRESSURE_BONUS = 0.05, OVERPRESSURE_EXTRA_CAP = 5;
@@ -9033,9 +9067,9 @@ function tickBoils(dt){
     }
   }
 }
-/* ВЕНОМАНСЕР: смерть любого приспешника оставляет кислоту. Три тика по 15%
-   текущего здоровья идут сразу, затем через одну и две секунды. */
-const ACID_R = 58, ACID_LIFE = 3, ACID_PCT = 0.15, ACID_MAX = 30;
+/* ВЕНОМАНСЕР: смерть любого приспешника оставляет кислоту. Два тика по 5%
+   текущего здоровья идут сразу и через одну секунду. */
+const ACID_R = 58, ACID_LIFE = 2, ACID_PCT = 0.05, ACID_MAX = 30;
 function dropAcidPool(m){
   if (G.acidPools.length >= ACID_MAX) G.acidPools.shift();
   G.acidPools.push({x:m.x, y:m.y, r:ACID_R*D.aoeR, life:ACID_LIFE, max:ACID_LIFE, t:0});
@@ -9868,12 +9902,12 @@ function attack(src){
         const a = Math.atan2(e.y-o.y, e.x-o.x), force = 520 * D.warriorWaveKnock * knockbackScale(e);
         if (!stepEcho){ e.kb.x += Math.cos(a)*force; e.kb.y += Math.sin(a)*force;
         e.ail.dizzy = Math.max(e.ail.dizzy, 0.75*D.ailDur); }
-        if (!stepEcho && D.swordmaster && G.lvl >= 30 && e.kind === 'norm')
-          e.ail.stun = Math.max(e.ail.stun, 0.35*D.ailDur);
+        if (!stepEcho && D.swordmaster && G.lvl >= 20 && (e.kind === 'norm' || e.kind === 'elite'))
+          e.ail.stun = Math.max(e.ail.stun, 0.40*D.ailDur);
       }
       if (!src) releaseTitansWave(titanMain,titanDealt);
-      if (!stepEcho && D.guardian && waveHits >= 3 && p.guardianCd <= 0){
-        p.barrier = Math.max(p.barrier, D.life*0.06); p.guardianCd = 4;
+      if (!stepEcho && D.guardian && waveHits >= 2 && p.guardianCd <= 0){
+        p.barrier = Math.max(p.barrier, D.life*0.08); p.guardianCd = 3;
         G.fx.push({t:'ring', x:p.x, y:p.y, r:p.r, max:p.r+24, life:0.45, col:'#5ec2e0'});
         G.fx.push({t:'txt', x:p.x, y:p.y-30, s:'БАРЬЕР СТРАЖА', life:0.9, col:'#5ec2e0'});
       }
@@ -10105,16 +10139,15 @@ function update(dt){
      в кадре. Пересчёт зовём только на ПЕРЕКЛЮЧЕНИИ, а не каждый кадр: recalc()
      тяжёлый, и гонять его шестьдесят раз в секунду ради пары множителей незачем. */
   const wasKill = p.spdKill > 0, wasSprint = p.sprintT > 0, wasCheatSpeed = p.cheatSpeedT > 0, wasMove = p.dashMoving,
-        wasSwift = p.swiftT > 0, wasLow = p.lowHp, wasBerserkLow = p.berserkLow;
+        wasSwift = p.swiftT > 0, wasLow = p.lowHp;
   p.spdKill = Math.max(0, (p.spdKill||0) - dt);
   p.sprintT = Math.max(0, (p.sprintT||0) - dt);
   p.cheatSpeedT = Math.max(0, (p.cheatSpeedT||0) - dt);
   p.swiftT  = Math.max(0, (p.swiftT||0)  - dt);
   p.dashMoving = p.moving;
   p.lowHp   = p.hp/D.life < 0.30;
-  p.berserkLow = p.hp/D.life < 0.40;
   if ((p.spdKill > 0) !== wasKill || (p.sprintT > 0) !== wasSprint || (p.cheatSpeedT > 0) !== wasCheatSpeed || (amu('runner') && p.moving !== wasMove) ||
-      (p.swiftT > 0) !== wasSwift || p.lowHp !== wasLow || p.berserkLow !== wasBerserkLow) recalc();
+      (p.swiftT > 0) !== wasSwift || p.lowHp !== wasLow) recalc();
   p.predT   = Math.max(0, (p.predT||0)   - dt);      // ГЛАЗ ХИЩНИКА
 
   if (D.timeDebt && (p.timeDebtT>0 || p.timeDebtCoolingT>0)){
@@ -10198,6 +10231,10 @@ function update(dt){
   // по границе, поэтому высокая прокачка не может перескочить потолок.
   const fastHealLimit = D.life * 0.5;
   if (D.regen && p.hp < fastHealLimit) heal(Math.min(D.regen * dt, fastHealLimit - p.hp));
+  if (D.guardianHeal > 0){
+    p.guardianHealT -= dt;
+    while (p.guardianHealT <= 0){ heal(D.guardianHeal); p.guardianHealT += 5; }
+  } else p.guardianHealT = 5;
   if (D.respite && !G.portal){
     const respiteLimit=D.life*0.60;
     const wasActive=p.respiteT>=4;
@@ -12786,7 +12823,7 @@ const MINION_STATS = new Set([
   'vsLow','vsFull','vsBoss','vsSlowed','whMove','whStill','perNear','afterKill',
   // Криты: шанс наследуется целиком, множитель и надстройки общие
   'critCh','critMul','superCh','critWave',
-  // Скорости наследуются целиком
+  // Прирост скоростей хозяина входит в общую additive-корзину скоростей свиты
   'aspd','mspd',
   // Площадь: радиус взрыва приспешника при смерти и «Буйства демонов»
   'aoeR',
@@ -12805,6 +12842,7 @@ const MINION_STATS = new Set([
    а взятые из раздачи и так вырезаны. */
 function currentOf(m){
   if (m.kind === 'flag') return null;
+  if (m.id === 'spd.action') return '×' + D.attackSpeedMore.toFixed(2);
   const e = G.bag.s[m.stat];
   if (!e) return m.kind === 'more' ? '×1.00' : '0';
   if (m.kind === 'more')   return '×' + e.more.toFixed(2);
@@ -13009,7 +13047,7 @@ const affectsMinions = m => {
 const KIND_HINT = {
   flat:  'к урону плюсом',
   inc:   'суммируется в процентах',
-  more:  'отдельный множитель',
+  more:  'общий more-множитель',
   chance:'шанс',
   flag:  'свойство',
 };
@@ -13042,7 +13080,7 @@ const SKILL_TIPS = {
   'crit.super_chance':'<b>Требование:</b> открывается при 100% обычного крита.<br><b>Когда срабатывает:</b> после критического удара бросается отдельный шанс сверхкрита.<br><b>Эффект:</b> сверхкрит удваивает уже критический урон и накладывает кровотечение на 3% силы удара в секунду; кровотечения складываются без предела.',
   'crit.on_crit_shockwave':'<b>Когда срабатывает:</b> каждый раз, когда ваш удар критует.<br><b>База волны:</b> 20% урона, который крит фактически снял с основной цели после её защиты; лишний урон сверх оставшегося HP не учитывается.<br><b>Цели:</b> только другие враги в радиусе 90; первоначальная цель исключается.<br><b>Защита соседей:</b> каждый отдельно применяет свою броню, панцирь, защиту пачки и особую защиту босса.<br><b>Важно:</b> волна сама не критует и не создаёт следующую критическую волну; радиус растёт от бонусов к области действия.',
   'spd.attack':'<b>Что меняет:</b> уменьшает задержку между автоатаками на указанный процент.<br><b>Пример:</b> +20% скорости атаки означает примерно в 1,2 раза больше атак за то же время.<br><b>Влияет:</b> на основную атаку и частоту ударов свиты там, где применяется её собственная скорость.',
-  'spd.action':'<b>Что меняет:</b> это отдельный множитель скорости атаки, а не обычный процент.<br><b>Пример:</b> при 100% обычной скорости «×1,15» делает итог 115%; несколько таких множителей перемножаются.<br><b>Почему ценен:</b> складывается отдельно от карточек «Скорость атаки».',
+  'spd.action':'<b>Что меняет:</b> добавляет процент к общей корзине more для скорости атаки.<br><b>Пример:</b> «×1,15», +10% Охотника и +20% обычного предмета вместе дают ×1,45, а не ×1,518.<br><b>В одной корзине:</b> сюда входят повторяемые more-карточки, обычные бонусы предметов, подкласса и временные стаки. Кейстоуны и штрафы применяются отдельно.',
   'mov.speed':'<b>Что меняет:</b> увеличивает скорость движения героя во все стороны.<br><b>Пример:</b> +10% означает, что одинаковая дистанция проходится примерно за 90% прежнего времени.<br><b>Не влияет:</b> на скорость снарядов, атаки, рывок и скорость свиты.',
   'mov.speed_on_kill':'<b>Когда срабатывает:</b> сразу после каждого убийства.<br><b>Эффект:</b> герой получает +25% скорости передвижения на 0,8 секунды.<br><b>Обновление:</b> новое убийство сразу обновляет время действия.',
   'shape.proj_count':'<b>Что меняет:</b> каждая атака Лучника выпускает ещё один снаряд.<br><b>Эффект:</b> дополнительный снаряд наносит полный урон и может отдельно критовать, пробивать и накладывать эффекты.<br><b>Важно:</b> карточка доступна только Лучнику; Маг получает дополнительные основные снаряды только от общего классового роста.',
@@ -13074,7 +13112,7 @@ function detailedSkillTip(m, card){
   if (m.id === 'trig.on_low_life') return '<b>Когда срабатывает:</b> здоровье героя опускается до опасного уровня.<br><b>Эффект:</b> восстанавливает 25% максимального HP.<br><b>Ограничение:</b> повторное срабатывание возможно только через 20 секунд.';
   if (m.id === 'dmg.flat_all') return '<b>Что меняет:</b> добавляет <b>' + shown + '</b> к базовому урону каждого вашего подходящего удара.<br><b>Как считается:</b> сначала прибавляется это число, затем применяются проценты и множители.<br><b>Влияет:</b> на все типы урона, включая атаки свиты, когда они наследуют ваши характеристики.';
   if (m.id === 'dmg.inc_all') return '<b>Что меняет:</b> добавляет <b>' + shown + '</b> к сумме общего процентного урона.<br><b>Пример:</b> +20% и +30% общего урона вместе дают +50% к базовому урону.<br><b>Влияет:</b> на все типы атак, но не заменяет отдельные множители «more».';
-  if (m.id === 'dmg.more_all') return '<b>Что меняет:</b> умножает итоговый урон на отдельный множитель <b>' + shown + '</b>.<br><b>Пример:</b> 100 урона с «×1,20» становится 120 после обычных процентных бонусов.<br><b>Важно:</b> несколько таких карточек перемножаются между собой.';
+  if (m.id === 'dmg.more_all') return '<b>Что меняет:</b> добавляет свой процент к общей корзине more для урона: <b>' + shown + '</b>.<br><b>Пример:</b> «×1,20» и «×1,15» вместе дают общий множитель ×1,35, а не ×1,38.<br><b>Важно:</b> собранная корзина применяется один раз после обычных процентных бонусов.';
   if (m.id === 'dmg.aoe') return '<b>Условие:</b> урон должен быть нанесён по площади — взрывом, волной, лужей или сферой мага.<br><b>За карточку:</b> случайно выпадает целое значение от <b>7% до 13%</b>.<br><b>Сложение:</b> все выбранные значения суммируются без потолка; например, 8% + 12% = +20%.<br><b>Не действует:</b> на одиночное прямое попадание стрелы.';
   if (m.id === 'dmg.projectile') return '<b>Класс:</b> карточка доступна только Лучнику.<br><b>Условие:</b> урон должен прийти от летящей стрелы.<br><b>За карточку:</b> случайно выпадает целое значение от <b>5% до 10%</b>.<br><b>Сложение:</b> все выбранные значения суммируются без потолка; например, 6% + 9% = +15%.<br><b>Не действует:</b> на атаки других классов и свиты.';
   if (m.id === 'dmg.melee') return '<b>Условие:</b> урон должен быть нанесён ближней атакой воина.<br><b>Эффект:</b> такой удар получает указанный процент урона.<br><b>Не действует:</b> на стрелы, сферы и самостоятельные эффекты по площади.';
@@ -13089,8 +13127,8 @@ function detailedSkillTip(m, card){
   if (/^dt\.(fire|cold|lightning|poison)\.flat$/.test(m.id)) return '<b>Условие появления:</b> сначала нужно взять хотя бы 1% шанса соответствующего статуса.<br><b>Что меняет:</b> добавляет <b>' + shown + '</b> плоского урона стихии к каждому подходящему попаданию.<br><b>Важно:</b> открытие только добавляет редкую синюю карточку в случайный пул и не гарантирует её в следующей раздаче.';
   if (/^dt\.(fire|cold|lightning|poison)\.inc$/.test(m.id)) return '<b>Условие появления:</b> сначала нужно взять хотя бы 1% шанса соответствующего статуса.<br><b>Что меняет:</b> усиливает весь урон этой стихии на <b>' + shown + '</b>.<br><b>Важно:</b> обычная карточка лишь открывается в случайном пуле и не выдаётся гарантированно.';
   if (m.id === 'ail.ignite.chance') return '<b>Когда проверяется:</b> при каждом подходящем попадании.<br><b>Эффект:</b> поджог наносит 20% полного удара в секунду в течение 3 секунд.<br><b>Предел:</b> одна карточка даёт 5–10 процентных пунктов; суммарный шанс не превышает 25%.';
-  if (m.id === 'ail.chill.chance') return '<b>Когда проверяется:</b> при каждом подходящем попадании.<br><b>Эффект на 0,5 сек:</b> −15% скорости цели, +10% входящего урона и отдельный урон в размере 10% атаки; соседи замедляются на 5%.<br><b>Предел:</b> одна карточка даёт 5–10 п.п.; суммарный шанс не превышает 25%.';
-  if (m.id === 'ail.shock.chance') return '<b>Когда проверяется:</b> при каждом подходящем попадании.<br><b>Эффект:</b> Шок на 1 секунду даёт цели +10% входящего урона; базовый разряд бьёт до 5 соседей на 15% удара.<br><b>Предел:</b> одна карточка даёт 5–10 п.п.; суммарный шанс не превышает 25%. На потолке открывается «ТЕСЛА».';
+  if (m.id === 'ail.chill.chance') return '<b>Когда проверяется:</b> при каждом подходящем попадании.<br><b>Эффект на 0,5 сек:</b> −15% скорости цели, +10% в общую корзину входящего урона и отдельный урон в размере 10% атаки; соседи замедляются на 5%.<br><b>Сложение:</b> Охлаждение, Шок и Заморозка вместе дают +30%, а не ×1,10³.<br><b>Предел:</b> одна карточка даёт 5–10 п.п.; суммарный шанс не превышает 25%.';
+  if (m.id === 'ail.shock.chance') return '<b>Когда проверяется:</b> при каждом подходящем попадании.<br><b>Эффект:</b> Шок на 1 секунду добавляет +10% в общую корзину входящего урона; базовый разряд бьёт до 5 соседей на 15% удара.<br><b>Сложение:</b> Охлаждение, Шок и Заморозка вместе дают +30%, а не ×1,10³.<br><b>Предел:</b> одна карточка даёт 5–10 п.п.; суммарный шанс не превышает 25%. На потолке открывается «ТЕСЛА».';
   if (m.id === 'ail.poison.chance') return '<b>Когда проверяется:</b> при каждом подходящем попадании.<br><b>Эффект:</b> яд наносит 15% полного удара в секунду в течение 4 секунд и стакается.<br><b>Предел:</b> одна карточка даёт 5–10 п.п.; суммарный шанс не превышает 25%.';
   if (m.id === 'cc.knockback') return '<b>Когда проверяется:</b> при каждом вашем попадании.<br><b>Эффект:</b> с этим шансом враг отбрасывается от героя.<br><b>Диапазон:</b> каждая карточка даёт случайно 5–15%.<br><b>Сопротивление:</b> сила толчка по Бегунам снижена на 30%, по любой элите — на 50%, по боссам — на 90%.<br><b>Предел:</b> 75%; последняя карточка обрезается до остатка, затем открывается «ГОЛОВОКРУЖЕНИЕ».';
   if (m.id === 'cc.stun_chance') return '<b>Когда проверяется:</b> при каждом вашем попадании.<br><b>Эффект:</b> с этим шансом враг полностью перестаёт двигаться и атаковать. Базовая длительность оглушения — 0,5 секунды.<br><b>Карточка:</b> каждый выбор даёт целые 3–5 процентных пунктов; например, 4% + 5% = 9% шанса.<br><b>Предел:</b> суммарный шанс не превышает 50%; после этого карточка уходит из пула.<br><b>Длительность:</b> «Длительность всех эффектов» продолжает оглушение; например, +50% превращает 0,5 секунды в 0,75 секунды.';
@@ -13100,7 +13138,7 @@ function detailedSkillTip(m, card){
   if (m.kind === 'chance') return '<b>Что означает число:</b> это независимый шанс при каждом подходящем событии.<br><b>Пример:</b> ' + shown + ' означает, что примерно столько раз из 100 эффект сработает.<br><b>Важно:</b> шанс не гарантирует срабатывание по счёту; точный потолок указан в описании ветки.';
   if (m.kind === 'flag') return '<b>Эффект:</b> открывает это постоянное свойство до конца забега.<br><b>Когда работает:</b> условия и детали указаны в названии и категории карточки.<br><b>Важно:</b> повторный выбор той же карточки не усиливает свойство.';
   if (m.kind === 'flat') return '<b>Что меняет:</b> добавляет <b>' + shown + '</b> напрямую к этому параметру.<br><b>Как считается:</b> плоское значение прибавляется к базе до процентных усилений.<br><b>Важно:</b> это не процент — эффект одинаковый при любом текущем значении.';
-  if (m.kind === 'more') return '<b>Что меняет:</b> умножает итоговый параметр на отдельный множитель <b>' + shown + '</b>.<br><b>Важно:</b> этот тип применяется после обычных процентов, поэтому несколько таких бонусов перемножаются.<br><b>Не путать:</b> это не обычное сложение процентов.';
+  if (m.kind === 'more') return '<b>Что меняет:</b> добавляет свой процент к общей корзине more: <b>' + shown + '</b>.<br><b>Важно:</b> бонусы more складываются между собой, а вся корзина применяется один раз после обычных процентов.<br><b>Не путать:</b> more остаётся отдельным от обычной корзины increased.';
   return '<b>Что меняет:</b> добавляет <b>' + shown + '</b> к сумме процентных бонусов этого параметра.<br><b>Как считается:</b> все такие проценты складываются, затем усиливают базовое значение.<br><b>Пример:</b> +20% и +30% дают вместе +50%, а не ×1,2 ×1,3.';
 }
 
@@ -13552,7 +13590,7 @@ function renderSheet(){
           Math.round(bookBleedDps() || avgHit()*0.15*D.ailEff) + ' урона/сек за стак') : '')
       + (D.minBoil ? r('Кипящая кровь', '5% на лужу радиусом ' + Math.round(BOIL_R*D.aoeR) +
           ' · 5% текущего здоровья в секунду') : '')
-      + (D.venomancer ? r('Кислота веномансера', '3 сек · 15% текущего здоровья/сек') : '') +
+      + (D.venomancer ? r('Кислота веномансера', '2 сек · 5% текущего здоровья/сек') : '') +
       r('Трупов на земле', G.corpses.length)
     : '') +
     (Object.keys(G.totems).length ?

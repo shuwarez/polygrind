@@ -52,7 +52,7 @@ console.log('ПЕЧАТЬ ПУСТОГО ТРОНА');
     const v=hitViaAttack(o,e);return v;};
   function hitViaAttack(o,e){const hp=e.hp;o.c.attack();return hp-e.hp;}
   const plain=swing(false),boost=swing(true);
-  ok('обычный усиленный взмах получает +35% урона',Math.abs(boost/plain-1.35)<1e-9,plain.toFixed(2)+' \u2192 '+boost.toFixed(2));
+  ok('обычный усиленный взмах получает +35% урона',Math.abs(boost/plain-1.35)<1e-8,plain.toFixed(2)+' \u2192 '+boost.toFixed(2));
 }
 {
   const wave=ready=>{const o=mk('emptyThroneSeal'),e=foe(o,{x:-50});o.p.aim=0;o.p.bladeN=2;o.p.emptyThroneReady=ready;

@@ -12,6 +12,13 @@ function enemy(floor){
   return e;
 }
 
+{ const stable=Object.keys({blade:1,bow:1,wand:1,necro:1}).every(key=>{
+    const c=loadGame('./GrimGrind.html'); c.newGame(key,'keys'); const G=c.__api.G,w=G.weapon;
+    G.lvl=100; G.floor=100; c.recalc();
+    return Math.abs(c.__api.D.baseMin-w.dmg[0])<1e-9&&Math.abs(c.__api.D.baseMax-w.dmg[1])<1e-9;
+  });
+  ok('уровень и этаж не повышают базовый урон героев',stable); }
+
 { const e = enemy(2);
   const hpKind = e.kind === 'boss' ? 14 : e.kind === 'elite' ? 3.2 : 1;
   const dmgKind = e.kind === 'boss' ? 1.9 : e.kind === 'elite' ? 1.3 : 1;

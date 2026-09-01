@@ -21,6 +21,42 @@ function arrowHit(o,age,{first=true}={}){
   const hp=e.hp;o.c.update(0);return {damage:hp-e.hp,e,s};
 }
 
+function subclassStats(id,lvl){
+  const c=loadGame('./GrimGrind.html');c.newGame('bow','keys',id);
+  c.__api.G.lvl=lvl;c.recalc();return c.__api.D;
+}
+
+{
+  const h4=subclassStats('hunter',4),h5=subclassStats('hunter',5),h25=subclassStats('hunter',25);
+  ok('Охотник получает +1% скорости атаки за полные 5 уровней',
+    Math.abs(h4.aspd-1)<1e-9&&Math.abs(h5.aspd-1.01)<1e-9&&Math.abs(h25.aspd-1.05)<1e-9,
+    h4.aspd.toFixed(2)+'/'+h5.aspd.toFixed(2)+'/'+h25.aspd.toFixed(2));
+  const dancer=subclassStats('dancer',20);
+  ok('Боевой танцор получает +1 рывок и +1 уворот за уровень',
+    dancer.dashMax===2&&dancer.dodge===20,'рывки '+dancer.dashMax+' · уворот '+dancer.dodge+'%');
+  const plain4=subclassStats(null,4),dance4=subclassStats('dancer',4),plain5=subclassStats(null,5),dance5=subclassStats('dancer',5);
+  ok('здоровье Боевого танцора растёт на 1% каждые 5 уровней',
+    Math.abs(dance4.life/plain4.life-1)<1e-9&&Math.abs(dance5.life/plain5.life-1.01)<1e-9,
+    (dance4.life/plain4.life).toFixed(2)+'/'+(dance5.life/plain5.life).toFixed(2));
+  const danceLife=loadGame('./GrimGrind.html');danceLife.newGame('bow','keys','dancer');
+  danceLife.__api.G.lvl=25;danceLife.__api.G.bag.add('life','inc',100);danceLife.recalc();
+  ok('процент здоровья Танцора складывается с карточками максимального здоровья',
+    Math.abs(danceLife.__api.D.life-410)<1e-9,'HP '+danceLife.__api.D.life.toFixed(0));
+}
+
+{
+  const c=loadGame('./GrimGrind.html');c.newGame('bow','keys','hunter');const G=c.__api.G,p=G.player;
+  G.lvl=25;G.bag.add('aspd','inc',50);G.bag.add('aspd','more',15);
+  G.amu.clock=true;G.amu.claws=true;G.amu.swift=true;p.swiftT=1;c.recalc();
+  const actionCard=c.__api.MODS.find(m=>m.id==='spd.action');
+  ok('обычные бонусы скорости атаки складываются в общую more-корзину',
+    Math.abs(c.__api.D.attackSpeedMore-1.70)<1e-9&&Math.abs(c.__api.D.aspd-2.55)<1e-9&&c.currentOf(actionCard)==='×1.70',
+    'more ×'+c.__api.D.attackSpeedMore.toFixed(2)+' · итог ×'+c.__api.D.aspd.toFixed(2));
+  G.bag.add('kFlurry','flag',1);c.recalc();
+  ok('трансформирующий кейстоун скорости остаётся отдельным множителем',
+    Math.abs(c.__api.D.aspd-5.10)<1e-9,'×'+c.__api.D.aspd.toFixed(2));
+}
+
 {
   const o=setup(),mods=o.c.__api.MODS,ids=['archer.long_flight','archer.accelerated','archer.swift_arrows','archer.clean_trajectory','archer.elemental_pierce','archer.fletching','archer.split_arrow','archer.return_shot','archer.hunter_mark','archer.mirror_volley'];
   ok('в каталоге есть все десять новых навыков Лучника',ids.every(id=>mods.some(m=>m.id===id)));

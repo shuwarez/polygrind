@@ -25,6 +25,31 @@ const row = (data,key) => data.rows.find(x=>x.key===key);
   ok('расчёт не изменяет HP и текущие показатели', G.player.hp===hp && near(c.attackAvgHit(),hit) && near(c.attackAvgHit()/c.__api.D.atkCd,dps)); }
 
 { const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys');
+  const G=c.__api.G, base=c.attackAvgHit();
+  G.bag.add('dmg','inc',100);
+  G.bag.add('dmg','more',20); G.bag.add('dmg','more',15); c.recalc();
+  ok('повторяемые more урона складываются в общую корзину',
+    near(G.bag.s.dmg.more,1.35) && near(c.attackAvgHit(),base*2*1.35),
+    '×'+G.bag.s.dmg.more.toFixed(2));
+  G.bag.add('kGlass','flag',1); c.recalc();
+  ok('уникальный множитель остаётся отдельным от корзины more', near(c.__api.D.moreAll,1.35*1.6),
+    '×'+c.__api.D.moreAll.toFixed(2)); }
+
+{ const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys');
+  const G=c.__api.G, base=c.__api.D.aspd;
+  G.bag.add('aspd','more',15); G.bag.add('aspd','more',10); c.recalc();
+  ok('повторяемая скорость действий использует ту же общую корзину more',
+    near(G.bag.s.aspd.more,1.25) && near(c.__api.D.aspd,base*1.25),
+    '×'+G.bag.s.aspd.more.toFixed(2)); }
+
+{ const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys'); c.setLanguage('ru');
+  const x=card(c,'dmg.more_all',20), tip=c.detailedSkillTip(x.m,x);
+  c.setLanguage('en');
+  ok('подсказка more объясняет сложение и приводит точный пример',
+    tip.includes('общей корзине') && tip.includes('×1,35') && !tip.includes('перемножаются') &&
+    c.tr('общий more-множитель')==='shared more multiplier'); }
+
+{ const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys');
   const G=c.__api.G, x=card(c,'key.glass_cannon',1), hp=G.player.hp, life=c.__api.D.life;
   c.cardImpactData(x.m,x);
   ok('проекция кейстоуна возвращает здоровье после временного recalc', G.player.hp===hp && c.__api.D.life===life,

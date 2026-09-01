@@ -18,9 +18,9 @@ function loadGame(file, options={}){
              'applyBookAilments:(e,total,chanceMul,fixedDamageMul,minionShare)=>applyBookAilments(e,total,chanceMul,fixedDamageMul,minionShare), ' +
              'affectsMinions:(m)=>affectsMinions(m), get MINION_STATS(){return MINION_STATS}, ' +
              'get ELEMENTAL_BALANCE(){return {igniteDps:IGNITE_DPS_SHARE,poisonDps:POISON_DPS_SHARE,' +
-             'chillDuration:CHILL_DURATION,chillDamage:CHILL_DAMAGE_SHARE,chillTaken:CHILL_TAKEN,chillSlow:CHILL_SLOW,chillAuraSlow:CHILL_AURA_SLOW,' +
-             'freezeChance:FREEZE_CHANCE,freezeDuration:FREEZE_DURATION,freezeTaken:FREEZE_TAKEN,' +
-             'shockDuration:SHOCK_DURATION,shockTaken:SHOCK_TAKEN,shockTargets:shockTargets(),shockShare:shockShare()}} , ' +
+             'chillDuration:CHILL_DURATION,chillDamage:CHILL_DAMAGE_SHARE,chillTaken:CHILL_TAKEN_INC,chillSlow:CHILL_SLOW,chillAuraSlow:CHILL_AURA_SLOW,' +
+             'freezeChance:FREEZE_CHANCE,freezeDuration:FREEZE_DURATION,freezeTaken:FREEZE_TAKEN_INC,' +
+             'shockDuration:SHOCK_DURATION,shockTaken:SHOCK_TAKEN_INC,shockTargets:shockTargets(),shockShare:shockShare()}} , ' +
              'get DROP_BALANCE(){return {itemScale:ITEM_DROP_SCALE,bookScale:BOOK_DROP_SCALE,totemScale:TOTEM_DROP_SCALE,' +
              'findRateScale:FIND_RATE_SCALE,itemShare:AMU_SHARE*ITEM_DROP_SCALE/FIND_RATE_SCALE,' +
              'totemShare:TOTEM_SHARE*TOTEM_DROP_SCALE/FIND_RATE_SCALE}}, ' +

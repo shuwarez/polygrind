@@ -135,6 +135,23 @@ console.log('СТАТУСЫ ОТ УДАРА СВИТЫ');
   ok('добивание', o.e.hp <= 0); }
 
 console.log('БАЛАНС ВСЕЙ СВИТЫ');
+{ const power=o=>o.c.avgHit()*o.D.minDmgMul;
+  const base=power(mk([])),hero=power(mk([['dmg',100,'inc']])),
+    own=power(mk([['minDmg',50,'inc'],['minInherit',50]])),
+    both=power(mk([['dmg',100,'inc'],['minDmg',50,'inc'],['minInherit',50]]));
+  ok('урон хозяина, свиты и наследование складывают прирост без перемножения',
+    Math.abs((both-base)-((hero-base)+(own-base)))<1e-8,
+    [base,hero,own,both].map(x=>x.toFixed(1)).join(' / ')); }
+{ const base=mk([]).D.minAspd,hero=mk([['aspd',100,'inc']]).D.minAspd,
+    own=mk([['minAspd',100,'inc']]).D.minAspd,both=mk([['aspd',100,'inc'],['minAspd',100,'inc']]).D.minAspd;
+  ok('скорость атаки хозяина и свиты складывается от базового темпа',
+    Math.abs(base-1)<1e-9&&Math.abs(hero-2)<1e-9&&Math.abs(own-2)<1e-9&&Math.abs(both-3)<1e-9,
+    [base,hero,own,both].map(x=>x.toFixed(1)).join(' / ')); }
+{ const base=mk([]).D.minSpd,hero=mk([['mspd',100,'inc']]).D.minSpd,
+    own=mk([['minSpd',100,'inc']]).D.minSpd,both=mk([['mspd',100,'inc'],['minSpd',100,'inc']]).D.minSpd;
+  ok('скорость движения хозяина и свиты складывается от базового темпа',
+    Math.abs(base-610)<1e-9&&Math.abs(hero-1220)<1e-9&&Math.abs(own-1220)<1e-9&&Math.abs(both-1830)<1e-9,
+    [base,hero,own,both].map(x=>x.toFixed(0)).join(' / ')); }
 { const o = mk([]);
   // Сравниваем один и тот же детерминированный удар: две независимые случайные
   // выборки базы и критов давали ложный разброс отношения вплоть до 0.57.
@@ -242,6 +259,14 @@ console.log('ЕСТЕСТВЕННАЯ СМЕРТЬ СВИТЫ');
      'свита ' + beforeCount + ' → ' + G.minions.length + ' · взрыв ' + Math.round(hp0-e.hp));
   ok('естественная смерть создаёт кислоту веномансера', G.acidPools.length === 1,
      'луж: ' + G.acidPools.length);
+  G.acidPools.length=0; e.hp=e.maxHp=10000; e.x=e.y=0;
+  c.dropAcidPool({x:0,y:0}); c.tickAcidPools(0);
+  const afterFirst=e.hp; c.tickAcidPools(1); const afterSecond=e.hp;
+  ok('кислота веномансера наносит два тика по 5% текущего здоровья',
+    Math.abs(afterFirst-9500)<1e-9&&Math.abs(afterSecond-9025)<1e-9,
+    '10000 → '+afterFirst+' → '+afterSecond);
+  c.tickAcidPools(1);
+  ok('кислота веномансера исчезает через 2 секунды',G.acidPools.length===0,'луж: '+G.acidPools.length);
   G.enemies.length = 0; G.spawnQueue = 0; G.portal = null; G.corpses.length = 0; G.raiseT = 0;
   const deadCount = G.minions.length; c.update(0.24); const beforeRevive = G.minions.length; c.update(0.02);
   ok('погибший возвращается по правилу 0.25 секунды', beforeRevive === deadCount && G.minions.length === deadCount+1,

@@ -39,11 +39,11 @@ const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
   ok('две лужи последовательно снимают 5% текущего HP каждая',Math.abs(e.hp-9025)<1e-9); }
 
 { const c=fresh(),G=c.__api.G,e=c.spawnEnemy('blob');G.enemies=[e];e.hp=e.maxHp=10000;e.x=68;e.y=0;e.r=10;e.dead=false;
-  G.acidPools=[{x:0,y:0,r:58,life:3,max:3,t:0}];c.tickAcidPools(0);
-  ok('кислотная лужа сохраняет включительную границу',Math.abs(e.hp-8500)<1e-9);
-  e.hp=10000;e.dead=true;G.acidPools=[{x:0,y:0,r:58,life:3,max:3,t:0}];c.tickAcidPools(0);
+  G.acidPools=[{x:0,y:0,r:58,life:2,max:2,t:0}];c.tickAcidPools(0);
+  ok('кислотная лужа сохраняет включительную границу',Math.abs(e.hp-9500)<1e-9);
+  e.hp=10000;e.dead=true;G.acidPools=[{x:0,y:0,r:58,life:2,max:2,t:0}];c.tickAcidPools(0);
   ok('кислота по-прежнему исключает помеченную мёртвую цель',e.hp===10000);
-  e.dead=false;e.x=68.001;G.acidPools=[{x:0,y:0,r:58,life:3,max:3,t:0}];c.tickAcidPools(0);
+  e.dead=false;e.x=68.001;G.acidPools=[{x:0,y:0,r:58,life:2,max:2,t:0}];c.tickAcidPools(0);
   ok('кислота не задевает цель за границей на 0,001',e.hp===10000); }
 
 { const c=fresh(),G=c.__api.G,e=c.spawnEnemy('blob');G.enemies=[e];e.hp=e.maxHp=1000;e.r=10;e.x=60;e.y=0;

@@ -28,7 +28,7 @@ function orbitHit({subclass=null,lvl=1,inc=0,more=1,element=0,crit=0,double=0,ig
   G.enemies.length=0; G.spawnQueue=0; G.packs.length=0; G.portal=null;
   p.x=p.y=0; G.orbitA=0;
   D.baseMin=D.baseMax=100; D.elem={fire:element,cold:0,lit:0,poi:0};
-  D.incAll=inc; D.moreAll=more; D.critCh=crit; D.critMul=200; D.superCh=0;
+  D.incAll=inc+(subclass==='berserker'?lvl:0); D.moreAll=more; D.critCh=crit; D.critMul=200; D.superCh=0;
   D.dblHit=double; D.deadlyHit=false; D.igniteCh=ignite;
   D.chillCh=D.shockCh=D.poiCh=D.knock=0; D.ailEff=D.ailDur=1;
   const e=foe({c,G,D,p}); Object.assign(e,c.orbitPos(0)); e.orbCd=0;
@@ -154,29 +154,44 @@ function orbitHit({subclass=null,lvl=1,inc=0,more=1,element=0,crit=0,double=0,ig
 
 {
   const o=mk('berserker',20);
-  ok('Берсерк: +1% ближнего урона за уровень', o.D.warriorMeleeInc===20, o.D.warriorMeleeInc+'%');
-  const base=fixedDamage(mk(null,20),true), boosted=fixedDamage(mk('berserker',20),true);
-  ok('Берсерк усиливает прямой взмах на 20-м уровне', Math.abs(boosted/base-1.20)<1e-9, base+' → '+boosted);
-  const standalone=fixedDamage(mk('berserker',20),false);
-  ok('самостоятельный эффект бонус Берсерка не получает', Math.abs(standalone-base)<1e-9, standalone+' урона');
-  o.p.berserkLow=false; o.p.hp=o.D.life; o.c.recalc(); const full=o.D.aspd;
-  o.p.berserkLow=true; o.p.hp=o.D.life*0.39; o.c.recalc();
-  ok('ниже 40% здоровья скорость атаки умножается на 1.20', Math.abs(o.D.aspd/full-1.20)<1e-9, full.toFixed(2)+' → '+o.D.aspd.toFixed(2));
-  const high=mk('berserker',20); high.p.berserkLow=false; high.p.hp=high.D.life*0.40; high.c.recalc();
-  ok('на 40% здоровья ускорение ещё не действует', Math.abs(high.D.aspd-1)<1e-9, high.D.aspd.toFixed(2));
+  const plain=mk(null,20);
+  ok('Берсерк получает +1% общего урона за уровень',
+    Math.abs(o.D.incAll-plain.D.incAll-20)<1e-9&&o.D.warriorMeleeInc===0,o.D.incAll+'%');
+  for(const x of [plain,o]){
+    x.D.baseMin=x.D.baseMax=100;x.D.elem={fire:0,cold:0,lit:0,poi:0};x.D.moreAll=1;x.D.critCh=x.D.superCh=0;
+  }
+  const plainEnemy=foe(plain),berserkEnemy=foe(o),plainHp=plainEnemy.hp,berserkHp=berserkEnemy.hp;
+  plain.c.damage(plainEnemy,{});o.c.damage(berserkEnemy,{});
+  ok('общий бонус Берсерка усиливает урон без привязки к прямому взмаху',
+    Math.abs((berserkHp-berserkEnemy.hp)/(plainHp-plainEnemy.hp)-1.20)<1e-9,
+    (plainHp-plainEnemy.hp)+' → '+(berserkHp-berserkEnemy.hp));
+  const lv4=mk('berserker',4),lv5=mk('berserker',5);
+  ok('лечение Берсерка растёт на 2 HP за каждые 5 уровней',
+    lv4.D.berserkerHitHeal===0&&lv5.D.berserkerHitHeal===2&&o.D.berserkerHitHeal===8,
+    lv4.D.berserkerHitHeal+'/'+lv5.D.berserkerHitHeal+'/'+o.D.berserkerHitHeal);
+  o.p.hp=o.D.life-20;const before=o.p.hp;
+  o.c.damage(foe(o),{direct:true,heroDirect:true,warriorMelee:true});
+  ok('успешное прямое попадание Берсерка восстанавливает здоровье',
+    Math.abs(o.p.hp-before-8)<1e-9,'+'+(o.p.hp-before)+' HP');
+  o.p.hp=o.D.life-20;const indirect=o.p.hp;
+  o.c.damage(foe(o),{});
+  ok('непрямой эффект не считается попаданием Берсерка',o.p.hp===indirect);
 }
 
 {
   const base=mk(null,20), guard=mk('guardian',20);
-  ok('Страж: +0,75% здоровья за уровень', Math.abs(guard.D.life/base.D.life-1.15)<1e-9, Math.round(base.D.life)+' → '+Math.round(guard.D.life));
-  for(let i=0;i<3;i++) foe(guard,-70+i*15,0);
+  ok('Страж получает +1% максимального здоровья за уровень', Math.abs(guard.D.life/base.D.life-1.20)<1e-9, Math.round(base.D.life)+' → '+Math.round(guard.D.life));
+  const stacked=mk('guardian',20);stacked.G.bag.add('life','inc',100);stacked.c.recalc();
+  ok('здоровье Стража и карточки максимального здоровья складываются',
+    Math.abs(stacked.D.life-396)<1e-9,'HP '+stacked.D.life.toFixed(0));
+  for(let i=0;i<2;i++) foe(guard,-70+i*15,0);
   guard.c.attack(); guard.c.attack(); guard.c.attack();
-  ok('волна по трём целям даёт барьер 6%', Math.abs(guard.p.barrier/guard.D.life-0.06)<1e-9, Math.round(guard.p.barrier)+' HP');
-  ok('барьер запускает перезарядку 4 секунды', guard.p.guardianCd===4, guard.p.guardianCd+'с');
+  ok('волна по двум целям даёт барьер 8%', Math.abs(guard.p.barrier/guard.D.life-0.08)<1e-9, Math.round(guard.p.barrier)+' HP');
+  ok('барьер запускает перезарядку 3 секунды', guard.p.guardianCd===3, guard.p.guardianCd+'с');
 
-  const two=mk('guardian',20); foe(two,-70,0); foe(two,-55,0);
-  two.c.attack(); two.c.attack(); two.c.attack();
-  ok('двух целей для барьера недостаточно', two.p.barrier===0);
+  const one=mk('guardian',20); foe(one,-70,0);
+  one.c.attack(); one.c.attack(); one.c.attack();
+  ok('одной цели для барьера недостаточно', one.p.barrier===0);
 
   guard.p.barrier=0; guard.c.attack(); guard.c.attack(); guard.c.attack();
   ok('до конца перезарядки барьер не обновляется', guard.p.barrier===0);
@@ -185,24 +200,32 @@ function orbitHit({subclass=null,lvl=1,inc=0,more=1,element=0,crit=0,double=0,ig
   larger.p.barrier=larger.D.life*0.10; larger.c.attack(); larger.c.attack(); larger.c.attack();
   ok('волна не уменьшает уже больший барьер', Math.abs(larger.p.barrier/larger.D.life-0.10)<1e-9);
   larger.G.enemies.length=0; larger.G.spawnQueue=0; larger.c.update(0.5);
-  ok('перезарядка Стража уменьшается во времени', Math.abs(larger.p.guardianCd-3.5)<1e-9, larger.p.guardianCd.toFixed(1)+'с');
+  ok('перезарядка Стража уменьшается во времени', Math.abs(larger.p.guardianCd-2.5)<1e-9, larger.p.guardianCd.toFixed(1)+'с');
+  const low=mk('guardian',4),healer=mk('guardian',20);healer.p.hp=healer.D.life-50;
+  healer.G.enemies.length=0;healer.G.spawnQueue=0;healer.c.update(4.99);const beforeHeal=healer.p.hp;healer.c.update(0.01);
+  ok('Страж каждые 5 уровней получает ещё 5 HP лечения раз в 5 секунд',
+    low.D.guardianHeal===0&&healer.D.guardianHeal===20&&Math.abs(healer.p.hp-beforeHeal-20)<1e-9,
+    low.D.guardianHeal+'/'+healer.D.guardianHeal+' · +'+(healer.p.hp-beforeHeal)+' HP');
 }
 
 {
   const o=mk('swordmaster',20);
-  ok('Мастер меча: рост на 20-м уровне', Math.abs(o.D.warriorWaveRadius-1.20)<1e-9 && Math.abs(o.D.warriorWaveKnock-1.30)<1e-9,
+  ok('Мастер меча: +3% радиуса и толчка каждые два уровня', Math.abs(o.D.warriorWaveRadius-1.30)<1e-9 && Math.abs(o.D.warriorWaveKnock-1.30)<1e-9,
      'радиус ×'+o.D.warriorWaveRadius.toFixed(2)+', толчок ×'+o.D.warriorWaveKnock.toFixed(2));
   const cap=mk('swordmaster',100);
-  ok('радиус и отбрасывание имеют потолки +60%/+90%', cap.D.warriorWaveRadius===1.60 && cap.D.warriorWaveKnock===1.90);
+  ok('радиус и отбрасывание имеют потолки +50%/+80%', cap.D.warriorWaveRadius===1.50 && cap.D.warriorWaveKnock===1.80);
   const pushed=foe(o); o.c.attack(); o.c.attack(); o.c.attack();
   ok('усиление применяется к реальному импульсу волны', Math.abs(pushed.kb.x+676)<1e-6, Math.round(pushed.kb.x));
 
-  const lv30=mk('swordmaster',30), normal=foe(lv30,-70,0,'norm'), elite=foe(lv30,-55,0,'elite');
-  lv30.c.attack(); lv30.c.attack(); lv30.c.attack();
-  ok('с 30-го уровня обычный враг оглушается на 0,35 сек', Math.abs(normal.ail.stun-0.35)<1e-9, normal.ail.stun.toFixed(2)+'с');
-  const lv29=mk('swordmaster',29), early=foe(lv29);
-  lv29.c.attack(); lv29.c.attack(); lv29.c.attack();
-  ok('до 30-го уровня и на элите оглушения нет', early.ail.stun===0 && elite.ail.stun===0);
+  const lv20=mk('swordmaster',20), normal=foe(lv20,-70,0,'norm'), elite=foe(lv20,-55,0,'elite');
+  lv20.c.attack(); lv20.c.attack(); lv20.c.attack();
+  ok('с 20-го уровня обычные и элитные враги оглушаются на 0,4 сек',
+    Math.abs(normal.ail.stun-0.40)<1e-9&&Math.abs(elite.ail.stun-0.40)<1e-9,
+    normal.ail.stun.toFixed(2)+'/'+elite.ail.stun.toFixed(2)+'с');
+  const lv19=mk('swordmaster',19), early=foe(lv19), boss=foe(lv20,-55,0,'boss');
+  lv19.c.attack(); lv19.c.attack(); lv19.c.attack();
+  lv20.p.bladeN=0;lv20.c.attack();lv20.c.attack();lv20.c.attack();
+  ok('до 20-го уровня и на боссах оглушения нет', early.ail.stun===0 && boss.ail.stun===0);
 }
 
 {

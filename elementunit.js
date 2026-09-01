@@ -101,8 +101,10 @@ console.log('ДЕЙСТВИЕ СТАТУСОВ');
   const no=build([['chillCh',25],['freeze',1,'flag']],()=>0.02), en=foe(no); no.c.damage(en,{});
   ok('ЗАМОРОЗКА делает отдельный 1% бросок и останавливает на 1 секунду',
     near(ey.ail.freeze,1) && en.ail.freeze===0, ey.ail.freeze + ' / ' + en.ail.freeze + ' сек'); }
-{ const o=build(), e=foe(o); e.ail.chill=1; e.ail.freeze=1; const hp=e.hp; o.c.damage(e,{});
-  ok('заморозка добавляет ещё ×1,10 поверх охлаждения', near(hp-e.hp,121), 'снято ' + (hp-e.hp).toFixed(1)); }
+{ const o=build(), e=foe(o); e.ail.chill=1; e.ail.freeze=1; let hp=e.hp; o.c.damage(e,{});
+  const two=hp-e.hp; e.hp=hp; e.ail.shock=1; o.c.damage(e,{}); const three=hp-e.hp;
+  ok('Охлаждение, Заморозка и Шок складывают входящий урон в одну корзину',
+    near(two,120) && near(three,130), 'два '+two.toFixed(1)+' · три '+three.toFixed(1)); }
 { const o=build([['shockCh',25]]), main=foe(o,60,0), others=[];
   for(let i=0;i<20;i++) others.push(foe(o,90+i*8,(i%2)*20));
   o.c.damage(main,{});
