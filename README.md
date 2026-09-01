@@ -137,3 +137,7 @@ node -e "const fs=require('fs');const h=fs.readFileSync('GrimGrind.html','utf8')
 
 Полные лимиты, маршруты data URI и команды упаковщика описаны в
 `GRAPHICS_AUDIT.md`.
+
+## Рабочий файл автономной игры
+
+Каноническое имя рабочего файла автономной версии игры — `index.html`.
