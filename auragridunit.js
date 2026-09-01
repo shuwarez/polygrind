@@ -2,7 +2,7 @@
 const {loadGame}=require('./sim');
 const fs=require('fs');
 const ok=(nm,cond,det='')=>console.log((cond?'  ✓ ':'  ✗ ')+nm.padEnd(66)+det);
-function fresh(){const c=loadGame('./GrimGrind.html');c.newGame('bow','keys');return c;}
+function fresh(){const c=loadGame('./index.html');c.newGame('bow','keys');return c;}
 function unit(x,y,r=10){return {x,y,r,ail:{chill:1}};}
 const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
 
@@ -82,7 +82,7 @@ const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
   G.enemies=[target,source];c.update(0.02);
   ok('источник, вошедший в радиус после движения, виден в том же кадре',target.frost===true,'x='+source.x.toFixed(0)); }
 
-{ const html=fs.readFileSync('./GrimGrind.html','utf8');
+{ const html=fs.readFileSync('./index.html','utf8');
   ok('сетка ауры строится после возможных прыжков пачки',
     /packTick\(pk, dt\);[\s\S]{0,180}buildEnemyLogicFrame\(frameScratch\)/.test(html));
   ok('булева проверка ауры не создаёт и не сортирует массив кандидатов',

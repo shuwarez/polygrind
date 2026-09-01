@@ -10,7 +10,7 @@ function seeded(seed=0x51f15e){
   let x=seed>>>0;return()=>{x=(Math.imul(x,1664525)+1013904223)>>>0;return x/4294967296;};
 }
 function setup(mode){
-  const c=loadGame('./GrimGrind.html',{random:seeded()});c.newGame('necro','keys');
+  const c=loadGame('./index.html',{random:seeded()});c.newGame('necro','keys');
   const G=c.__api.G,D=c.__api.D,p=G.player;
   G.enemies=[];G.minions=[];G.spawnQueue=0;G.spawnT=1e9;G.packs=[];G.corpses=[];
   G.shots=[];G.eshots=[];G.fx=[];G.parts=[];G.bloodFx=[];G.visualCorpses=[];

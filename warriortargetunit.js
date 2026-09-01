@@ -5,7 +5,7 @@ let n=0,fail=0;
 const ok=(name,cond,detail='')=>{n++;if(!cond)fail++;console.log((cond?'  ✓ ':'  ✗ ')+name.padEnd(72)+detail);};
 const d=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
 const point=(x,y,r=10)=>({x,y,r,hp:1000,maxHp:1000,dead:false});
-function fresh(){const c=loadGame('./GrimGrind.html');c.newGame('blade','keys');const G=c.__api.G;G.enemies=[];G.spawnQueue=0;G.packs=[];return{c,G,D:c.__api.D,p:G.player};}
+function fresh(){const c=loadGame('./index.html');c.newGame('blade','keys');const G=c.__api.G;G.enemies=[];G.spawnQueue=0;G.packs=[];return{c,G,D:c.__api.D,p:G.player};}
 function foe(c,x,y,r=10){const e=c.spawnEnemy('blob');e.x=x;e.y=y;e.r=r;e.spd=0;e.hp=e.maxHp=1000;e.dead=false;return e;}
 function sectorAccept(o,reach,arc,ang){return(e,dist)=>{if(dist>reach+e.r)return false;let da=Math.atan2(e.y-o.y,e.x-o.x)-ang;da=Math.atan2(Math.sin(da),Math.cos(da));return Math.abs(da)<arc/2;};}
 
@@ -80,7 +80,7 @@ function sectorAccept(o,reach,arc,ang){return(e,dist)=>{if(dist>reach+e.r)return
 }
 
 {
-  const html=fs.readFileSync('./GrimGrind.html','utf8');
+  const html=fs.readFileSync('./index.html','utf8');
   ok('helper сохраняет дистанцию рядом с целью до сортировки',/found\.push\(\[d,e\]\)[\s\S]{0,80}found\.sort\(\(a,b\)=>a\[0\]-b\[0\]\)/.test(html));
   ok('круговая волна использует единый кэшированный путь',/waveTargets=sortedEnemyTargets\(o,G\.enemies,\(e,d\)=>d<=waveR\+e\.r\)/.test(html));
   ok('сектор больше не пересчитывает дистанцию в comparator',/swingTargets=sortedEnemyTargets\(o,G\.enemies,\(e,d\)=>\{/.test(html)&&!/swingTargets\.sort/.test(html));

@@ -23,7 +23,7 @@ function probe(file, floor, runs){
   const med = k => { const v = a.map(x=>x[k]).sort((x,y)=>x-y); return v[Math.floor(v.length/2)]; };
   return {life:med('life'), worst:med('worst'), n:med('n'), lvl:med('lvl')};
 }
-const file = process.argv[2] || './GrimGrind.html';
+const file = process.argv[2] || './index.html';
 const N = +(process.argv[3] || 7);
 console.log('этаж | ур | здоровье | сильнейший удар | ударов до смерти | врагов на этаже');
 for (const f of [10,15,20,25,30,35,40,50]){

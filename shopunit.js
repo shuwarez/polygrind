@@ -5,7 +5,7 @@ const fs = require('fs');
 const {imageInfo,embeddedImage}=require('./asset_test_utils');
 const ok = (nm, cond, det) => console.log((cond ? '  ✓ ' : '  ✗ ') + nm.padEnd(44) + (det || ''));
 
-const c = loadGame('./GrimGrind.html');
+const c = loadGame('./index.html');
 const it = c.__api.SHOP.find(x => x.id === 'startSkill');
 ok('«Первый шаг»: пять рангов', !!it && it.max === 5,
    it ? 'потолок ' + it.max : 'товар не найден');
@@ -21,8 +21,8 @@ for (const rank of [1, 5]){
      'ожидается и выдано ' + c.__api.G.pending);
 }
 
-{ const base = loadGame('./GrimGrind.html'); base.newGame('necro', 'keys');
-  const boosted = loadGame('./GrimGrind.html');
+{ const base = loadGame('./index.html'); base.newGame('necro', 'keys');
+  const boosted = loadGame('./index.html');
   boosted.__api.STORE.data.shop = {dmg:100, aspd:50}; boosted.newGame('necro', 'keys');
   ok('урон магазина доходит до свиты', Math.abs(boosted.avgHit() / base.avgHit() - 2) < 0.001,
      base.avgHit().toFixed(1) + ' → ' + boosted.avgHit().toFixed(1));
@@ -40,7 +40,7 @@ for (const rank of [1, 5]){
   ok('пакетная покупка останавливается на 50', batch.cnt === 1,
      'доступно уровней: ' + batch.cnt); }
 
-{ const fast=loadGame('./GrimGrind.html'); fast.__api.STORE.data.shop.regen=10;
+{ const fast=loadGame('./index.html'); fast.__api.STORE.data.shop.regen=10;
   fast.newGame('bow','keys'); const G=fast.__api.G,D=fast.__api.D,p=G.player;
   G.enemies.length=0; G.spawnQueue=0; G.packs.length=0; G.pending=0;
   p.hp=D.life*0.35; const before=p.hp; fast.update(1);
@@ -65,7 +65,7 @@ for (const rank of [1, 5]){
   ok('пакетная покупка останавливается на десятом уровне', last.cnt===1 && last.sum===c.shopCost(speed,9),
      'доступно уровней: '+last.cnt); }
 
-{ const legacySpeed=loadGame('./GrimGrind.html'), old={base:1000,grow:1.11};
+{ const legacySpeed=loadGame('./index.html'), old={base:1000,grow:1.11};
   const expected=Array.from({length:7},(_,i)=>legacySpeed.shopCost(old,i+10)).reduce((a,b)=>a+b,0);
   legacySpeed.__api.STORE.data.gold=100; legacySpeed.__api.STORE.data.spent=expected+50;
   legacySpeed.__api.STORE.data.shop={mspd:17}; legacySpeed.__api.STORE.save();
@@ -87,7 +87,7 @@ for (const rank of [1, 5]){
      c.shopCost(length,0)===4500 && lenPrice===32190,
      recPrice.toLocaleString('ru-RU')+' · '+lenPrice.toLocaleString('ru-RU')+' золота'); }
 
-{ const fast=loadGame('./GrimGrind.html'); fast.__api.STORE.data.shop={dashRecharge:10,dashLength:5};
+{ const fast=loadGame('./index.html'); fast.__api.STORE.data.shop={dashRecharge:10,dashLength:5};
   fast.newGame('bow','keys'); const G=fast.__api.G,D=fast.__api.D,p=G.player,DT=1/60;
   G.enemies.length=0; G.spawnQueue=0; G.keys={d:true}; fast.tryDash(); p.dash=0; G.keys={};
   for(let i=0;i<199;i++) fast.update(DT); const early=p.dashN;
@@ -97,7 +97,7 @@ for (const rank of [1, 5]){
   const dashDistance=ctx=>{ const g=ctx.__api.G,pp=g.player; g.enemies.length=0;g.spawnQueue=0;g.keys={d:true};
     pp.x=pp.y=0;pp.dash=0;pp.dashN=ctx.__api.D.dashMax;ctx.tryDash();let n=0;while(pp.dash>0&&n++<60)ctx.update(DT);
     return Math.hypot(pp.x,pp.y); };
-  const normal=loadGame('./GrimGrind.html');normal.newGame('bow','keys');
+  const normal=loadGame('./index.html');normal.newGame('bow','keys');
   const long=dashDistance(fast), base=dashDistance(normal);
   ok('+25% дистанции даёт фактический рывок ×1,25', Math.abs(long/base-1.25)<1e-9,
      base.toFixed(1)+' → '+long.toFixed(1)); }
@@ -113,17 +113,17 @@ for (const rank of [1, 5]){
   ok('пакетная покупка брони останавливается на 30', batch.cnt === 1,
      'доступно уровней: ' + batch.cnt); }
 
-{ const legacy = loadGame('./GrimGrind.html');
+{ const legacy = loadGame('./index.html');
   legacy.__api.STORE.data.shop.regen = 100; legacy.newGame('bow','keys');
   ok('старое сохранение быстрого лечения не превышает потолок', legacy.__api.D.regen === 50,
      legacy.__api.D.regen.toFixed(0) + ' HP/сек'); }
 
-{ const legacyArmor = loadGame('./GrimGrind.html');
+{ const legacyArmor = loadGame('./index.html');
   legacyArmor.__api.STORE.data.shop.armor = 200; legacyArmor.newGame('bow','keys');
   ok('старая броня не превышает новый потолок', legacyArmor.__api.D.armor === 30,
      legacyArmor.__api.D.armor.toFixed(0) + ' брони'); }
 
-{ const refund = loadGame('./GrimGrind.html'), item = refund.__api.SHOP.find(x => x.id === 'armor');
+{ const refund = loadGame('./index.html'), item = refund.__api.SHOP.find(x => x.id === 'armor');
   refund.__api.STORE.data.shop.armor = 3;
   const expected = refund.shopCost(item,2) + refund.shopCost(item,1);
   const batch = refund.shopRefundBatch(item,2);
@@ -136,7 +136,7 @@ for (const rank of [1, 5]){
   refund.shopRefund(item,100,()=>{}); refund.shopRefund(item,1,()=>{});
   ok('повторный возврат не уходит ниже нулевого ранга', !refund.__api.STORE.data.shop.armor); }
 
-{ const refund = loadGame('./GrimGrind.html'), item = refund.__api.SHOP.find(x => x.id === 'dmg');
+{ const refund = loadGame('./index.html'), item = refund.__api.SHOP.find(x => x.id === 'dmg');
   refund.__api.STORE.data.shop.dmg = 7;
   const expected = refund.shopRefundBatch(item,7).sum;
   refund.__api.STORE.data.gold = 25; refund.__api.STORE.data.spent = expected;
@@ -144,7 +144,7 @@ for (const rank of [1, 5]){
   ok('кнопка «ВСЁ» возвращает весь отдельный бонус', !refund.__api.STORE.data.shop.dmg &&
     refund.__api.STORE.data.gold === 25 + expected && refund.__api.STORE.data.spent === 0); }
 
-{ const refund = loadGame('./GrimGrind.html');
+{ const refund = loadGame('./index.html');
   refund.__api.STORE.data.shop = {armor:3,dmg:4,regen:2,legacyUnknown:9};
   const expected = refund.shopRefundTotal();
   refund.__api.STORE.data.gold = 100; refund.__api.STORE.data.spent = expected.sum;
@@ -157,18 +157,18 @@ for (const rank of [1, 5]){
   const gold=refund.__api.STORE.data.gold;
   ok('повторный общий возврат не выдаёт золото повторно',refund.shopRefundAll(()=>{})===false && refund.__api.STORE.data.gold===gold); }
 
-{ const scroll = loadGame('./GrimGrind.html'), item=scroll.__api.SHOP.find(x=>x.id==='armor');
+{ const scroll = loadGame('./index.html'), item=scroll.__api.SHOP.find(x=>x.id==='armor');
   scroll.__api.STORE.data.gold=1e9; scroll.shopScreen(()=>{});
   scroll.document.getElementById('shop').scrollTop=437;
   scroll.shopBuy(item,1,()=>{});
   ok('покупка сохраняет точную позицию прокрутки магазина',scroll.document.getElementById('shop').scrollTop===437,
     String(scroll.document.getElementById('shop').scrollTop)); }
 
-{ const html=fs.readFileSync('./GrimGrind.html','utf8');
+{ const html=fs.readFileSync('./index.html','utf8');
   ok('интерфейс содержит полный возврат бонуса и всего магазина',
     /class="refund-all"[\s\S]*?ВСЁ/.test(html) && /id="shoprefundall"[\s\S]*?ВЕРНУТЬ ВСЕ ПОКУПКИ/.test(html)); }
 
-{ const html=fs.readFileSync('./GrimGrind.html','utf8'), design=loadGame('./GrimGrind.html');
+{ const html=fs.readFileSync('./index.html','utf8'), design=loadGame('./index.html');
   design.shopScreen(()=>{}); const screen=design.document.getElementById('ov').innerHTML;
   const atlasImage=embeddedImage(html,'SHOP_ICON_ATLAS_DATA');
   const atlas=atlasImage&&atlasImage.buffer,atlasInfo=imageInfo(atlas);
@@ -231,7 +231,7 @@ for (const rank of [1, 5]){
     shop.filter(x=>x.cat==='defense' && x.id!=='drFlat').every(x=>c.shopCost(shell,0)<c.shopCost(x,0)),
     shell ? c.shopCost(shell,0).toLocaleString('ru-RU')+' золота за первый ранг' : 'товар не найден'); }
 
-{ const defense=loadGame('./GrimGrind.html');
+{ const defense=loadGame('./index.html');
   defense.__api.STORE.data.shop={drFlat:100,block:60,dr:60,sarmor:70,vacuum:10};
   defense.newGame('bow','keys');
   ok('старые блок и снижение урона не дают характеристик', !('block' in defense.__api.D) && !('dr' in defense.__api.D));
@@ -240,7 +240,7 @@ for (const rank of [1, 5]){
   ok('100 рангов панциря входят в новый забег', defense.__api.D.drFlat===100,
     '−'+defense.__api.D.drFlat+' с каждого попадания'); }
 
-{ const legacy=loadGame('./GrimGrind.html');
+{ const legacy=loadGame('./index.html');
   const oldDr={base:3000,grow:1.075}, oldBlock={base:2500,grow:1.07}, oldVacuum={base:3000,grow:1.55};
   const expected=[0,1,2].reduce((s,i)=>s+legacy.shopCost(oldDr,i),0)+
     [0,1].reduce((s,i)=>s+legacy.shopCost(oldBlock,i),0)+

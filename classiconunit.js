@@ -1,7 +1,7 @@
 /* Классовые пиктограммы карточек: точное совпадение с реальным фильтром пула. */
 const fs = require('fs');
 const {loadGame} = require('./harness');
-const c = loadGame('./GrimGrind.html');
+const c = loadGame('./index.html');
 const mods = c.__api.MODS;
 const byId = id => mods.find(m => m.id === id);
 const keys = id => Array.from(c.allowedClassesForMod(byId(id)));
@@ -12,7 +12,7 @@ function ok(name, yes, got=''){
 }
 
 console.log('Классовые пиктограммы карточек');
-const html = fs.readFileSync('./GrimGrind.html','utf8');
+const html = fs.readFileSync('./index.html','utf8');
 ok('единый порядок значков: меч, лук, жезл, череп',
   html.includes("const CARD_CLASS_ORDER = ['blade','bow','wand','necro']"));
 ok('универсальная карточка допускает все четыре класса',

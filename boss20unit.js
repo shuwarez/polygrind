@@ -1,7 +1,7 @@
 /* Twenty approved bosses: embedded art, event sequences, damage contracts and hazards. */
 const fs=require('fs');
 const {loadGame}=require('./harness');
-const html=fs.readFileSync('./GrimGrind.html','utf8');
+const html=fs.readFileSync('./index.html','utf8');
 let n=0,fail=0;
 function ok(name,yes,got=''){n++;if(!yes)fail++;console.log((yes?'  ✓ ':'  ✗ ')+name.padEnd(66)+got);}
 const ids=['funeral_bell_colossus','star_devourer','plague_archimandrite','crimson_seamstress','glass_titan',
@@ -34,7 +34,7 @@ ok('длительные зоны рисуют эффект непосредст
 ok('спрайты комет и осколков ограничены реальным радиусом снаряда',
   /drawBoss20ProjectileEffect[\s\S]*?ctx\.arc\(0,0,s\.r\|\|8/.test(html));
 
-const c=loadGame('./GrimGrind.html');c.newGame('bow','keys');
+const c=loadGame('./index.html');c.newGame('bow','keys');
 const G=c.__api.G;G.player.inv=9999;G.enemies.length=0;
 const made=ids.map(id=>c.spawnEnemy('boss',id,null,0));
 ok('все 20 боссов создаются через штатный spawnEnemy',made.every((e,i)=>e&&e.kind==='boss'&&e.bossId===ids[i]));

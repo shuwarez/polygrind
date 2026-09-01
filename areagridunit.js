@@ -2,7 +2,7 @@
 const {loadGame}=require('./sim');
 const fs=require('fs');
 const ok=(nm,cond,det='')=>console.log((cond?'  ✓ ':'  ✗ ')+nm.padEnd(68)+det);
-function fresh(){const c=loadGame('./GrimGrind.html');c.newGame('bow','keys');return c;}
+function fresh(){const c=loadGame('./index.html');c.newGame('bow','keys');return c;}
 function point(x,y,r=10){return{x,y,r};}
 const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
 
@@ -83,7 +83,7 @@ const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
   G.enemies.unshift(remote);src.infT=0;mid.infT=0;far.infT=0;c.update(0.01);
   ok('далёкая цель не получает Инферно из-за грубого кандидата',remote.dots.fire.dps===0); }
 
-{ const html=fs.readFileSync('./GrimGrind.html','utf8');
+{ const html=fs.readFileSync('./index.html','utf8');
   ok('появление и смерть синхронизируют активную сетку Инферно',
     /ACTIVE_ENEMY_LOGIC_GRID\) addEnemyToSpatialGrid/.test(html)&&
     /ACTIVE_ENEMY_LOGIC_GRID\) removeEnemyFromSpatialGrid/.test(html));

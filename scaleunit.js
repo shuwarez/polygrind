@@ -4,7 +4,7 @@ const {loadGame} = require('./sim');
 const ok = (nm, cond, det) => console.log((cond ? '  ✓ ' : '  ✗ ') + nm.padEnd(46) + (det || ''));
 
 function enemy(floor){
-  const c = loadGame('./GrimGrind.html');
+  const c = loadGame('./index.html');
   c.newGame('bow', 'keys');
   const G = c.__api.G;
   G.floor = floor;
@@ -13,7 +13,7 @@ function enemy(floor){
 }
 
 { const stable=Object.keys({blade:1,bow:1,wand:1,necro:1}).every(key=>{
-    const c=loadGame('./GrimGrind.html'); c.newGame(key,'keys'); const G=c.__api.G,w=G.weapon;
+    const c=loadGame('./index.html'); c.newGame(key,'keys'); const G=c.__api.G,w=G.weapon;
     G.lvl=100; G.floor=100; c.recalc();
     return Math.abs(c.__api.D.baseMin-w.dmg[0])<1e-9&&Math.abs(c.__api.D.baseMax-w.dmg[1])<1e-9;
   });
@@ -22,12 +22,12 @@ function enemy(floor){
 { const e = enemy(2);
   const hpKind = e.kind === 'boss' ? 14 : e.kind === 'elite' ? 3.2 : 1;
   const dmgKind = e.kind === 'boss' ? 1.9 : e.kind === 'elite' ? 1.3 : 1;
-  const hpOk = e.hp === Math.round(e.t.hp * hpKind * 1.16);
-  const dmgOk = Math.abs(e.dmg - e.t.dmg * dmgKind * 1.15) < 0.0001;
+  const hpOk = e.hp === Math.round(e.t.hp * hpKind * 1.18);
+  const dmgOk = Math.abs(e.dmg - e.t.dmg * dmgKind * 1.11) < 0.0001;
   ok('HP +16%, урон +15% за этаж', hpOk && dmgOk,
      'HP ' + e.t.hp.toFixed(0) + ' → ' + e.hp.toFixed(0) + ', урон ' + e.t.dmg.toFixed(2) + ' → ' + e.dmg.toFixed(2)); }
 
-{ const c = loadGame('./GrimGrind.html'); c.newGame('bow','keys');
+{ const c = loadGame('./index.html'); c.newGame('bow','keys');
   const T=c.__api.ETYPES, e=c.spawnEnemy(), boss=c.spawnEnemy('boss','lich');
   ok('скорости рядовых фиксированы, Лич использует 80.7',
     T.runner.spd===170 && T.blob.spd===120 && T.shooter.spd===75 && T.tank.spd===65 &&

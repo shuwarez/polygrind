@@ -3,7 +3,7 @@ const {loadGame} = require('./sim');
 const fs = require('fs');
 const ok = (nm, cond, det) => console.log((cond ? '  ✓ ' : '  ✗ ') + nm.padEnd(54) + (det || ''));
 
-function fresh(){ const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys'); return c; }
+function fresh(){ const c=loadGame('./index.html'); c.newGame('bow','keys'); return c; }
 function hit(c, amount){ c.hurt(amount,true,false,'ТЕСТОВЫЙ УДАР'); return c.__api.G; }
 function shake(G){ return G.fx.find(f=>f.t==='shake'); }
 function number(G){ return G.fx.find(f=>f.t==='hurtNum'); }
@@ -32,7 +32,7 @@ function healing(G){ return G.fx.find(f=>f.t==='healNum'); }
   ok('HP-хвост хранит уровень до попадания', p.hpLag===1 && p.hp/c.__api.D.life<0.82,
     Math.round(p.hpLag*100)+'% → '+Math.round(p.hp/c.__api.D.life*100)+'%'); }
 
-{ const html=fs.readFileSync('./GrimGrind.html','utf8');
+{ const html=fs.readFileSync('./index.html','utf8');
   ok('delayed HP игрока имеет фиксированную длительность 0.4 секунды',
     /const PLAYER_HP_LAG_TIME=0\.4/.test(html)); }
 
@@ -61,7 +61,7 @@ function healing(G){ return G.fx.find(f=>f.t==='healNum'); }
   p.barrier=20; c.hurt(10,true,false,'ПОГЛОЩЕНО');
   ok('полностью поглощённый удар не запускает feedback', p.hp===c.__api.D.life && !number(G) && !shake(G) && G.hurtVignette===0); }
 
-{ const html=fs.readFileSync('./GrimGrind.html','utf8');
+{ const html=fs.readFileSync('./index.html','utf8');
   ok('HUD содержит белый хвост и класс вспышки HP-бара', /id="hpbar"><b><\/b><i/.test(html) && /#hpbar\.hurt/.test(html));
   ok('виньетка рисуется экранным radial gradient', /hurtVignette > 0/.test(html) && /createRadialGradient\(W\/2,H\/2/.test(html));
   ok('под моделью героя рисуется компактный HP-бар', /function drawPlayerHealthBar\(p\)/.test(html) && /const w=34,h=4/.test(html));
@@ -106,7 +106,7 @@ function healing(G){ return G.fx.find(f=>f.t==='healNum'); }
   p.barrier=6.2; p.dreadShield=4.1; const txt=c.playerHealthText(p);
   ok('барьер Воина не скрывает отдельный щит вампира', txt.includes('+7 barrier') && txt.includes('(+5 shield)'), txt); }
 
-{ const html=fs.readFileSync('./GrimGrind.html','utf8');
+{ const html=fs.readFileSync('./index.html','utf8');
   ok('мини-бар рисует голубой сегмент по сумме барьеров', /barrier=clamp\(totalPlayerBarrier\(p\)\/D\.life/.test(html) &&
     /fillStyle='#5ec2e0'.*w\*barrier,2/.test(html)); }
 

@@ -121,7 +121,7 @@ function play(c, wep, {maxSec=1200, immortal=false, maxFloor=1e9, subclass=null,
 module.exports = {play, pickCard, botStep};
 
 if (require.main === module){
-  const file = process.argv[2] || './GrimGrind.html';
+  const file = process.argv[2] || './index.html';
   const N = +(process.argv[3] || 6);
   for (const w of ['bow','wand','necro','blade']){
     const res = [];

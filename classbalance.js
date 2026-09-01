@@ -3,7 +3,7 @@
 const {loadGame} = require('./harness');
 const {play, pickCard, botStep} = require('./run');
 
-const FILE = process.argv[2] || './GrimGrind.html';
+const FILE = process.argv[2] || './index.html';
 const RUNS = +(process.argv[3] || 24);
 const CHECK_RUNS = +(process.argv[4] || 4);
 const GOAL = 30;

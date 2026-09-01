@@ -3,7 +3,7 @@ const fs=require('fs');
 const {loadGame}=require('./harness');
 let n=0,fail=0;
 function ok(name,yes,got=''){n++;if(!yes)fail++;console.log((yes?'  \u2713 ':'  \u2717 ')+name.padEnd(69)+got);}
-const html=fs.readFileSync('./GrimGrind.html','utf8');
+const html=fs.readFileSync('./index.html','utf8');
 const key=(code,value)=>({code,key:value,repeat:false,preventDefault(){this.prevented=true;}});
 
 ok('разметка содержит отдельный минимальный слой только с PAUSED',
@@ -13,7 +13,7 @@ ok('quick-pause прозрачна и не перехватывает мышь',
 ok('quick-pause не содержит панелей, кнопок или затемняющего inline-style',
   !/<div id="quickpause"[^>]*(?:background|opacity)/.test(html)&&!/<div id="quickpause">[\s\S]*?<button/.test(html.slice(html.indexOf('<div id="quickpause">'),html.indexOf('<div class="overlay" id="pauseov"'))));
 
-{const c=loadGame('./GrimGrind.html');c.newGame('bow','keys');const G=c.__api.G;
+{const c=loadGame('./index.html');c.newGame('bow','keys');const G=c.__api.G;
   ok('новый забег начинается без quick-pause',!G.quickPaused&&!G.paused);
   ok('setQuickPause(true) останавливает игру отдельным флагом',c.setQuickPause(true)&&G.quickPaused&&G.paused);
   ok('setQuickPause(false) полностью продолжает игру',!c.setQuickPause(false)&&!G.quickPaused&&!G.paused);

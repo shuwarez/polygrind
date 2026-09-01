@@ -7,7 +7,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parent
-HTML = ROOT / "GrimGrind.html"
+HTML = ROOT / "index.html"
 BASE = ROOT / "boss20_assets" / "webp"
 ATTACK = ROOT / "boss20_assets" / "generated_attack" / "webp"
 EFFECT = ROOT / "boss20_assets" / "generated_effects" / "webp"

@@ -6,7 +6,7 @@ function ok(name, yes, got=''){
   n++; if(!yes) fail++;
   console.log((yes?'  \u2713 ':'  \u2717 ') + name.padEnd(58) + got);
 }
-const html=fs.readFileSync('./GrimGrind.html','utf8');
+const html=fs.readFileSync('./index.html','utf8');
 const bossSpriteBlock=html.slice(html.indexOf('const BOSS_SPRITE_DATA = {'), html.indexOf('const BOSS_SPRITE_META = {'));
 const embeddedWebp = (block,key) => {
   const m=block.match(new RegExp("\\b"+key+":'data:image/webp;base64,([^']+)'"));
@@ -39,7 +39,7 @@ const effectBlock=html.slice(html.indexOf('const LEGACY_BOSS_EFFECT_SPRITE_DATA 
 const effectKeys=['goat_slam','behemoth_impact','minotaur_crash','tyrant_slash','vampire_cross','summon_sigil'];
 ok('шесть недостающих четырёхкадровых эффектов встроены отдельно',effectKeys.every(k=>isWebp(embeddedWebp(effectBlock,k))));
 
-{ const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys');
+{ const c=loadGame('./index.html'); c.newGame('bow','keys');
   const bosses=bossIds.map(id=>c.spawnEnemy('boss',id));
   ok('каждый идентификатор создаёт собственного босса', bosses.every((b,i)=>b.bossId===bossIds[i] && c.bossType(b)));
   ok('у каждого из четырнадцати боссов четыре кадра отдельного листа', bosses.every(b =>
@@ -49,7 +49,7 @@ ok('шесть недостающих четырёхкадровых эффек�
   ok('модель босса не меньше чем в 2.5 раза выше героя', bossHeight/heroHeight>=2.5,
     '×'+(bossHeight/heroHeight).toFixed(2)); }
 
-{ const common=loadGame('./GrimGrind.html',{random:()=>0}); common.newGame('bow','keys');
+{ const common=loadGame('./index.html',{random:()=>0}); common.newGame('bow','keys');
   ok('в начале шкалы выбирается обычный Изумрудный Лич', common.rollBossType()==='lich');
   const defs=bossIds.map(id=>common.bossType(common.spawnEnemy('boss',id)));
   ok('обычные боссы имеют стандартный вес 30', defs.filter(d=>!d.rare).every(d=>d.weight===30));
@@ -57,7 +57,7 @@ ok('шесть недостающих четырёхкадровых эффек�
   ok('два босса на этаже выбираются без повторения',
     common.rollBossType(bossIds.slice(0,-1))==='demonqueen'); }
 
-{ const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys');
+{ const c=loadGame('./index.html'); c.newGame('bow','keys');
   const G=c.__api.G, p=G.player, e=c.spawnEnemy('boss','lich'); G.eshots.length=0;
   e.x=-200; e.y=0; p.x=0; p.y=0;
   c.tickBossSkill(e,1.99); const early=G.eshots.length; c.tickBossSkill(e,0.02);
@@ -76,7 +76,7 @@ ok('шесть недостающих четырёхкадровых эффек�
   ok('Изумрудная сфера действительно уменьшает скорость движения вдвое',
     Math.abs((p.x-slowedX)-c.__api.D.mspd*0.5*0.1)<0.01, (p.x-slowedX).toFixed(2)+' за 0.1 сек'); }
 
-{ const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys');
+{ const c=loadGame('./index.html'); c.newGame('bow','keys');
   const G=c.__api.G, D=c.__api.D, p=G.player, e=c.spawnEnemy('boss','goat');
   G.enemies=[e]; G.spawnQueue=0; e.aff=[]; e.x=-500; e.y=0; p.x=0; p.y=0; e.spd=1;
   const x=e.x; c.update(0.1);
@@ -87,7 +87,7 @@ ok('шесть недостающих четырёхкадровых эффек�
   ok('Демон предупреждает, останавливается и наносит 25% max HP', warned && Math.abs(p.hp-D.life*0.75)<0.001,
     p.hp.toFixed(1)+'/'+D.life.toFixed(1)); }
 
-{ const c=loadGame('./GrimGrind.html',{random:()=>0.99}); c.newGame('bow','keys');
+{ const c=loadGame('./index.html',{random:()=>0.99}); c.newGame('bow','keys');
   const G=c.__api.G, D=c.__api.D, p=G.player, e=c.spawnEnemy('boss','plague');
   G.enemies=[e]; G.spawnQueue=1; G.eshots.length=0; e.aff=[]; e.spd=0;
   e.x=-150; e.y=0; p.x=0; p.y=0;
@@ -112,7 +112,7 @@ ok('шесть недостающих четырёхкадровых эффек�
   c.update(1);
   ok('кислота тикает раз в секунду на 10% max HP', Math.abs(p.hp-D.life*0.9)<0.001); }
 
-{ const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys');
+{ const c=loadGame('./index.html'); c.newGame('bow','keys');
   const G=c.__api.G, D=c.__api.D, e=c.spawnEnemy('boss','greed');
   G.enemies=[e]; G.eshots.length=0; e.x=-200; e.y=0; G.player.x=0; G.player.y=0;
   ok('Greed Boss помечен редким и имеет собственную низкую скорость', c.bossType(e).rare===true && e.spd===55);
@@ -129,7 +129,7 @@ ok('шесть недостающих четырёхкадровых эффек�
   const finds=G.orbs.filter(o=>o.book||o.amu||o.totem);
   ok('Greed Boss гарантированно оставляет ровно две находки', finds.length===2, finds.length+' находки'); }
 
-{ const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys');
+{ const c=loadGame('./index.html'); c.newGame('bow','keys');
   const G=c.__api.G, D=c.__api.D, p=G.player, e=c.spawnEnemy('boss','executioner');
   G.enemies=[e]; G.eshots.length=0; G.spawnQueue=1; G.spawnT=999;
   e.aff=[]; e.spd=0; e.x=0; e.y=0; p.x=180; p.y=0; p.hp=D.life;
@@ -151,7 +151,7 @@ ok('шесть недостающих четырёхкадровых эффек�
   G.keys.d=false; p.x=500; c.update(0.6);
   ok('вращающийся топор возвращается к владельцу и исчезает', !G.eshots.includes(axe)); }
 
-{ const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys');
+{ const c=loadGame('./index.html'); c.newGame('bow','keys');
   const G=c.__api.G, D=c.__api.D, p=G.player, e=c.spawnEnemy('boss','tyrant');
   G.enemies=[e]; G.spawnQueue=1; G.spawnT=999; e.aff=[]; e.spd=0; e.x=0; e.y=0; p.x=100; p.y=0; p.hp=D.life;
   ok('Horned Tyrant помечен редким боссом', c.bossType(e).rare===true);
@@ -168,7 +168,7 @@ ok('шесть недостающих четырёхкадровых эффек�
   const finds=G.orbs.filter(o=>o.book||o.amu||o.totem);
   ok('Horned Tyrant гарантированно оставляет ровно одну находку', finds.length===1, finds.length+' находка'); }
 
-{ const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys');
+{ const c=loadGame('./index.html'); c.newGame('bow','keys');
   const G=c.__api.G, e=c.spawnEnemy('boss','grave');
   G.enemies=[e]; e.x=0; e.y=0; c.tickBossSkill(e,1);
   const core=G.enemies.find(x=>x.summonedByGrave);
@@ -178,7 +178,7 @@ ok('шесть недостающих четырёхкадровых эффек�
   ok('Core выходит непосредственно из модели Grave King',
     core && Math.hypot(core.x-e.x,core.y-e.y)<=e.r+core.r+11); }
 
-{ const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys');
+{ const c=loadGame('./index.html'); c.newGame('bow','keys');
   const G=c.__api.G, p=G.player, e=c.spawnEnemy('boss','behemoth');
   G.enemies=[e]; e.aff=[]; e.x=-300; e.y=0; p.x=120; p.y=40;
   c.tickBossSkill(e,2.19); const early=!!e.bossT.jumpWarn; c.tickBossSkill(e,0.02);
@@ -189,7 +189,7 @@ ok('шесть недостающих четырёхкадровых эффек�
   c.tickBossSkill(e,0.35);
   ok('Бегемот завершает прыжок в отмеченной точке', Math.abs(e.x-tx)<0.01 && Math.abs(e.y-ty)<0.01); }
 
-{ const c=loadGame('./GrimGrind.html',{random:()=>0.99}); c.newGame('bow','keys');
+{ const c=loadGame('./index.html',{random:()=>0.99}); c.newGame('bow','keys');
   const G=c.__api.G, D=c.__api.D, p=G.player, e=c.spawnEnemy('boss','vampire');
   D.dodge=D.armor=D.drFlat=D.drShop=D.normalDr=D.majorDr=0;
   e.x=-200; e.y=0; p.x=80; p.y=20; e.hp=e.maxHp*0.25;
@@ -208,7 +208,7 @@ ok('шесть недостающих четырёхкадровых эффек�
   ok('крестовой рывок наносит 30% max HP', Math.abs(p.hp-D.life*0.70)<0.001);
   ok('Vampiric Bite восстанавливает 50% HP босса', Math.abs(e.hp-e.maxHp*0.75)<0.001); }
 
-{ const c=loadGame('./GrimGrind.html',{random:()=>0.5}); c.newGame('bow','keys');
+{ const c=loadGame('./index.html',{random:()=>0.5}); c.newGame('bow','keys');
   const G=c.__api.G, D=c.__api.D, p=G.player, e=c.spawnEnemy('boss','voidwrath');
   D.dodge=D.armor=D.drFlat=D.drShop=D.normalDr=D.majorDr=0;
   p.x=0; p.y=0; p.hp=D.life; p.inv=0; e.bossT={riftCd:0}; c.tickBossSkill(e,0.01);
@@ -223,7 +223,7 @@ ok('шесть недостающих четырёхкадровых эффек�
     !/pushTelegraphTrace\(\{shape:'rift'/.test(html) &&
     !/fillStyle='#8e45e8'/.test(html)); }
 
-{ const c=loadGame('./GrimGrind.html',{random:()=>0.99}); c.newGame('bow','keys');
+{ const c=loadGame('./index.html',{random:()=>0.99}); c.newGame('bow','keys');
   const G=c.__api.G, e=c.spawnEnemy('boss','minotaur'); e.armor=0;
   ok('Dread Minotaur — редкий босс', c.bossType(e).rare===true);
   e.bossT={}; ok('защита Минотавра постоянно срезает 80% урона', Math.abs(c.mitigate(e,100)-20)<0.001);
@@ -249,7 +249,7 @@ ok('шесть недостающих четырёхкадровых эффек�
   G.orbs.length=0; c.killEnemy(e,G.enemies.indexOf(e));
   ok('Dread Minotaur гарантирует две случайные находки', G.orbs.filter(o=>o.book||o.amu||o.totem).length===2); }
 
-{ const c=loadGame('./GrimGrind.html',{random:()=>0.99}); c.newGame('bow','keys');
+{ const c=loadGame('./index.html',{random:()=>0.99}); c.newGame('bow','keys');
   const G=c.__api.G, D=c.__api.D, p=G.player, e=c.spawnEnemy('boss','seraph');
   D.dodge=D.armor=D.drFlat=D.drShop=D.normalDr=D.majorDr=0;
   p.x=10; p.y=20; p.hp=D.life; p.inv=0; e.bossT={judgeCd:0}; c.tickBossSkill(e,0.01);
@@ -261,7 +261,7 @@ ok('шесть недостающих четырёхкадровых эффек�
   p.inv=0; c.tickBossSkill(e,0.81); p.inv=0; c.tickBossSkill(e,0.81);
   ok('Святое Копьё делает три удара и уходит в откат на 3 сек', e.bossT.judgeLeft===0 && e.bossT.judgeCd===3); }
 
-{ const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys');
+{ const c=loadGame('./index.html'); c.newGame('bow','keys');
   const G=c.__api.G, e=c.spawnEnemy('boss','matriarch'); G.enemies=[e]; e.x=0; e.y=0;
   c.tickBossSkill(e,1);
   const runners=G.enemies.filter(x=>x.summonedByMatriarch);
@@ -271,7 +271,7 @@ ok('шесть недостающих четырёхкадровых эффек�
     G.fx.filter(f=>f.t==='matriarchPlagueProjectile' && f.max===0.32).length===2 &&
     /MATRIARCH_PLAGUE_PROJECTILE_FRAMES\s*=\s*\[0,1,2,3\]/.test(html)); }
 
-{ const c=loadGame('./GrimGrind.html',{random:()=>0.99}); c.newGame('bow','keys');
+{ const c=loadGame('./index.html',{random:()=>0.99}); c.newGame('bow','keys');
   const G=c.__api.G, D=c.__api.D, p=G.player, e=c.spawnEnemy('boss','demonqueen');
   D.dodge=D.armor=D.drFlat=D.drShop=D.normalDr=D.majorDr=0;
   e.x=-200; e.y=0; p.x=40; p.y=50; p.hp=D.life; e.bossT={leapCd:0}; c.tickBossSkill(e,0.01);

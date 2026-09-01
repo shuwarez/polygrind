@@ -15,7 +15,7 @@ function seededRng(seed){
   };
 }
 function mk(amus, random){
-  const c = loadGame('./GrimGrind.html', random ? {random} : undefined);
+  const c = loadGame('./index.html', random ? {random} : undefined);
   c.newGame('necro','keys');
   const G = c.__api.G;
   G.lvl = 25;

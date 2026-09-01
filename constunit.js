@@ -4,8 +4,8 @@ const fs = require('fs');
 const crypto = require('crypto');
 const {imageInfo,embeddedObjectImage}=require('./asset_test_utils');
 const ok = (nm, cond, det) => console.log((cond?'  \u2713 ':'  \u2717 ') + nm.padEnd(50) + (det||''));
-const c = loadGame('./GrimGrind.html'), C = c.__api.CONSTELLATIONS, S = c.__api.STORE;
-const source = fs.readFileSync('./GrimGrind.html','utf8');
+const c = loadGame('./index.html'), C = c.__api.CONSTELLATIONS, S = c.__api.STORE;
+const source = fs.readFileSync('./index.html','utf8');
 const ids = ['runner','blob','tank','shooter','elite','boss'];
 
 ok('каталог: шесть согласованных созвездий',

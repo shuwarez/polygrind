@@ -3,7 +3,7 @@ const {loadGame} = require('./sim');
 const DT = 1/60;
 const ok = (nm, cond, det) => console.log((cond?'  \u2713 ':'  \u2717 ') + nm.padEnd(48) + (det||''));
 function mk(mods, items){
-  const c = loadGame('./GrimGrind.html');
+  const c = loadGame('./index.html');
   c.newGame('necro','keys');
   const G = c.__api.G;
   G.lvl = 25;

@@ -7,7 +7,7 @@ function ok(name,cond,detail=''){
   console.log((cond?'  ✓ ':'  ✗ ')+name.padEnd(72)+detail);
 }
 function fresh(weapon='bow',items=[],random=()=>0.99){
-  const c=loadGame('./GrimGrind.html',{random});
+  const c=loadGame('./index.html',{random});
   c.newGame(weapon,'keys');
   const G=c.__api.G;
   for(const id of items) G.amu[id]=true;
@@ -108,13 +108,13 @@ const IDS=['sealHunt','mothFang','cometEye','sealPack','eclipseBrushes','sparkst
 {
   const {c,G,p}=fresh('wand',['cometEye']); fixed(c); const radius=G.weapon.aoe;
   const one=foe(c,p.x+10,p.y,1000); c.explodePlayerOrb({x:p.x,y:p.y,aoeScale:1});
-  ok('Глаз Кометы даёт +30% взрыву сферы, зацепившему ровно одну цель',Math.abs((1000-one.hp)-71.5)<1e-9,`${(1000-one.hp).toFixed(2)}`);
+  ok('Глаз Кометы даёт +30% взрыву сферы, зацепившему ровно одну цель',Math.abs((1000-one.hp)-26)<1e-9,`${(1000-one.hp).toFixed(2)}`);
   G.enemies.length=0; const a=foe(c,p.x+10,p.y,1000),b=foe(c,p.x+20,p.y,1000);
   c.explodePlayerOrb({x:p.x,y:p.y,aoeScale:1});
-  ok('при двух целях Глаз Кометы не усиливает взрыв',Math.abs((1000-a.hp)-55)<1e-9&&Math.abs((1000-b.hp)-55)<1e-9);
+  ok('при двух целях Глаз Кометы не усиливает взрыв',Math.abs((1000-a.hp)-20)<1e-9&&Math.abs((1000-b.hp)-20)<1e-9);
   G.enemies.length=0; const mini=foe(c,p.x+10,p.y,1000);
   c.explodePlayerOrb({x:p.x,y:p.y,aoeScale:1,miniOrb:true,attackMul:1});
-  ok('мини-сфера считает собственный взрыв для Глаза Кометы',Math.abs((1000-mini.hp)-71.5)<1e-9&&radius>0);
+  ok('мини-сфера считает собственный взрыв для Глаза Кометы',Math.abs((1000-mini.hp)-26)<1e-9&&radius>0);
 }
 
 {

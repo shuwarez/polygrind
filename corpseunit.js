@@ -2,7 +2,7 @@
 const fs=require('fs');
 const {loadGame}=require('./sim');
 const {imageInfo,embeddedObjectImage}=require('./asset_test_utils');
-const html=fs.readFileSync('./GrimGrind.html','utf8');
+const html=fs.readFileSync('./index.html','utf8');
 const optimizer=fs.readFileSync('./optimize_graphics.py','utf8');
 const ok=(nm,cond,det='')=>console.log((cond?'  ✓ ':'  ✗ ')+nm.padEnd(66)+det);
 const objectBlock=name=>(html.match(new RegExp('const '+name+' = \\{([\\s\\S]*?)\\n\\};'))||[])[1]||'';
@@ -38,7 +38,7 @@ ok('установщик проверяет размер, палитру и не
   /image\.size != \(384, 64\)/.test(optimizer) && /image\.mode != "P"/.test(optimizer) &&
   /index \* 64, 0, \(index \+ 1\) \* 64, 64/.test(optimizer) && /for index in range\(6\)/.test(optimizer));
 
-const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys');
+const c=loadGame('./index.html'); c.newGame('bow','keys');
 let G=c.__api.G;
 ok('декоративные и некромантские трупы хранятся раздельно',Array.isArray(G.visualCorpses) && Array.isArray(G.corpses) && G.visualCorpses!==G.corpses);
 ok('новый забег начинает с чистого декоративного слоя',G.visualCorpses.length===0);

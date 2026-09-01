@@ -23,7 +23,7 @@ from PIL import Image, ImageChops, ImageDraw, ImageEnhance, ImageFilter
 
 
 ROOT = Path(__file__).resolve().parent
-HTML = ROOT / "GrimGrind.html"
+HTML = ROOT / "index.html"
 TRANSPARENT_INDEX = 15
 PALETTE_COLORS = 15
 FRAME_PALETTE_COLORS = 128
@@ -645,11 +645,76 @@ def enemy_status_icon_sheet(path: Path) -> bytes:
     return indexed_png(sheet)
 
 
-FLOOR_PORTAL_MASTER_SHA256 = "017427f6b435e40df9eb9892fa46a2091c552758bff18ef1eb3ccacce77bb70c"
+FLOOR_PORTAL_MASTER_SHA256 = "ecda2cd0ca8a0406d4d0cc711965e57d191795a3cd82371e460a906b4955ccfb"
 
 
-def floor_portal_sprite_sheet(path: Path) -> bytes:
-    """Собрать бесшовный 16-кадровый цикл внутреннего вихря портала."""
+def floor_portal_opening_mask() -> Image.Image:
+    """Маска инфернальной раны: камень, кости и основание остаются неподвижны."""
+    mask = Image.new("L", (128, 128))
+    ImageDraw.Draw(mask).polygon(
+        ((58, 28), (69, 28), (77, 40), (80, 62), (77, 83),
+         (70, 98), (63, 103), (55, 96), (49, 81), (47, 58), (51, 39)),
+        fill=255)
+    return mask.filter(ImageFilter.GaussianBlur(.8))
+
+
+def floor_portal_flame_frame(index: int, opening_mask: Image.Image) -> Image.Image:
+    """Циклический огонь и дым без сдвига несущего силуэта портала."""
+    phase = index / 16
+    layer = Image.new("RGBA", (128, 128))
+    draw = ImageDraw.Draw(layer)
+    shadow = Image.new("RGBA", (128, 128), (7, 0, 1, 0))
+    shadow.putalpha(opening_mask.point(lambda value: round(value * .58)))
+    layer.alpha_composite(shadow)
+    for strand in range(11):
+        top = 34 + (strand * 11) % 31
+        base_x = 50 + strand * 3
+        points = []
+        for y in range(98, top - 1, -4):
+            bend = math.sin(y * .19 + phase * math.tau + strand * 1.37)
+            curl = math.sin(y * .07 - phase * math.tau * 2 + strand * .71)
+            points.append((round(base_x + bend * (2.2 + strand % 3) + curl * 1.4), y))
+        draw.line(points, fill=(115 + strand * 10, 5 + strand % 3, 3, 165), width=4)
+        draw.line(points, fill=(246, 43 + strand * 3, 5, 205), width=1 if strand % 3 else 2)
+    for ember in range(13):
+        travel = (phase + ember * .173) % 1
+        x = 52 + ((ember * 17) % 23) + math.sin(travel * math.tau + ember) * 3
+        y = 91 - travel * 57
+        radius = 1 if ember % 4 else 2
+        draw.ellipse((x-radius, y-radius, x+radius, y+radius),
+                     fill=(255, 76 if ember % 3 else 132, 12, round(220 * (1-travel))))
+    layer = layer.filter(ImageFilter.GaussianBlur(.45))
+    layer.putalpha(ImageChops.multiply(layer.getchannel("A"), opening_mask))
+    return layer
+
+
+def floor_portal_blood_frame(index: int, strength: float = 1.0) -> Image.Image:
+    """Отдельный грунтовый слой: неподвижные русла и бегущие по ним блики крови."""
+    phase = index / 16
+    layer = Image.new("RGBA", (128, 128))
+    draw = ImageDraw.Draw(layer)
+    alpha = round(225 * max(0, min(1, strength)))
+    paths = (
+        ((63, 103), (57, 111), (43, 115), (27, 124)),
+        ((66, 103), (73, 110), (88, 115), (105, 124)),
+        ((62, 105), (61, 114), (54, 121), (52, 127)),
+    )
+    draw.ellipse((21, 119, 109, 132), fill=(45, 0, 3, round(alpha * .48)))
+    for path_index, path in enumerate(paths):
+        draw.line(path, fill=(58, 0, 4, alpha), width=5 if path_index < 2 else 4,
+                  joint="curve")
+        draw.line(path, fill=(137, 4, 8, round(alpha * .68)), width=2, joint="curve")
+        segment = (phase + path_index * .29) % 1
+        scaled = segment * (len(path)-1)
+        start = min(len(path)-2, int(scaled)); local = scaled-start
+        x = path[start][0] + (path[start+1][0]-path[start][0])*local
+        y = path[start][1] + (path[start+1][1]-path[start][1])*local
+        draw.ellipse((x-2, y-1, x+2, y+1), fill=(214, 17, 12, alpha))
+    return layer.filter(ImageFilter.GaussianBlur(.35))
+
+
+def floor_portal_sprite_sheets(path: Path) -> tuple[bytes, bytes]:
+    """Собрать 16 кадров роста из земли и 16 кадров неподвижного цикла."""
     data = path.read_bytes()
     actual = hashlib.sha256(data).hexdigest()
     if actual != FLOOR_PORTAL_MASTER_SHA256:
@@ -664,43 +729,40 @@ def floor_portal_sprite_sheet(path: Path) -> bytes:
     if not final.getchannel("A").point(lambda value: 255 if value >= 8 else 0).getbbox():
         raise SystemExit("Master портала стал пустым после уменьшения")
 
-    # Вращаем только энергетический центр: основание, руны и каменное кольцо
-    # остаются неподвижными, а отсутствующий семнадцатый кадр продолжает первый.
-    center = (63, 65)
-    radius = 34
-    vortex_mask = Image.new("L", final.size)
-    ImageDraw.Draw(vortex_mask).ellipse(
-        (center[0] - radius, center[1] - radius,
-         center[0] + radius, center[1] + radius), fill=255)
-    vortex_mask = vortex_mask.filter(ImageFilter.GaussianBlur(1.15))
-
-    ring_mask = Image.new("L", final.size)
-    ring_draw = ImageDraw.Draw(ring_mask)
-    ring_draw.ellipse((center[0] - radius - 2, center[1] - radius - 2,
-                       center[0] + radius + 2, center[1] + radius + 2), fill=255)
-    ring_draw.ellipse((center[0] - radius + 2, center[1] - radius + 2,
-                       center[0] + radius - 2, center[1] + radius - 2), fill=0)
-    ring_mask = ring_mask.filter(ImageFilter.GaussianBlur(2.1))
-
-    sheet = Image.new("RGBA", (128 * 16, 128))
+    opening_mask = floor_portal_opening_mask()
+    loop_sheet = Image.new("RGBA", (128 * 16, 128))
     for index in range(16):
-        phase = index / 16
-        pulse = 0.5 + 0.5 * math.sin(phase * math.tau)
-        vortex = final.rotate(
-            -phase * 360, resample=Image.Resampling.BICUBIC,
-            center=center, expand=False)
-        vortex = ImageEnhance.Brightness(vortex).enhance(1.02 + pulse * 0.10)
-        vortex.putalpha(ImageChops.multiply(vortex.getchannel("A"), vortex_mask))
-
         frame = final.copy()
-        glow_alpha = ring_mask.point(
-            lambda value, strength=0.34 + pulse * 0.28: round(value * strength))
-        glow = Image.new("RGBA", final.size, (45, 186, 255, 0))
-        glow.putalpha(glow_alpha)
-        frame.alpha_composite(glow)
-        frame.alpha_composite(vortex)
-        sheet.alpha_composite(frame, (index * 128, 0))
-    return indexed_rgba_png(sheet, colors=192)
+        frame.alpha_composite(floor_portal_flame_frame(index, opening_mask))
+        frame.alpha_composite(floor_portal_blood_frame(index))
+        loop_sheet.alpha_composite(frame, (index * 128, 0))
+
+    appear_sheet = Image.new("RGBA", (128 * 16, 128))
+    baseline = 126
+    for index in range(16):
+        progress = index / 15
+        eased = 1 - (1-progress) ** 3
+        width = max(1, round(128 * (.28 + .72 * eased)))
+        height = max(1, round(128 * (.035 + .965 * eased)))
+        grown = final.resize((width, height), Image.Resampling.BICUBIC)
+        frame = Image.new("RGBA", (128, 128))
+        frame.alpha_composite(grown, ((128-width)//2, baseline-height))
+        ground = floor_portal_blood_frame(index, min(1, progress*2.7))
+        ground_draw = ImageDraw.Draw(ground)
+        crack_half = round(7 + progress*40)
+        ground_draw.line(((64-crack_half, 124), (64, 120), (64+crack_half, 124)),
+                         fill=(18, 0, 0, round(240*min(1, progress*3))), width=3)
+        if index < 13:
+            for shard in range(9):
+                lift = math.sin((progress + shard*.13) * math.pi) * (8 + shard % 4 * 2)
+                x = 38 + shard*7 + math.sin(shard*2.1)*3
+                y = 122 - lift
+                ground_draw.polygon(((x-2, y+3), (x, y-3), (x+2, y+3)),
+                                    fill=(62, 31, 24, round(190*(1-progress))))
+        frame.alpha_composite(ground)
+        appear_sheet.alpha_composite(frame, (index * 128, 0))
+    return (indexed_rgba_png(loop_sheet, colors=192),
+            indexed_rgba_png(appear_sheet, colors=192))
 
 
 def totem_sprite(path: Path) -> bytes:
@@ -1656,9 +1718,9 @@ def main() -> None:
     parser.add_argument("--floor-portal", type=Path,
                         help="прозрачный master портала 1254×1254")
     parser.add_argument("--build-floor-portal", action="store_true",
-                        help="собрать бесшовную анимацию портала в 16 кадров по 128×128")
+                        help="собрать 16 кадров роста и 16 кадров цикла портала по 128×128")
     parser.add_argument("--install-floor-portal", action="store_true",
-                        help="собрать и встроить 16-кадровый цикл портала завершения этажа")
+                        help="собрать и встроить оба 16-кадровых листа портала завершения этажа")
     parser.add_argument("--totem-sprite-dir", type=Path,
                         help="word/media с 16 Master-спрайтами четырёх существующих тотемов")
     parser.add_argument("--lightning-totem-sprite-dir", type=Path,
@@ -2671,24 +2733,39 @@ def main() -> None:
             parser.error("портал завершения этажа требует --floor-portal")
         if not args.floor_portal.is_file():
             parser.error(f"не найден лист портала: {args.floor_portal}")
-        generated = floor_portal_sprite_sheet(args.floor_portal)
+        loop_generated, appear_generated = floor_portal_sprite_sheets(args.floor_portal)
         output_dir = ROOT / "outputs"
         output_dir.mkdir(exist_ok=True)
-        path = output_dir / "floor-completion-portal-16x128.png"
-        path.write_bytes(generated)
+        loop_path = output_dir / "floor-completion-portal-loop-16x128.png"
+        appear_path = output_dir / "floor-completion-portal-appear-16x128.png"
+        loop_path.write_bytes(loop_generated)
+        appear_path.write_bytes(appear_generated)
+        asset_dir = ROOT / "portal_assets"
+        asset_loop_path = asset_dir / "infernal-portal-loop-16x128.png"
+        asset_appear_path = asset_dir / "infernal-portal-appear-16x128.png"
+        asset_loop_path.write_bytes(loop_generated)
+        asset_appear_path.write_bytes(appear_generated)
         if args.install_floor_portal:
             html = HTML.read_text(encoding="utf-8")
-            value = base64.b64encode(generated).decode("ascii")
+            value = base64.b64encode(loop_generated).decode("ascii")
             html, count = re.subn(
                 r"(const FLOOR_PORTAL_SPRITE_DATA = ')[^']*(';)",
                 rf"\g<1>data:image/png;base64,{value}\2", html, count=1)
             if count != 1:
                 raise SystemExit(
                     f"FLOOR_PORTAL_SPRITE_DATA: ожидалась одна замена, получено {count}")
+            value = base64.b64encode(appear_generated).decode("ascii")
+            html, count = re.subn(
+                r"(const FLOOR_PORTAL_APPEAR_SPRITE_DATA = ')[^']*(';)",
+                rf"\g<1>data:image/png;base64,{value}\2", html, count=1)
+            if count != 1:
+                raise SystemExit(
+                    f"FLOOR_PORTAL_APPEAR_SPRITE_DATA: ожидалась одна замена, получено {count}")
             HTML.write_text(html, encoding="utf-8", newline="\n")
-        print(json.dumps({"path": str(path), "bytes": len(generated),
-                          "size": Image.open(io.BytesIO(generated)).size,
-                          "frames": 16, "frameMs": 80},
+        print(json.dumps({"loopPath": str(asset_loop_path), "appearPath": str(asset_appear_path),
+                          "loopBytes": len(loop_generated), "appearBytes": len(appear_generated),
+                          "size": Image.open(io.BytesIO(loop_generated)).size,
+                          "loopFrames": 16, "appearFrames": 16},
                          separators=(",", ":")))
         return
 

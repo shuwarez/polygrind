@@ -4,7 +4,7 @@ const ok = (nm, cond, det) => console.log((cond?'  \u2713 ':'  \u2717 ') + nm.pa
 const near = (a,b,eps=1e-6) => Math.abs(a-b)<eps;
 
 function build(weapon='bow', mods=[], amus=[]){
-  const c=loadGame('./GrimGrind.html',{random:()=>0}); c.newGame(weapon,'keys',null);
+  const c=loadGame('./index.html',{random:()=>0}); c.newGame(weapon,'keys',null);
   const G=c.__api.G; G.enemies.length=0; G.spawnQueue=0; G.packs.length=0;
   for (const [stat,kind,value] of mods) G.bag.add(stat,kind,value);
   for (const id of amus) G.amu[id]=true;

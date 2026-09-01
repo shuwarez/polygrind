@@ -3,7 +3,7 @@
 
 The input directory must contain floor_01.png ... floor_10.png.  Every source
 is converted to a dark 512x512 indexed PNG, its opposite edges are feathered
-into an exact match, and an optional marker block in GrimGrind.html is updated
+into an exact match, and an optional marker block in index.html is updated
 with the resulting data URIs.
 """
 

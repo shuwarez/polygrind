@@ -6,7 +6,7 @@ function ok(name, yes, got=''){
   n++; if(!yes) fail++;
   console.log((yes?'  \u2713 ':'  \u2717 ') + name.padEnd(64) + got);
 }
-const html=fs.readFileSync('./GrimGrind.html','utf8');
+const html=fs.readFileSync('./index.html','utf8');
 
 ok('интерфейс содержит компактный Spawn Menu и три раздела',
   html.includes('<h1>Spawn Menu</h1>') && html.includes('ОБЫЧНЫЕ ВРАГИ') &&
@@ -33,7 +33,7 @@ ok('кнопки находок подключены к отдельным бе�
   /querySelectorAll\('\[data-spawn-book\]'\)/.test(html) && /debugSpawnBook\(key\)/.test(html) &&
   /querySelectorAll\('\[data-spawn-totem\]'\)/.test(html) && /debugSpawnTotem\(key\)/.test(html));
 
-{ const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys');
+{ const c=loadGame('./index.html'); c.newGame('bow','keys');
   const G=c.__api.G;
   ok('физическая K работает при русской раскладке', c.inputKey({code:'KeyK',key:'л'})==='k');
   ok('старая физическая L по-прежнему распознаётся', c.inputKey({code:'KeyL',key:'д'})==='l');
@@ -47,7 +47,7 @@ ok('кнопки находок подключены к отдельным бе�
     html.includes("if (k === 'l' && !e.repeat)") && html.includes('function openTestPanel()') &&
     html.includes('function closeTestPanel()')); }
 
-{ const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys');
+{ const c=loadGame('./index.html'); c.newGame('bow','keys');
   const G=c.__api.G, keys=Object.keys(c.__api.ETYPES), made=[];
   for (const key of keys){
     const e=c.debugSpawnEnemy(key); made.push(e);
@@ -58,7 +58,7 @@ ok('кнопки находок подключены к отдельным бе�
     return d>=100 && d<=250 && Math.abs(e.x)<=1500-e.r && Math.abs(e.y)<=1500-e.r;
   })); }
 
-{ const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys');
+{ const c=loadGame('./index.html'); c.newGame('bow','keys');
   const G=c.__api.G, ids=['frostWolf','toxicRunner','cursedRogue','skeletonWarrior','blightGrunt','boneGargoyle',
     'fallenPyromancer','beholderSlave','skeletonCrossbow','forgottenGuard','abyssalExecutioner','plagueOgre'];
   const expected={frostWolf:'runner',toxicRunner:'runner',cursedRogue:'runner',skeletonWarrior:'blob',blightGrunt:'blob',boneGargoyle:'blob',
@@ -74,7 +74,7 @@ ok('кнопки находок подключены к отдельным бе�
   }));
   ok('неизвестный id отдельной элиты безопасно отклоняется',c.debugSpawnEliteVariant('missingElite')===null); }
 
-{ const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys');
+{ const c=loadGame('./index.html'); c.newGame('bow','keys');
   const G=c.__api.G, ids=['lich','goat','plague','greed','executioner','tyrant','grave','behemoth',
     'vampire','voidwrath','minotaur','seraph','matriarch','demonqueen'], made=[];
   for (const id of ids){
@@ -88,7 +88,7 @@ ok('кнопки находок подключены к отдельным бе�
     return d>=100 && d<=250 && Math.abs(e.x)<=1500-e.r && Math.abs(e.y)<=1500-e.r;
   })); }
 
-{ const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys');
+{ const c=loadGame('./index.html'); c.newGame('bow','keys');
   const G=c.__api.G; G.floor=1;
   const pk=c.debugSpawnElitePack();
   ok('элита создаётся штатной spawnPack с участниками и аффиксом', pk && G.packs.includes(pk) &&
@@ -97,7 +97,7 @@ ok('кнопки находок подключены к отдельным бе�
     const d=Math.hypot(e.x-G.player.x,e.y-G.player.y); return d>=100 && d<=250;
   })); }
 
-{ const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys');
+{ const c=loadGame('./index.html'); c.newGame('bow','keys');
   const G=c.__api.G, itemKeys=Object.keys(c.__api.AMULETS), bookKeys=Object.keys(c.__api.BOOKS);
   const totemKeys=['fire','freeze','poison','blood','lightning'];
   const before={floor:G.floor,queue:G.spawnQueue,timer:G.spawnT,portal:G.portal,amu:Object.keys(G.amu).length,
@@ -127,13 +127,13 @@ ok('кнопки находок подключены к отдельным бе�
   ok('неизвестные ключи находок безопасно отклоняются',
     c.debugSpawnItem('missing')===null&&c.debugSpawnBook('missing')===null&&c.debugSpawnTotem('missing')===null&&G.orbs.length===count); }
 
-{ const c=loadGame('./GrimGrind.html',{random:()=>0.125}); c.newGame('bow','keys');
+{ const c=loadGame('./index.html',{random:()=>0.125}); c.newGame('bow','keys');
   const G=c.__api.G; G.player.x=1480; G.player.y=1480;
   const o=c.debugSpawnItem(Object.keys(c.__api.AMULETS)[0]), d=Math.hypot(o.x-G.player.x,o.y-G.player.y);
   ok('у края арены находка остаётся внутри радиуса 100 и границ мира',
     d>=56&&d<=100&&Math.abs(o.x)<=1500-18&&Math.abs(o.y)<=1500-18); }
 
-{ const c=loadGame('./GrimGrind.html',{random:()=>0.999}); c.newGame('bow','keys');
+{ const c=loadGame('./index.html',{random:()=>0.999}); c.newGame('bow','keys');
   const G=c.__api.G, before={floor:G.floor, queue:G.spawnQueue, timer:G.spawnT, portal:G.portal};
   const normal=c.debugSpawnRandomEnemy(), boss=c.debugSpawnRandomBoss(), pack=c.debugSpawnElitePack();
   ok('Random Enemy и Random Boss выбирают существующие каталожные типы',
@@ -141,7 +141,7 @@ ok('кнопки находок подключены к отдельным бе�
   ok('обычный, boss и elite debug-spawn не меняют wave progression',
     G.floor===before.floor && G.spawnQueue===before.queue && G.spawnT===before.timer && G.portal===before.portal && pack); }
 
-{ const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys');
+{ const c=loadGame('./index.html'); c.newGame('bow','keys');
   const G=c.__api.G; G.spawnQueue=3; G.spawnT=7;
   c.debugSpawnBoss('plague'); G.eshots.push({}); G.pools.push({}); G.bossPools.push({}); G.bossTrails.push({});
   const cleared=c.debugClearEnemies();

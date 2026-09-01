@@ -3,7 +3,7 @@ const {loadGame}=require('./sim');
 let n=0,fail=0;
 function ok(name,cond,detail=''){ n++; if(!cond)fail++; console.log((cond?'  ✓ ':'  ✗ ')+name.padEnd(58)+detail); }
 function setup(random=()=>0.99){
-  const c=loadGame('./GrimGrind.html',{random}); c.newGame('bow','keys','hunter');
+  const c=loadGame('./index.html',{random}); c.newGame('bow','keys','hunter');
   const G=c.__api.G,D=c.__api.D,p=G.player;
   G.enemies.length=0; G.spawnQueue=0; G.packs.length=0; G.portal=null;
   p.x=p.y=0; p.atkCd=99;
@@ -22,7 +22,7 @@ function arrowHit(o,age,{first=true}={}){
 }
 
 function subclassStats(id,lvl){
-  const c=loadGame('./GrimGrind.html');c.newGame('bow','keys',id);
+  const c=loadGame('./index.html');c.newGame('bow','keys',id);
   c.__api.G.lvl=lvl;c.recalc();return c.__api.D;
 }
 
@@ -38,14 +38,14 @@ function subclassStats(id,lvl){
   ok('здоровье Боевого танцора растёт на 1% каждые 5 уровней',
     Math.abs(dance4.life/plain4.life-1)<1e-9&&Math.abs(dance5.life/plain5.life-1.01)<1e-9,
     (dance4.life/plain4.life).toFixed(2)+'/'+(dance5.life/plain5.life).toFixed(2));
-  const danceLife=loadGame('./GrimGrind.html');danceLife.newGame('bow','keys','dancer');
+  const danceLife=loadGame('./index.html');danceLife.newGame('bow','keys','dancer');
   danceLife.__api.G.lvl=25;danceLife.__api.G.bag.add('life','inc',100);danceLife.recalc();
   ok('процент здоровья Танцора складывается с карточками максимального здоровья',
     Math.abs(danceLife.__api.D.life-410)<1e-9,'HP '+danceLife.__api.D.life.toFixed(0));
 }
 
 {
-  const c=loadGame('./GrimGrind.html');c.newGame('bow','keys','hunter');const G=c.__api.G,p=G.player;
+  const c=loadGame('./index.html');c.newGame('bow','keys','hunter');const G=c.__api.G,p=G.player;
   G.lvl=25;G.bag.add('aspd','inc',50);G.bag.add('aspd','more',15);
   G.amu.clock=true;G.amu.claws=true;G.amu.swift=true;p.swiftT=1;c.recalc();
   const actionCard=c.__api.MODS.find(m=>m.id==='spd.action');
@@ -179,7 +179,7 @@ function fixed(o){o.D.baseMin=o.D.baseMax=100;o.D.elem={fire:0,cold:0,lit:0,poi:
 {
   const o=setup();o.G.bag.add('hunterMark','flag',1);o.c.recalc();const a=foe(o),b=foe(o),c=foe(o);
   o.G.time=0;o.c.markHunterTarget(a);o.G.time=1;o.c.markHunterTarget(b);o.G.time=2;o.c.markHunterTarget(c);
-  const html=require('fs').readFileSync('./GrimGrind.html','utf8');
+  const html=require('fs').readFileSync('./index.html','utf8');
   ok('одновременно живут две метки, третья заменяет старейшую и рисует красный прицел',
     !o.c.hunterMarkActive(a)&&o.c.hunterMarkActive(b)&&o.c.hunterMarkActive(c)&&
     html.includes("ctx.strokeStyle='#ff3b4f'")&&html.includes("if (pass==='worldHud') drawHunterMark(e);"));
@@ -217,7 +217,7 @@ function fixed(o){o.D.baseMin=o.D.baseMax=100;o.D.elem={fire:0,cold:0,lit:0,poi:
   ok('синий след включается ровно с порога бонусного урона',early&&o.c.acceleratedArrowTrailActive(s));
   ok('след ограничен стрелами игрока и рисуется позади снаряда',
     !o.c.acceleratedArrowTrailActive({...s,playerArrow:false}) &&
-    /drawAcceleratedArrowTrail\(s\);[\s\S]{0,100}drawPlayerProjectileSprite/.test(require('fs').readFileSync('./GrimGrind.html','utf8')));
+    /drawAcceleratedArrowTrail\(s\);[\s\S]{0,100}drawPlayerProjectileSprite/.test(require('fs').readFileSync('./index.html','utf8')));
 }
 
 {

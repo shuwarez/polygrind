@@ -6,12 +6,12 @@ function ok(name,yes,got=''){
   n++;if(!yes)fail++;
   console.log((yes?'  \u2713 ':'  \u2717 ')+name.padEnd(67)+got);
 }
-function fresh(options={}){const c=loadGame('./GrimGrind.html',options);c.newGame('bow','keys');return c;}
+function fresh(options={}){const c=loadGame('./index.html',options);c.newGame('bow','keys');return c;}
 function centered(c,p){
   const frame=c.prepareCameraFrame(p),hero=c.worldToScreen(p.x,p.y,p,0,0,frame);
   return Math.abs(hero.x-640)<1e-9&&Math.abs(hero.y-360)<1e-9;
 }
-const html=fs.readFileSync('./GrimGrind.html','utf8');
+const html=fs.readFileSync('./index.html','utf8');
 
 {const c=fresh(),G=c.__api.G,p=G.player,frame=c.prepareCameraFrame(p),view=c.prepareRenderView(p,0,0,frame);
   const center=c.worldToScreen(frame.centerX,frame.centerY,p,0,0,frame),screenW=center.x*2,screenH=center.y*2;

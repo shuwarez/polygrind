@@ -3,7 +3,7 @@ const {loadGame}=require('./sim');
 const fs=require('fs'),vm=require('vm');
 let n=0,fail=0;
 const ok=(name,cond,detail='')=>{n++;if(!cond)fail++;console.log((cond?'  ✓ ':'  ✗ ')+name.padEnd(80)+detail);};
-function fresh(random=()=>0.5){const c=loadGame('./GrimGrind.html',{random});c.newGame('bow','keys');const G=c.__api.G;G.enemies=[];G.spawnQueue=0;return{c,G,p:G.player,D:c.__api.D};}
+function fresh(random=()=>0.5){const c=loadGame('./index.html',{random});c.newGame('bow','keys');const G=c.__api.G;G.enemies=[];G.spawnQueue=0;return{c,G,p:G.player,D:c.__api.D};}
 function enemy(o,x=0,y=0){const e=o.c.spawnEnemy('blob');e.x=x;e.y=y;e.hp=e.maxHp=1e9;e.dead=false;e.armor=0;e.spd=0;return e;}
 
 {
@@ -113,7 +113,7 @@ function enemy(o,x=0,y=0){const e=o.c.spawnEnemy('blob');e.x=x;e.y=y;e.hp=e.maxH
 }
 
 {
-  const html=fs.readFileSync('./GrimGrind.html','utf8');
+  const html=fs.readFileSync('./index.html','utf8');
   ok('обновление частиц больше не использует покадровый splice',/function updateParticles[\s\S]{0,500}parts\[write\+\+\]=q/.test(html)&&!/function updateParticles[\s\S]{0,500}splice\(/.test(html));
   ok('обновление G.fx больше не использует покадровый splice',/function updateTransientEffects[\s\S]{0,1000}fx\[write\+\+\]=f/.test(html)&&!/function updateTransientEffects[\s\S]{0,1000}splice\(/.test(html));
   ok('телеграфы не проходят через декоративный лимит',/function pushTimedTelegraph\(spec,life\)\{\s*G\.fx\.push/.test(html));

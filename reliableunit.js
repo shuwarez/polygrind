@@ -4,21 +4,21 @@ const ok = (nm, cond, det) => console.log((cond?'  \u2713 ':'  \u2717 ') + nm.pa
 const near = (a,b,eps=1e-9) => Math.abs(a-b)<eps;
 
 function build(hero='bow', narrow=0){
-  const c=loadGame('./GrimGrind.html'); c.newGame(hero,'keys');
+  const c=loadGame('./index.html'); c.newGame(hero,'keys');
   const G=c.__api.G;
   if (narrow) G.bag.add('narrow','inc',narrow);
   c.recalc();
   return {c,G,D:c.__api.D,m:c.__api.MODS.find(x=>x.id==='dmg.range_narrow')};
 }
 function defense(normalDr=0){
-  const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys');
+  const c=loadGame('./index.html'); c.newGame('bow','keys');
   const G=c.__api.G;
   if (normalDr) G.bag.add('normalDr','inc',normalDr);
   c.recalc();
   return {c,G,D:c.__api.D,m:c.__api.MODS.find(x=>x.id==='def.normal_reduction')};
 }
 function knockback(chance=0){
-  const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys');
+  const c=loadGame('./index.html'); c.newGame('bow','keys');
   const G=c.__api.G;
   if (chance) G.bag.add('knock','chance',chance);
   c.recalc();
@@ -26,7 +26,7 @@ function knockback(chance=0){
     dizzy:c.__api.MODS.find(x=>x.id==='cc.dizzy')};
 }
 function critWave(primaryHp=1000){
-  const c=loadGame('./GrimGrind.html',{random:()=>0}); c.newGame('bow','keys');
+  const c=loadGame('./index.html',{random:()=>0}); c.newGame('bow','keys');
   const G=c.__api.G, D=c.__api.D;
   G.enemies.length=0; G.packs.length=0;
   G.bag.add('critWave','flag',1); G.bag.add('critCh','flat',95); c.recalc();
@@ -355,7 +355,7 @@ console.log('Шанс оглушения');
 { const o=build(), m=o.c.__api.MODS.find(x=>x.id==='cc.stun_chance');
   o.G.bag.add('stun','chance',137); o.c.recalc();
   ok('механический шанс ограничен 50%, затем карта уходит', o.D.stun===50 && m.hide()===true); }
-{ const c=loadGame('./GrimGrind.html',{random:()=>0}); c.newGame('bow','keys');
+{ const c=loadGame('./index.html',{random:()=>0}); c.newGame('bow','keys');
   const G=c.__api.G, D=c.__api.D, e=c.spawnEnemy();
   G.bag.add('stun','chance',50); c.recalc(); D.baseMin=D.baseMax=1; e.armor=0; e.maxHp=e.hp=1000;
   c.damage(e,{noDouble:true}); const base=e.ail.stun;

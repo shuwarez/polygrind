@@ -4,7 +4,7 @@ const ok = (nm, cond, det) => console.log((cond ? '  ✓ ' : '  ✗ ') + nm.padE
 // Переход этажа проверяет очередь интерфейса, а не распределение случайных
 // боссов и находок. Фиксированный поток не даёт редкому боссу подмешать в
 // заранее собранную добычу собственную гарантированную находку.
-const fresh = () => loadGame('./GrimGrind.html', {random:() => 0.5});
+const fresh = () => loadGame('./index.html', {random:() => 0.5});
 
 { const c = fresh(); c.newGame('bow', 'keys');
   const G = c.__api.G, D = c.__api.D, p = G.player;
@@ -27,15 +27,20 @@ const fresh = () => loadGame('./GrimGrind.html', {random:() => 0.5});
   G.spawnQueue = 0; c.update(0.01);
   ok('после последнего врага портал появляется', !!G.portal);
   const portalDistance=Math.hypot(G.portal.x-p.x,G.portal.y-p.y);
-  ok('портал появляется в радиусе 800–1000 от героя',portalDistance>=800&&portalDistance<=1000,
-    portalDistance.toFixed(2));
+  const portalScreen=c.worldToScreen(G.portal.x,G.portal.y,p);
+  const portalHalf=166*.95/2;
+  ok('портал появляется не ближе 350 и целиком в поле зрения',
+    portalDistance>=350&&portalDistance<=520&&
+    portalScreen.x>=portalHalf&&portalScreen.x<=1280-portalHalf&&
+    portalScreen.y>=portalHalf&&portalScreen.y<=720-portalHalf,
+    portalDistance.toFixed(2)+' @ '+portalScreen.x.toFixed(1)+', '+portalScreen.y.toFixed(1));
   const edgePortal=c.floorPortalSpawnPosition({x:1390,y:1390});
   ok('увеличенный портал целиком остаётся внутри арены',Math.abs(G.portal.x)<=1397&&Math.abs(G.portal.y)<=1397&&
     Math.abs(edgePortal.x)<=1397&&Math.abs(edgePortal.y)<=1397&&
     Math.abs(Math.hypot(edgePortal.x-1390,edgePortal.y-1390)-edgePortal.distance)<1e-6,
     G.portal.x.toFixed(1)+', '+G.portal.y.toFixed(1));
-  ok('появление портала создаёт густой энергетический выброс',G.parts.length>=84&&G.fx.filter(f=>f.t==='ring').length>=3&&
-    c.drawFloorPortalEnergy(G.portal)===96,
+  ok('появление портала создаёт кровавый выброс, дым и угли',G.parts.length>=84&&G.fx.filter(f=>f.t==='ring').length>=3&&
+    c.drawFloorPortalEnergy(G.portal)===48,
     'частиц '+G.parts.length);
   ok('Canvas-защита отсекает отрицательные и повреждённые радиусы',
     c.safeCanvasRadius(-1.36773)===0&&c.safeCanvasRadius(NaN)===0&&c.safeCanvasRadius(12.5)===12.5);

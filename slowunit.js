@@ -4,7 +4,7 @@ const ok = (nm, cond, det) => console.log((cond?'  \u2713 ':'  \u2717 ') + nm.pa
 const near = (a,b,eps=1e-9) => Math.abs(a-b)<eps;
 
 function build(hero='bow'){
-  const c=loadGame('./GrimGrind.html',{random:()=>0.37}); c.newGame(hero,'keys');
+  const c=loadGame('./index.html',{random:()=>0.37}); c.newGame(hero,'keys');
   const G=c.__api.G; G.enemies.length=0;
   return {c,G,D:c.__api.D,
     dmg:c.__api.MODS.find(x=>x.id==='cond.vs_slowed'),

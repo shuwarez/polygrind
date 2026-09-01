@@ -7,7 +7,7 @@ function ok(name,cond,detail=''){
   console.log((cond?'  \u2713 ':'  \u2717 ')+name.padEnd(68)+detail);
 }
 function mk(items=[],weapon='blade',random=()=>0.5){
-  const c=loadGame('./GrimGrind.html',{random});
+  const c=loadGame('./index.html',{random});
   c.newGame(weapon,'keys');
   const G=c.__api.G,D=c.__api.D,p=G.player;
   G.pending=0;G.enemies.length=0;G.spawnQueue=1;G.packs.length=0;

@@ -11,7 +11,7 @@ Git, а не переносятся в каждый свежий клон.
 
 ## Источники внутри HTML
 
-Все runtime-изображения встроены в `GrimGrind.html` как data URI. Пиксельные
+Все runtime-изображения встроены в `index.html` как data URI. Пиксельные
 каталоги в основном используют PNG, а крупные нормализованные листы боссов и
 фоны — lossless/quality WebP. Основные каталоги:
 
@@ -106,7 +106,7 @@ Git, а не переносятся в каждый свежий клон.
 
 ```powershell
 python prepare_floor_textures.py <каталог-floor_01..floor_10> floor_textures `
-  --preview <contact_3x3.png> --embed-html GrimGrind.html
+  --preview <contact_3x3.png> --embed-html index.html
 ```
 
 Скрипт уменьшает исходники до `512×512` без сглаживания, выравнивает яркость,
@@ -142,7 +142,7 @@ python optimize_graphics.py --install-item-floor-sprites-24
 ```
 
 Установщик требует `catalog_manifest.json`, сверяет точное покрытие runtime-ключей
-и наличие ровно 120 PNG без лишних файлов. В `GrimGrind.html` переносятся
+и наличие ровно 120 PNG без лишних файлов. В `index.html` переносятся
 исходные PNG-байты: для канонического UI-каталога ресайз, повторная квантизация и
 изменение alpha запрещены. Одновременно из 93 предметов и семи книг воспроизводимо
 строятся `RARE_ITEM_FLOOR_SPRITE_DATA` и `BOOK_FLOOR_SPRITE_DATA`: каждый силуэт
@@ -294,7 +294,7 @@ python optimize_graphics.py --help
 каталоги `webp/base`, `webp/attack` и `webp/effects`.
 
 `outputs/` и исходные многомегапиксельные изображения не являются runtime и не
-публикуются. В `GrimGrind.html` устанавливаются только окончательные компактные
+публикуются. В `index.html` устанавливаются только окончательные компактные
 листы.
 
 ## Проверка после изменений

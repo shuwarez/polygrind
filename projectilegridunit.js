@@ -7,7 +7,7 @@ function ok(name,cond,detail=''){
 }
 
 function setup(){
-  const c=loadGame('./GrimGrind.html',{random:()=>0.99});
+  const c=loadGame('./index.html',{random:()=>0.99});
   c.newGame('bow','keys','hunter');
   const G=c.__api.G,D=c.__api.D,p=G.player;
   G.enemies.length=0;G.shots.length=0;G.spawnQueue=0;G.packs.length=0;G.pending=0;

@@ -5,7 +5,7 @@ const zlib = require('zlib');
 const {loadGame} = require('./sim');
 const {imageInfo}=require('./asset_test_utils');
 const ok = (nm, cond, det) => console.log((cond?'  \u2713 ':'  \u2717 ') + nm.padEnd(52) + (det||''));
-const html=fs.readFileSync('./GrimGrind.html','utf8');
+const html=fs.readFileSync('./index.html','utf8');
 const embeddedPng = key => {
   const match=html.match(new RegExp(key+"\\s*[:=]\\s*'data:image/(?:png|webp);base64,([^']+)'"));
   return match ? Buffer.from(match[1], 'base64') : Buffer.alloc(0);
@@ -103,10 +103,12 @@ ok('семь элементальных индикаторов встроены 
   statusIconPng.png && statusIconPng.w===112 && statusIconPng.h===16 && statusIconPng.color===3 &&
   statusIconBytes.length<1000, statusIconBytes.length+' байт');
 const portalBytes=embeddedPng('FLOOR_PORTAL_SPRITE_DATA'), portalPng=pngInfo(portalBytes);
-ok('портал этажа встроен оптимизированным 16-кадровым листом 2048×128',
-  portalPng.png && portalPng.w===2048 && portalPng.h===128 && portalPng.color===3 &&
-  portalPng.lossless && portalPng.alpha && portalBytes.length<70000,
-  portalBytes.length+' байт');
+const portalAppearBytes=embeddedPng('FLOOR_PORTAL_APPEAR_SPRITE_DATA'),portalAppearPng=pngInfo(portalAppearBytes);
+ok('инфернальный портал встроен двумя 16-кадровыми листами 2048×128',
+  [portalPng,portalAppearPng].every(p=>p.png&&p.w===2048&&p.h===128&&p.color===3&&p.lossless) &&
+  [portalBytes,portalAppearBytes].every(b=>b.includes(Buffer.from('tRNS'))) &&
+  portalBytes.length<70000 && portalAppearBytes.length<70000,
+  portalBytes.length+' + '+portalAppearBytes.length+' байт');
 
 const groundPoolKeys=['tar','ogreAcid','bossAcid','boilingBlood','lavaTrail','frostTrail','venomAcid','tyrantFire'];
 const groundPoolObject=(html.match(/const GROUND_POOL_SPRITE_DATA = \{([\s\S]*?)\n\};/)||[])[1]||'';
@@ -124,7 +126,7 @@ ok('листы наземных эффектов различаются и вм�
   groundPoolBytes.reduce((sum,data)=>sum+data.length,0)<18000,
   groundPoolBytes.reduce((sum,data)=>sum+data.length,0)+' байт');
 
-const c=loadGame('./GrimGrind.html');
+const c=loadGame('./index.html');
 c.newGame('bow','keys','hunter');
 const poolG=c.__api.G;
 poolG.time=0; const poolFrame0=groundPoolKeys.map(key=>c.groundPoolSpriteFrame(key).index);
@@ -235,16 +237,18 @@ ok('индикаторы врага содержат только семь эл�
   statuses.map(status=>status.key).join(',')==='burning,poison,plague,chilled,frozen,shocked,bleeding' &&
   statuses.map(status=>status.frame.index).join(',')==='0,1,2,3,4,5,6' &&
   statuses.map(status=>status.stacks).join(',')==='2,3,0,0,0,0,4');
-ok('портал бесшовно зацикливает все 16 кадров',
-  [0,.08,.16,.24,.32,.4,.48,.56,.64,.72,.8,.88,.96,1.04,1.12,1.2,1.28,2.48,2.56].map(t=>c.floorPortalSpriteFrame({t}).index).join(',')===
-    '0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,0,15,0' &&
+ok('портал проигрывает 16 кадров роста, затем бесшовный неподвижный цикл',
+  [0,.08,.16,.24,.32,.4,.48,.56,.64,.72,.8,.88,.96,1.04,1.12,1.2].map(t=>c.floorPortalSpriteFrame({t}).index).join(',')===
+    '0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15' &&
+  c.floorPortalSpriteFrame({t:1.2}).sheet==='appear' && c.floorPortalSpriteFrame({t:1.28}).sheet==='loop' &&
+  [1.28,1.37,2.63,2.72].map(t=>c.floorPortalSpriteFrame({t}).index).join(',')==='0,1,15,0' &&
   c.floorPortalSpriteFrame({t:0}).meta.anchorX===0.5 &&
   c.floorPortalSpriteFrame({t:0}).meta.anchorY===1 &&
   c.floorPortalSpriteFrame({t:0}).w===128 && c.floorPortalSpriteFrame({t:0}).h===128 &&
   c.floorPortalSpriteFrame({t:1.2}).x===1920 && c.floorPortalSpriteFrame({t:0}).meta.drawW===166 &&
-  !c.floorPortalReady({t:.59}) && c.floorPortalReady({t:.6}) &&
+  !c.floorPortalReady({t:1.27}) && c.floorPortalReady({t:1.28}) &&
   html.includes('x:index*meta.frameW') && html.includes('w:meta.frameW,h:meta.frameH') &&
-  /function drawFloorPortalSprite[\s\S]*?imageSmoothingEnabled=false[\s\S]*?drawImage\(FLOOR_PORTAL_SPRITE/.test(html));
+  /function drawFloorPortalSprite[\s\S]*?frame\.sheet==='appear'[\s\S]*?imageSmoothingEnabled=false[\s\S]*?drawImage\(sprite/.test(html));
 ok('круговой прицел PNG-врага заменён стрелками',
   c.enemyTargetMarkerKind({typeKey:'blob',animT:0})==='chevron' && c.enemyTargetMarkerKind({typeKey:'tank',animT:0})==='chevron' &&
   c.enemyTargetMarkerKind({typeKey:'shooter',animT:0})==='chevron');
@@ -253,7 +257,7 @@ c.newGame('bow','keys','hunter');
 const G=c.__api.G, p=G.player, e=c.spawnEnemy();
 const lootFrames=[];
 for (const t of [0,.125,.25,.375,.5]){ G.time=t; lootFrames.push(c.lootSpriteFrame({book:'shock'}).index); }
-const bookModal=loadGame('./GrimGrind.html'); bookModal.newGame('wand','keys'); bookModal.takeBook('cold');
+const bookModal=loadGame('./index.html'); bookModal.newGame('wand','keys'); bookModal.takeBook('cold');
 const bookModalHtml=bookModal.document.getElementById('ov').innerHTML;
 ok('книги используют уникальные 24×24 PNG на полу и канонические 128×128 в UI',
   lootFrames.join(',')==='0,0,0,0,0' &&
@@ -272,9 +276,9 @@ ok('книги используют уникальные 24×24 PNG на пол�
   !/\.loot-item-icon\{[^}]*background-size/.test(html) &&
   !/fillText\((?:B|A)\.ico/.test(html) && html.includes("lootSpriteHTML(k,'hud')") &&
   html.includes("lootSpriteHTML(k,'inventory')"));
-const itemModal=loadGame('./GrimGrind.html'); itemModal.newGame('bow','keys'); itemModal.takeAmulet('mirror');
+const itemModal=loadGame('./index.html'); itemModal.newGame('bow','keys'); itemModal.takeAmulet('mirror');
 const itemModalHtml=itemModal.document.getElementById('ov').innerHTML;
-const totemModal=loadGame('./GrimGrind.html'); totemModal.newGame('wand','keys');
+const totemModal=loadGame('./index.html'); totemModal.newGame('wand','keys');
 totemModal.__api.G.items.fire={tier:1,val:3}; totemModal.takeTotem('fire');
 const totemModalHtml=totemModal.document.getElementById('ov').innerHTML;
 ok('предметное окно получает ровно в пять раз больше искристых частиц',
@@ -351,7 +355,7 @@ const deathHashes={
     '03fa60484b3da6f6060a17356dac0038d37cd5f7eb910f7c729922868c51c849',
   ],
 };
-const soundGame=loadGame('./GrimGrind.html',{random:()=>hitRandom,Audio:FakeAudio});
+const soundGame=loadGame('./index.html',{random:()=>hitRandom,Audio:FakeAudio});
 soundGame.window.AudioContext=FakeAudioContext; soundGame.unlockSound(); soundGame.newGame('bow','keys');
 const soundG=soundGame.__api.G, soundAt={x:12,y:34};
 const itemKey=Object.keys(soundGame.__api.AMULETS)[0];
@@ -492,7 +496,7 @@ const soundSaved=new Map(), soundStorage={
   getItem:key=>soundSaved.has(key)?soundSaved.get(key):null,
   setItem:(key,value)=>soundSaved.set(key,String(value)),
 };
-const settingsGame=loadGame('./GrimGrind.html',{random:()=>0,localStorage:soundStorage});
+const settingsGame=loadGame('./index.html',{random:()=>0,localStorage:soundStorage});
 let settingsAudio;
 class SettingsAudioContext extends FakeAudioContext { constructor(){ super(); settingsAudio=this; } }
 settingsGame.window.AudioContext=SettingsAudioContext; settingsGame.unlockSound(); settingsGame.newGame('bow','keys');
@@ -506,7 +510,7 @@ settingsGame.playHitSound(); settingsGame.levelUpSfx();
 ok('кнопка отключения глушит каждый синтезированный игровой эффект',
   settingsGame.__api.SFX_SETTINGS.muted && !settingsGame.__api.SFX_SETTINGS.audible &&
   soundSaved.get('polygrind_sfx_muted')==='on' && settingsAudio.oscillators.length===mutedOscillators);
-const restoredSettings=loadGame('./GrimGrind.html',{random:()=>0,localStorage:soundStorage});
+const restoredSettings=loadGame('./index.html',{random:()=>0,localStorage:soundStorage});
 ok('громкость и выключение звуков восстанавливаются после перезапуска',
   restoredSettings.__api.SFX_SETTINGS.volume===80 && restoredSettings.__api.SFX_SETTINGS.muted &&
   !restoredSettings.__api.SFX_SETTINGS.audible);
@@ -523,7 +527,7 @@ ok('настройки главного меню используют общие
   /\$\('#menusfxvolume'\)\.oninput=event=>setSfxVolume\(event\.target\.value\)/.test(html) &&
   /\$\('#menusfxmute'\)\.onclick=toggleSfxMute/.test(html) &&
   /\$\('#settingsback'\)\.onclick=\(\)=>runConfirmedMenuAction\(startScreen\)/.test(html));
-const escapeGame=loadGame('./GrimGrind.html',{random:()=>0});
+const escapeGame=loadGame('./index.html',{random:()=>0});
 escapeGame.newGame('bow','keys');
 escapeGame.handleGameKeyDown({key:'Escape',code:'Escape',repeat:false,preventDefault(){}});
 escapeGame.handleGameKeyDown({key:'Escape',code:'Escape',repeat:true,preventDefault(){}});
@@ -543,19 +547,19 @@ ok('сфера Мага использует общий четырёхкадро
   c.playerProjectileSpriteFrame({spriteType:'reflected'})===null);
 
 const playerShotType = key => {
-  const game=loadGame('./GrimGrind.html'); game.newGame(key,'keys');
+  const game=loadGame('./index.html'); game.newGame(key,'keys');
   const state=game.__api.G, target=game.spawnEnemy(); state.enemies=[target]; state.pending=0; state.spawnQueue=0;
   state.player.x=0; state.player.y=0; target.x=100; target.y=0; target.spd=0; game.attack();
   return state.shots[0] && state.shots[0].spriteType;
 };
 ok('штатные атаки Лучника и Мага получают свои sprite-маркеры',
   playerShotType('bow')==='arrow' && playerShotType('wand')==='mage');
-const minionGame=loadGame('./GrimGrind.html'); minionGame.newGame('bow','keys');
+const minionGame=loadGame('./index.html'); minionGame.newGame('bow','keys');
 minionGame.minionShot({x:0,y:0},{x:100,y:0},false);
 minionGame.minionShot({x:0,y:0},{x:100,y:0},true);
 ok('охотник и колдун свиты используют те же канонические текстуры',
   minionGame.__api.G.shots[0].spriteType==='arrow' && minionGame.__api.G.shots[1].spriteType==='mage');
-const mageFx=loadGame('./GrimGrind.html'); mageFx.newGame('wand','keys');
+const mageFx=loadGame('./index.html'); mageFx.newGame('wand','keys');
 const MFG=mageFx.__api.G, MFD=mageFx.__api.D;
 MFG.enemies=[]; MFG.fx=[];
 mageFx.explodePlayerOrb({x:10,y:20,orb:true,travel:0,hitSet:[]});

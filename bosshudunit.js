@@ -1,7 +1,7 @@
 /* Компактный Canvas Boss HUD: 1–4 босса, rare, маркеры и отсутствие старого banner. */
 const fs=require('fs');
 const {loadGame}=require('./harness');
-const html=fs.readFileSync('./GrimGrind.html','utf8');
+const html=fs.readFileSync('./index.html','utf8');
 let n=0,fail=0;
 function ok(name,yes,got=''){
   n++; if(!yes) fail++;
@@ -29,7 +29,7 @@ ok('сборщик хранит ссылки максимум на четыре 
   /BOSS_HUD_TARGETS=\[null,null,null,null\]/.test(html) &&
   /BOSS_HUD_TARGETS\[BOSS_HUD_COUNT\+\+\]=e/.test(collectSrc));
 
-{ const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys');
+{ const c=loadGame('./index.html'); c.newGame('bow','keys');
   const ids=['lich','goat','plague','greed','executioner','tyrant','grave','behemoth',
     'vampire','voidwrath','minotaur','seraph','matriarch','demonqueen'];
   const defs=ids.map(id=>c.bossType(c.spawnEnemy('boss',id)));
@@ -56,7 +56,7 @@ ok('delayed HP босса догоняет настоящее значение �
 ok('светлая delayed-полоса рисуется перед мгновенной красной полосой',
   html.indexOf("ctx.fillStyle='#f2e8dcbb'")<html.indexOf("ctx.fillStyle='#ff3b45'",html.indexOf('function drawBossHudEntry')));
 
-{ const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys');
+{ const c=loadGame('./index.html'); c.newGame('bow','keys');
   const G=c.__api.G; G.enemies.length=0;
   const a=c.debugSpawnBoss('vampire'),b=c.debugSpawnBoss('minotaur');
   ok('каждый новый босс получает собственное состояние delayed HP',
@@ -73,7 +73,7 @@ ok('светлая delayed-полоса рисуется перед мгнове
     Math.abs(a.hudHpLag-0.65)<1e-9 && Math.abs(b.hudHpLag-0.95)<1e-9 && b.hudHpTimer===0);
 }
 
-{ const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys');
+{ const c=loadGame('./index.html'); c.newGame('bow','keys');
   const G=c.__api.G; G.enemies.length=0;
   const calls=[]; c.drawBossHudEntry=(...args)=>calls.push(args);
   ok('при нуле боссов HUD не рисует ни одного блока',c.collectBossHudTargets()===0 && c.drawBossHud()===0 && calls.length===0);

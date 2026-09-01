@@ -2,7 +2,7 @@
 const {loadGame} = require('./sim');
 const ok = (nm, cond, det) => console.log((cond?'  \u2713 ':'  \u2717 ') + nm.padEnd(46) + (det||''));
 function mk(totems){
-  const c = loadGame('./GrimGrind.html');
+  const c = loadGame('./index.html');
   c.newGame('necro','keys');
   const G = c.__api.G;
   G.lvl = 25;
@@ -20,7 +20,7 @@ function foe(o){
   return e;
 }
 function dropSample(books, totems, n){
-  const c = loadGame('./GrimGrind.html'); c.newGame('bow','keys');
+  const c = loadGame('./index.html'); c.newGame('bow','keys');
   const G = c.__api.G;
   G.items = {};
   for (const k of books) G.items[k] = {tier:1, val:1};
@@ -89,17 +89,17 @@ console.log('НА УДАРЕ');
      off.toFixed(1) + ' \u2192 ' + on.toFixed(1)); }
 
 console.log('ДРОП');
-{ const c = loadGame('./GrimGrind.html'), B = c.__api.DROP_BALANCE;
+{ const c = loadGame('./index.html'), B = c.__api.DROP_BALANCE;
   ok('частота предметов ×0,5, книг и тотемов ×1/3',
     Math.abs(B.itemScale-.5)<1e-9 && Math.abs(B.bookScale-1/3)<1e-9 && Math.abs(B.totemScale-1/3)<1e-9); }
 { const dropsAt = value => {
-    let roll=0.99; const c=loadGame('./GrimGrind.html',{random:()=>roll}); c.newGame('bow','keys');
+    let roll=0.99; const c=loadGame('./index.html',{random:()=>roll}); c.newGame('bow','keys');
     roll=value; c.__api.G.orbs.length=0; c.tryDropBook({kind:'norm',x:0,y:0});
     return c.__api.G.orbs.length;
   };
   ok('общий шанс рядового снижен с 0,4% до 0,1533%', dropsAt(.0015)===1 && dropsAt(.0016)===0); }
 { const dropsAt = value => {
-    let roll=0.99; const c=loadGame('./GrimGrind.html',{random:()=>roll}); c.newGame('bow','keys');
+    let roll=0.99; const c=loadGame('./index.html',{random:()=>roll}); c.newGame('bow','keys');
     const G=c.__api.G; for (const k of Object.keys(c.__api.AMULETS)) G.amu[k]=true;
     G.items={}; G.totems={}; G.orbs.length=0; roll=value; c.tryDropBook({kind:'norm',x:0,y:0});
     return G.orbs.length;

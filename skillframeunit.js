@@ -2,7 +2,7 @@
 const fs = require('fs');
 const {imageInfo}=require('./asset_test_utils');
 
-const html = fs.readFileSync('./GrimGrind.html', 'utf8');
+const html = fs.readFileSync('./index.html', 'utf8');
 const optimizer = fs.readFileSync('./optimize_graphics.py', 'utf8');
 const objectMatch = html.match(/const SKILL_CARD_FRAME_DATA = \{([\s\S]*?)\n\};/);
 const entries = Object.fromEntries(Array.from(

@@ -2,7 +2,7 @@
 const fs=require('fs');
 const {loadGame}=require('./sim');
 const {imageInfo,embeddedObjectImage}=require('./asset_test_utils');
-const html=fs.readFileSync('./GrimGrind.html','utf8');
+const html=fs.readFileSync('./index.html','utf8');
 const ok=(nm,cond,det='')=>console.log((cond?'  ✓ ':'  ✗ ')+nm.padEnd(62)+det);
 const block=(html.match(/const BLOOD_SPRITE_DATA = \{([\s\S]*?)\n\};/)||[])[1]||'';
 function asset(key){
@@ -17,7 +17,7 @@ for (const [key,[w,h]] of Object.entries(expected)){
     `${data.length} B ${info.w}×${info.h}`);
 }
 
-const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys');
+const c=loadGame('./index.html'); c.newGame('bow','keys');
 const G=c.__api.G,e=c.spawnEnemy('blob');
 ok('новая партия создаёт пустое состояние крови',Array.isArray(G.bloodFx) && G.bloodFx.length===0 && G.bloodStampN===0);
 ok('все двенадцать функций системы доступны',[

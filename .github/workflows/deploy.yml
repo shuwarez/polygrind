@@ -24,7 +24,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  GAME_FILE: GrimGrind.html
+  GAME_FILE: index.html
 
 jobs:
   publish:

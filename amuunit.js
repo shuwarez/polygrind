@@ -3,7 +3,7 @@ const {loadGame} = require('./sim');
 const DT = 1/60;
 
 function mk(ids, floor){
-  const c = loadGame('./GrimGrind.html');
+  const c = loadGame('./index.html');
   c.newGame('bow','keys');
   const G = c.__api.G;
   for (const i of [].concat(ids)) G.amu[i] = true;
@@ -21,12 +21,12 @@ function addEnemy(c, x, y){
 const ok = (nm, cond, det) => console.log((cond?'  \u2713 ':'  \u2717 ') + nm.padEnd(38) + (det||''));
 
 console.log('ХАРАКТЕРИСТИКИ');
-{ const c = loadGame('./GrimGrind.html'), A = c.__api.AMULETS;
+{ const c = loadGame('./index.html'), A = c.__api.AMULETS;
   ok('два осколка имеют разные ключи и эффекты',
     A.shard.nm === 'ЗЕРКАЛЬНЫЙ ОСКОЛОК' && A.bossShard.nm === 'ОСКОЛОК БОССА' && A.shard !== A.bossShard); }
 { const a = mk([]), b = mk(['golem']);
   ok('сердце голема: +50 брони', b.D.armor - a.D.armor === 50, a.D.armor + ' \u2192 ' + b.D.armor); }
-{ const c1 = loadGame('./GrimGrind.html'); c1.newGame('bow','keys');
+{ const c1 = loadGame('./index.html'); c1.newGame('bow','keys');
   c1.__api.G.bag.add('leech','flat',40); c1.recalc();        // уже за потолком 25%
   const before = c1.__api.D.leech;
   c1.__api.G.amu.fang = true; c1.recalc();

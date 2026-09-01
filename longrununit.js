@@ -4,7 +4,7 @@ const fs=require('fs'),{performance}=require('perf_hooks');
 let n=0,fail=0;
 const ok=(name,cond,detail='')=>{n++;if(!cond)fail++;console.log((cond?'  ✓ ':'  ✗ ')+name.padEnd(84)+detail);};
 const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
-function fresh(){const c=loadGame('./GrimGrind.html',{random:()=>0.5});c.newGame('necro','keys');const G=c.__api.G;G.enemies=[];G.minions=[];G.spawnQueue=0;G.packs=[];return{c,G,D:c.__api.D,p:G.player};}
+function fresh(){const c=loadGame('./index.html',{random:()=>0.5});c.newGame('necro','keys');const G=c.__api.G;G.enemies=[];G.minions=[];G.spawnQueue=0;G.packs=[];return{c,G,D:c.__api.D,p:G.player};}
 function foe(o,x,y){const e=o.c.spawnEnemy('blob');e.x=x;e.y=y;e.spd=0;e.dmg=0;e.hp=e.maxHp=1e12;e.dead=false;e.armor=0;e.ward=null;e.bulwark=0;return e;}
 
 {
@@ -29,7 +29,7 @@ function foe(o,x,y){const e=o.c.spawnEnemy('blob');e.x=x;e.y=y;e.spd=0;e.dmg=0;e
 }
 
 {
-  const html=fs.readFileSync('./GrimGrind.html','utf8'),body=(html.match(/function chillAuraAffectsEnemy\(e,chillGrid\)\{[\s\S]*?\n\}/)||[''])[0];
+  const html=fs.readFileSync('./index.html','utf8'),body=(html.match(/function chillAuraAffectsEnemy\(e,chillGrid\)\{[\s\S]*?\n\}/)||[''])[0];
   ok('горячая проверка ауры больше не вызывает enemySpatialCandidates',body.length>0&&!body.includes('enemySpatialCandidates'));
   ok('горячая проверка ауры не создаёт временных массивов и сортировок',!body.includes('[]')&&!body.includes('.sort(')&&!body.includes('.filter('));
 }

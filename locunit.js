@@ -2,7 +2,7 @@
    переключатель с двумя встроенными CSS-флагами. */
 const fs = require('fs');
 const {loadGame} = require('./harness');
-const file = process.argv[2] || './GrimGrind.html';
+const file = process.argv[2] || './index.html';
 const c = loadGame(file);
 let n = 0, fail = 0;
 function ok(name, yes, got=''){

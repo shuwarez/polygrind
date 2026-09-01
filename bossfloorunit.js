@@ -14,7 +14,7 @@ const expected=[
   [70,4,8,true],[73,1,8,false],[79,3,8,false],[80,4,8,true],[100,4,8,true]
 ];
 
-{ const c=loadGame('./GrimGrind.html');
+{ const c=loadGame('./index.html');
   for(const [floor,bosses,affixes,suppress] of expected){
     const p=c.bossFloorPlan(floor);
     ok('план этажа '+floor,
@@ -26,7 +26,7 @@ const expected=[
     expected.every(([f,b,a])=>c.bossCount(f)===b && c.affixCount(f)===a));
 }
 
-{ const c=loadGame('./GrimGrind.html',{random:()=>0.5}); c.newGame('bow','keys');
+{ const c=loadGame('./index.html',{random:()=>0.5}); c.newGame('bow','keys');
   const G=c.__api.G;
   const built=[];
   for(const [floor,bosses,affixes,suppress] of expected){
@@ -66,7 +66,7 @@ const expected=[
   ok('безопасные дистанции сохраняются во всех четырёх углах арены',cornersSafe);
 }
 
-{ const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys'); const G=c.__api.G;
+{ const c=loadGame('./index.html'); c.newGame('bow','keys'); const G=c.__api.G;
   for(const floor of [3,6,9,13,16,19]){
     G.floor=floor; c.buildFloor();
     ok('на этаже '+floor+' обычные волны сохранены',G.spawnQueue>0,String(G.spawnQueue));
@@ -80,7 +80,7 @@ const expected=[
   ok('защитный guard не выпускает системную волну на X0',G.enemies.length===before,String(G.enemies.length));
 }
 
-{ const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys'); const G=c.__api.G;
+{ const c=loadGame('./index.html'); c.newGame('bow','keys'); const G=c.__api.G;
   G.floor=10; c.buildFloor();
   const grave=c.spawnEnemy('boss','grave'),core=c.summonGraveCore(grave);
   ok('умение босса продолжает призывать миньона на X0',core&&core.summonedByGrave&&core.kind==='norm');
@@ -90,7 +90,7 @@ const expected=[
   ok('аффикс «Зов» продолжает призывать миньонов на X0',G.enemies.length===before+3,String(G.enemies.length-before));
 }
 
-{ const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys'); const G=c.__api.G;
+{ const c=loadGame('./index.html'); c.newGame('bow','keys'); const G=c.__api.G;
   const boss=c.spawnEnemy('boss','lich'), wave=c.__api.AFFIXES.find(a=>a.id==='wave');
   G.fx.length=0; boss.affT.wave=0; wave.tick(boss,0.01,G.player,200);
   const fx=G.fx.find(f=>f.t==='wave');
@@ -99,7 +99,7 @@ const expected=[
 }
 
 for(const floor of [6,9]){
-  const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys'); const G=c.__api.G;
+  const c=loadGame('./index.html'); c.newGame('bow','keys'); const G=c.__api.G;
   G.floor=floor; c.buildFloor(); G.spawnQueue=0;
   const bosses=G.enemies.filter(e=>e.kind==='boss');
   G.enemies.splice(G.enemies.indexOf(bosses[0]),1);
@@ -108,7 +108,7 @@ for(const floor of [6,9]){
   ok('этаж '+floor+' завершается после смерти всех '+bosses.length+' боссов',c.floorCombatComplete());
 }
 
-{ const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys'); const G=c.__api.G;
+{ const c=loadGame('./index.html'); c.newGame('bow','keys'); const G=c.__api.G;
   G.floor=10; c.buildFloor();
   const bosses=G.enemies.filter(e=>e.kind==='boss');
   const minion=c.spawnEnemy('runner'); minion.summonedByGrave=true;

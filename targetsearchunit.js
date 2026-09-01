@@ -3,7 +3,7 @@ const {loadGame}=require('./sim');
 const fs=require('fs');
 let n=0,fail=0;
 const ok=(name,cond,detail='')=>{n++;if(!cond)fail++;console.log((cond?'  ✓ ':'  ✗ ')+name.padEnd(72)+detail);};
-function fresh(){const c=loadGame('./GrimGrind.html');c.newGame('bow','keys','hunter');const G=c.__api.G;G.enemies=[];G.shots=[];G.spawnQueue=0;return{c,G,D:c.__api.D};}
+function fresh(){const c=loadGame('./index.html');c.newGame('bow','keys','hunter');const G=c.__api.G;G.enemies=[];G.shots=[];G.spawnQueue=0;return{c,G,D:c.__api.D};}
 function point(x,y,hp=100){return{x,y,r:10,hp,maxHp:hp,dead:false};}
 function foe(c,x,y,hp=1000){const e=c.spawnEnemy('blob');e.x=x;e.y=y;e.r=10;e.spd=0;e.hp=e.maxHp=hp;e.dead=false;return e;}
 function shot(hitSet=[]){return{x:0,y:0,vx:600,vy:0,r:5,life:1,hitSet:hitSet.slice(),mul:1,pierced:0,ricochetReleased:false,spriteType:'arrow'};}
@@ -118,7 +118,7 @@ function shot(hitSet=[]){return{x:0,y:0,vx:600,vy:0,r:5,life:1,hitSet:hitSet.sli
 }
 
 {
-  const html=fs.readFileSync('./GrimGrind.html','utf8');
+  const html=fs.readFileSync('./index.html','utf8');
   ok('поиски top-k больше не сортируют полный список врагов',!/nearestLivingEnemies[\s\S]{0,180}\.sort|shockBurst[\s\S]{0,700}\.sort|tickSparkSigils[\s\S]{0,350}\.sort/.test(html));
   ok('главный цикл передаёт готовую сетку рикошету',/releaseRicochetShards\(s,hitMul,s\.attackMul,enemyGrid\)/.test(html));
 }

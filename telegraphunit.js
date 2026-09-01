@@ -1,14 +1,14 @@
 /* Унифицированные цвета, формы, тайминги и следы телеграфов. */
 const fs=require('fs');
 const {loadGame}=require('./harness');
-const html=fs.readFileSync('./GrimGrind.html','utf8');
+const html=fs.readFileSync('./index.html','utf8');
 let n=0,fail=0;
 function ok(name,yes,got=''){
   n++; if(!yes) fail++;
   console.log((yes?'  \u2713 ':'  \u2717 ')+name.padEnd(62)+got);
 }
 
-const c=loadGame('./GrimGrind.html');
+const c=loadGame('./index.html');
 ok('три типа последствий имеют фиксированную палитру',
   /warning:'#f6c344', damage:'#ff3b45', control:'#b56cff'/.test(html));
 ok('общее заполнение длится ровно 0.8 секунды',/TELEGRAPH_FILL_TIME=0\.8/.test(html));

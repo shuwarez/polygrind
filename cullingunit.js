@@ -3,7 +3,7 @@ const {loadGame} = require('./sim');
 const fs = require('fs');
 const ok = (nm, cond, det='') => console.log((cond ? '  ✓ ' : '  ✗ ') + nm.padEnd(62) + det);
 
-function fresh(){ const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys'); return c; }
+function fresh(){ const c=loadGame('./index.html'); c.newGame('bow','keys'); return c; }
 const box={ready:true,left:-100,top:-50,right:100,bottom:50};
 
 { const c=fresh();
@@ -89,7 +89,7 @@ const box={ready:true,left:-100,top:-50,right:100,bottom:50};
   ok('массовая сцена передаёт в отрисовку только видимые модели', visible>0 && visible<100,
     visible+'/500'); }
 
-{ const html=fs.readFileSync('./GrimGrind.html','utf8');
+{ const html=fs.readFileSync('./index.html','utf8');
   ok('рендер использует отдельные безопасные списки моделей и HUD',
     /pass==='entities'\?view\.enemyBodies:pass==='worldHud'\?view\.enemyHud:G\.enemies/.test(html));
   ok('телеграфы защищены собственной проверкой геометрии',

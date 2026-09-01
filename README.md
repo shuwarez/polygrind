@@ -1,7 +1,7 @@
 # Grim Grind
 
 Grim Grind — одиночная top-down action RPG на Canvas 2D. PolyGrind остаётся
-техническим названием репозитория и автономного файла `GrimGrind.html`.
+техническим названием репозитория и автономного файла `index.html`.
 
 Игра не требует сборки, сервера или npm-зависимостей: весь код, стили, шрифты и
 графика встроены в один HTML-файл.
@@ -11,21 +11,21 @@ Grim Grind — одиночная top-down action RPG на Canvas 2D. PolyGrind 
 - [Последний автономный билд](https://github.com/shuwarez/polygrind/releases/latest)
 - [GitHub Pages](https://shuwarez.github.io/polygrind/)
 
-Для локального запуска откройте `GrimGrind.html` в актуальном Chrome, Edge или
+Для локального запуска откройте `index.html` в актуальном Chrome, Edge или
 Firefox. Интернет и соседние файлы игре не нужны.
 
 ## Что находится в репозитории
 
 | Путь | Назначение |
 | --- | --- |
-| `GrimGrind.html` | Единственный runtime-файл игры: UI, механики, баланс, локализация и встроенные ресурсы. |
+| `index.html` | Единственный runtime-файл игры: UI, механики, баланс, локализация и встроенные ресурсы. |
 | `HANDOFF.md` | Единственная техническая передача: архитектура, точки правды, инварианты и порядок проверки. |
 | `GRAPHICS_AUDIT.md` | Актуальные требования к runtime-графике и повторяемой упаковке ресурсов. |
 | `optimize_graphics.py` | Детерминированная подготовка и установка компактных индексированных PNG. |
-| `portal_assets/` | Прозрачный ImageGen-master портала и описание воспроизводимой 16-кадровой упаковки. |
+| `portal_assets/` | Прозрачный ImageGen-master инфернальных врат и сборка двух 16-кадровых листов: появление и стабильный цикл. |
 | `legacy_boss_assets/` | Исходные референсы, прозрачные листы и lossless WebP для визуального обновления 14 прежних боссов. |
 | `harness.js`, `*unit.js`, `run-all.js` | Node-харнесс, юнит-проверки, симуляции и диагностические замеры. |
-| `.github/workflows/deploy.yml` | Публикация `GrimGrind.html` на GitHub Pages при push в `main`. |
+| `.github/workflows/deploy.yml` | Публикация `index.html` на GitHub Pages при push в `main`. |
 
 В репозитории намеренно нет датированных balance/handover-отчётов. Одноразовые
 замеры быстро устаревают и остаются локальными результатами инструментов или в
@@ -41,7 +41,7 @@ Firefox. Интернет и соседние файлы игре не нужн�
    old versions/YYYY-MM-DD_HH-mm-ss_before-<краткое-описание>/
    ```
 
-   В снимке обязательны текущий `GrimGrind.html` и `README.txt` с датой,
+   В снимке обязательны текущий `index.html` и `README.txt` с датой,
    причиной, веткой и коммитом. Затрагиваемые служебные файлы сохраняются рядом.
 3. `old versions/` остаётся локальным архивом: папку нельзя добавлять через
    `git add -f`, включать в коммит, release или другой пакет для GitHub.
@@ -71,7 +71,7 @@ node run-all.js
 Проверка синтаксиса встроенного JavaScript:
 
 ```powershell
-node -e "const fs=require('fs');const h=fs.readFileSync('GrimGrind.html','utf8');[...h.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/gi)].forEach(x=>new Function(x[1]));console.log('Syntax OK')"
+node -e "const fs=require('fs');const h=fs.readFileSync('index.html','utf8');[...h.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/gi)].forEach(x=>new Function(x[1]));console.log('Syntax OK')"
 ```
 
 ## Камера

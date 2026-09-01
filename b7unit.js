@@ -3,7 +3,7 @@ const {loadGame} = require('./sim');
 const DT = 1/60;
 const ok = (nm, cond, det) => console.log((cond?'  \u2713 ':'  \u2717 ') + nm.padEnd(44) + (det||''));
 function mk(mods){
-  const c = loadGame('./GrimGrind.html');
+  const c = loadGame('./index.html');
   c.newGame('bow','keys');
   const G = c.__api.G;
   G.lvl = 20;
@@ -66,12 +66,12 @@ console.log('УЖАСАЮЩИЙ ВАМПИР');
 { const {c,G,D,p} = mk([]);
   p.hp = 100; c.heal(50);
   ok('без кейстоуна лечение обычное', p.hp === 150); }
-{ const c = loadGame('./GrimGrind.html');
+{ const c = loadGame('./index.html');
   ok('карточка «Вампиризм %» убрана из каталога',
      !c.__api.MODS.some(m => m.id === 'life.leech'));
   const k = c.__api.MODS.find(m => m.id === 'key.dread_vampire');
   ok('кейстоун в каталоге, редкость 3', !!k && k.rar === 3 && k.cat === 'Кейстоун' && k.noMin); }
-{ const c = loadGame('./GrimGrind.html'); c.newGame('necro','keys');
+{ const c = loadGame('./index.html'); c.newGame('necro','keys');
   c.__api.G.bag.add('kDread','flag',1); c.recalc();
   ok('Ужасающий вампир не действует у Некроманта', !c.__api.D.dread && c.__api.D.leech !== 0.5); }
 

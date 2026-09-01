@@ -3,7 +3,7 @@ const {loadGame} = require('./sim');
 const ok = (nm, cond, det) => console.log((cond?'  \u2713 ':'  \u2717 ') + nm.padEnd(58) + (det||''));
 
 function mk(dbl=0, deadly=false){
-  const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys','hunter');
+  const c=loadGame('./index.html'); c.newGame('bow','keys','hunter');
   const G=c.__api.G;
   if (dbl) G.bag.add('dblHit','chance',dbl);
   if (deadly) G.bag.add('deadlyHit','flag',1);
@@ -12,7 +12,7 @@ function mk(dbl=0, deadly=false){
 }
 
 function plague(chance=0){
-  const c=loadGame('./GrimGrind.html'); c.newGame('bow','keys','hunter');
+  const c=loadGame('./index.html'); c.newGame('bow','keys','hunter');
   const G=c.__api.G;
   if (chance) G.bag.add('explode','chance',chance);
   c.recalc();

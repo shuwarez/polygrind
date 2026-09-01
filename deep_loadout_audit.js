@@ -182,7 +182,7 @@ function runStaticCompatibility(){
   console.log('STATIC compatibility sweep');
   const rng=makeRng(ROOT_SEED^0x11111111);
   for (const weaponKey of WEAPONS){
-    const c=loadGame('./GrimGrind.html',{random:rng});
+    const c=loadGame('./index.html',{random:rng});
     const mods=compatibleMods(c,weaponKey),items=compatibleItems(c,weaponKey);
     const subclass=c.__api.SUBCLASSES[weaponKey][0].id;
     const G=resetStatic(c,weaponKey,subclass,120);
@@ -447,7 +447,7 @@ function combatSpecs(c,rng){
 function runCombatMatrix(){
   console.log('COMBAT matrix');
   const rng=makeRng(ROOT_SEED^0x22222222);
-  const catalog=loadGame('./GrimGrind.html',{random:rng});catalog.newGame('bow','keys',null,true);
+  const catalog=loadGame('./index.html',{random:rng});catalog.newGame('bow','keys',null,true);
   const allSpecs=combatSpecs(catalog,rng);
   const specs=ONLY_SCENARIO?allSpecs.filter(spec=>spec.name===ONLY_SCENARIO):allSpecs;
   if(ONLY_SCENARIO&&!specs.length)throw new Error(`Unknown --only scenario: ${ONLY_SCENARIO}`);
@@ -455,7 +455,7 @@ function runCombatMatrix(){
   for(let i=0;i<specs.length;i++){
     const spec=specs[i],key=spec.weapon+'|'+spec.subclass;
     let c=contexts.get(key);
-    if(!c){c=loadGame('./GrimGrind.html',{random:rng});contexts.set(key,c);}
+    if(!c){c=loadGame('./index.html',{random:rng});contexts.set(key,c);}
     runCombatScenario(c,spec,rng);
     if((i+1)%25===0)console.log(`  ${i+1}/${specs.length} scenarios, failures=${report.failures.length}`);
     if(global.gc && (i+1)%40===0){global.gc();report.performance.heapSamplesMb.push(process.memoryUsage().heapUsed/1048576);}
@@ -480,8 +480,8 @@ function finalize(){
 }
 
 try{
-  const probe=loadGame('./GrimGrind.html',{random:makeRng(ROOT_SEED)});probe.newGame('bow','keys',null,true);
-  report.build={htmlBytes:fs.statSync('./GrimGrind.html').size,bosses:probe.__api.BOSS_KEYS.length,
+  const probe=loadGame('./index.html',{random:makeRng(ROOT_SEED)});probe.newGame('bow','keys',null,true);
+  report.build={htmlBytes:fs.statSync('./index.html').size,bosses:probe.__api.BOSS_KEYS.length,
     mods:probe.__api.MODS.length,items:Object.keys(probe.__api.AMULETS).length,books:Object.keys(probe.__api.BOOKS).length,
     totems:Object.keys(probe.__api.TOTEMS).length};
   if(!SKIP_STATIC)runStaticCompatibility();runCombatMatrix();
