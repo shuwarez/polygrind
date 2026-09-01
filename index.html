@@ -979,7 +979,7 @@ const EN_ITEMS = [
   ["РУКИ ТИТАНА", "TITAN'S HANDS"], ["только Воину · скорость ближней атаки уменьшается на 35%, но каждый взмах выпускает волну на 60% фактически прошедшего урона основной цели · основная цель исключается · каждый сосед применяет защиту · волна не критует и не создаёт новую волну", "Warrior only · melee Attack Speed is reduced by 35%, but every swing releases a wave for 60% of the actual damage dealt to the primary target · the primary target is excluded · each neighbor applies its own defense · the wave cannot Critical Hit or create another wave"],
   ["ШАГ ЗА ГРАНЬ", "STEP BEYOND"], ["после рывка следующая обычная атака повторяется через 0,1 сек с силой 100% · восстановление зарядов рывка на 50% медленнее · эхо не критует, не накладывает статусы и не запускает предметы или другое эхо", "after Dashing, the next basic attack repeats after 0.1 sec at 100% power · Dash charges recover 50% slower · the echo cannot Critical Hit, apply statuses, trigger items, or create another echo"],
   ["МАРШ МЁРТВЫХ", "MARCH OF THE DEAD"], ["только Некроманту · скорость героя снижена на 30%, но свита получает +80% скорости движения и не может быть замедлена · не снимает оглушение и не ускоряет атаки · бонус существует только пока предмет найден в текущем забеге", "Necromancer only · hero Movement Speed is reduced by 30%, but minions gain +80% Movement Speed and cannot be Slowed · does not remove Stun or increase Attack Speed · the bonus exists only while the item is owned in the current run"],
-  ["КОЛЬЦО НУЛЕВОЙ ДИСТАНЦИИ", "RING OF ZERO DISTANCE"], ["только Магу · все сферы, включая мини-сферы, детонируют сразу вокруг героя · радиус взрыва +60%, урон взрыва +35% · прямое попадание снаряда исчезает полностью, дальний полёт и самонаведение не работают · притяжение применяется от позиции героя", "Mage only · all orbs, including mini-orbs, detonate immediately around the hero · +60% explosion radius and +35% explosion damage · the projectile's direct hit is removed entirely, long flight and homing do not function · pull originates from the hero's position"],
+  ["КОЛЬЦО НУЛЕВОЙ ДИСТАНЦИИ", "RING OF ZERO DISTANCE"], ["только Магу · все сферы, включая мини-сферы, детонируют сразу вокруг героя · уникальный множитель радиуса взрыва ×1,6, урон взрыва +35% · прямое попадание снаряда исчезает полностью, дальний полёт и самонаведение не работают · притяжение применяется от позиции героя", "Mage only · all orbs, including mini-orbs, detonate immediately around the hero · unique explosion-radius multiplier ×1.6 and +35% explosion damage · the projectile's direct hit is removed entirely, long flight and homing do not function · pull originates from the hero's position"],
   ["ПЕРЕВЁРНУТАЯ КОРОНА", "INVERTED CROWN"], ["каждая элитная пачка получает ещё трёх элитных врагов · шанс предмета с элит и боссов повышается на 40%, а 20% предметов получают редкость на ступень выше · все враги получают +15% максимального HP · легендарную редкость повысить нельзя · дополнительные элитные враги выдают обычную награду", "each elite pack gains three additional elite enemies · item chance from elites and bosses is increased by 40%, and 20% of items are upgraded by one rarity step · all enemies gain +15% maximum HP · Legendary rarity cannot be upgraded · additional elite enemies grant normal rewards"],
   ["АРХИВАРИУС", "THE ARCHIVIST"], ["каждая найденная книга немедленно получает дополнительный тир · вес выпадения книг и тотемов после находки реликвии уменьшается вдвое", "each book found immediately gains an additional tier · the drop weight of books and totems is halved after finding the relic"],
   ["Сердце секунды", "Heart of the Second"], ["заряда", "charge"],
@@ -4320,7 +4320,7 @@ const AMULETS = {
   marchDead:{nm:'МАРШ МЁРТВЫХ',col:'#8fe36b',ico:'\u2620',slot:'boot',rar:3,minOnly:true,
     nt:'только Некроманту · скорость героя снижена на 30%, но свита получает +80% скорости движения и не может быть замедлена · не снимает оглушение и не ускоряет атаки · бонус существует только пока предмет найден в текущем забеге'},
   zeroDistanceRing:{nm:'КОЛЬЦО НУЛЕВОЙ ДИСТАНЦИИ',col:'#ff6bd6',ico:'\u2299',slot:'ring',rar:3,mageOnly:true,
-    nt:'только Магу · все сферы, включая мини-сферы, детонируют сразу вокруг героя · радиус взрыва +60%, урон взрыва +35% · прямое попадание снаряда исчезает полностью, дальний полёт и самонаведение не работают · притяжение применяется от позиции героя'},
+    nt:'только Магу · все сферы, включая мини-сферы, детонируют сразу вокруг героя · уникальный множитель радиуса взрыва ×1,6, урон взрыва +35% · прямое попадание снаряда исчезает полностью, дальний полёт и самонаведение не работают · притяжение применяется от позиции героя'},
   invertedCrown:{nm:'ПЕРЕВЁРНУТАЯ КОРОНА',col:'#ffcf55',ico:'\u265B',slot:'rel',rar:3,
     nt:'каждая элитная пачка получает ещё трёх элитных врагов · шанс предмета с элит и боссов повышается на 40%, а 20% предметов получают редкость на ступень выше · все враги получают +15% максимального HP · легендарную редкость повысить нельзя · дополнительные элитные враги выдают обычную награду'},
   archivist:{nm:'АРХИВАРИУС',col:'#f0b35a',ico:'\u2263',slot:'rel',rar:3,
@@ -5465,8 +5465,11 @@ function recalc(){
   D.remoteBlast = w.type === 'orb' ? b.sum('remoteBlast') : 0;
   D.arcaneMine = w.type === 'orb' && b.has('arcaneMine');
   D.repeatDetonation = w.type === 'orb' && b.has('repeatDetonation');
-  // Разрушитель и обычные +% радиуса описывают один стат, поэтому складываются.
-  D.aoeR    = 1 + (b.sum('aoeR') + (destroyer ? G.lvl : 0))/100;
+  // Все регулярно накапливаемые +% радиуса живут в одной корзине. Локальные
+  // бонусы конкретного удара добавляются к ней через playerAreaRadius();
+  // уникальные изменения формы способности остаются отдельным множителем.
+  D.aoeRadiusPct = b.sum('aoeR') + (destroyer ? G.lvl : 0);
+  D.aoeR    = 1 + D.aoeRadiusPct/100;
   if (b.has('aoeToDmg')) D.incAll += (D.aoeR-1)*60;      // conv.aoe_to_damage
   // Площадные радиусы: считаются здесь один раз на смену билда, а не в кадре
   D.shockR     = SHOCK_RANGE    * D.aoeR;   // разлёт молний при шоке
@@ -8436,10 +8439,19 @@ function burst(x, y, n, col, spd, size, life){
    после развития шанса до потолка 25%. Радиус остаётся общим для обеих версий. */
 const SHOCK_BASE_TARGETS = 5, SHOCK_TESLA_TARGETS = 20, SHOCK_RANGE = 400;
 const SHOCK_BASE_SHARE = 0.15, SHOCK_TESLA_SHARE = 0.25, SHOCK_DURATION = 1;
-/* Базы площадных радиусов игрока. Все они умножаются на D.aoeR в recalc():
-   правило простое — если область принадлежит игроку, «Радиус области действия»
-   её растит. Раньше через aoeR ходило только то, что зовёт nova(), а шок,
-   обе ауры и инферно считали дистанцию своим циклом и мимо стата прошли. */
+/* Общая формула радиуса игрока. Все обычные +% — постоянные и сохранённые
+   на конкретном ударе — сначала складываются. Только уникальные изменения
+   формы способности (мини-сфера, МЕГА-чума, Нулевая дистанция и т.п.)
+   применяются после корзины отдельным множителем. */
+function playerAreaRadius(base, localBonusPct=0, uniqueMul=1){
+  const globalPct=Number.isFinite(D.aoeRadiusPct) ? D.aoeRadiusPct : (D.aoeR-1)*100;
+  const localPct=Number.isFinite(localBonusPct) ? localBonusPct : 0;
+  const special=Number.isFinite(uniqueMul) ? uniqueMul : 1;
+  return base*(1+(globalPct+localPct)/100)*special;
+}
+/* Базы площадных радиусов игрока. Если область принадлежит игроку, общая
+   корзина радиуса её растит; фиксированные механические дистанции врагов,
+   подбора и условий боя сюда не входят. */
 const SLOW_AURA_BASE = 260, INFERNO_BASE = 110;
 /* Охлаждение — короткий ослабленный удар контроля: 15% прямого замедления,
    5% соседям, x1.10 входящего урона и 10% дополнительного урона от атаки. */
@@ -8614,7 +8626,7 @@ function plantArcaneMine(s){
   const mine={
     x:clamp(s.x,-ARENA+margin,ARENA-margin),
     y:clamp(s.y,-ARENA+margin,ARENA-margin),
-    r:G.weapon.aoe*D.aoeR*aoeScale,
+    r:playerAreaRadius(G.weapon.aoe,s.aoeBonusPct,aoeScale),
     dmg:avgHit()*attackMul*0.55*ARCANE_MINE_DAMAGE_SHARE,
     life:ARCANE_MINE_DURATION,max:ARCANE_MINE_DURATION,
   };
@@ -8746,7 +8758,7 @@ function tickGroundbreakerCracks(dt){
 
 function explodePlayerOrb(s,enemyGrid=null){
   const aoeScale=s.aoeScale || 1, attackMul=s.attackMul === undefined ? 1 : s.attackMul;
-  const radius=G.weapon.aoe*D.aoeR*aoeScale;
+  const radius=playerAreaRadius(G.weapon.aoe,s.aoeBonusPct,aoeScale);
   const fixedTargets=enemyAreaCandidates(enemyGrid,s.x,s.y,radius)
     .filter(e=>!e.dead&&e.hp>0&&dist(e,s)<radius+e.r);
   const cometMul=!s.noProcs&&amu('cometEye')&&fixedTargets.length===1?1.30:1;
@@ -9733,7 +9745,7 @@ function spawnPlayerShot(o, a, w, miniOrb=false, opts={}){
   const orb = w.type === 'orb';
   const stepEcho=!!opts.stepBeyondEcho;
   const projectileScale = miniOrb ? D.multiplierMiniArea : 1;
-  let aoeScale = projectileScale;
+  let aoeScale = projectileScale, aoeBonusPct=0;
   const playerArrow=w.id==='wpn.bow';
   const oneArrowMul=playerArrow ? D.oneArrowDamage||1 : 1;
   const mirrorGhost=playerArrow && !!opts.mirrorGhost;
@@ -9746,11 +9758,11 @@ function spawnPlayerShot(o, a, w, miniOrb=false, opts={}){
     G.player.draftReady=false; draftBoost=true;
   }
   if (satinEligible && amu('satinGloves') && G.player.satinReady){
-    G.player.satinReady=false; aoeScale*=1.20;
+    G.player.satinReady=false; aoeBonusPct+=20;
   }
   let eclipseBoost=false;
   if (eclipseEligible && amu('eclipseBrushes') && G.player.eclipseReady){
-    G.player.eclipseReady=false; eclipseBoost=true; aoeScale*=1.25;
+    G.player.eclipseReady=false; eclipseBoost=true; aoeBonusPct+=25;
   }
   let returnShot=false,hunterMarkShot=false;
   if (heroArrow && !stepEcho && D.returnShot){
@@ -9770,7 +9782,7 @@ function spawnPlayerShot(o, a, w, miniOrb=false, opts={}){
     r:(orb?9:5) * D.projSize * projectileScale, life:w.life*(playerArrow?D.arrowFlight:1), age:0, travel:0,
     pierce:D.pierce, chain:D.chain, hitSet:[], orb,
     mul:1, attackMul:shotAttackMul,
-    aoeScale, miniOrb, eclipseBoost, confinementPct:confinementDamagePct(), pierced:0, ricochetReleased:false,
+    aoeScale, aoeBonusPct, miniOrb, eclipseBoost, confinementPct:confinementDamagePct(), pierced:0, ricochetReleased:false,
     spriteType:orb ? 'mage' : 'arrow', playerArrow, archerArrow:playerArrow,
     secondaryArrow:false, splitReleased:false, returnShot, returningArrow:false, hunterMarkShot, mirrorGhost, oneArrowMul,
     heroDirect:o===G.player||stepEcho, weaponAttack:o===G.player||stepEcho, primaryBasic:primaryHeroArrow||satinEligible,

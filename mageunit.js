@@ -32,6 +32,14 @@ for (const [id,nm] of [['destroyer','Разрушитель'],['multiplier','М�
 { const o=mage('destroyer',50); o.G.bag.add('aoeR','inc',100); o.c.recalc();
   ok('радиус Разрушителя складывается с обычными процентами радиуса',
     Math.abs(o.D.aoeR-2.50)<1e-9,'×'+o.D.aoeR.toFixed(2)); }
+{ const o=mage('destroyer',50),p=o.G.player,G=o.G;
+  G.bag.add('aoeR','inc',100); G.amu.satinGloves=true; G.amu.eclipseBrushes=true; o.c.recalc();
+  p.satinReady=p.eclipseReady=true; G.shots.length=0; G.fx.length=0;
+  o.c.spawnPlayerShot(p,0,G.weapon); const shot=G.shots.pop(); o.c.explodePlayerOrb(shot);
+  const blast=G.fx.find(f=>f.t==='mageOrbExplosion'), expected=G.weapon.aoe*2.95;
+  ok('Разрушитель, карточки и временные +% сферы складываются в одной корзине',
+    shot.aoeBonusPct===45 && shot.aoeScale===1 && Math.abs(blast.r-expected)<1e-9,
+    'радиус '+blast.r.toFixed(1)+' вместо перемноженных '+(G.weapon.aoe*2.50*1.20*1.25).toFixed(1)); }
 { const o=mage('elementalist',10);
   for(const stat of ['dFire','dCold','dLit','dPoi'])o.G.bag.add(stat,'flat',100);
   o.c.recalc();

@@ -95,10 +95,10 @@ console.log('КОЛЬЦО НУЛЕВОЙ ДИСТАНЦИИ');
 }
 {
   const o=mk('zeroDistanceRing','wand');o.p.aim=0;
-  const radius=o.G.weapon.aoe*o.D.aoeR*1.60,e=foe(o,{x:radius-2});const hp=e.hp;
+  const radius=o.c.playerAreaRadius(o.G.weapon.aoe,0,1.60),e=foe(o,{x:radius-2});const hp=e.hp;
   o.c.attack();
   ok('обычная сфера сразу взрывается вокруг героя',e.hp<hp&&o.G.shots.length===0);
-  ok('радиус взрыва увеличен ровно на 60%',o.G.fx.some(f=>f.t==='mageOrbExplosion'&&Math.abs(f.r-radius)<1e-9));
+  ok('уникальный множитель радиуса ×1,6 применяется после общей корзины',o.G.fx.some(f=>f.t==='mageOrbExplosion'&&Math.abs(f.r-radius)<1e-9));
 }
 {
   const base=mk([],'wand'),ring=mk('zeroDistanceRing','wand');

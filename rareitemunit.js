@@ -132,7 +132,8 @@ const IDS=['sealHunt','mothFang','cometEye','sealPack','eclipseBrushes','sparkst
   c.explodePlayerOrb({x:p.x,y:p.y,aoeScale:1});
   ok('взрыв обычной сферы по четырём целям заряжает Кисти Затмения',p.eclipseReady);
   G.enemies.forEach(e=>e.hp=e.maxHp); c.spawnPlayerShot(p,0,G.weapon); const empowered=G.shots.pop();
-  ok('следующая сфера получает +25% радиуса и −10% урона',empowered.aoeScale===1.25&&empowered.attackMul===0.9&&!p.eclipseReady);
+  ok('следующая сфера получает +25% в общую корзину радиуса и −10% урона',
+    empowered.aoeBonusPct===25&&empowered.aoeScale===1&&empowered.attackMul===0.9&&!p.eclipseReady);
   p.eclipseReady=false; c.explodePlayerOrb({x:p.x,y:p.y,aoeScale:1,miniOrb:true,attackMul:1});
   p.eclipseReady=true; c.spawnPlayerShot(p,0,G.weapon,true); const mini=G.shots.pop();
   ok('мини-сферы не заряжают и не расходуют Кисти Затмения',p.eclipseReady&&mini.attackMul!==0.9);

@@ -108,9 +108,11 @@ const IDS=['copperChronometer','knottedCharm','tallyGloves','smithThumbstall','d
   c.spawnPlayerShot(p,0,G.weapon); G.shots[0].life=0; c.update(DT);
   const armed=p.satinReady; c.spawnPlayerShot(p,0,G.weapon); const boosted=G.shots[G.shots.length-1];
   ok('промах сферы с успешным 1% роллом заряжает Сатиновые Перчатки',armed&&!p.satinReady);
-  ok('следующая обычная сфера получает ровно +20% радиуса взрыва',boosted.aoeScale===1.2&&boosted.r===9*c.__api.D.projSize);
+  ok('следующая обычная сфера получает ровно +20% в общую корзину радиуса',
+    boosted.aoeBonusPct===20&&boosted.aoeScale===1&&boosted.r===9*c.__api.D.projSize);
   p.satinReady=true; c.spawnPlayerShot(p,0,G.weapon,true); const mini=G.shots[G.shots.length-1];
-  ok('мини-сфера Мультипликации не расходует бонус Сатиновых Перчаток',p.satinReady&&mini.aoeScale===c.__api.D.multiplierMiniArea);
+  ok('мини-сфера Мультипликации не расходует бонус Сатиновых Перчаток',
+    p.satinReady&&mini.aoeBonusPct===0&&mini.aoeScale===c.__api.D.multiplierMiniArea);
 }
 
 {
