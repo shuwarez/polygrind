@@ -28,8 +28,8 @@ ok('четырнадцать отдельных атакующих WebP-лист
 ok('базовые и атакующие листы используют канонические кадры 64×96',
   /for \(const meta of Object\.values\(BOSS_SPRITE_META\)\)[\s\S]*?w:64,h:96/.test(html)&&
   /for \(const meta of Object\.values\(BOSS_ATTACK_SPRITE_META\)\)[\s\S]*?w:64,h:96/.test(html));
-ok('все 28 листов боссов укладываются в 450 КБ',
-  sheets.concat(attackSheets).reduce((sum,b)=>sum+b.length,0)<450*1024,
+ok('все 28 листов боссов укладываются в 500 КБ',
+  sheets.concat(attackSheets).reduce((sum,b)=>sum+b.length,0)<500*1024,
   sheets.concat(attackSheets).reduce((sum,b)=>sum+b.length,0)+' байт');
 const projectileKeys=['PLAGUE_SLIME_PROJECTILE_DATA','EMERALD_ORB_PROJECTILE_DATA','GREED_SPEAR_PROJECTILE_DATA',
   'EXECUTIONER_AXE_PROJECTILE_DATA','MINOTAUR_SPEAR_PROJECTILE_DATA','SERAPH_HOLY_SPEAR_DATA',

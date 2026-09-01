@@ -10,6 +10,7 @@ ROOT = Path(__file__).resolve().parent
 HTML = ROOT / "PolyGrind.html"
 BASE = ROOT / "boss20_assets" / "webp"
 ATTACK = ROOT / "boss20_assets" / "generated_attack" / "webp"
+EFFECT = ROOT / "boss20_assets" / "generated_effects" / "webp"
 START = "/* BOSS20_ASSETS_START */"
 END = "/* BOSS20_ASSETS_END */"
 ANCHOR = "const MINION_SPRITE_DATA = {"
@@ -21,8 +22,12 @@ def uri(path: Path) -> str:
 
 base_lines = [f"  {path.stem}:'{uri(path)}'," for path in sorted(BASE.glob("*.webp"))]
 attack_lines = [f"  {path.stem}:'{uri(path)}'," for path in sorted(ATTACK.glob("*.webp"))]
-if len(base_lines) != 20 or len(attack_lines) != 4:
-    raise SystemExit(f"expected 20 base and 4 attack sheets, found {len(base_lines)} and {len(attack_lines)}")
+effect_lines = [f"  {path.stem}:'{uri(path)}'," for path in sorted(EFFECT.glob("*.webp"))]
+if len(base_lines) != 20 or len(attack_lines) != 20 or len(effect_lines) != 25:
+    raise SystemExit(
+        "expected 20 base, 20 attack and 25 effect sheets, "
+        f"found {len(base_lines)}, {len(attack_lines)} and {len(effect_lines)}"
+    )
 
 block = "\n".join(
     [
@@ -34,6 +39,10 @@ block = "\n".join(
         *attack_lines,
         "};",
         "const BOSS_ATTACK_SPRITES = {};",
+        "const BOSS20_EFFECT_SPRITE_DATA = {",
+        *effect_lines,
+        "};",
+        "const BOSS20_EFFECT_SPRITES = {};",
         END,
         "",
     ]
@@ -49,4 +58,7 @@ else:
         raise SystemExit("asset insertion anchor not found")
     text = text.replace(ANCHOR, block + ANCHOR, 1)
 HTML.write_text(text, encoding="utf-8", newline="\n")
-print("embedded", len(base_lines), len(attack_lines), "bytes", HTML.stat().st_size)
+print(
+    "embedded", len(base_lines), "base,", len(attack_lines), "attack and",
+    len(effect_lines), "effect sheets; bytes", HTML.stat().st_size
+)

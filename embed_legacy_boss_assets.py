@@ -37,8 +37,9 @@ def replace_property(text: str, key: str, value: str) -> str:
 
 def main() -> None:
     text = HTML_PATH.read_text(encoding="utf-8")
-    for key in BOSSES:
-        text = replace_property(text, key, uri(ASSETS / "base" / f"{key}.webp"))
+    # Never replace the build's original standing boss sheets here.  The legacy
+    # base export is only an intermediate derivative; attack art is normalized
+    # against frame 0 extracted from the actual embedded build instead.
 
     legacy_attack_lines = "\n".join(
         f"  {key}_attack:'{uri(ASSETS / 'attack' / f'{key}_attack.webp')}',"
@@ -84,7 +85,7 @@ def main() -> None:
         text = text.replace(anchor, anchor + effect_block + "\n", 1)
 
     HTML_PATH.write_text(text, encoding="utf-8", newline="\n")
-    print(f"Embedded {len(BOSSES)} base sheets, {len(BOSSES)} attack sheets and {len(EFFECTS)} effects")
+    print(f"Embedded {len(BOSSES)} attack sheets and {len(EFFECTS)} effects; original base sheets preserved")
 
 
 if __name__ == "__main__":

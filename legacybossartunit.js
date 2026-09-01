@@ -49,6 +49,8 @@ const vampire=bosses[8];vampire.bossT={markWarn:.01,markX:70,markY:40};c.tickBos
 const minotaur=bosses[10];minotaur.bossT={chargeLeft:.01,chargeA:0,chargeHit:true};c.tickBossSkill(minotaur,.02);
 ok('земляной удар, рубящий серп, приземление, крест и таран создают свои эффекты',
   ['goat_slam','tyrant_slash','behemoth_impact','vampire_cross','minotaur_crash'].every(key=>G.fx.some(f=>f.t==='legacyBossEffect'&&f.key===key)));
+ok('каждый созданный старый AoE-эффект хранит точный spec или набор specs',
+  G.fx.filter(f=>f.t==='legacyBossEffect').every(f=>f.spec||f.specs));
 
 G.fx.length=0;
 for(const id of ['greed','grave','matriarch']){
@@ -58,7 +60,15 @@ ok('три призыва получают анимированную руну �
 ok('новые эффекты проходят отдельный culling по экранному размеру',
   /f\.t==='legacyBossEffect'[\s\S]*?f\.size/.test(html));
 ok('эффектная анимация выбирает кадр из нормализованного progress',
-  /drawLegacyBossEffect[\s\S]*?Math\.floor\(progress\*meta\.frames\)/.test(html));
+  /drawLegacyBossEffect[\s\S]*?drawBossEffectSprite[\s\S]*?Math\.floor\(clamp\(progress/.test(html));
+ok('старые AoE-эффекты получают точный механический spec',
+  /goat_slam[\s\S]*?shape:'circle'[\s\S]*?tyrant_slash[\s\S]*?shape:'cone'/.test(html));
+ok('крест Вампира состоит из двух точных коридоров урона',
+  /vampire_cross[\s\S]*?specs:\[[\s\S]*?shape:'corridor'[\s\S]*?shape:'corridor'/.test(html));
+ok('старые снаряды обрезаются и масштабируются по своему hit-radius',
+  /drawEnemyProjectileSprite[\s\S]*?ctx\.arc\(0,0,s\.r[\s\S]*?s\.r\*2/.test(html));
+ok('лужи боссов обрезаются по механическому кругу',
+  /drawGroundPoolSprite[\s\S]*?ctx\.arc\(o\.x,o\.y,o\.r[\s\S]*?ctx\.clip/.test(html));
 ok('геометрические телеграфы сохранены поверх художественных эффектов',
   /if \(pass==='telegraphs'\)/.test(html)&&/drawTelegraph\(/.test(html));
 

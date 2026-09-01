@@ -11,6 +11,10 @@ const html=fs.readFileSync('./PolyGrind.html','utf8');
 ok('интерфейс содержит компактный Spawn Menu и три раздела',
   html.includes('<h1>Spawn Menu</h1>') && html.includes('ОБЫЧНЫЕ ВРАГИ') &&
   html.includes('ЭЛИТА / ОСОБЫЕ') && html.includes('БОССЫ'));
+ok('все каталожные категории Spawn Menu изначально свёрнуты',
+  /function spawnMenuSection[\s\S]*?aria-expanded="false"[\s\S]*?<div class="spawngrid" hidden>/.test(html));
+ok('заголовок категории одним кликом переключает aria-expanded и содержимое',
+  /querySelectorAll\('#spawnpanel \.spawnsectiontoggle'\)[\s\S]*?toggle\.setAttribute\('aria-expanded',String\(!expanded\)\)[\s\S]*?grid\.hidden=expanded/.test(html));
 ok('интерфейс содержит обе случайные кнопки и безопасную очистку',
   html.includes('Spawn Random Enemy') && html.includes('Spawn Random Boss') && html.includes('Clear Enemies'));
 ok('меню не обновляется из update() и строится только при открытии',

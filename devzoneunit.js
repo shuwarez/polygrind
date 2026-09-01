@@ -22,6 +22,15 @@ ok('кнопка подключена к прямому входу в тесто
   c.update(1);
   ok('игровой цикл не создаёт волну или портал в пустой DEV_ZONE',
     !G.enemies.length&&G.spawnQueue===0&&G.portal===null);
+  ok('физическая J распознаётся независимо от русской раскладки',c.inputKey({code:'KeyJ',key:'о'})==='j');
+  const baseSpeed=c.__api.D.mspd;G.player.hp=1;
+  ok('J-режим в DEV_ZONE изначально выключен',!G.devGodMode);
+  ok('J включает god mode, восстанавливает HP и даёт ровно +100% скорости',
+    c.toggleDevGodMode()&&G.devGodMode&&G.player.hp===c.__api.D.life&&Math.abs(c.__api.D.mspd-baseSpeed*2)<1e-9);
+  const safeHp=G.player.hp;c.hurt(99999,true,true,'DEV TEST');
+  ok('god mode блокирует весь входящий урон через общий hurt()',G.player.hp===safeHp);
+  ok('повторный J выключает режим и возвращает исходную скорость',
+    !c.toggleDevGodMode()&&!G.devGodMode&&Math.abs(c.__api.D.mspd-baseSpeed)<1e-9);
   c.openSpawnMenu();
   ok('Spawn Menu по K-логике доступно и ставит DEV_ZONE на паузу',G.spawnOpen&&G.paused);
   c.closeSpawnMenu();const e=c.debugSpawnEnemy('blob');
@@ -42,10 +51,11 @@ ok('кнопка подключена к прямому входу в тесто
 
 {const c=loadGame('./PolyGrind.html');c.newGame('bow','keys');const G=c.__api.G;
   ok('обычный новый забег не получает флаг DEV_ZONE и сохраняет волны',!G.devZone&&G.spawnQueue>0);
+  ok('в обычном забеге тестовый god mode нельзя включить',!c.toggleDevGodMode()&&!G.devGodMode);
   G.spawnQueue=0;G.enemies.length=0;
   ok('обычная пустая комната по-прежнему завершается штатно',c.floorCombatComplete());}
 
 ok('HUD и подсказка явно обозначают тестовый режим',
-  /G\.devZone\?'DEV':G\.floor/.test(html)&&html.includes("G.devZone?' · DEV_ZONE: K — SPAWN MENU':''"));
+  /G\.devZone\?'DEV':G\.floor/.test(html)&&html.includes('DEV_ZONE: K — SPAWN MENU · J — GOD +100% SPEED'));
 
 console.log(JSON.stringify({n,fail}));process.exitCode=fail?1:0;

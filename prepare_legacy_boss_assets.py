@@ -12,6 +12,8 @@ ROOT = Path(__file__).resolve().parent
 ASSETS = ROOT / "legacy_boss_assets"
 RAW_BOSSES = ASSETS / "generated" / "raw"
 RAW_EFFECTS = ASSETS / "generated" / "effects_raw"
+RAW_ATTACK_V3 = ASSETS / "generated" / "attack_v3_raw"
+STANDING_FRAME0 = ASSETS / "source_standing_frame0"
 PNG_BASE = ASSETS / "generated" / "base_png"
 PNG_ATTACK = ASSETS / "generated" / "attack_png"
 PNG_EFFECT = ASSETS / "generated" / "effect_png"
@@ -69,14 +71,87 @@ def remove_light_background(image: Image.Image) -> Image.Image:
     return rgba
 
 
+def remove_dark_background(image: Image.Image) -> Image.Image:
+    """Remove only near-black pixels connected to the image boundary."""
+    rgb = image.convert("RGB")
+    width, height = rgb.size
+    pixels = rgb.load()
+    seen = bytearray(width * height)
+    queue: deque[tuple[int, int]] = deque()
+
+    def is_background(x: int, y: int) -> bool:
+        r, g, b = pixels[x, y]
+        return max(r, g, b) <= 24
+
+    for x in range(width):
+        if is_background(x, 0): queue.append((x, 0))
+        if is_background(x, height - 1): queue.append((x, height - 1))
+    for y in range(height):
+        if is_background(0, y): queue.append((0, y))
+        if is_background(width - 1, y): queue.append((width - 1, y))
+
+    mask = Image.new("L", image.size, 255)
+    alpha = mask.load()
+    while queue:
+        x, y = queue.popleft()
+        index = y * width + x
+        if seen[index] or not is_background(x, y):
+            continue
+        seen[index] = 1
+        alpha[x, y] = 0
+        if x: queue.append((x - 1, y))
+        if x + 1 < width: queue.append((x + 1, y))
+        if y: queue.append((x, y - 1))
+        if y + 1 < height: queue.append((x, y + 1))
+
+    rgba = image.convert("RGBA")
+    rgba.putalpha(mask)
+    return rgba
+
+
 def clean_alpha(image: Image.Image) -> Image.Image:
     if image.mode != "RGBA" or image.getchannel("A").getextrema() == (255, 255):
-        image = remove_light_background(image)
+        corner = image.convert("RGB").getpixel((0, 0))
+        image = remove_light_background(image) if sum(corner) >= 384 else remove_dark_background(image)
     rgba = image.convert("RGBA")
     # Generated transparent PNGs sometimes retain almost-black RGB under a tiny alpha.
     alpha = rgba.getchannel("A").point(lambda value: 0 if value < 12 else value)
     rgba.putalpha(alpha)
     return rgba
+
+
+def alpha_weighted_median_x(image: Image.Image) -> int:
+    alpha = image.getchannel("A")
+    weights = [sum(alpha.crop((x, 0, x + 1, image.height)).getdata()) for x in range(image.width)]
+    halfway = sum(weights) / 2
+    running = 0
+    for x, weight in enumerate(weights):
+        running += weight
+        if running >= halfway:
+            return x
+    return image.width // 2
+
+
+def fixed_scale_attack_sheet(frames: list[Image.Image], reference: Image.Image) -> Image.Image:
+    """Keep the body scale fixed; oversized weapons are clipped, never shrunk to fit."""
+    reference_alpha = reference.getchannel("A").point(lambda value: 255 if value >= 16 else 0)
+    reference_bbox = reference_alpha.getbbox()
+    if not reference_bbox:
+        raise ValueError("Standing reference has no visible pixels")
+    reference = reference.crop(reference_bbox)
+    crops = [foreground_crop(frame) for frame in frames]
+    scale = reference.height / max(1, crops[0].height)
+    target_center_x = reference_bbox[0] + alpha_weighted_median_x(reference)
+    target_bottom = reference_bbox[3]
+    output = Image.new("RGBA", (64 * len(crops), 96))
+    for index, crop in enumerate(crops):
+        size = (max(1, round(crop.width * scale)), max(1, round(crop.height * scale)))
+        resized = crop.resize(size, Image.Resampling.LANCZOS)
+        source_center_x = alpha_weighted_median_x(resized)
+        x = index * 64 + target_center_x - source_center_x
+        y = target_bottom - resized.height
+        output.alpha_composite(resized, (x, y))
+    return output
 
 
 def cells(image: Image.Image, columns: int, rows: int) -> list[Image.Image]:
@@ -149,6 +224,21 @@ def build_bosses() -> tuple[list[tuple[str, Image.Image]], list[tuple[str, Image
     return base_entries, attack_entries
 
 
+def build_attack_v3() -> list[tuple[str, Image.Image]]:
+    entries: list[tuple[str, Image.Image]] = []
+    for key in BOSSES:
+        raw = clean_alpha(Image.open(RAW_ATTACK_V3 / f"{key}_attack_v3_raw.png"))
+        reference = clean_alpha(Image.open(STANDING_FRAME0 / f"{key}_frame0.png"))
+        attack = fixed_scale_attack_sheet(cells(raw, 4, 1), reference)
+        save_lossless(
+            attack,
+            PNG_ATTACK / f"{key}_attack.png",
+            WEBP_ATTACK / f"{key}_attack.webp",
+        )
+        entries.append((key, attack))
+    return entries
+
+
 def build_effects() -> list[tuple[str, Image.Image]]:
     entries: list[tuple[str, Image.Image]] = []
     for key in EFFECTS:
@@ -182,7 +272,8 @@ def contact_sheet(entries: list[tuple[str, Image.Image]], path: Path, columns: i
 
 
 def main() -> None:
-    bases, attacks = build_bosses()
+    bases, _ = build_bosses()
+    attacks = build_attack_v3() if RAW_ATTACK_V3.exists() else []
     effects = build_effects()
     contact_sheet(bases, ASSETS / "legacy_boss_base_v2_contact.png")
     contact_sheet(attacks, ASSETS / "legacy_boss_attack_contact.png")
