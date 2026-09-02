@@ -35,7 +35,7 @@ npm run check
 | `tools/dev-server.js` | Локальный статический сервер. |
 | `tools/update-asset-manifest.js` | Пересборка manifest по ссылкам из runtime. |
 | `tools/verify-structure.js` | Проверка структуры и отсутствия лишних ассетов. |
-| `docs/` | Архитектура, разработка, ассеты и тестирование. |
+| `docs/` | Архитектура, разработка, ассеты, тестирование и патчноуты. |
 | `.github/workflows/deploy.yml` | Проверка и публикация GitHub Pages. |
 
 Папок `art-source`, `old versions`, `tools/migration` и
@@ -65,7 +65,8 @@ npm run check             # verify + test
 
 Подробнее: [архитектура](docs/ARCHITECTURE.md),
 [разработка](docs/DEVELOPMENT.md), [ассеты](docs/ASSETS.md) и
-[тестирование](docs/TESTING.md).
+[тестирование](docs/TESTING.md). Переход на новый формат описан в
+[патчноуте от 2 сентября 2026 года](docs/PATCH_NOTES.md).
 
 ## Публикация
 
