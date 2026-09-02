@@ -4,10 +4,15 @@ const ctx = cv.getContext('2d');                   // 2D-контекст рис
 const nativeFillText = ctx.fillText.bind(ctx);      // Canvas-текст проходит через тот же словарь
 ctx.fillText = (value, ...args) => nativeFillText(tr(String(value)), ...args);
 let W = 0, H = 0;                                  // размеры окна в пикселях
+const MAX_GAME_DPR = 1.5;                          // retina выше 1.5 слишком дорога для полноэкранного 2D Canvas
+let RENDER_DPR = 1;
 function resize(){                                 // подгоняем холст под окно с учётом retina
-  const d = window.devicePixelRatio || 1;
+  const rawDpr = Math.max(1, Number(window.devicePixelRatio) || 1);
+  const d = RENDER_DPR = Math.min(rawDpr, MAX_GAME_DPR);
   W = cv.clientWidth; H = cv.clientHeight;
-  cv.width = W * d; cv.height = H * d;
+  const pixelW=Math.max(1,Math.round(W*d)),pixelH=Math.max(1,Math.round(H*d));
+  if (cv.width!==pixelW) cv.width=pixelW;
+  if (cv.height!==pixelH) cv.height=pixelH;
   ctx.setTransform(d,0,0,d,0,0);
 }
 window.addEventListener('resize', resize);

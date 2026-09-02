@@ -13,6 +13,11 @@ function centered(c,p){
 }
 const html=require('./harness').loadInspectionSource('./index.html');
 
+{const c=loadGame('./index.html',{devicePixelRatio:2.5}),canvas=c.document.getElementById('cv');
+  const viewport=c.diagSnapshot().viewport;
+  ok('игровой Canvas ограничивает retina до DPR 1.5',canvas.width===1920&&canvas.height===1080&&
+    viewport.dpr===2.5&&viewport.renderDpr===1.5,canvas.width+'×'+canvas.height+' · DPR '+viewport.renderDpr);}
+
 {const c=fresh(),G=c.__api.G,p=G.player,frame=c.prepareCameraFrame(p),view=c.prepareRenderView(p,0,0,frame);
   const center=c.worldToScreen(frame.centerX,frame.centerY,p,0,0,frame),screenW=center.x*2,screenH=center.y*2;
   ok('масштаб мира равен 0.95',Math.abs(frame.scale-0.95)<1e-12,String(frame.scale));

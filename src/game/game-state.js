@@ -47,7 +47,8 @@ function diagSnapshot(){
     capturedAt:new Date().toISOString(),build:diagBuildLabel(),visibility:document.visibilityState||'unknown',
     viewport:{width:typeof innerWidth==='number'?innerWidth:(window.innerWidth||1280),
       height:typeof innerHeight==='number'?innerHeight:(window.innerHeight||720),
-      dpr:typeof devicePixelRatio==='number'?(devicePixelRatio||1):(window.devicePixelRatio||1)},frames:diagFrameStats(),
+      dpr:typeof devicePixelRatio==='number'?(devicePixelRatio||1):(window.devicePixelRatio||1),
+      renderDpr:typeof RENDER_DPR==='number'?RENDER_DPR:1},frames:diagFrameStats(),
     heapMiB:memory,
   };
   if (!G) return Object.assign(base,{screen:'menu',game:null});
@@ -380,7 +381,7 @@ function newGame(weaponKey, control, subclassKey, devZone=false){
             moveT:0, predT:0, critChain:0, riposte:false, swiftT:0, spdKill:0, sprintT:0, lowHp:false, moving:false, faceX:1, faceY:0, spriteFace:1, heroWalkT:0,
             stillT:0, killT:0, cheatCd:0, cheatSpeedT:0, healCd:0, fastHealT:5, onCritHealReadyAt:0,
             hitFlash:0, hpFlash:0, hpLag:1, hpLagFrom:1, hpLagTimer:0},
-    enemies:[], shots:[], delayedShots:[], attackEchoes:[], stepBeyondEchoes:[], eshots:[], orbs:[], fx:[], fxPool:[], transientFxCounts:{num:0,status:0}, bloodFx:[], bloodFxPool:[], bloodGroundCanvas:null, bloodGroundCtx:null, bloodStampN:0, arcaneTraces:[], arcaneMines:[], repeatDetonations:[], groundbreakerCracks:[], sparkSigils:[],
+    enemies:[], shots:[], delayedShots:[], attackEchoes:[], stepBeyondEchoes:[], eshots:[], orbs:[], fx:[], fxPool:[], transientFxCounts:{num:0,status:0}, bloodFx:[], bloodFxPool:[], bloodGroundCanvas:null, bloodGroundCtx:null, bloodStampN:0, bloodBurstTime:-Infinity, bloodBurstN:0, arcaneTraces:[], arcaneMines:[], repeatDetonations:[], groundbreakerCracks:[], sparkSigils:[],
     parts:[], partPool:[],                    // пиксельные частицы и их переиспользуемые объекты
     frameScratch:{
       chillSources:[],chillGrid:null,infernoGrid:null,postMoveGrid:null,postMoveReady:false,

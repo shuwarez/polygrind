@@ -1606,6 +1606,7 @@ function buildFloor(){
    этажа, поэтому после каждой правки обязательны замеры глубины и ваншотов. */
 const hpScale  = f => Math.pow(1.18, f-1);
 const dmgScale = f => Math.pow(1.11, f-1);
+const BOSS_HP_MULT = 4; // пользовательский баланс: 200 стартового HP при базе Бастиона 50
 
 function spawnEnemy(kind, requestedBossType, requestedEliteVariant, requestedBossAffixCount){
   const f = G.floor;
@@ -1671,7 +1672,7 @@ function spawnEnemy(kind, requestedBossType, requestedEliteVariant, requestedBos
     pack:null, roles:[], dead:false, rage:0, noDmgT:0, r0:0, tauntMinion:null, // пачка / цель провокации
     jumpTo:null, jumpT:0, didSplit:false, noBreed:false, madT:0, madA:0,
   };
-  const mul = boss ? 14 : elite ? 3.2 : 1;
+  const mul = boss ? BOSS_HP_MULT : elite ? 3.2 : 1;
   e.maxHp = e.hp = Math.round(t.hp * mul * hpScale(f) * ledgerEnemyHpMul() * (amu('invertedCrown')?1.15:1));
   e.mothBurns=[];
   // Boss HUD хранит прошлое здоровье в самом экземпляре: при двух боссах

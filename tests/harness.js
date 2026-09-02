@@ -110,7 +110,7 @@ function loadGame(file, options={}){
   const c = {
     document:{getElementById:()=>el, querySelector:()=>el, querySelectorAll:()=>[],
               addEventListener:noop, body:el},
-    window:{devicePixelRatio:1, addEventListener:noop, localStorage:options.localStorage},
+    window:{devicePixelRatio:options.devicePixelRatio||1, addEventListener:noop, localStorage:options.localStorage},
     addEventListener:noop, requestAnimationFrame:noop,
     performance:{now:()=>0}, setTimeout:noop, clearTimeout:noop,
     localStorage:options.localStorage, Audio:options.Audio, console,

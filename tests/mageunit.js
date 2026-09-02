@@ -142,6 +142,23 @@ function orbAt(o,x=0,y=0,travel=0,attackMul=1){
   return {x,y,travel,attackMul,aoeScale:1,orb:true,hitSet:[]};
 }
 
+{ const o=arena(),radius=o.G.weapon.aoe*o.D.aoeR;
+  for(let i=0;i<15;i++) foe(o,Math.cos(i)*radius*0.35,Math.sin(i)*radius*0.35);
+  for(let hit=0;hit<12;hit++) o.c.explodePlayerOrb(orbAt(o));
+  ok('серия обычных взрывов Мага по толпе не создаёт больше 18 эффектов за тик',
+    o.G.bloodFx.length===18,'эффектов '+o.G.bloodFx.length); }
+{ const o=arena(()=>0),radius=o.G.weapon.aoe*o.D.aoeR;
+  for(const [stat,kind,value] of [['blastHeart','inc',50],['elementalExplosion','flag',1],
+    ['residualArcana','inc',25],['overheatedOrb','inc',25],['repeatDetonation','flag',1],
+    ['igniteCh','chance',25],['chillCh','chance',25],['shockCh','chance',25],['poiCh','chance',25]])
+    add(o,stat,kind,value);
+  for(let i=0;i<10;i++) foe(o,Math.cos(i*Math.PI/5)*radius*0.25,Math.sin(i*Math.PI/5)*radius*0.25);
+  o.c.explodePlayerOrb(orbAt(o,0,0,300));
+  const bolts=o.G.fx.filter(f=>f.t==='bolt').length;
+  ok('полностью прокачанный стихийный взрыв по 10 целям не создаёт квадратичный FX-каскад',
+    bolts===10 && o.G.fx.length<=31 && o.G.parts.length<=60,
+    `FX ${o.G.fx.length} · частицы ${o.G.parts.length} · молнии ${bolts}`); }
+
 { const c=loadGame('./index.html'), ids=['mage.blast_heart','mage.elemental_explosion','mage.residual_arcana','mage.overheated_orb','mage.remote_detonation','mage.arcane_mine','mage.repeat_detonation'];
   const mods=ids.map(id=>c.__api.MODS.find(m=>m.id===id));
   ok('каталог содержит все семь новых карточек Мага', mods.every(Boolean) && mods.every(m=>m.wep[0]==='orb' && m.noMin));

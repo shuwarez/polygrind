@@ -20,12 +20,19 @@ function enemy(floor){
   ok('уровень и этаж не повышают базовый урон героев',stable); }
 
 { const e = enemy(2);
-  const hpKind = e.kind === 'boss' ? 14 : e.kind === 'elite' ? 3.2 : 1;
+  const hpKind = e.kind === 'boss' ? 4 : e.kind === 'elite' ? 3.2 : 1;
   const dmgKind = e.kind === 'boss' ? 1.9 : e.kind === 'elite' ? 1.3 : 1;
   const hpOk = e.hp === Math.round(e.t.hp * hpKind * 1.18);
   const dmgOk = Math.abs(e.dmg - e.t.dmg * dmgKind * 1.11) < 0.0001;
   ok('HP +16%, урон +15% за этаж', hpOk && dmgOk,
      'HP ' + e.t.hp.toFixed(0) + ' → ' + e.hp.toFixed(0) + ', урон ' + e.t.dmg.toFixed(2) + ' → ' + e.dmg.toFixed(2)); }
+
+{ const c = loadGame('./index.html'); c.newGame('bow','keys');
+  const G=c.__api.G; G.floor=1;
+  const bosses=c.__api.BOSS_KEYS.map(key=>c.spawnEnemy('boss',key,undefined,0));
+  ok('стартовое здоровье всех боссов равно четырём базовым запасам',
+    bosses.every(e=>e.maxHp===Math.round(e.t.hp*4) && e.hp===e.maxHp),
+    bosses.map(e=>e.bossId+':'+e.maxHp).join(', ')); }
 
 { const c = loadGame('./index.html'); c.newGame('bow','keys');
   const T=c.__api.ETYPES, e=c.spawnEnemy(), boss=c.spawnEnemy('boss','lich');

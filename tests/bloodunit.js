@@ -32,7 +32,7 @@ ok('все тринадцать функций системы доступны',
 
 const hp0=e.hp,fx0=G.bloodFx.length;
 const dealt=c.applyDamage(e,5,false,false);
-ok('кровь запускает только фактически снятый HP',dealt===5 && e.hp===hp0-5 && G.bloodFx.length>=fx0+6,
+ok('кровь запускает только фактически снятый HP',dealt===5 && e.hp===hp0-5 && G.bloodFx.length>=fx0+2,
   `dealt=${dealt} fx=${G.bloodFx.length}`);
 const afterHit=G.bloodFx.length;
 c.applyDamage(e,0,false,false);
@@ -42,8 +42,8 @@ G.bloodFx.length=0;
 c.applyDamage(e,1,true,false);
 const firstCritSprays=G.bloodFx.filter(f=>f.t==='critSpray').length;
 c.applyDamage(e,1,true,false);
-ok('каждый крит добавляет два спрайтовых разлёта мелких брызг',
-  firstCritSprays===2 && G.bloodFx.filter(f=>f.t==='critSpray').length===4);
+ok('каждый крит добавляет один компактный спрайтовый разлёт мелких брызг',
+  firstCritSprays===1 && G.bloodFx.filter(f=>f.t==='critSpray').length===2);
 ok('каждый слой критического разлёта остаётся одним компактным объектом',
   G.bloodFx.filter(f=>f.t==='critSpray').every(f=>f.max<=0.27 && f.size<=56));
 
@@ -51,7 +51,7 @@ G.bloodFx.length=0; e.bloodDotFxT=undefined;
 c.applyDamage(e,1,false,true);
 const firstDot=G.bloodFx.length;
 c.applyDamage(e,1,false,true);
-ok('частые DoT-тиki ограничены на одной цели',firstDot>=6 && G.bloodFx.length===firstDot,`fx=${firstDot}`);
+ok('частые DoT-тиki ограничены на одной цели',firstDot>=2 && G.bloodFx.length===firstDot,`fx=${firstDot}`);
 G.time+=0.19; c.applyDamage(e,1,false,true);
 ok('DoT снова виден после 0.18 секунды',G.bloodFx.length>firstDot);
 
@@ -85,12 +85,12 @@ const skeleton=c.spawnEnemy('pack',null,'skeletonWarrior');
 const lich=c.spawnEnemy('boss','lich');
 ok('скелеты и нежить получают не человеческую палитру',c.bloodMaterialForEnemy(skeleton)==='bone' && c.bloodMaterialForEnemy(lich)==='ichor');
 
-G.bloodFx=Array.from({length:600},()=>({t:'drop',x:0,y:0,z:2,vx:0,vy:0,vz:0,size:3,life:1,max:1,material:'blood'}));
+G.bloodFx=Array.from({length:96},()=>({t:'drop',x:0,y:0,z:2,vx:0,vy:0,vz:0,size:3,life:1,max:1,material:'blood'}));
 G.bloodFxPool=[];
 const capStamp=G.bloodStampN;
 c.emitBloodHit(e,1,{});
-ok('переполнение 600 временных частиц отбрасывается без дорогих декалей',
-  G.bloodFx.length===600 && G.bloodStampN===capStamp && G.bloodFxPool.length>0,
+ok('переполнение 96 временных частиц отбрасывается без дорогих декалей',
+  G.bloodFx.length===96 && G.bloodStampN===capStamp && G.bloodFxPool.length>0,
   `fx=${G.bloodFx.length} stamps=${G.bloodStampN-capStamp}`);
 
 G.bloodStampN=1800;
@@ -104,6 +104,7 @@ const landStamp=G.bloodStampN;
 c.updateBloodFx(1/60);
 ok('приземлившаяся капля переносится в постоянный слой и пул',G.bloodFx.length===0 &&
   G.bloodStampN===landStamp+1 && G.bloodFxPool.includes(landedDrop));
+G.time+=0.01;
 c.spawnBloodSplash(0,0,0,0.01);
 ok('новая брызга переиспользует объект из пула',G.bloodFx.length===1 && G.bloodFx[0]===landedDrop);
 
@@ -128,8 +129,12 @@ ok('изображения крови не создаются внутри ка�
 ok('критический разлёт рисуется одним кадром компактного листа',
   /critSpray:\{frame:32,frames:4\}/.test(html) &&
   /drawImage\(image,frame\*spriteMeta\.frame/.test(html));
-ok('один кадр рисует не более 320 свежих эффектов крови',
-  /maxDrawFx:320/.test(html) && /length-BLOOD_CFG\.maxDrawFx/.test(html));
+ok('один кадр рисует не более 48 свежих эффектов крови',
+  /maxDrawFx:48/.test(html) && /length-BLOOD_CFG\.maxDrawFx/.test(html));
+G.bloodFx=[]; G.bloodFxPool=[]; G.bloodBurstTime=-Infinity; G.bloodBurstN=0;
+for(let i=0;i<20;i++) c.emitBloodHit(e,1,{});
+ok('массовый урон создаёт не более 18 новых эффектов крови за игровой тик',
+  G.bloodFx.length===18 && G.bloodBurstN===18,`fx=${G.bloodFx.length}`);
 const damageSource=c.applyDamage.toString();
 ok('кровь вызывается после реального dealt без объекта метаданных в горячем пути',
   damageSource.indexOf('emitBloodHitValues(e,dealt')>damageSource.indexOf('const dealt =') &&

@@ -506,7 +506,8 @@ function applyDamage(e, amount, crit, silent, minionShare=0, skipConstellation=f
   // лимит крови сразу отклонял эффект, провоцируя частые minor GC.
   if (dealt>0) emitBloodHitValues(e,dealt,opt&&opt.bloodSource,!!crit,
     hpBefore>0 && amount>=hpBefore,!!silent || !!(opt&&opt.bloodKind==='dot'));
-  if (dealt > 0 && !silent){ e.hit = 0.12; playHitSound(e); }
+  const compactImpact=!!(opt&&opt.compactImpact);
+  if (dealt > 0 && !silent){ e.hit = 0.12; if (!compactImpact) playHitSound(e); }
   e.noDmgT = 0;                   // регенераторы считают время с последнего попадания
   if (dealt>0 && hpBefore>0 && amount>=hpBefore){
     e.lastKillingDamage=dealt;
@@ -517,7 +518,7 @@ function applyDamage(e, amount, crit, silent, minionShare=0, skipConstellation=f
   if (minionShare > 0 && D.deathLord) heal(dealt * minionShare * 0.001);
   if (!silent){
     pushDamageNumber(e,amount,crit);
-    burst(e.x, e.y, crit ? 9 : 3, crit ? '#ffd24a' : e.t.col, crit ? 220 : 110, 3, 0.35);
+    if (!compactImpact) burst(e.x, e.y, crit ? 9 : 3, crit ? '#ffd24a' : e.t.col, crit ? 220 : 110, 3, 0.35);
   }
   return dealt;
 }
@@ -1172,7 +1173,7 @@ function nova(x, y, r, dmg, col, opt){
     const skipConstellation = !!(opt && opt.skipConstellation);
     const targetDamage = blastDamage * (opt && opt.damageMul ? opt.damageMul(e) : 1);
     const dealt = opt && opt.mitigate ? mitigate(e, targetDamage, minionShare, skipConstellation) : targetDamage;
-    const actual = applyDamage(e, dealt, false, false, minionShare, skipConstellation);
+    const actual = applyDamage(e, dealt, false, false, minionShare, skipConstellation,opt&&opt.damageOpt);
     if (opt && opt.onDamage) opt.onDamage(e, actual);
     if (opt && opt.onTarget) opt.onTarget(e, dealt);
     if (opt && opt.knock){
@@ -1197,7 +1198,8 @@ function nova(x, y, r, dmg, col, opt){
 /* Красная ветка Мага относится именно к взрыву: прямой контакт сферы уже прошёл
    через damage() и сюда не попадает. Шансы берутся из текущих карточек игрока;
    книги остаются отдельными источниками и не удваиваются второй раз. */
-function applyOrbExplosionAilments(e, total){
+const MAGE_AOE_SHOCK_BURST_CAP=2;
+function applyOrbExplosionAilments(e, total, context=null){
   if (!D.elementalExplosion) return;
   const roll = v => Math.random()*100 < v*2;
   if (roll(D.igniteCh))
@@ -1205,7 +1207,7 @@ function applyOrbExplosionAilments(e, total){
   if (roll(D.chillCh)){
     if (e.ail.chill <= 0) statusText(e, 'SLOWED', '#ffe14a');
     e.ail.chill = Math.max(e.ail.chill, CHILL_DURATION*D.ailDur);
-    applyDamage(e, total*CHILL_DAMAGE_SHARE*D.ailEff, false, false);
+    applyDamage(e,total*CHILL_DAMAGE_SHARE*D.ailEff,false,false,0,false,{compactImpact:true});
     if (D.freeze && Math.random() < FREEZE_CHANCE){
       if (e.ail.freeze <= 0) statusText(e, 'FROZEN', '#7fd6ff');
       e.ail.freeze = Math.max(e.ail.freeze, FREEZE_DURATION*D.ailDur*D.freezeDur);
@@ -1213,7 +1215,10 @@ function applyOrbExplosionAilments(e, total){
   }
   if (roll(D.shockCh)){
     e.ail.shock = Math.max(e.ail.shock, SHOCK_DURATION*D.ailDur);
-    shockBurst(e, total, 0);
+    if (!context || context.shockBursts<MAGE_AOE_SHOCK_BURST_CAP){
+      if (context) context.shockBursts++;
+      shockBurst(e,total,0);
+    }
   }
   if (roll(D.poiCh))
     addDot(e, 'poison', total*POISON_DPS_SHARE*D.ailEff*(D.radiation?2:1), 4*D.ailDur);
@@ -1267,14 +1272,14 @@ function plantArcaneMine(s){
 
 /* Это ровно базовые шансы автоатаки, без удвоения красной карты
    «Элементальный взрыв»: каждый задетый враг делает четыре своих броска. */
-function applyArcaneMineAilments(e, total){
+function applyArcaneMineAilments(e,total,context=null){
   const roll=v=>Math.random()*100 < v;
   if (roll(D.igniteCh))
     addDot(e,'fire',total*IGNITE_DPS_SHARE*D.ailEff,3*D.ailDur);
   if (roll(D.chillCh)){
     if (e.ail.chill<=0) statusText(e,'SLOWED','#ffe14a');
     e.ail.chill=Math.max(e.ail.chill,CHILL_DURATION*D.ailDur);
-    applyDamage(e,total*CHILL_DAMAGE_SHARE*D.ailEff,false,false);
+    applyDamage(e,total*CHILL_DAMAGE_SHARE*D.ailEff,false,false,0,false,{compactImpact:true});
     if (D.freeze && Math.random()<FREEZE_CHANCE){
       if (e.ail.freeze<=0) statusText(e,'FROZEN','#7fd6ff');
       e.ail.freeze=Math.max(e.ail.freeze,FREEZE_DURATION*D.ailDur*D.freezeDur);
@@ -1282,16 +1287,20 @@ function applyArcaneMineAilments(e, total){
   }
   if (roll(D.shockCh)){
     e.ail.shock=Math.max(e.ail.shock,SHOCK_DURATION*D.ailDur);
-    shockBurst(e,total,0);
+    if (!context || context.shockBursts<MAGE_AOE_SHOCK_BURST_CAP){
+      if (context) context.shockBursts++;
+      shockBurst(e,total,0);
+    }
   }
   if (roll(D.poiCh))
     addDot(e,'poison',total*POISON_DPS_SHARE*D.ailEff*(D.radiation?2:1),4*D.ailDur);
 }
 
 function detonateArcaneMine(mine,enemyGrid=null){
+  const ailmentContext={shockBursts:0};
   const targets=nova(mine.x,mine.y,mine.r,mine.dmg,'#63dcff',{
     mitigate:true,overpressure:true,noRing:true,grid:enemyGrid,
-    onTarget:(e,total)=>applyArcaneMineAilments(e,total),
+    onTarget:(e,total)=>applyArcaneMineAilments(e,total,ailmentContext),
   });
   G.fx.push({t:'arcaneMineExplosion',x:mine.x,y:mine.y,r:mine.r,
              life:ARCANE_MINE_EXPLOSION_TIME,max:ARCANE_MINE_EXPLOSION_TIME});
@@ -1395,14 +1404,16 @@ function explodePlayerOrb(s,enemyGrid=null){
   const cometMul=!s.noProcs&&amu('cometEye')&&fixedTargets.length===1?1.30:1;
   const sphereDamage=avgHit()*attackMul*(1+(s.confinementPct||0)/100);
   const remote=remoteOrbActive(s), point={x:s.x,y:s.y};
+  const ailmentContext={shockBursts:0};
   const repeatHits=D.repeatDetonation ? [] : null;
   const targets=nova(s.x, s.y, radius, sphereDamage*MAGE_ORB_EXPLOSION_DAMAGE_SHARE, remote?'#b56cff':'#c08cff', {
     overpressure:true,noRing:true,grid:enemyGrid,
     pull:ARCANE_PULL_FORCE*D.arcanePull/100,
     skipDead:true,
     damageMul:e=>cometMul*(1 + (remote?D.remoteBlast:0)/100 + (dist(e,point)<=radius*0.5?D.blastHeart:0)/100),
+    damageOpt:{compactImpact:true,bloodSource:point},
     onDamage:repeatHits ? (e,dealt)=>repeatHits.push({enemy:e,dealt}) : null,
-    onTarget:s.noAilments?null:(e,total)=>applyOrbExplosionAilments(e,total),
+    onTarget:s.noAilments?null:(e,total)=>applyOrbExplosionAilments(e,total,ailmentContext),
   });
   G.fx.push({t:'mageOrbExplosion',x:s.x,y:s.y,r:radius,
     variant:s.miniOrb?'mini':remote?'remote':'normal',
