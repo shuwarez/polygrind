@@ -1,0 +1,19 @@
+/* --- Верхняя строка состояния --- */
+#hud{position:absolute;top:0;left:0;right:0;padding:10px 14px;pointer-events:none;
+  display:flex;gap:14px;align-items:flex-start}
+.bar{height:14px;background:#000a;border:1px solid var(--line);border-radius:2px;overflow:hidden;position:relative}
+.bar>i{display:block;height:100%;transition:width .12s linear}
+.bar>span{position:absolute;inset:0;font-size:12.5px;line-height:14px;text-align:center;letter-spacing:.5px}
+#hpbar{width:280px;transform-origin:left center;transition:transform .06s ease-out,border-color .06s}
+#hpbar>b{position:absolute;inset:0 auto 0 0;background:#fff9;pointer-events:none;transition:width .04s linear}
+#hpbar>i{position:relative;z-index:1}
+#hpbar>span{z-index:2}
+#hpbar.hurt{transform:scale(1.045);border-color:#ff9a9a;box-shadow:0 0 12px #ff243f88}
+#hpbar.hurt>i{background:#ff1938!important}
+#xpbar{width:280px;height:8px;margin-top:4px}
+#floorbox{margin-left:auto;text-align:right;font-size:15px;line-height:1.5}
+#floorbox b{font-size:25px;color:var(--amber)}
+#warriorbuffs{position:absolute;left:14px;bottom:78px;display:none;color:#dbe6ef;
+  font-size:12px;line-height:1.55;text-shadow:0 1px 3px #000;pointer-events:none}
+#warriorbuffs div{border-left:2px solid #d5a64a;padding-left:7px}
+.k{color:var(--dim)}

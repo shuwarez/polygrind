@@ -1,0 +1,16 @@
+{
+  "name": "polygrind",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Structured browser runtime for PolyGrind / Grim Grind",
+  "scripts": {
+    "start": "node tools/dev-server.js",
+    "assets:manifest": "node tools/update-asset-manifest.js",
+    "test": "node run-all.js",
+    "verify": "node tools/verify-structure.js",
+    "check": "npm run verify && npm test"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

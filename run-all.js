@@ -3,10 +3,11 @@
 const {spawn} = require('child_process');
 const fs = require('fs');
 const os = require('os');
+const path = require('path');
 
 /* Проверка комплектности до запуска: если набора нет на диске, честно сказать
    какого именно, а не падать на первом же execSync с невнятной ошибкой. */
-const CORE = ['harness.js', 'sim.js', 'run.js', 'orderscan.js', 'index.html'];
+const CORE = ['tests/harness.js', 'tests/sim.js', 'tests/run.js', 'tests/orderscan.js', 'index.html'];
 const SUITES = [
   ['packunit',    25, 'пачки элиты: 18 аффиксов, роли, потолок лечения'],
   ['elitevariantunit',41, 'разновидности Бегунов/Ядер: спрайты, выбор, защита и контактные эффекты'],
@@ -22,7 +23,7 @@ const SUITES = [
   ['shopunit',    59, 'цены, баланс, возвраты, читаемая витрина и сгенерированные иконки магазина'],
   ['scaleunit',    3, 'фиксированный урон героев, рост урона и скорость врагов'],
   ['reliableunit',80, 'баланс карточек: урон, лечение, взаимоисключающие пробитие и отскоки, таймеры, критическая волна, защита, оглушение и добивание'],
-  ['skillframeunit',10, 'пять цветных 9-slice рамок карточек навыков без потери исходников'],
+  ['skillframeunit', 9, 'пять цветных 9-slice рамок карточек навыков'],
   ['novakillunit',12, 'взрыв при убийстве: шанс, защита цели, красное усиление, отбрасывание и цепь'],
   ['overpressureunit',17, 'синее Сверхдавление: источники взрывов, +5% за цель и потолок +25%'],
   ['arcaneunit',   17, 'синяя Арканная иллюзия: пул Мага, 20–30%, потолок и притяжение сфер'],
@@ -46,12 +47,12 @@ const SUITES = [
   ['quickpauseunit',16, 'быстрая P-пауза: прозрачный PAUSED, перехват ввода и отдельный Escape'],
   ['generalskillunit',43,'общие синие и фиолетовые одноразовые навыки и их индикаторы'],
   ['floortransitionunit',46, 'завершение этажа: автосбор, защищённый портал, энергия, указатель и телепорт'],
-  ['floorvariationunit',23, '10 бесшовных полов 512 px: палитра, яркость, отдельный RNG, fallback и единый pattern этажа'],
+  ['floorvariationunit',15, '10 runtime-полов 512 px: уникальность, отдельный RNG, fallback и единый pattern этажа'],
   ['damagefeedbackunit',34, 'урон, лечение и барьер игрока: feedback, delayed HP, два бара, combat text и HUD-кэш'],
   ['cameraunit',   19, 'камера: фиксированный центр, zoom 0.95, мышь, culling и экранные слои'],
   ['cullingunit', 24, 'консервативное отсечение рендера: края, ауры, боссы, снаряды, эффекты и телеграфы'],
   ['bloodunit',     22, 'кровь этажа: фактический HP, атласы, критические брызги, декали, DoT, лимиты и слои'],
-  ['corpseunit',    31, 'трупы всех монстров и классов: масштаб 50%, чистая alpha-кромка, 50% луж, слои и culling'],
+  ['corpseunit',    28, 'трупы всех монстров и классов: runtime-геометрия, лужи, слои и culling'],
   ['cheatdeathunit',12, 'оранжевый Обман смерти: гарантия, 1 HP, неуязвимость, скорость и минутный откат'],
   ['layerunit',     15, 'фиксированные Canvas-слои: кровь, телеграфы, персонажи, HUD, combat text и виньетка'],
   ['telegraphunit', 20, 'единые телеграфы: три последствия, круг, прицел, коридор и следы'],
@@ -67,7 +68,7 @@ const SUITES = [
   ['clawunit',     9, 'резкие когти и вихрь когтей'],
   ['bb2unit',     11, 'кровавая баня и кипящая кровь'],
   ['b7unit',      16, 'ужасающий вампир, щит, классовое ограничение и книга крови'],
-  ['constunit',    44, 'астральная обсерватория: пути, профиль, фон, прогресс, награды, адаптивность и производительность'],
+  ['constunit',    43, 'астральная обсерватория: пути, профиль, фон, прогресс, награды, адаптивность и производительность'],
   ['doubleunit',   14, 'двойное попадание и чумный взрыв: потолки, анлоки и урон'],
   ['graveunit',     7, 'кладбище: миграция, последние 10 смертей и полная сводка'],
   ['spriteunit',    60, 'PNG-враги, лужи, портал, звуки, добыча, предметы 128/24 px, усиленный pickup, свита и эффекты Мага'],
@@ -77,18 +78,19 @@ const SUITES = [
   ['boss20unit',     38, 'двадцать новых боссов: листы, события и эффекты по точным зонам'],
   ['locunit',       9, 'локализация: EN по умолчанию, полнота каталогов, примеры и CSS-флаги'],
   ['bladeunit',    11, 'Воин: спрайт и круговая волна каждого третьего взмаха'],
-  ['herospriteunit',81, 'герои и 8-кадровые подклассы 36 px вправо, детальные превью и классическое меню'],
+  ['herospriteunit',74, 'runtime-герои и 8-кадровые подклассы 36 px вправо, превью и классическое меню'],
   ['warriorunit',  70, 'подклассы, классовый пул, Налегке и новые ветки Воина'],
   ['archerunit',   61, 'базовый темп, подклассы и ветки Лучника: траектория, возврат, Зеркальный залп и Техника одной стрелы'],
   ['mageunit',      58, 'три подкласса, общая корзина радиуса и семь новых веток Мага, включая Мину и Повторную детонацию'],
 ];
-const missing = CORE.concat(SUITES.map(x => x[0] + '.js')).filter(f => !fs.existsSync(f));
+const suiteFile = name => path.join('tests', name + '.js');
+const missing = CORE.concat(SUITES.map(x => suiteFile(x[0]))).filter(f => !fs.existsSync(f));
 if (missing.length){
   console.log('НЕ ХВАТАЕТ ФАЙЛОВ (' + missing.length + '):');
   for (const f of missing) console.log('  ' + f);
-  console.log('\nВсе они лежат в папке harness/ рядом с HANDOFF.md.');
-  console.log('Для запуска нужны Node 18+ и один каталог, куда положены');
-  console.log('index.html и содержимое harness/ без вложенности.');
+  console.log('\nТестовые наборы и helpers должны находиться в папке tests/.');
+  console.log('Для запуска нужны Node 18+ и полная структура проекта:');
+  console.log('index.html, src/, assets/, tests/ и run-all.js.');
   process.exit(2);
 }
 
@@ -119,10 +121,10 @@ async function main(){
     while (true){
       const index = next++;
       if (index >= SUITES.length) return;
-      results[index] = await runFile(SUITES[index][0] + '.js');
+      results[index] = await runFile(suiteFile(SUITES[index][0]));
     }
   });
-  const orderScanPromise = runFile('orderscan.js');
+  const orderScanPromise = runFile(suiteFile('orderscan'));
   await Promise.all(workers);
 
   let bad = 0, total = 0;

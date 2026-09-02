@@ -1,0 +1,123 @@
+/* --- Панель характеристик --- */
+#sheet{position:absolute;top:0;right:0;width:400px;height:100%;background:#0b0f14f2;
+  border-left:1px solid var(--line);padding:16px;overflow-y:auto;display:none;z-index:9;font-size:15px}
+#sheet h3{font-size:13.8px;letter-spacing:2px;color:#cfdae5;margin:14px 0 6px;font-weight:500}
+#sheet h3:first-child{margin-top:0}
+.row{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid #2a3440}
+.row b{color:var(--amber);font-weight:600}
+.pick{padding:5px 0;border-bottom:1px solid #2a3440;line-height:1.45}
+.pick i{font-style:normal;color:#9fb0c0;font-size:12.5px}
+#inventory{position:absolute;top:0;left:0;width:min(520px,48vw);height:100%;background:#0b0f14f7;
+  border-right:1px solid var(--line);padding:16px;overflow-y:auto;display:none;z-index:9;font-size:15px}
+#inventory h1{font-size:22px;letter-spacing:3px;color:var(--amber);margin-bottom:4px}
+#inventory h3{font-size:13.8px;letter-spacing:2px;color:#cfdae5;margin:18px 0 7px;font-weight:500}
+#inventory h3:first-of-type{margin-top:14px}
+.invitem{padding:9px 10px;margin:7px 0;background:#11161c;border:1px solid #2a3440;border-left:3px solid var(--line);line-height:1.45}
+.invitem b{display:block;font-size:15px}.invitem i{display:block;font-style:normal;color:#9fb0c0;font-size:12.5px;margin-top:3px}
+.invempty{color:#7d8b9a;padding:9px 0;line-height:1.5}
+.summary-grid{display:grid;grid-template-columns:repeat(2,minmax(190px,1fr));gap:8px;width:min(760px,92vw)}
+.summary-cell{background:#11161c;border:1px solid #2a3440;padding:10px 12px}.summary-cell span{display:block;color:#9fb0c0;font-size:12px;letter-spacing:1px}.summary-cell b{display:block;color:var(--amber);font-size:21px;margin-top:3px}
+#skilltip{position:fixed;display:none;z-index:30;width:min(440px,calc(100vw - 28px));padding:14px 16px;
+  background:#090d12fa;border:1px solid #6b88b8;border-left:3px solid #84aef8;box-shadow:0 12px 34px #000b;
+  color:#e7edf5;font-size:14px;line-height:1.5;pointer-events:none}
+#skilltip b{color:#a9c7ff}#skilltip .tt-title{color:var(--amber);font-size:16px;letter-spacing:1px;margin-bottom:5px}
+#skilltip .tt-note{color:#aebdce;margin-top:7px;font-size:12.5px}
+#skilltip .tt-impact{margin:8px 0 10px;padding:9px 10px;background:#101a25;border:1px solid #36506f;border-left:3px solid #6fa8ff}
+#skilltip .tt-impact-head{color:#8fbcff;font-size:11px;font-weight:800;letter-spacing:1.35px;margin-bottom:6px}
+#skilltip .tt-impact-row{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:10px;align-items:baseline;padding:3px 0;border-top:1px solid #26394d}
+#skilltip .tt-impact-row:first-of-type{border-top:0}.tt-impact-row span{color:#b9c7d6;font-size:12.5px}
+#skilltip .tt-impact-row b{color:#f3f7fb;white-space:nowrap}.tt-impact-row em{grid-column:2;color:#74df9b;font-size:11px;font-style:normal;text-align:right}
+#skilltip .tt-impact-row.loss em{color:#ff8f82}.tt-impact-note{color:#7f91a5;font-size:10.8px;line-height:1.35;margin-top:6px}
+#skilltip .tt-exclusive{margin:7px 0 9px;padding:7px 8px;border:1px solid #987518;background:#2a220d;color:#ffd84a;font-size:15px;font-weight:900;line-height:1.35;letter-spacing:.7px;text-transform:uppercase}
+.floor-find-list{display:grid;gap:8px;width:min(680px,92vw);max-height:46vh;overflow-y:auto;padding-right:4px}
+.floor-find-row{display:grid;grid-template-columns:48px minmax(0,1fr);gap:11px;align-items:center;padding:10px 12px;
+  background:#11161c;border:1px solid #2a3440;border-left:3px solid var(--fc,#6fa8ff);text-align:left;cursor:help;outline:none;transition:.12s}
+.floor-find-row:hover,.floor-find-row:focus{border-color:var(--fc,#6fa8ff);box-shadow:0 0 0 1px color-mix(in srgb,var(--fc,#6fa8ff) 35%,transparent),0 5px 18px #0007;background:#151c24}
+.floor-find-icon{font-size:30px;line-height:1;text-align:center;color:var(--fc,#6fa8ff)}
+.floor-find-row b{display:block;color:var(--fc,#e7edf5);font-size:16px}.floor-find-row span{display:block;color:#9fb0c0;font-size:12px;margin-top:3px}
+#books{display:flex;gap:6px;margin-top:7px}
+.bk{display:flex;align-items:center;gap:5px;padding:3px 8px 3px 6px;border:1px solid;border-radius:3px;
+  background:#0b0f14cc;font-size:15px;line-height:1}
+.bk .ic{font-size:17.5px}
+.bk .tr{font-size:11.2px;opacity:.75;letter-spacing:.5px}
+.bk .vl{font-weight:700}
+/* Список уже найденных предметов в окне находки. Высота в vh, а не в пикселях:
+   26 предметов при полном сборе выталкивали кнопку «Продолжить» за нижний край
+   экрана, и её приходилось доставать зумом браузера. Потолок в 30vh держит окно
+   в габаритах любого монитора — вместе с иконкой, названием и описанием это
+   примерно 360px плюс треть экрана, то есть кнопка видна и на ноутбуке. */
+#amuown{width:min(640px,90vw);border-top:1px solid var(--line);padding-top:12px}
+#amulist{max-height:28vh;overflow-y:auto;padding-right:8px}
+/* Иконка и отступы ужимаются вместе с окном: на ноутбуке с высотой 600
+   фиксированные 80px иконки и шесть отступов по 22 съедали столько, что
+   кнопка не влезала даже при прокручиваемом списке. */
+#amuico{line-height:1}
+.rare-item-icon{display:inline-block;width:24px;height:24px;object-fit:contain;vertical-align:middle;image-rendering:pixelated;image-rendering:crisp-edges}
+.rare-item-icon.modal{width:clamp(144px,27vh,216px);height:clamp(144px,27vh,216px)}
+.rare-item-icon.tiny{width:18px;height:18px;margin-right:5px}.rare-item-icon.hud{width:18px;height:18px}
+.rare-item-icon.inventory{width:24px;height:24px;margin-right:7px}.rare-item-icon.summary{width:30px;height:30px}
+.totem-icon{display:inline-block;width:24px;height:24px;object-fit:contain;vertical-align:middle;image-rendering:pixelated;image-rendering:crisp-edges}
+.totem-icon.modal{width:clamp(96px,18vh,144px);height:clamp(96px,18vh,144px)}
+.totem-icon.tiny{width:18px;height:18px;margin-right:5px}.totem-icon.hud{width:18px;height:18px}
+.totem-icon.inventory{width:24px;height:24px;margin-right:7px}.totem-icon.summary{width:30px;height:30px}
+.totem-icon.banner{width:44px;height:44px;margin-right:8px}
+.loot-item-icon{display:inline-block;width:24px;height:24px;object-fit:contain;vertical-align:middle;image-rendering:pixelated;image-rendering:crisp-edges}
+.loot-item-icon.modal{width:clamp(96px,18vh,144px);height:clamp(96px,18vh,144px)}
+.loot-item-icon.hud{width:18px;height:18px}.loot-item-icon.inventory{width:24px;height:24px;margin-right:7px}
+.loot-item-icon.summary{width:30px;height:30px}
+.pickup-reveal{position:relative;flex:0 0 auto;width:clamp(132px,23vh,184px);height:clamp(116px,20vh,160px);
+  display:grid;place-items:center;isolation:isolate;overflow:visible;--pickup-color:#f0c66a}
+.pickup-reveal.boosted{width:clamp(198px,34.5vh,276px);height:clamp(174px,30vh,240px)}
+.pickup-reveal__icon{position:relative;z-index:2;display:grid;place-items:center;
+  animation:pickupIconPulse 1.55s ease-in-out infinite;filter:drop-shadow(0 8px 7px #000c) drop-shadow(0 0 14px var(--pickup-color))}
+.pickup-reveal.boosted .pickup-reveal__icon{filter:drop-shadow(0 10px 9px #000d) drop-shadow(0 0 22px var(--pickup-color)) drop-shadow(0 0 44px var(--pickup-color))}
+.pickup-reveal__effect{position:absolute;z-index:0;left:50%;top:50%;width:var(--ring);height:var(--ring);
+  border:1px solid color-mix(in srgb,var(--pickup-color) 72%,#fff);border-radius:50%;opacity:0;
+  box-shadow:0 0 12px var(--pickup-color),inset 0 0 12px var(--pickup-color);
+  animation:pickupEffect 3.2s ease-in-out infinite;animation-delay:var(--delay);pointer-events:none}
+.pickup-reveal__spark{position:absolute;z-index:1;left:50%;top:50%;width:var(--spark-size,5px);height:var(--spark-size,5px);border-radius:50%;
+  background:#fff;box-shadow:0 0 4px #fff,0 0 10px var(--pickup-color);opacity:0;
+  animation:pickupSpark 1.8s ease-out infinite;animation-delay:var(--delay,0s)}
+@keyframes pickupIconPulse{0%,100%{transform:scale(.94)}50%{transform:scale(1.08)}}
+@keyframes pickupEffect{
+  0%,100%{opacity:0;transform:translate(-50%,-50%) scale(.72) rotate(0)}
+  18%{opacity:.68}70%{opacity:.2}
+  88%{opacity:0;transform:translate(-50%,-50%) scale(1.18) rotate(var(--turn))}}
+@keyframes pickupSpark{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.2) rotate(0)}
+  20%{opacity:1}75%{opacity:.85}
+  100%{opacity:0;transform:translate(-50%,-50%) translate(var(--x),var(--y)) scale(1.25) rotate(150deg)}}
+@media (prefers-reduced-motion:reduce){
+  .pickup-reveal__icon{animation:none}.pickup-reveal__effect{animation:none;opacity:.24;transform:translate(-50%,-50%)}
+  .pickup-reveal__spark{animation:none;opacity:.72;
+    transform:translate(-50%,-50%) translate(var(--x),var(--y)) scale(.8)}}
+.overlay{gap:clamp(9px,2.2vh,22px)}
+/* Полоса прокрутки видимая: иначе непонятно, что список продолжается */
+#amulist::-webkit-scrollbar{width:8px}
+#amulist::-webkit-scrollbar-thumb{background:#2a323c;border-radius:4px}
+#amulist::-webkit-scrollbar-thumb:hover{background:#3a4450}
+#amulist::-webkit-scrollbar-track{background:#0d1116;border-radius:4px}
+/* Двумя колонками, когда предметов много: вдвое короче список при той же читаемости */
+#amulist.two{column-count:2;column-gap:18px}
+#amulist.two .pick{break-inside:avoid}
+/* Оверлей тоже прокручиваемый — страховка на случай, если что-то ещё разрастётся */
+.overlay{overflow-y:auto}
+
+/* Скрытая тестовая панель: отдельные классы, чтобы не менять боевые карточки. */
+#testpanel{width:min(940px,94vw);max-height:72vh;display:flex;flex-direction:column;gap:10px}
+#testsearch{font:inherit;font-size:17px;padding:11px 13px;color:var(--ink);background:#0b0f14;border:1px solid #526b8f;border-radius:3px;outline:none}
+#testsearch:focus{border-color:#88aefa;box-shadow:0 0 0 2px #6f9cff22}
+#testresults{display:grid;grid-template-columns:repeat(auto-fill,minmax(245px,1fr));gap:7px;overflow-y:auto;padding-right:5px}
+.testskill{display:flex;align-items:center;gap:8px;background:#11161c;border:1px solid #2e3b49;padding:9px 10px;text-align:left}
+.testskill:hover{border-color:#6b88b8}.testskill .tsbody{min-width:0;flex:1}.testskill .tsname{font-size:14px;color:#e7edf5}.testskill .tsmeta{font-size:11px;color:#8998aa;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.testskill .class-access{justify-content:flex-start;margin-top:5px}.testskill .class-access-label{font-size:7px}
+.testskill .class-icon{width:19px;height:19px}.testskill .class-icon svg{width:14px;height:14px}
+.testskill button{padding:6px 8px;font-size:11px;white-space:nowrap}
+
+/* Второе debug-меню строится только по K: в игровом цикле для него нет ни
+   обновлений DOM, ни обходов каталога существ. */
+#spawnpanel{width:min(760px,94vw);max-height:76vh;display:flex;flex-direction:column;gap:10px;overflow-y:auto;padding-right:5px}
+#spawnpanel h1{margin-bottom:0}.spawnsection{border-top:1px solid #334151;padding-top:9px}.spawnsection h2{margin:0}
+.spawnsectiontoggle{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:7px 9px;border:1px solid transparent;background:#11161c;color:var(--amber);font:inherit;font-size:13px;letter-spacing:1.5px;text-align:left;cursor:pointer}.spawnsectiontoggle:hover,.spawnsectiontoggle:focus-visible{border-color:#53677a;background:#151c24}.spawnchevron{flex:0 0 auto;font-size:16px;line-height:1;transition:transform .12s ease}.spawnsectiontoggle[aria-expanded="true"] .spawnchevron{transform:rotate(90deg)}
+.spawngrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(205px,1fr));gap:6px;margin-top:7px}.spawngrid[hidden]{display:none}.spawnrow{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#11161c;border:1px solid #2e3b49;padding:7px 8px}.spawnrow span{min-width:0;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.spawnrow button,.spawnactions button{padding:6px 8px;font-size:11px;white-space:nowrap}
+.spawnactions{display:flex;gap:7px;flex-wrap:wrap}.spawnactions button{flex:1;min-width:170px}#spawnstatus{min-height:16px;color:#9fb0c0;font-size:11px}

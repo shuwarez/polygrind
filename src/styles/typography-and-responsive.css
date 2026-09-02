@@ -1,0 +1,317 @@
+/* --- Типографика экранов меню ---
+   Шрифты намеренно ограничены .overlay.menu: HUD, числа урона, лист
+   характеристик и прочие боевые показатели остаются моноширинными. */
+.overlay.menu{
+  --menu-heading:"Grim Cormorant SC",Georgia,"Times New Roman",serif;
+  --menu-copy:"Grim Cormorant Garamond",Georgia,"Times New Roman",serif;
+  --menu-bone:#f0e2c7;
+  --menu-parchment:#c9bead;
+  --menu-muted:#aaa094;
+  --menu-ember:#f3c981;
+  --menu-border:#6f5d4c;
+  --menu-border-hot:#d18742;
+  font-family:var(--menu-copy);font-weight:500;color:var(--menu-parchment);
+  font-kerning:normal;font-variant-ligatures:common-ligatures;
+}
+.overlay.menu .cards{align-items:stretch;max-width:1180px}
+.overlay.menu .cards.class-cards{
+  display:grid;grid-template-columns:repeat(4,280px);
+  width:auto;max-width:calc(100vw - 32px);gap:14px;
+}
+.overlay.menu h1,
+.overlay.menu .menu-screen-title,
+.overlay.menu .card .nm,
+.overlay.menu .card .cat,
+.overlay.menu .shopcat-head b,
+.overlay.menu .const-sky-copy b,
+.overlay.menu .const-title b,
+.overlay.menu .grave-run .gr-class,
+.overlay.menu .grave-empty b{
+  font-family:var(--menu-heading);font-weight:600;
+  color:var(--menu-bone);
+  text-shadow:1px 1px 0 #21160f,0 0 8px #a43b181f;
+}
+.overlay.menu h2,
+.overlay.menu .menu-screen-note,
+.overlay.menu .card .nt,
+.overlay.menu .card .id,
+.overlay.menu .card .k,
+.overlay.menu .shopcat-head span,
+.overlay.menu .const-title span,
+.overlay.menu .const-effect,
+.overlay.menu .grave-run .gr-sub,
+.overlay.menu .grave-empty{
+  font-family:var(--menu-copy);font-weight:500;color:var(--menu-parchment);
+}
+.overlay.menu > h1{font-size:clamp(31px,3vw,42px);letter-spacing:2px}
+.overlay.menu > h2,.overlay.menu .menu-screen-note{
+  font-size:18px;line-height:1.4;letter-spacing:.6px;color:var(--menu-muted);
+}
+.overlay.menu .menu-screen-title{
+  font-size:25px;line-height:1.15;letter-spacing:1.3px;color:var(--menu-bone)!important;
+}
+
+/* Классический выбор: четыре высокие class-specific рамки. Внутри каждой
+   по очереди проигрываются три новые восьмикадровые модели подклассов. */
+.overlay.menu .card.class-card{
+  width:280px;height:390px;min-height:390px;padding:0;gap:0;border:0;overflow:visible;
+  isolation:isolate;background:radial-gradient(circle at 50% 42%,#251d18 0,#15110f 68%,#0d0b0a 100%);
+  box-shadow:none;transition:filter .15s,transform .12s;
+}
+.overlay.menu .card.class-card:hover{
+  border:0;background:radial-gradient(circle at 50% 42%,#2d211a 0,#18120f 68%,#0e0b09 100%);
+  box-shadow:none;filter:brightness(1.07) contrast(1.03) drop-shadow(0 0 8px #d18a4138);
+}
+.overlay.menu .class-card-content{padding:48px 35px 36px;gap:5px}
+.overlay.menu .class-card .nm{
+  width:100%;max-width:100%;
+  min-height:34px;display:flex;align-items:center;justify-content:center;
+  font-size:25px;line-height:1.08;letter-spacing:1.4px;color:var(--menu-bone);
+}
+.overlay.menu .class-card .nm::after{
+  content:"◆";position:absolute;width:104px;height:8px;margin-top:42px;
+  color:#6f4a32;font:600 7px/1 Georgia,serif;
+  background:linear-gradient(90deg,transparent 0,#6f4a32 25%,#6f4a32 43%,transparent 43%,transparent 57%,#6f4a32 57%,#6f4a32 75%,transparent 100%) center/100% 1px no-repeat;
+  transition:color .15s,background-image .15s;
+}
+.overlay.menu .card.class-card:hover .nm{color:var(--menu-ember)}
+.overlay.menu .card.class-card:hover .nm::after{
+  color:#b06b32;
+  background-image:linear-gradient(90deg,transparent 0,#b06b32 25%,#b06b32 43%,transparent 43%,transparent 57%,#b06b32 57%,#b06b32 75%,transparent 100%);
+}
+.overlay.menu .class-card .nt{
+  min-height:0;max-width:208px;margin:3px 0 0;text-align:left;
+  font-size:13.3px;line-height:1.34;font-weight:600;letter-spacing:.03px;
+  color:var(--menu-parchment);text-shadow:0 1px 2px #000;
+}
+.overlay.menu .class-card[data-w="bow"] .nt{font-size:12.8px;line-height:1.31}
+.overlay.menu .card.class-card:hover .nt{color:#dfd3c0}
+.overlay.menu .class-card-frame{object-fit:fill;transition:filter .15s}
+.overlay.menu .class-subclass-preview{
+  width:108px;height:108px;margin:8px auto 0;pointer-events:none;background-repeat:no-repeat;
+  background-position:0 0;background-size:800% 100%;image-rendering:pixelated;image-rendering:crisp-edges;
+  filter:drop-shadow(0 6px 5px #000d);
+}
+.overlay.menu .class-subclass-name{
+  min-height:24px;margin-top:-1px;color:#d7b878;font:600 12px/1.2 var(--menu-heading);
+  letter-spacing:.7px;text-align:center;text-shadow:0 1px 3px #000;
+}
+.overlay.menu .card:not(.class-card) .nm{
+  font-size:21px;line-height:1.2;letter-spacing:1px;color:var(--menu-bone);
+}
+.overlay.menu .card:not(.class-card) .nt{font-size:15.5px;line-height:1.5;color:var(--menu-parchment)}
+.overlay.menu .card:not(.class-card){border-color:var(--menu-border)}
+.overlay.menu .card:not(.class-card):hover{border-color:var(--menu-border-hot);box-shadow:0 0 16px #7b32151c}
+.overlay.menu .card.subclass-card{
+  position:relative;width:320px;height:400px;min-height:400px;max-height:400px;
+  padding:0;gap:0;border:0;box-shadow:none;overflow:visible;isolation:isolate;
+  align-items:stretch;background:radial-gradient(circle at 50% 42%,#251d18 0,#15110f 68%,#0d0b0a 100%);
+}
+.overlay.menu .card.subclass-card:hover{
+  border:0;box-shadow:none;background:radial-gradient(circle at 50% 42%,#2d211a 0,#18120f 68%,#0e0b09 100%);
+}
+.subclass-card__frame{
+  position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;
+  image-rendering:pixelated;image-rendering:crisp-edges;object-fit:fill;
+  transition:filter .12s;
+}
+.subclass-card:hover .subclass-card__frame{filter:brightness(1.08) contrast(1.04) drop-shadow(0 0 7px #d18a4138)}
+.subclass-card__content{
+  position:relative;z-index:2;width:100%;height:100%;box-sizing:border-box;
+  padding:54px 42px 34px;display:flex;flex-direction:column;align-items:center;gap:6px;
+}
+.overlay.menu .subclass-card .nm{
+  min-height:44px;display:flex;align-items:center;justify-content:center;text-align:center;
+  font-size:20px;line-height:1.08;letter-spacing:.8px;color:var(--menu-bone);
+}
+.overlay.menu .subclass-card .subclass-sprite{
+  width:108px;height:108px;margin:0 auto;pointer-events:none;
+  filter:drop-shadow(0 5px 4px #000c);
+}
+.overlay.menu .subclass-card .vl{margin:0;font-size:25px;line-height:1;color:#e7b15c;text-shadow:0 0 8px #c56b2b55}
+.overlay.menu .subclass-card .nt{
+  width:100%;margin:3px 0 0;display:block;min-height:0;max-width:none;text-align:left;
+  font:500 13.6px/1.34 Georgia,"Times New Roman",serif;color:#d2c6b5;overflow-wrap:anywhere;
+}
+.overlay.menu .subclass-card[data-s="multiplier"] .nt,
+.overlay.menu .subclass-card[data-s="guardian"] .nt,
+.overlay.menu .subclass-card[data-s="swordmaster"] .nt{
+  font-size:13px;line-height:1.24;
+}
+
+/* Крупные действия говорят тем же декоративным голосом; пояснения и
+   счётчики внутри них сохраняют отдельный, спокойный уровень иерархии. */
+.overlay.menu > button,
+.overlay.menu .meta-actions > button,
+.overlay.menu .const-unlock,
+.overlay.menu .const-actions > button{
+  font-family:var(--menu-heading);font-weight:600;letter-spacing:1.2px;
+  color:var(--menu-bone);border-color:var(--menu-border);
+}
+.overlay.menu > button:hover,
+.overlay.menu .meta-actions > button:hover,
+.overlay.menu .const-unlock:hover:not(:disabled),
+.overlay.menu .const-actions > button:hover:not(:disabled){
+  color:var(--menu-ember);border-color:var(--menu-border-hot);
+  box-shadow:0 0 16px #7b321522;
+}
+.overlay.menu .shop-entry,
+.overlay.menu .const-entry,
+.overlay.menu .grave-entry,
+.overlay.menu .settings-entry{
+  min-height:62px;background:linear-gradient(180deg,#241d17,#110e0c);
+  color:var(--menu-bone);border-color:var(--menu-border);
+  font-size:20px;line-height:1;font-weight:600;letter-spacing:1.35px;
+  box-shadow:inset 0 1px #f0c47a0d,0 0 16px #0005;
+}
+.overlay.menu .shop-entry:hover,
+.overlay.menu .const-entry:hover,
+.overlay.menu .grave-entry:hover,
+.overlay.menu .settings-entry:hover{
+  color:var(--menu-ember);border-color:var(--menu-border-hot);
+  box-shadow:inset 0 1px #f0c47a18,0 0 18px #7b32152b;
+}
+.overlay.menu .const-entry-copy small,
+.overlay.menu .grave-entry-copy small{
+  font-family:var(--menu-copy);font-size:13px;line-height:1.15;font-weight:600;
+  letter-spacing:.45px;color:var(--menu-muted);text-shadow:none;
+}
+.overlay.menu .const-entry-copy small.ready{color:#c99d58;text-shadow:none}
+
+/* Чёткая клавиатурная фокусировка не зависит только от смены цвета рамки. */
+.overlay.menu .card.class-card:focus-visible,
+.overlay.menu button:focus-visible{
+  outline:2px solid #e5a85b;outline-offset:3px;border-color:var(--menu-border-hot);
+  box-shadow:inset 0 1px #f0c47a22,0 0 0 2px #080604,0 0 22px #b85a263d;
+}
+
+/* Технические блоки меню остаются моноширинными: суммы, ранги, действия
+   магазина, переключатель языка и скрытые отладочные панели. */
+.overlay.menu #bank,
+.overlay.menu .srow .sval,
+.overlay.menu .srow .saction,
+.overlay.menu .shop-refund-all,
+.overlay.menu .const-rank,
+.overlay.menu .const-progress-line,
+.overlay.menu .grave-run .gr-place,
+.overlay.menu .language-switch,
+.overlay.menu #testpanel,
+.overlay.menu #spawnpanel{
+  font-family:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+
+@media(max-width:1180px) and (min-width:761px){
+  .overlay.menu .cards.class-cards{grid-template-columns:repeat(2,245px);gap:10px}
+  .overlay.menu .card.class-card{width:245px;height:342px;min-height:342px}
+  .overlay.menu .class-card-content{padding:42px 31px 30px;gap:3px}
+  .overlay.menu .class-card .nm{font-size:22px;min-height:30px}
+  .overlay.menu .class-subclass-preview{width:108px;height:108px;margin-top:7px}
+  .overlay.menu .class-subclass-name{font-size:11px;min-height:21px}
+  .overlay.menu .class-card .nt{font-size:12px;line-height:1.28;max-width:183px}
+  .overlay.menu .class-card[data-w="bow"] .nt{font-size:11.6px;line-height:1.25}
+}
+@media(max-width:760px){
+  .overlay.menu{padding-inline:12px}
+  .overlay.menu #brandnm{width:min(40.2vw,304px)}
+  .overlay.menu .brandtorch{width:clamp(24px,5vw,32px)}
+  .overlay.menu .cards.class-cards{grid-template-columns:245px;width:auto;max-width:100%;gap:10px}
+  .overlay.menu .card.class-card{width:245px;height:342px;min-height:342px}
+  .overlay.menu .class-card-content{padding:42px 31px 30px;gap:3px}
+  .overlay.menu .class-card .nm{font-size:22px;min-height:30px}
+  .overlay.menu .class-subclass-preview{width:108px;height:108px;margin-top:7px}
+  .overlay.menu .class-subclass-name{font-size:11px;min-height:21px}
+  .overlay.menu .class-card .nt{font-size:12px;line-height:1.28;max-width:183px}
+  .overlay.menu .class-card[data-w="bow"] .nt{font-size:11.6px;line-height:1.25}
+}
+@media(max-height:800px) and (min-width:1180px){
+  .overlay.menu{gap:8px;padding-block:8px 10px}
+  .overlay.menu #brandnm{width:clamp(333px,34.3vw,382px)}
+  .overlay.menu .brandtorch{width:clamp(32px,3.2vw,40px)}
+  .overlay.menu .cards.class-cards{grid-template-columns:repeat(4,245px);gap:10px}
+  .overlay.menu .card.class-card{width:245px;height:342px;min-height:342px}
+  .overlay.menu .class-card-content{padding:42px 31px 30px;gap:3px}
+  .overlay.menu .class-card .nm{font-size:22px;min-height:30px}
+  .overlay.menu .class-subclass-preview{width:108px;height:108px;margin-top:7px}
+  .overlay.menu .class-subclass-name{font-size:11px;min-height:21px}
+  .overlay.menu .class-card .nt{font-size:12px;line-height:1.28;max-width:183px}
+  .overlay.menu .class-card[data-w="bow"] .nt{font-size:11.6px;line-height:1.25}
+  .overlay.menu .meta-actions > button{min-height:54px}
+}
+#hint{position:absolute;bottom:10px;left:14px;font-size:13.8px;color:var(--dim);line-height:1.6;pointer-events:none;text-shadow:0 1px 3px #000}
+#toast{position:absolute;top:70px;left:50%;transform:translateX(-50%);font-size:16.2px;
+  color:var(--amber);letter-spacing:2px;pointer-events:none;opacity:0;transition:opacity .3s}
+/* Объявление повторной книги: крупно, по центру, без паузы и без кнопки.
+   Первая находка по-прежнему открывает окно — там игрок читает, что книга
+   вообще делает. Вторую и дальше он уже знает, и останавливать бой ради
+   строчки «тир 2» значит рвать темп на каждом подъёме. */
+#pickup{position:absolute;top:33%;left:50%;transform:translateX(-50%);pointer-events:none;
+  opacity:0;transition:opacity .25s;text-align:center;white-space:nowrap}
+#pickup .pn{font-size:clamp(30px,4.4vw,54px);font-weight:800;letter-spacing:5px;line-height:1.05}
+#pickup .pv{font-size:17.5px;letter-spacing:3px;color:#7d8b9a;margin-top:4px}
+/* Полоса босса висит всё время боя: тост живёт 1.4 сек, за это время
+   три аффикса прочитать невозможно. */
+/* Клеймо сборки: намеренно тусклое, читается только если вглядеться */
+#build{position:absolute;right:8px;bottom:6px;font-size:10px;color:#3a4550;
+  pointer-events:none;letter-spacing:1px;user-select:text}
+/* Панель пачки: снизу, чтобы не спорить с панелью босса сверху.
+   Аффиксов у пачки бывает до десяти — кольцами вокруг каждого монстра
+   столько не показать, читается только списком. */
+#packbar{position:absolute;bottom:46px;left:50%;transform:translateX(-50%);
+  pointer-events:none;text-align:center;background:#0b0f14e6;border:1px solid #ffffff22;
+  border-radius:8px;padding:7px 18px;max-width:92vw}
+#packbar .pt{font-size:11.5px;letter-spacing:4px;color:#7d8b9a;font-weight:700}
+#packbar .pa{font-size:16.5px;line-height:1.3;font-weight:700;letter-spacing:.5px;margin-top:2px}
+#packbar .psep{color:#4a5561;margin:0 8px;font-weight:400}
+/* Язык выбирается только в главном меню: два равноправных флажка, активный
+   вариант читается и цветом, и рамкой, поэтому не зависит от одного цвета. */
+.language-switch{display:flex;gap:8px;justify-content:center;align-items:center;margin:-4px 0 12px}
+.language-switch button{min-width:82px;padding:8px 13px;border-color:#42505f;color:#b8c4d0;
+  font-size:14px;letter-spacing:1.5px;background:#0c1118d9}
+.language-switch button.active{border-color:#ffb340;color:#fff0a8;background:#2a1c0d;
+  box-shadow:0 0 15px #ff9a2f33}
+.language-switch button b{font-size:13px}
+.menu-utility{display:flex;gap:8px;justify-content:center;align-items:center;margin:-4px 0 12px;flex-wrap:wrap}
+.menu-utility .language-switch{margin:0}
+.menu-music-toggle,.menu-sfx-toggle{min-width:154px;padding:8px 13px;
+  font-size:13px;letter-spacing:1px;background:#16100cd9}
+.menu-music-toggle{border-color:#6b4a24;color:#e8d7bd}
+.menu-sfx-toggle{border-color:#425d69;color:#c7dce4}
+.menu-music-toggle span{display:inline-block;width:20px;color:#f0b34a;font-size:16px;line-height:1}
+.dev-zone-entry{position:absolute;left:16px;top:16px;z-index:3;display:flex;flex-direction:column;
+  align-items:flex-start;gap:4px;min-width:178px;padding:10px 14px;text-align:left;border:1px solid #4a765f;
+  background:linear-gradient(180deg,#15251d,#0b1210);color:#a8e3bf;box-shadow:inset 0 1px #c9ffe718,0 0 18px #4bc68116}
+.dev-zone-entry b{font:700 14px/1 monospace;letter-spacing:2px}.dev-zone-entry small{font:600 9px/1.2 monospace;letter-spacing:.7px;color:#789987}
+.dev-zone-entry:hover{border-color:#85d6aa;color:#d5ffe6;box-shadow:inset 0 1px #e8fff333,0 0 22px #52cf8b38}
+@media(max-width:760px){.dev-zone-entry{left:8px;top:8px;min-width:0;padding:8px 10px}.dev-zone-entry small{display:none}}
+.menu-music-toggle[aria-pressed="false"],.menu-sfx-toggle[aria-pressed="false"]{border-color:#42505f;color:#7d8b9a;background:#0c1118d9}
+.menu-music-toggle[aria-pressed="false"] span{color:#66727e}
+.language-flag{display:inline-block;width:24px;height:15px;border:1px solid #ffffff66;border-radius:2px;
+  box-shadow:0 1px 3px #0008;vertical-align:-3px;margin-right:8px}
+.flag-ru{background:linear-gradient(#fff 0 33.33%,#1f57a5 33.33% 66.66%,#d52b1e 66.66%)}
+.flag-en{background:
+  linear-gradient(90deg,transparent 42%,#cf2135 42% 58%,transparent 58%),
+  linear-gradient(0deg,transparent 36%,#cf2135 36% 64%,transparent 64%),
+  linear-gradient(33deg,transparent 44%,#fff 44% 56%,transparent 56%),
+  linear-gradient(-33deg,transparent 44%,#fff 44% 56%,transparent 56%),#21468b}
+/* Диагностика остаётся отдельным экранным слоем: она не масштабируется вместе
+   с игровым миром и не зависит от #ov, который занят меню и находками. */
+#diagbadge{position:absolute;right:12px;bottom:24px;z-index:75;display:none;padding:8px 11px;
+  border:1px solid #d38a36;background:#22160eef;color:#ffd28a;font:700 11px/1.25 monospace;
+  letter-spacing:1px;box-shadow:0 0 18px #d36f2544}
+#diagpanel{position:absolute;inset:18px;z-index:80;display:none;flex-direction:column;gap:10px;
+  padding:16px;background:#070a0df5;border:1px solid #53606e;color:#d9e2ea;
+  box-shadow:0 0 0 100vmax #0009,0 12px 44px #000;overflow:auto;font-family:monospace}
+#diagpanel h1{margin:0;color:#ffbd61;font-size:22px;letter-spacing:3px}
+#diagpanel h2{margin:0;color:#8998a7;font-size:11px;letter-spacing:1px;text-transform:none}
+.diag-grid{display:grid;grid-template-columns:minmax(280px,.8fr) minmax(360px,1.2fr);gap:12px;min-height:0}
+.diag-box{border:1px solid #34404c;background:#0c1117;padding:11px;min-width:0}
+.diag-box h3{margin:0 0 8px;color:#8fc5d7;font-size:12px;letter-spacing:1.5px}
+#diaglive,#diagpreview{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.45 monospace;color:#cbd6df}
+#diagpreview{max-height:46vh;overflow:auto;color:#aebbc6}
+.diag-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.diag-actions button,.diag-actions select{padding:8px 10px;border:1px solid #53606e;background:#101821;
+  color:#dce7ee;font:700 11px/1 monospace;letter-spacing:.5px}
+.diag-actions button:hover{border-color:#e2a04e;color:#ffe1a6}
+#diagclear{border-color:#713b43;color:#ef9aa6}#diagclose{margin-left:auto}
+#diagreportselect{max-width:min(520px,72vw)}
+@media(max-width:840px){#diagpanel{inset:8px;padding:11px}.diag-grid{grid-template-columns:1fr}#diagpreview{max-height:32vh}}

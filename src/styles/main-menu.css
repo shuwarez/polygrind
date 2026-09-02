@@ -1,0 +1,147 @@
+/* --- Главное меню --- */
+/* Закопчённая стена кузницы остаётся заметнее по бокам, а тёмная спокойная
+   область в центре сохраняет читаемость логотипа, карточек и кнопок. */
+.overlay.menu{background:
+  radial-gradient(ellipse 70% 62% at 50% 42%,#07060580 0%,#02040612 76%,#02030548 100%),
+  url("../../assets/images/ui/style-overlay-menu-1eaee352cf.webp") center/cover no-repeat,#040608;
+  justify-content:safe center;overflow-y:auto;gap:14px;padding:12px 24px 24px}
+#brand{display:flex;align-items:center;justify-content:center;gap:clamp(8px,1.4vw,18px);max-width:100%}
+/* Логотип и факел хранятся в двух компактных индексированных листах. Canvas
+   проигрывает восемь кадров, а CSS только масштабирует готовые пиксели. */
+#brandnm{display:block;width:clamp(382px,44.1vw,500px);height:auto;aspect-ratio:32/9;
+  image-rendering:pixelated;image-rendering:crisp-edges;
+  filter:drop-shadow(0 8px 8px #000b) drop-shadow(0 0 11px #9b271844)}
+.brandtorch{display:block;width:clamp(38.4px,4vw,51.2px);height:auto;aspect-ratio:3/8;
+  image-rendering:pixelated;image-rendering:crisp-edges;
+  filter:drop-shadow(0 7px 5px #000c) drop-shadow(0 0 12px #ff6a1f55)}
+#brandtorchr{transform:scaleX(-1)}
+/* Тёплое выделение карточек поддерживает золотую палитру игры. */
+.overlay.menu .card:hover{border-color:#ff9a2f;box-shadow:0 0 22px #ff8a2f22}
+.overlay.menu button{border-color:#6b4a24}
+.overlay.menu button:hover{border-color:#ffb340;box-shadow:0 0 16px #ff8a2f33}
+.overlay h2{font-size:18.8px;color:var(--dim);font-weight:400;letter-spacing:1px}
+.settings-panel{display:flex;flex-direction:column;gap:14px;width:min(440px,calc(100vw - 40px));
+  padding:20px 22px;background:#0d1218f2;border:1px solid #425368;box-shadow:0 12px 34px #000a,inset 0 1px #ffffff08}
+.settings-row{display:flex;align-items:center;justify-content:space-between;gap:18px}
+.settings-row label{color:#dce6f0;font-weight:800;letter-spacing:1.6px}
+.settings-row output{min-width:58px;color:#ffb340;font:800 18px/1 monospace;text-align:right}
+#sfxvolume{width:100%;height:8px;margin:4px 0 2px;accent-color:#e59028;cursor:pointer}
+#sfxmute{width:100%;border-color:#596b7d;color:#dce6f0}
+#sfxmute[aria-pressed="true"]{border-color:#9b3f4e;color:#ff9a8a;background:#211116}
+#resumegame{width:min(300px,calc(100vw - 80px));border-color:#6f8e60;color:#cce9bc}
+#quickpause{position:absolute;inset:0;z-index:8;display:none;align-items:center;justify-content:center;
+  pointer-events:none;background:transparent;color:#f2f4f7;font:700 42px/1 "JetBrains Mono",monospace;
+  letter-spacing:8px;text-shadow:0 2px 5px #000c}
+.cards{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;max-width:1160px}
+.level-card-grid{display:grid;grid-template-columns:repeat(var(--level-columns),270px);gap:8px 14px;align-items:stretch}
+.level-card-column{display:contents}
+.level-card-column>.card{grid-column:var(--level-column);grid-row:1;width:270px}
+.level-card-column>.level-unlocks{grid-column:var(--level-column);grid-row:2}
+.level-unlocks{width:270px;padding:7px 8px 8px;background:#091018e8;border:1px solid #2d4055;
+  box-shadow:inset 0 1px #ffffff08}
+.level-unlocks-head{display:flex;align-items:baseline;justify-content:center;gap:7px;margin-bottom:6px;text-align:center}
+.level-unlocks-head b{color:#9fc1ef;font-size:11px;letter-spacing:1.6px}
+.level-unlocks-head span{color:#718399;font-size:9px;letter-spacing:.35px}
+.level-unlocks-list{display:flex;flex-direction:column;gap:6px}
+.level-unlock{--unlock-col:#6fa8ff;display:grid;grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;column-gap:6px;row-gap:3px;min-width:0;width:100%;padding:7px 8px;background:#0f1720;
+  border:1px solid #2b3b4e;border-left:3px solid var(--unlock-col);cursor:help;outline:none;transition:.12s}
+.level-unlock:hover,.level-unlock:focus{border-color:var(--unlock-col);box-shadow:0 0 14px #6fa8ff1f;background:#131d28}
+.level-unlock-source{grid-column:1/-1;color:#8798aa;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.level-unlock-arrow{display:none}
+.level-unlock-target{color:var(--unlock-col);font-size:12px;font-weight:800;letter-spacing:.45px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.level-unlock-target::before{content:"→ ";color:#536c89}
+.level-unlock-progress{color:#c7d3e0;font-size:11px;font-weight:700;white-space:nowrap;padding-left:3px}
+.level-unlock.r-rare{--unlock-col:#6fa8ff}.level-unlock.r-epic{--unlock-col:#b884ff}
+.level-unlock.r-key{--unlock-col:#ffb547}.level-unlock.r-blood{--unlock-col:#ff677f}
+@media(max-width:1180px){
+  .level-card-grid{display:flex;flex-wrap:wrap;align-items:flex-start}
+  .level-card-column{display:flex;flex-direction:column;gap:8px;width:270px}
+  .level-card-column>.card{width:270px}
+}
+.level-actions{display:flex;flex-direction:column;align-items:stretch;gap:8px;min-width:290px}
+.level-actions button{width:100%}
+.level-key-hint{font-size:11px;letter-spacing:1.1px;text-align:center;color:#8293a6}
+.reroll-key{display:inline-block;margin-left:5px;padding:2px 5px;border:1px solid #596574;border-radius:3px;
+  background:#0b1016;color:#c8d4e2;font:700 10px/1 monospace;letter-spacing:.8px;vertical-align:1px}
+#skilltips-toggle{font-size:12px;padding:7px 14px;color:#a9c7ff;border-color:#496b98;background:#0f1721}
+#skilltips-toggle:hover{border-color:#84aef8;box-shadow:0 0 14px #6fa8ff22}
+#skilltips-toggle.tips-off{color:#7d8b9a;border-color:#36414e;background:#101419}
+/* 1000px разбивали четыре карточки на 3+1: при открытой в магазине четвёртой
+   карте ряд обязан вставать в одну строку, иначе выбор читается как «3 и ещё одна». */
+.card{width:270px;min-height:160px;background:var(--panel);border:1px solid var(--line);
+  border-radius:4px;padding:16px;cursor:pointer;transition:.12s;display:flex;flex-direction:column;gap:8px}
+.card:hover{border-color:var(--amber);transform:translateY(-3px)}
+.card.class-card{position:relative;overflow:hidden}
+.class-card-frame{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;
+  image-rendering:pixelated;image-rendering:crisp-edges}
+.class-card-content{position:relative;z-index:2;width:100%;height:100%;box-sizing:border-box;
+  display:flex;flex-direction:column;align-items:center;text-align:center}
+.class-card .nm{font-size:23px;letter-spacing:2.5px;line-height:1.2;color:#f7fafc}
+.class-card .nt{font-size:12.8px;line-height:1.45;color:#aebbc8}
+.hero-preview{display:inline-block;flex:0 0 auto;background-repeat:no-repeat;background-position:center;background-size:contain}
+.hero-preview.sheet{background-position:0 0;background-size:400% 100%;image-rendering:pixelated;image-rendering:crisp-edges}
+.hero-preview.sheet[data-subclass-preview],.class-subclass-preview{background-size:800% 100%}
+.card .cat{font-size:12.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim)}
+.card .card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;min-height:24px}
+.card .card-top .cat{min-width:0;padding-top:3px}
+.level-key-group{display:flex;align-items:flex-start;gap:8px;min-width:0}
+.level-key{display:inline-grid;place-items:center;flex:0 0 auto;width:23px;height:23px;padding:0;
+  border:1px solid #8b6634;border-radius:3px;background:#1b140b;color:#ffc05a;font:700 13px/1 monospace;
+  box-shadow:inset 0 0 0 1px #ffffff0b}
+/* Ограничение по классам выводится из тех же wep/req/noMin, что фильтруют пул.
+   Универсальные карточки не получают лишней плашки; на остальных маленькие
+   пиксельные знаки читаются и цветом, и формой, а названия доступны в tooltip. */
+.class-access{display:flex;align-items:center;justify-content:flex-end;gap:4px;flex:0 0 auto}
+.class-access-label{font-size:8px;line-height:1;letter-spacing:.8px;color:#647487;text-transform:uppercase;margin-right:1px}
+.class-icon{display:inline-grid;place-items:center;width:23px;height:23px;border:1px solid currentColor;
+  border-radius:3px;background:#0a0e13;box-shadow:inset 0 0 0 1px #ffffff0b;line-height:0}
+.class-icon svg{display:block;width:17px;height:17px;overflow:visible;image-rendering:pixelated;shape-rendering:crispEdges}
+.class-icon-warrior{color:#f0a43c}.class-icon-archer{color:#8bd35b}
+.class-icon-mage{color:#b58aff}.class-icon-necromancer{color:#89d6b0}
+.card .nm{font-size:18.8px;font-weight:600;line-height:1.35}
+.card .vl{font-size:27.5px;color:var(--amber);font-weight:700}
+.card-example{margin-top:1px;padding:8px 9px;background:#0d151e;border:1px solid #26394d;border-left:2px solid #6fb3ff;
+  color:#c8d8e8;font-size:12.2px;line-height:1.45}
+.card-example b{display:block;color:#8fbcff;font-size:10px;letter-spacing:1.2px;margin-bottom:2px}
+.card .nt{font-size:13.8px;color:var(--dim);line-height:1.5;margin-top:auto}
+.card .id{font-size:11.2px;color:#3d4854;letter-spacing:.5px}
+.card.r-rare{border-color:#3a6ea5}   .card.r-rare  .vl{color:#6fb3ff}
+.card.r-epic{border-color:#7a4fb5}   .card.r-epic  .vl{color:#c08cff}
+.card.r-key {border-color:#b55a2a;background:#1a1210} .card.r-key .vl{color:#ff8a3d}
+/* Красная редкость: выше кейстоуна. Отдельный уровень нужен потому, что такие
+   карточки не выпадают в общей рулетке вообще — их открывает только доведённая
+   до потолка ветка, и игрок должен опознать это с одного взгляда. */
+/* Метка «действует и на свиту». Показывается только некроманту и только на
+   тех карточках, чей бонус реально доходит до приспешников. */
+/* «Сейчас» рядом с прибавкой: игрок должен видеть, к чему прибавляет.
+   +44% к урону свиты значат разное при нуле и при двухстах уже вложенных. */
+.card .vl .cur{display:block;font-size:12.5px;letter-spacing:1px;color:#7d8b9a;
+  font-weight:400;margin-top:2px}
+.card .mn{display:inline-block;margin-top:7px;font-size:11px;letter-spacing:1.5px;
+  color:#8be04e;border:1px solid #8be04e55;border-radius:3px;padding:2px 6px;font-weight:700}
+.card.r-blood{border-color:#c02a2a;background:#1c0f11;box-shadow:0 0 18px #ff2a2a22}
+.card.r-blood .vl{color:#ff5a4e}
+.card.r-blood .nm{color:#ff8a80}
+/* Рамки навыков приходят в одном каноническом размере 304x194, а карточки
+   имеют переменную высоту. 9-slice сохраняет углы и тянет только прямые рейки;
+   псевдоэлемент не участвует в раскладке и не создаёт объектов в игровом цикле. */
+.level-card-grid .card{--skill-card-frame:var(--skill-frame-common);position:relative;border-color:transparent}
+.level-card-grid .card.r-rare{--skill-card-frame:var(--skill-frame-blue)}
+.level-card-grid .card.r-epic{--skill-card-frame:var(--skill-frame-purple)}
+.level-card-grid .card.r-key{--skill-card-frame:var(--skill-frame-orange)}
+.level-card-grid .card.r-blood{--skill-card-frame:var(--skill-frame-red)}
+.level-card-grid .card::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  border:12px solid transparent;border-image-source:var(--skill-card-frame);border-image-slice:20;
+  border-image-width:12px;border-image-outset:0;border-image-repeat:stretch;
+  image-rendering:pixelated;image-rendering:crisp-edges}
+.level-card-grid .card>*{position:relative;z-index:2}
+button{font-family:inherit;background:var(--panel);color:var(--ink);border:1px solid var(--line);
+  padding:9px 20px;border-radius:3px;cursor:pointer;font-size:15px;letter-spacing:1px}
+button:hover{border-color:var(--amber)}
+button:disabled{opacity:.35;cursor:default}
+.shop-entry{display:flex;align-items:center;justify-content:center;gap:2px;min-width:250px;min-height:62px;
+  padding:6px 16px;border:2px solid #d79b27;background:linear-gradient(180deg,#3d2a0c,#17120a);
+  color:#ffe5a0;font-size:19px;font-weight:800;letter-spacing:2px;box-shadow:0 0 18px #e6a52b22}
+.shop-entry:hover{border-color:#ffe070;box-shadow:0 0 26px #e6a52b55;transform:translateY(-2px)}
+.shop-entry .shopcoin{width:24px;height:24px;image-rendering:pixelated;image-rendering:crisp-edges;pointer-events:none}

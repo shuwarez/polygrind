@@ -1,29 +1,13 @@
+node_modules/
+build/
+.DS_Store
+Thumbs.db
 __pycache__/
 *.py[cod]
 
-# Локальные обязательные снимки разработки. Никогда не добавлять в Git/GitHub.
-/old versions/
-/old_versions/
-
-# Устаревающие одноразовые отчёты не возвращать в корень репозитория.
-# Замеры остаются локальными или в истории задачи/коммита.
-/BALANCE_REPORT.md
-/HANDOVER.md
-
-# Локальная среда сборки, исходники генерации, концепты и промежуточные экспорты.
-# Runtime-версии ресурсов уже встроены в index.html и отдельно не публикуются.
-/.codex_tmp/
-/.artifact-work/
-/assets/
-/outputs/
-/outputs/*/previews/
-/outputs/*/*-previews/
-/outputs/**/*.inspect.ndjson
-/outputs/**/~$*.xlsx
-/outputs/**/*_IDEAS.xlsx
-/outputs/*.png
-/outputs/grim-grind-title-spritesheet-concept.png
-/outputs/grim-grind-title-spritesheet-wide.png
-/outputs/grim-grind-torch-spritesheet-8f.png
-/outputs/grim-grind-title-spritesheet-optimized.png
-/outputs/grim-grind-torch-spritesheet-optimized.png
+# Локальные рабочие материалы не являются частью проекта.
+.codex_tmp/
+.artifact-work/
+outputs/
+old versions/
+old_versions/

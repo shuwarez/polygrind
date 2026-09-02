@@ -23,9 +23,6 @@ concurrency:
   group: pages
   cancel-in-progress: true
 
-env:
-  GAME_FILE: index.html
-
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -35,19 +32,23 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Собрать сборку и проставить версию
+      - name: Проверить структуру и регрессию
+        run: |
+          node tools/verify-structure.js
+          node run-all.js
+
+      - name: Собрать папку публикации и проставить версию
         run: |
           set -e
-          if [ ! -f "$GAME_FILE" ]; then
-            echo "ОШИБКА: не нашёл $GAME_FILE. Имя чувствительно к регистру. Есть:"; ls -1; exit 1
-          fi
           BUILD="${GITHUB_SHA::7} · $(date -u +%Y-%m-%d)"
           mkdir -p build
-          # Pages отдаёт index.html как главную страницу — переименовываем
-          cp "$GAME_FILE" build/index.html
-          sed -i "s/__BUILD__/${BUILD}/" build/index.html
-          grep -q "</script>" build/index.html || { echo "ОШИБКА: скрипт оборван"; exit 1; }
-          echo "собрано: ${BUILD}, размер $(du -h build/index.html | cut -f1)"
+          cp index.html build/index.html
+          cp CNAME build/CNAME
+          cp -R src build/src
+          cp -R assets build/assets
+          sed -i "s/__BUILD__/${BUILD}/" build/src/game/input-and-bootstrap.js
+          test -f build/assets/manifest.json
+          echo "собрано: ${BUILD}, общий размер $(du -sh build | cut -f1)"
 
       - uses: actions/configure-pages@v5
 

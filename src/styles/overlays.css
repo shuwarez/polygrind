@@ -1,0 +1,4 @@
+/* --- Оверлеи (выбор оружия, уровень, смерть) --- */
+.overlay{position:absolute;inset:0;background:#070a0dee;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:22px;padding:24px;z-index:10}
+.overlay h1{font-size:37.5px;letter-spacing:6px;font-weight:600}

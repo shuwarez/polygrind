@@ -1,0 +1,3151 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-09-02T17:14:12.350Z",
+  "note": "Generated from asset references in index.html and src/.",
+  "assets": [
+    {
+      "path": "assets/audio/archer-shot-sound-data-002-ec935773bc.ogg",
+      "mime": "audio/ogg",
+      "bytes": 4668,
+      "sha256": "a537c616742c4d4fa3919a61caf2c53ead11c3d1754aa3940ce28f9b0101cc9e"
+    },
+    {
+      "path": "assets/audio/archer-shot-sound-data-003-24f9c4859d.ogg",
+      "mime": "audio/ogg",
+      "bytes": 4687,
+      "sha256": "1bed32779aca31427b20bcf2a5d264437c618e1778db384ffce677114a5bcf40"
+    },
+    {
+      "path": "assets/audio/archer-shot-sound-data-004-b2dec10673.ogg",
+      "mime": "audio/ogg",
+      "bytes": 4544,
+      "sha256": "469400e38347e51f95df933f5c58edd6d3537ccd8129ae77bdfbf47e74b97231"
+    },
+    {
+      "path": "assets/audio/archer-shot-sound-data-e83fb0ac21.ogg",
+      "mime": "audio/ogg",
+      "bytes": 4645,
+      "sha256": "2bfd7a9cf697ecfb5730d38bb20a20494b2e584aa8d0622c9ea2fdbaf869ad80"
+    },
+    {
+      "path": "assets/audio/confirm-sound-data-82a2741879.ogg",
+      "mime": "audio/ogg",
+      "bytes": 1865,
+      "sha256": "300084b049183ca0e8da0938208a6db95ad9ee67254fe81b2138a28cbdc2d62e"
+    },
+    {
+      "path": "assets/audio/hover-sound-data-2c140998b3.ogg",
+      "mime": "audio/ogg",
+      "bytes": 1358,
+      "sha256": "64b6e293a63d3e76658572c83f875f874a8b61842ed799238d41a1441a817f18"
+    },
+    {
+      "path": "assets/audio/level-up-sound-data-912afe17e5.ogg",
+      "mime": "audio/ogg",
+      "bytes": 7326,
+      "sha256": "57c6461aae12fc01c277fa081e3c7b9319a0dc49fe86dc83c45f262a65cbdf63"
+    },
+    {
+      "path": "assets/audio/mage-attack-sound-data-002-2e91b225d9.ogg",
+      "mime": "audio/ogg",
+      "bytes": 5261,
+      "sha256": "2f705e4eb6720aec80e4480b7d1fd7e2b5b37a71ced16b7cb6c052ecbcf6390f"
+    },
+    {
+      "path": "assets/audio/mage-attack-sound-data-003-73e74c2676.ogg",
+      "mime": "audio/ogg",
+      "bytes": 5199,
+      "sha256": "442afd04d92987bb9eb4d90f1fd06b8dc93a62afcb673cdb6bcf98b19319ebed"
+    },
+    {
+      "path": "assets/audio/mage-attack-sound-data-004-07aa6cd881.ogg",
+      "mime": "audio/ogg",
+      "bytes": 5217,
+      "sha256": "013d99d1bfdb688ad9e6f85e10c2bf579bbb9740f66855bacad76cbfba9c2417"
+    },
+    {
+      "path": "assets/audio/mage-attack-sound-data-83413af1e3.ogg",
+      "mime": "audio/ogg",
+      "bytes": 5233,
+      "sha256": "3b6baf3457eb7fc4bc3d0edcbccc9b670f5a3019e6566f18ea91493c3a14baee"
+    },
+    {
+      "path": "assets/audio/menu-music-data-f0eaed2ffc.ogg",
+      "mime": "audio/ogg",
+      "bytes": 203349,
+      "sha256": "077f237a32911f2ce4564cb39991cd2ec96d553e2ece6f87b8048dba4c0b9e2b"
+    },
+    {
+      "path": "assets/audio/monster-death-sound-data-002-71f9e8ba95.ogg",
+      "mime": "audio/ogg",
+      "bytes": 5519,
+      "sha256": "abe286fec84839209237dec066e661f7c70099a956922077949fb284e0250a89"
+    },
+    {
+      "path": "assets/audio/monster-death-sound-data-003-f99b4fc554.ogg",
+      "mime": "audio/ogg",
+      "bytes": 5442,
+      "sha256": "58f48bd0a53dc152764e70058cc684438374e67afe29352e8d08fdd7ed97a92d"
+    },
+    {
+      "path": "assets/audio/monster-death-sound-data-004-0d30931b3d.ogg",
+      "mime": "audio/ogg",
+      "bytes": 5781,
+      "sha256": "8fdd1512dbd6f0feccf9136aad65f95ce0a0fe847e73474a74bd70089953c177"
+    },
+    {
+      "path": "assets/audio/monster-death-sound-data-005-b7f8f2efef.ogg",
+      "mime": "audio/ogg",
+      "bytes": 5805,
+      "sha256": "5c37fa3d8eb9a2f6007cc3d9ff0491d1c3d5d6380a293e13a1ae8854b6e8d5c7"
+    },
+    {
+      "path": "assets/audio/monster-death-sound-data-006-f9b36d2de5.ogg",
+      "mime": "audio/ogg",
+      "bytes": 5812,
+      "sha256": "5a5353c94448e36e9c959383ac66e9de1a05734dc8336e7f14a8b629ee957d7d"
+    },
+    {
+      "path": "assets/audio/monster-death-sound-data-007-a507da1b3e.ogg",
+      "mime": "audio/ogg",
+      "bytes": 6019,
+      "sha256": "d864a7b420dc2ddfa98130ba0bd6d87522d6c4dceb1a4e3e71dd1c822429799a"
+    },
+    {
+      "path": "assets/audio/monster-death-sound-data-008-ba69122f65.ogg",
+      "mime": "audio/ogg",
+      "bytes": 5790,
+      "sha256": "f46aae1dc1dac30061eda6abc1c5aedd3f8ba9812b44fb1d4415780fbb18ce85"
+    },
+    {
+      "path": "assets/audio/monster-death-sound-data-009-5e440c38c6.ogg",
+      "mime": "audio/ogg",
+      "bytes": 5977,
+      "sha256": "18fd66c181b58820bb70789d1b546c1e288c38e7345192c6253043842805adea"
+    },
+    {
+      "path": "assets/audio/monster-death-sound-data-010-7fe093fbee.ogg",
+      "mime": "audio/ogg",
+      "bytes": 5493,
+      "sha256": "bef988b2d7bd6841009cf645e45e167dcba97954a1e7c0704ec51ea00c5a42bd"
+    },
+    {
+      "path": "assets/audio/monster-death-sound-data-011-5012e71971.ogg",
+      "mime": "audio/ogg",
+      "bytes": 5496,
+      "sha256": "9b603a481623683e9026b3d52c03cb688e72f915a54232a8a83ecb407a2a9ac7"
+    },
+    {
+      "path": "assets/audio/monster-death-sound-data-012-a765ffb6a9.ogg",
+      "mime": "audio/ogg",
+      "bytes": 5374,
+      "sha256": "03fa60484b3da6f6060a17356dac0038d37cd5f7eb910f7c729922868c51c849"
+    },
+    {
+      "path": "assets/audio/monster-death-sound-data-de8cd0c3db.ogg",
+      "mime": "audio/ogg",
+      "bytes": 5541,
+      "sha256": "421699278a2a96484b17a10fee89c3389abe1894a21e7eae660547f50bce6ec0"
+    },
+    {
+      "path": "assets/audio/monster-hit-sound-data-002-e1a65c6042.ogg",
+      "mime": "audio/ogg",
+      "bytes": 5164,
+      "sha256": "b6c112ad757537c3d8244bafdcd3f8abe88ddcd1bf5a64cea26da68f21ceaa26"
+    },
+    {
+      "path": "assets/audio/monster-hit-sound-data-003-dc7ccc35d2.ogg",
+      "mime": "audio/ogg",
+      "bytes": 4990,
+      "sha256": "51d42e8d3ee876ea00434124902907a29909cee860761eb116ee00337af44247"
+    },
+    {
+      "path": "assets/audio/monster-hit-sound-data-004-a2c6c3bc41.ogg",
+      "mime": "audio/ogg",
+      "bytes": 5637,
+      "sha256": "42d0419c1e8d2be375196c5e77604a5630814d1ade1fe81188cd15b8685f8af0"
+    },
+    {
+      "path": "assets/audio/monster-hit-sound-data-005-90f2e6b73e.ogg",
+      "mime": "audio/ogg",
+      "bytes": 6003,
+      "sha256": "6bad456ddff0a716e2b05e08e77646b32217d4d5278f94ac5f09d83204a8c1ff"
+    },
+    {
+      "path": "assets/audio/monster-hit-sound-data-006-7e26035ce5.ogg",
+      "mime": "audio/ogg",
+      "bytes": 5603,
+      "sha256": "a721688b3f10d64f76449b8cd03cbf5795d7a8e96924298499663814c3d537d4"
+    },
+    {
+      "path": "assets/audio/monster-hit-sound-data-007-8021f6023d.ogg",
+      "mime": "audio/ogg",
+      "bytes": 5041,
+      "sha256": "1eaa3e719f18cb7f395e490d42d91885cda05efdf1678998d8a987fd1ec70a71"
+    },
+    {
+      "path": "assets/audio/monster-hit-sound-data-008-7239440526.ogg",
+      "mime": "audio/ogg",
+      "bytes": 5044,
+      "sha256": "0a4db1f01d047e38ee1ce43190f3969e868a57d859510299b7f88b0f17068369"
+    },
+    {
+      "path": "assets/audio/monster-hit-sound-data-009-55b3e34eec.ogg",
+      "mime": "audio/ogg",
+      "bytes": 5058,
+      "sha256": "a13a5c2e5b1be3c137afb927f8d9106d785a811ef7c5ae97678e6e81ad19c7af"
+    },
+    {
+      "path": "assets/audio/monster-hit-sound-data-010-2ea87653e4.ogg",
+      "mime": "audio/ogg",
+      "bytes": 5440,
+      "sha256": "adf8a3016eb3e4738852ae94912cf34c42cd58475d879677773229a3cd3256bd"
+    },
+    {
+      "path": "assets/audio/monster-hit-sound-data-011-32ff555993.ogg",
+      "mime": "audio/ogg",
+      "bytes": 4844,
+      "sha256": "561788a5d210af84aad6fb8fc0f035728e180f620a098c9ce108d5fba9ce8d09"
+    },
+    {
+      "path": "assets/audio/monster-hit-sound-data-012-1953b319d1.ogg",
+      "mime": "audio/ogg",
+      "bytes": 4815,
+      "sha256": "314157e93177df2ac565f0a31e906e2a00844fb7b8708dd990d453dd3658394b"
+    },
+    {
+      "path": "assets/audio/monster-hit-sound-data-74cd85da75.ogg",
+      "mime": "audio/ogg",
+      "bytes": 5214,
+      "sha256": "ca674316e9968568d7e5d654b3e345ad148fb854d715232fce1d0d57735f51bc"
+    },
+    {
+      "path": "assets/audio/warrior-attack-sound-data-002-2fc1f197d7.ogg",
+      "mime": "audio/ogg",
+      "bytes": 4551,
+      "sha256": "3ef1fe28c3797bd4427aa0766f6d8f51dd4c4a4f8aa31216a89b1c550b75f82b"
+    },
+    {
+      "path": "assets/audio/warrior-attack-sound-data-003-d0f22b1f6e.ogg",
+      "mime": "audio/ogg",
+      "bytes": 4856,
+      "sha256": "609857aac108498a369327cd6bf3f73e8c2a51840f452e644afeb65844edce41"
+    },
+    {
+      "path": "assets/audio/warrior-attack-sound-data-004-5782807b2b.ogg",
+      "mime": "audio/ogg",
+      "bytes": 4905,
+      "sha256": "14348e52d7e875ea1e05f27655b232ef63bdee975438c3390e45611bc903d315"
+    },
+    {
+      "path": "assets/audio/warrior-attack-sound-data-f3151e1df0.ogg",
+      "mime": "audio/ogg",
+      "bytes": 4466,
+      "sha256": "3a72d4a60fa8d79d98001586f89084ee391ed9766d80bb97b2271afc57b0d5c5"
+    },
+    {
+      "path": "assets/fonts/font-grim-cormorant-garamond-002-6cc6864793.woff2",
+      "mime": "font/woff2",
+      "bytes": 37640,
+      "sha256": "d80df8ff5aecd299a61549f9e29ab1ed0b9b05f4ea71d50fe978e07d5240b235"
+    },
+    {
+      "path": "assets/fonts/font-grim-cormorant-garamond-ad02fa047a.woff2",
+      "mime": "font/woff2",
+      "bytes": 21168,
+      "sha256": "017fab69b4be8ffc08ca312823327989ade6dc3d948f0afa125e12ec2e5e7ca1"
+    },
+    {
+      "path": "assets/fonts/font-grim-cormorant-sc-002-404351391a.woff2",
+      "mime": "font/woff2",
+      "bytes": 20940,
+      "sha256": "12e0111fadbbbd005472837880657dd323d93441ac4b09cbdb34ebd6e8614fff"
+    },
+    {
+      "path": "assets/fonts/font-grim-cormorant-sc-4f63cdc387.woff2",
+      "mime": "font/woff2",
+      "bytes": 10980,
+      "sha256": "a668d86417bb22272a251011ca1f731f44b42e19e4746df16236799c8ca13cd7"
+    },
+    {
+      "path": "assets/images/bosses/boss-attack-sprite-data-ashen-seraph-attack-48f4e09cb3.webp",
+      "mime": "image/webp",
+      "bytes": 32348,
+      "sha256": "0bf96bc900aaf64442943542d39a6ab95b060e9288bef65ef990790bc8fe23db"
+    },
+    {
+      "path": "assets/images/bosses/boss-attack-sprite-data-behemoth-attack-7c7e86f274.webp",
+      "mime": "image/webp",
+      "bytes": 24108,
+      "sha256": "d3182dbb83eb1164df62bdca870b5ddc744f5a5fb6e85c54af459e1f16a9afe3"
+    },
+    {
+      "path": "assets/images/bosses/boss-attack-sprite-data-bone-astrolabe-attack-a7f64aef9a.webp",
+      "mime": "image/webp",
+      "bytes": 30544,
+      "sha256": "ea473edd3c18c22cf7b2c594507708186cbc29a51450f9989d779fa6f63f00b2"
+    },
+    {
+      "path": "assets/images/bosses/boss-attack-sprite-data-bottomless-mnema-attack-c44f16f96f.webp",
+      "mime": "image/webp",
+      "bytes": 30350,
+      "sha256": "cee2bc75b41306d1d1a10452e801754f4eacd376d5870c09cec913c7a76acbdb"
+    },
+    {
+      "path": "assets/images/bosses/boss-attack-sprite-data-copper-oracle-attack-c2233a4ceb.webp",
+      "mime": "image/webp",
+      "bytes": 35158,
+      "sha256": "b07c9813f5df28b43c08fcb6d529dd87c4ee23f77f304088b2fc65b185acddd2"
+    },
+    {
+      "path": "assets/images/bosses/boss-attack-sprite-data-crimson-seamstress-attack-4a96387e94.webp",
+      "mime": "image/webp",
+      "bytes": 26312,
+      "sha256": "0723ffa25927e17667f3669acd207375253adb1dc474150b0c2d7947aca6b473"
+    },
+    {
+      "path": "assets/images/bosses/boss-attack-sprite-data-demonqueen-attack-510ad1f82e.webp",
+      "mime": "image/webp",
+      "bytes": 35178,
+      "sha256": "c72916b0c27b1693b58c8c550280b1ff4d38694d94051ce122f294f91f35ec73"
+    },
+    {
+      "path": "assets/images/bosses/boss-attack-sprite-data-empress-iron-roses-attack-79f6a0064f.webp",
+      "mime": "image/webp",
+      "bytes": 26786,
+      "sha256": "88bf07c401b0e0dacbcfc812be6a8db65ec7d892efa4337903ecd2f7b35b8da8"
+    },
+    {
+      "path": "assets/images/bosses/boss-attack-sprite-data-executioner-attack-5b3c8a9c0d.webp",
+      "mime": "image/webp",
+      "bytes": 20628,
+      "sha256": "bcc371db958c7f96a8189fc2a456838a7a07ac919467199e4843b80d254d21f4"
+    },
+    {
+      "path": "assets/images/bosses/boss-attack-sprite-data-funeral-bell-colossus-attack-e66a3ca235.webp",
+      "mime": "image/webp",
+      "bytes": 33546,
+      "sha256": "747bb466e0acdc9162c09e3d93cc39d55fb4b9c533106f6ad1c442bff529aae6"
+    },
+    {
+      "path": "assets/images/bosses/boss-attack-sprite-data-glass-titan-attack-dd78e23e13.webp",
+      "mime": "image/webp",
+      "bytes": 33818,
+      "sha256": "6ff300deb4267e0d5ec8d9b83f29bfd1cc1b45a8731dc624d3948ca187b151d1"
+    },
+    {
+      "path": "assets/images/bosses/boss-attack-sprite-data-goat-attack-0f1c2089ba.webp",
+      "mime": "image/webp",
+      "bytes": 32924,
+      "sha256": "6a66fa687cb58c5215b125125962f121f29f04d0f779d9849ae90475c842cfaf"
+    },
+    {
+      "path": "assets/images/bosses/boss-attack-sprite-data-grave-attack-e81c50e171.webp",
+      "mime": "image/webp",
+      "bytes": 25748,
+      "sha256": "83fb2ef15c35b8b8bd19d533c9c4a3ed37fae1421727be84d13634da1d1fd023"
+    },
+    {
+      "path": "assets/images/bosses/boss-attack-sprite-data-greed-attack-61c5e90536.webp",
+      "mime": "image/webp",
+      "bytes": 25564,
+      "sha256": "93cc6b559d5f7ab4c44ea6a7f0b056df9f431d1ada0efddca947206e688b27ad"
+    },
+    {
+      "path": "assets/images/bosses/boss-attack-sprite-data-heart-collector-attack-40f200251c.webp",
+      "mime": "image/webp",
+      "bytes": 22664,
+      "sha256": "cf4b24d94b103ac64031896298cbbfd41c222bf544ff95eb15075105afc92cb7"
+    },
+    {
+      "path": "assets/images/bosses/boss-attack-sprite-data-ice-psalmist-attack-ed24217363.webp",
+      "mime": "image/webp",
+      "bytes": 43450,
+      "sha256": "27aec3fed1969966ae8c998535dc186f76c169126a9e235d98501f6544e4bb1d"
+    },
+    {
+      "path": "assets/images/bosses/boss-attack-sprite-data-ink-leviathan-attack-d90061389f.webp",
+      "mime": "image/webp",
+      "bytes": 31352,
+      "sha256": "47cbbe9ec30106ee4492c334ff8a3aec9d2ede492cc95b5670622279838089ce"
+    },
+    {
+      "path": "assets/images/bosses/boss-attack-sprite-data-judge-of-chains-attack-2ab9f4324b.webp",
+      "mime": "image/webp",
+      "bytes": 31488,
+      "sha256": "64b0090cad57ec55e7b20680c95703f30149c12fb95b848fc2a1e77084f1e1ce"
+    },
+    {
+      "path": "assets/images/bosses/boss-attack-sprite-data-keeper-last-candle-attack-ff1a00e7cc.webp",
+      "mime": "image/webp",
+      "bytes": 28520,
+      "sha256": "5d4da5adbb2c9fe37e98f33a09523602a4e27c98b34a5eb7635ad6164e4798ec"
+    },
+    {
+      "path": "assets/images/bosses/boss-attack-sprite-data-lich-attack-df8070e4db.webp",
+      "mime": "image/webp",
+      "bytes": 39818,
+      "sha256": "a14e2d088bd44732e4e35fb21bbcb30e5c8dece9f97d236e0280b0847d21d4a4"
+    },
+    {
+      "path": "assets/images/bosses/boss-attack-sprite-data-lunar-butcher-attack-bb1d404544.webp",
+      "mime": "image/webp",
+      "bytes": 31300,
+      "sha256": "25111282e9a0f3edafea3c90278340fc6c2bf436b658e5395550990710ad7d13"
+    },
+    {
+      "path": "assets/images/bosses/boss-attack-sprite-data-matriarch-attack-efcf3b26ff.webp",
+      "mime": "image/webp",
+      "bytes": 31740,
+      "sha256": "99e4ce6311d596418d42bbeb94e40badfb141196fb9b4abe65c011459ebce395"
+    },
+    {
+      "path": "assets/images/bosses/boss-attack-sprite-data-minotaur-attack-f4c8753ffd.webp",
+      "mime": "image/webp",
+      "bytes": 29030,
+      "sha256": "531da83ea6838d28fa670265cd08097c324faa5f2e17e5f49b2832ae6350a876"
+    },
+    {
+      "path": "assets/images/bosses/boss-attack-sprite-data-mother-empty-masks-attack-088ae6b8be.webp",
+      "mime": "image/webp",
+      "bytes": 29552,
+      "sha256": "914aa2c5213f7a2e9debbb09590ed1296368ba5f3b33c36dd01b3818ee3a9c29"
+    },
+    {
+      "path": "assets/images/bosses/boss-attack-sprite-data-plague-archimandrite-attack-9d23017528.webp",
+      "mime": "image/webp",
+      "bytes": 37476,
+      "sha256": "065517b549b3a97cae6b1dfb607706dcf5daa36c5172a54bbfdf1e38e3875779"
+    },
+    {
+      "path": "assets/images/bosses/boss-attack-sprite-data-plague-attack-f7ef8cf884.webp",
+      "mime": "image/webp",
+      "bytes": 29996,
+      "sha256": "d56e8a87f2eb7192205bccedf1aa01f589ca0c2588d8e94a02eb989d9c105b8d"
+    },
+    {
+      "path": "assets/images/bosses/boss-attack-sprite-data-prince-hungry-ravens-attack-7f42a27322.webp",
+      "mime": "image/webp",
+      "bytes": 28920,
+      "sha256": "a71708542f875ddb03e48ba8c32bf51caa65b2150c0805a70906810869a5a391"
+    },
+    {
+      "path": "assets/images/bosses/boss-attack-sprite-data-rust-king-attack-10cd6acaf2.webp",
+      "mime": "image/webp",
+      "bytes": 28738,
+      "sha256": "28f2ed3f22c8ebc527ca8837dca995b36c2cc4ee17678fb4da0f11acd0226ce4"
+    },
+    {
+      "path": "assets/images/bosses/boss-attack-sprite-data-sand-gravedigger-attack-7428802cb6.webp",
+      "mime": "image/webp",
+      "bytes": 26064,
+      "sha256": "b5f69402fc8bdfc4d10c2c659c9bc13ca8d6cf82576f9ea035efcd87589e2f56"
+    },
+    {
+      "path": "assets/images/bosses/boss-attack-sprite-data-seraph-attack-211d673481.webp",
+      "mime": "image/webp",
+      "bytes": 27158,
+      "sha256": "8aa728cbe0581b1690baaf672e964a073708f532f74ecd3de383b381c874697f"
+    },
+    {
+      "path": "assets/images/bosses/boss-attack-sprite-data-star-devourer-attack-eefddc0f12.webp",
+      "mime": "image/webp",
+      "bytes": 32842,
+      "sha256": "b475f3ba7eb58b0a63f7262c0835417b7493004790834a12240970fea7fdbea0"
+    },
+    {
+      "path": "assets/images/bosses/boss-attack-sprite-data-tyrant-attack-a0b8f62997.webp",
+      "mime": "image/webp",
+      "bytes": 28502,
+      "sha256": "59720a13de94688a83bae7aa8af777b35f050b040716204c34ef459ee4c4bd60"
+    },
+    {
+      "path": "assets/images/bosses/boss-attack-sprite-data-vampire-attack-9e2c964ffb.webp",
+      "mime": "image/webp",
+      "bytes": 27620,
+      "sha256": "6963c09b10d9aaa6dcbc1e69f4d69791fec634c3118a989774f0b75b0f5b1086"
+    },
+    {
+      "path": "assets/images/bosses/boss-attack-sprite-data-voidwrath-attack-50fff8d298.webp",
+      "mime": "image/webp",
+      "bytes": 29876,
+      "sha256": "2b8f2b39cfc3389dc18ce6f66b9453d9f516668e09d1591368ac3ba32fb0207d"
+    },
+    {
+      "path": "assets/images/bosses/boss-sprite-data-behemoth-e1cd419184.webp",
+      "mime": "image/webp",
+      "bytes": 4504,
+      "sha256": "de62dfea66a1a940722a57bec848962bf3ab7b4021a4b281c471aab12ecec192"
+    },
+    {
+      "path": "assets/images/bosses/boss-sprite-data-demonqueen-9d5e03a99c.webp",
+      "mime": "image/webp",
+      "bytes": 5338,
+      "sha256": "87cceff9a6714d8cc72d497d9ebd60bea1c26f872b862105f6c07d771f9da45b"
+    },
+    {
+      "path": "assets/images/bosses/boss-sprite-data-executioner-8187648cff.webp",
+      "mime": "image/webp",
+      "bytes": 3976,
+      "sha256": "15dbc7d5cc68231ad0a1b9fb11b1f8217309961cbb3a9b6eba4e4946d131b3dd"
+    },
+    {
+      "path": "assets/images/bosses/boss-sprite-data-goat-f3a0ea0f61.webp",
+      "mime": "image/webp",
+      "bytes": 5950,
+      "sha256": "c144f8e21d660bbc8d798c0620463ae4ca68db7e6d33746204dfd493f70783b5"
+    },
+    {
+      "path": "assets/images/bosses/boss-sprite-data-grave-b7c2f2cd17.webp",
+      "mime": "image/webp",
+      "bytes": 4848,
+      "sha256": "34a5d4600fcf5caff3575fbaf4005a690ec6da6cf40a9a7b4e7bf096b1993839"
+    },
+    {
+      "path": "assets/images/bosses/boss-sprite-data-greed-cbed480758.webp",
+      "mime": "image/webp",
+      "bytes": 4722,
+      "sha256": "de51c5029bc68eea0de9b9db0a5908ed1bda5c197de83ad5734c7f45c71f4a3b"
+    },
+    {
+      "path": "assets/images/bosses/boss-sprite-data-lich-a5f0f53fd3.webp",
+      "mime": "image/webp",
+      "bytes": 6288,
+      "sha256": "24675d40ba98584950a316e8b02acd8fe61c9b640701167e4f943924bfc6f8e7"
+    },
+    {
+      "path": "assets/images/bosses/boss-sprite-data-matriarch-49d11deaae.webp",
+      "mime": "image/webp",
+      "bytes": 5734,
+      "sha256": "8b1f3f86c80cee8f0ae624acb124194a49d685a6d592f9c634e417d9d463cee5"
+    },
+    {
+      "path": "assets/images/bosses/boss-sprite-data-minotaur-b3faa54bfa.webp",
+      "mime": "image/webp",
+      "bytes": 4936,
+      "sha256": "3c891a94a740063bdea0d706bd2dfcc409937bddc2fc00543424d43f00f95c94"
+    },
+    {
+      "path": "assets/images/bosses/boss-sprite-data-plague-a879f0d2f2.webp",
+      "mime": "image/webp",
+      "bytes": 4924,
+      "sha256": "eb834d3c599d50ce60db89b63debfc64d5e151affbeb93bf3c796b11e512c284"
+    },
+    {
+      "path": "assets/images/bosses/boss-sprite-data-seraph-e9f858ca1a.webp",
+      "mime": "image/webp",
+      "bytes": 5300,
+      "sha256": "a0df3e7818d05a8d55e224c0cdadc745f194dcd9a0fffba9c91c0ffc4479495a"
+    },
+    {
+      "path": "assets/images/bosses/boss-sprite-data-tyrant-abb3c64a32.webp",
+      "mime": "image/webp",
+      "bytes": 5124,
+      "sha256": "d71483207b32dec87322542f3997b34b3e20a0252595b95d3d34f956d2728d9c"
+    },
+    {
+      "path": "assets/images/bosses/boss-sprite-data-vampire-dd020c896e.webp",
+      "mime": "image/webp",
+      "bytes": 4588,
+      "sha256": "14994923b86ac0688d856ea8de3329037799d87cf7f221267b6f38c964133c8f"
+    },
+    {
+      "path": "assets/images/bosses/boss-sprite-data-voidwrath-bb35437b80.webp",
+      "mime": "image/webp",
+      "bytes": 5470,
+      "sha256": "0ebcfd77cc0e8a71dd4593b39d888b1c79e64d542fc41db83b8f66b8d357b095"
+    },
+    {
+      "path": "assets/images/bosses/boss20-effect-sprite-data-ashen-comet-7e67aacafa.webp",
+      "mime": "image/webp",
+      "bytes": 27152,
+      "sha256": "7fd3bfc27ea5c20a57b905b179602e69e9b4098eaac81b3cb340fb13253bd43f"
+    },
+    {
+      "path": "assets/images/bosses/boss20-effect-sprite-data-ashen-comet-impact-5bb38b95e6.webp",
+      "mime": "image/webp",
+      "bytes": 36818,
+      "sha256": "dd6fda39ef25927a81ca45b0105bfa6d72560e31089e1a3e5b79245f95152e68"
+    },
+    {
+      "path": "assets/images/bosses/boss20-effect-sprite-data-bone-orbit-ring-9cbb86c58e.webp",
+      "mime": "image/webp",
+      "bytes": 39224,
+      "sha256": "de2a7e9e378115858bd7e38dab1ca465754f5cc7b35d6478e84c6eec63856eeb"
+    },
+    {
+      "path": "assets/images/bosses/boss20-effect-sprite-data-candle-safe-halo-366eaa2fdd.webp",
+      "mime": "image/webp",
+      "bytes": 40496,
+      "sha256": "ce0807cfad80d8ba37d2979e211970de0fae07626e59fac64ee86cfe6dbd3f0b"
+    },
+    {
+      "path": "assets/images/bosses/boss20-effect-sprite-data-copper-rewind-explosion-6f37940cc9.webp",
+      "mime": "image/webp",
+      "bytes": 33508,
+      "sha256": "86ddf693854f3da9f6317a37c3b812182b2fd89b2ab6d4acdcf04c183c159732"
+    },
+    {
+      "path": "assets/images/bosses/boss20-effect-sprite-data-crimson-flesh-seam-dbf011251b.webp",
+      "mime": "image/webp",
+      "bytes": 26930,
+      "sha256": "bf98bd5468f057034b48d574f5414dc268138133e2de0ab63f649a97131582a3"
+    },
+    {
+      "path": "assets/images/bosses/boss20-effect-sprite-data-empty-mask-beam-8b7570a64e.webp",
+      "mime": "image/webp",
+      "bytes": 31118,
+      "sha256": "acbc746d86e005a74c92792b80b959e7231730947c023a26611e41f1e04a8e84"
+    },
+    {
+      "path": "assets/images/bosses/boss20-effect-sprite-data-funeral-wave-ring-fa2468ac9d.webp",
+      "mime": "image/webp",
+      "bytes": 28660,
+      "sha256": "c4368bf8df3686d95a491cbfa0ff9ebb872a0946dc8bf1c8c4f07fe03e74fa3c"
+    },
+    {
+      "path": "assets/images/bosses/boss20-effect-sprite-data-glass-blast-d726be8b17.webp",
+      "mime": "image/webp",
+      "bytes": 38230,
+      "sha256": "9b368db8ef21323e4697b634f03baebc49f3f2c9d0703bfaa4d3417ea281b5bf"
+    },
+    {
+      "path": "assets/images/bosses/boss20-effect-sprite-data-glass-shard-122e94cbca.webp",
+      "mime": "image/webp",
+      "bytes": 18322,
+      "sha256": "748c58f6d70d0f271e7400d65696bf955aed9dce43ad5614df5000db6b99e12d"
+    },
+    {
+      "path": "assets/images/bosses/boss20-effect-sprite-data-heart-blood-ring-e535783d42.webp",
+      "mime": "image/webp",
+      "bytes": 15516,
+      "sha256": "9b4e0274938ccf37cdb5e715d7a06dab3296fa2d2e2b0536f1245eafb682a747"
+    },
+    {
+      "path": "assets/images/bosses/boss20-effect-sprite-data-ice-liturgy-sector-2f494c62b9.webp",
+      "mime": "image/webp",
+      "bytes": 47226,
+      "sha256": "8dcfeeff0bb8f95f46492e1c678d854b47a57b0358b320bda228f322fb6c2fae"
+    },
+    {
+      "path": "assets/images/bosses/boss20-effect-sprite-data-ink-pool-b525535f3a.webp",
+      "mime": "image/webp",
+      "bytes": 34242,
+      "sha256": "ed17db3784188c6e2fb94d5a23126cc79b9f7b2007c1ec66c50983625eb9c4a0"
+    },
+    {
+      "path": "assets/images/bosses/boss20-effect-sprite-data-iron-rose-ring-7cbd917324.webp",
+      "mime": "image/webp",
+      "bytes": 29820,
+      "sha256": "5c377468aea0351126f6ec181470eaeb433841fb36d77c7cfad31aff603e9f9d"
+    },
+    {
+      "path": "assets/images/bosses/boss20-effect-sprite-data-judge-chain-hook-1456c7d05a.webp",
+      "mime": "image/webp",
+      "bytes": 24900,
+      "sha256": "49a427b23171dc6f69ec094e5d636ffec790651bf2f354e3d08b32fe2e505739"
+    },
+    {
+      "path": "assets/images/bosses/boss20-effect-sprite-data-judge-hammer-impact-56eec193db.webp",
+      "mime": "image/webp",
+      "bytes": 37602,
+      "sha256": "9921e4282c688aaf088642e4d3dc27cdcf2dc0764398de745cba437bb5127616"
+    },
+    {
+      "path": "assets/images/bosses/boss20-effect-sprite-data-lunar-crescent-c6925314e0.webp",
+      "mime": "image/webp",
+      "bytes": 23070,
+      "sha256": "2ec70a2c16a0d9048fa03939829d445fb6ce535e4789644fb326351ebd1efd46"
+    },
+    {
+      "path": "assets/images/bosses/boss20-effect-sprite-data-mnema-shadow-pierce-feef702a9f.webp",
+      "mime": "image/webp",
+      "bytes": 23418,
+      "sha256": "886d9f5877f99be9faf2e058086c70e9f22ddd58f012dd8f1a57d3bae521cbef"
+    },
+    {
+      "path": "assets/images/bosses/boss20-effect-sprite-data-plague-censer-cloud-1ecd764e26.webp",
+      "mime": "image/webp",
+      "bytes": 32204,
+      "sha256": "5b9c065cf2e52007444356c500a822d0fcd0298c1e7eb0c343d3f53470a55c68"
+    },
+    {
+      "path": "assets/images/bosses/boss20-effect-sprite-data-raven-swarm-da47e62b7e.webp",
+      "mime": "image/webp",
+      "bytes": 31094,
+      "sha256": "cc77ebd3e43399b333c22c22f26ab8bf949f7f14e7741dba3db82ee624ef12f2"
+    },
+    {
+      "path": "assets/images/bosses/boss20-effect-sprite-data-rust-tide-cone-8914ee2bd7.webp",
+      "mime": "image/webp",
+      "bytes": 38192,
+      "sha256": "a68ab637ac6419949ec39d0cf4f4d785846bbb14fd6625eab23331635623d018"
+    },
+    {
+      "path": "assets/images/bosses/boss20-effect-sprite-data-sand-ground-strip-15283a77d5.webp",
+      "mime": "image/webp",
+      "bytes": 25522,
+      "sha256": "7ab282946a68eabad83c4862b19faa34bfa1eb3c8a488df1de2c8facdd34b824"
+    },
+    {
+      "path": "assets/images/bosses/boss20-effect-sprite-data-sand-shockwave-064df6670e.webp",
+      "mime": "image/webp",
+      "bytes": 45546,
+      "sha256": "1319a4716b2e47daa5778380d32d7de4cb15729c45cad25167cb6e5aa39b7e1f"
+    },
+    {
+      "path": "assets/images/bosses/boss20-effect-sprite-data-star-meteor-4c5f12ac9f.webp",
+      "mime": "image/webp",
+      "bytes": 30232,
+      "sha256": "15a93909e84d4798110329b1eb62d73569b80ebae0a08f5c354e86f8c076a144"
+    },
+    {
+      "path": "assets/images/bosses/boss20-effect-sprite-data-star-meteor-impact-7e8f8217fb.webp",
+      "mime": "image/webp",
+      "bytes": 37900,
+      "sha256": "233464d9aa8145c6d77c7b9a4abe6f967c915aa2be59edaf9e886cb1b896df23"
+    },
+    {
+      "path": "assets/images/bosses/constellation-sprite-data-boss-018ac65840.webp",
+      "mime": "image/webp",
+      "bytes": 2756,
+      "sha256": "7537aa1e14507441221e323f751812898f2dc087cc9e33f6779288ac8a186281"
+    },
+    {
+      "path": "assets/images/bosses/executioner-axe-projectile-data-792d81baeb.webp",
+      "mime": "image/webp",
+      "bytes": 4138,
+      "sha256": "8cd283ec3349d223a688e5d6f99f06df8887f4b21ece3fc50ac8e87cd503c464"
+    },
+    {
+      "path": "assets/images/bosses/greed-spear-projectile-data-d233a30838.webp",
+      "mime": "image/webp",
+      "bytes": 1288,
+      "sha256": "c8f086fa415277b149a4f438c98941f6629da8321a8fb9c8d810e127f7f4b653"
+    },
+    {
+      "path": "assets/images/bosses/ground-pool-sprite-data-boss-acid-8df3fd1cda.webp",
+      "mime": "image/webp",
+      "bytes": 4996,
+      "sha256": "566916b2352e9b4f60f2373c8d05f7ecb5429ce4081548ba20039de23de4478a"
+    },
+    {
+      "path": "assets/images/bosses/legacy-boss-effect-sprite-data-behemoth-impact-4bb82cfe26.webp",
+      "mime": "image/webp",
+      "bytes": 35500,
+      "sha256": "b83de1e1849e17efd61ae325f41572fa3ac5fe4d887dc8ea85657bf21810f49e"
+    },
+    {
+      "path": "assets/images/bosses/legacy-boss-effect-sprite-data-goat-slam-6067232715.webp",
+      "mime": "image/webp",
+      "bytes": 45396,
+      "sha256": "dd35332c178f3af0de0690c1c7778e08678c1edc5b6c7f9eeb903fe2dd0f76b9"
+    },
+    {
+      "path": "assets/images/bosses/legacy-boss-effect-sprite-data-minotaur-crash-7fe9e6f65e.webp",
+      "mime": "image/webp",
+      "bytes": 37968,
+      "sha256": "f8cfee1961fe205d7b539a42fd658a4b9b1c044920d8ebc86322b0aa9b11dbf8"
+    },
+    {
+      "path": "assets/images/bosses/legacy-boss-effect-sprite-data-summon-sigil-21f59dbc13.webp",
+      "mime": "image/webp",
+      "bytes": 42694,
+      "sha256": "5cfce7aa4e6fea142f112569392f1edaac60c170a86a0cbdf80f4edad22c3e88"
+    },
+    {
+      "path": "assets/images/bosses/legacy-boss-effect-sprite-data-tyrant-slash-95b9ab3a32.webp",
+      "mime": "image/webp",
+      "bytes": 27812,
+      "sha256": "bec34f56d78becb4a252a9878d400acefa5f2d44172be8ce6595fea3a1fa72c1"
+    },
+    {
+      "path": "assets/images/bosses/legacy-boss-effect-sprite-data-vampire-cross-29119ac196.webp",
+      "mime": "image/webp",
+      "bytes": 18842,
+      "sha256": "92d45a65fdb2f7cb9faa16120cd59d2807918b33653c1a0ed40706401b5eef68"
+    },
+    {
+      "path": "assets/images/bosses/matriarch-plague-projectile-data-1047d8b8d0.webp",
+      "mime": "image/webp",
+      "bytes": 1158,
+      "sha256": "8ae82a0e4660f9ad4fbf6f58be6917f00e02d50d98889dabe3092ca0bbb114b1"
+    },
+    {
+      "path": "assets/images/bosses/minotaur-spear-projectile-data-3822975cc0.webp",
+      "mime": "image/webp",
+      "bytes": 874,
+      "sha256": "16e9c25ec12343d610df726b1ec34e610b83d4c1c08bd6eaf483c60d052e224f"
+    },
+    {
+      "path": "assets/images/bosses/plague-slime-projectile-data-b735da2478.webp",
+      "mime": "image/webp",
+      "bytes": 772,
+      "sha256": "d7899f83742889349f3810c1087cbc34a5e0887acc07c94876836376c12b699a"
+    },
+    {
+      "path": "assets/images/bosses/rare-item-floor-sprite-data-boss-shard-31e67d4cae.webp",
+      "mime": "image/webp",
+      "bytes": 200,
+      "sha256": "ae657c52b3f74ab7c93510672e32e779db66e6b540f06f4bb836a25faa29a302"
+    },
+    {
+      "path": "assets/images/bosses/rare-item-sprite-data-boss-shard-4aec55f825.webp",
+      "mime": "image/webp",
+      "bytes": 3262,
+      "sha256": "e1e46c4e9080025414944a161c5527a9a0dea2d4bf728cc6b64806a0a175a93e"
+    },
+    {
+      "path": "assets/images/bosses/seraph-holy-spear-data-c03052a5d9.webp",
+      "mime": "image/webp",
+      "bytes": 2302,
+      "sha256": "3b244590fdfd6544182fb9f15bc64058188b88579cb9e36d0e5fc347eb9253f6"
+    },
+    {
+      "path": "assets/images/effects/arcane-mine-explosion-data-dee01d40aa.webp",
+      "mime": "image/webp",
+      "bytes": 3790,
+      "sha256": "36680e7b6daf655f4557c469be073dc968df5a9fbd65793cf36915815be74931"
+    },
+    {
+      "path": "assets/images/effects/arcane-mine-sprite-data-ed0ee7d75b.webp",
+      "mime": "image/webp",
+      "bytes": 374,
+      "sha256": "1900d69c39545824446c555624298d2e2f44dad148cfbc34a11b43e3dc55c434"
+    },
+    {
+      "path": "assets/images/effects/emerald-orb-projectile-data-3962e91da2.webp",
+      "mime": "image/webp",
+      "bytes": 1458,
+      "sha256": "24e957b5ef62cdd9f85f518c9f66c80b19e0c89ba9555bea166b5aa6bf742b34"
+    },
+    {
+      "path": "assets/images/effects/found-e4460c1aaa.webp",
+      "mime": "image/webp",
+      "bytes": 20040,
+      "sha256": "da37864654efd8d18618b7f267e077c7896ea2406690af7f96c1f393ef1d181a"
+    },
+    {
+      "path": "assets/images/enemies/corpse-puddle-data-atlas-d228ac0c8c.webp",
+      "mime": "image/webp",
+      "bytes": 5146,
+      "sha256": "416d020c1dda97151178c79c0227e632ba281d55c44dccaa72e758ce3c6268b9"
+    },
+    {
+      "path": "assets/images/enemies/corpse-sprite-data-abyssal-executioner-950e319d0a.webp",
+      "mime": "image/webp",
+      "bytes": 2780,
+      "sha256": "73a0f1df376aa08991920bf4d1100f1f17514081da4c79e4af7be817efdb40e2"
+    },
+    {
+      "path": "assets/images/enemies/corpse-sprite-data-behemoth-91334b9c4a.webp",
+      "mime": "image/webp",
+      "bytes": 4626,
+      "sha256": "dde28a0b83a71482a20beeb522958706f0e86cba9d9dd1c8e59e4b72e704dbd3"
+    },
+    {
+      "path": "assets/images/enemies/corpse-sprite-data-beholder-slave-26c91803cf.webp",
+      "mime": "image/webp",
+      "bytes": 3640,
+      "sha256": "cbeab3a9463bc832c32d58126e8dcd94463b50389a492af083ea8f8f02c6faac"
+    },
+    {
+      "path": "assets/images/enemies/corpse-sprite-data-blight-grunt-019a7c7ab8.webp",
+      "mime": "image/webp",
+      "bytes": 3344,
+      "sha256": "2e9af8d7f5fb00b70380a13bbb0252a80e75b67c4658cfa97807c719ac2f1480"
+    },
+    {
+      "path": "assets/images/enemies/corpse-sprite-data-blob-54c6e4c718.webp",
+      "mime": "image/webp",
+      "bytes": 2810,
+      "sha256": "603873144b643a8767e2416a53b0becd5a195e11f0b919544b6b57b2c0fad5fb"
+    },
+    {
+      "path": "assets/images/enemies/corpse-sprite-data-bone-gargoyle-60bf65a962.webp",
+      "mime": "image/webp",
+      "bytes": 3378,
+      "sha256": "164ab9f1703ade37c88dc0ad82c0aebebbb32694121ab772438e6e32cc912229"
+    },
+    {
+      "path": "assets/images/enemies/corpse-sprite-data-cursed-rogue-23ebf8496c.webp",
+      "mime": "image/webp",
+      "bytes": 2836,
+      "sha256": "282d21fb3d2b4858272b342867bd8bc3966bc2213495f80545a86e39a0107f62"
+    },
+    {
+      "path": "assets/images/enemies/corpse-sprite-data-demonqueen-024ecf1ddd.webp",
+      "mime": "image/webp",
+      "bytes": 4292,
+      "sha256": "0ca54fd1ead755a7cde6f8eb112bcfa2c2756ee807828ec3759109bc7c6410a6"
+    },
+    {
+      "path": "assets/images/enemies/corpse-sprite-data-executioner-1cd6ffd836.webp",
+      "mime": "image/webp",
+      "bytes": 4406,
+      "sha256": "8146fc660341d43a5822ae8e3709382270636ee07578da64b97227c6e92f5693"
+    },
+    {
+      "path": "assets/images/enemies/corpse-sprite-data-fallen-pyromancer-4511a621bb.webp",
+      "mime": "image/webp",
+      "bytes": 2382,
+      "sha256": "3ab4bbb38c52694d150605cf22b66885a0f1e8b359910da34c6b9def5c5174b5"
+    },
+    {
+      "path": "assets/images/enemies/corpse-sprite-data-forgotten-guard-0c6511bd1e.webp",
+      "mime": "image/webp",
+      "bytes": 3596,
+      "sha256": "e24d6a8680c2eac83f5beb7640f9d0899d86c1d144a87addf879dde59591d71f"
+    },
+    {
+      "path": "assets/images/enemies/corpse-sprite-data-frost-wolf-44c53994d6.webp",
+      "mime": "image/webp",
+      "bytes": 3164,
+      "sha256": "f17496077cb569c5fe5aacfab3c0977c7927f9a0647ba87adaf62a259ad1e2af"
+    },
+    {
+      "path": "assets/images/enemies/corpse-sprite-data-goat-ba1a9874d6.webp",
+      "mime": "image/webp",
+      "bytes": 4540,
+      "sha256": "e2ee4827a8b422633850cfb95be32fff343a44a941acd77eba6f8caccda7a33b"
+    },
+    {
+      "path": "assets/images/enemies/corpse-sprite-data-grave-eff0af1701.webp",
+      "mime": "image/webp",
+      "bytes": 4442,
+      "sha256": "a0def28ba2e2af169c1ad08e1c5b19657c34d05e4ce3996b6ce427306ab61853"
+    },
+    {
+      "path": "assets/images/enemies/corpse-sprite-data-greed-78e47c0907.webp",
+      "mime": "image/webp",
+      "bytes": 4802,
+      "sha256": "b6332d7a5044243ac186d2773fdadcc5cb7f1cabccea66b27e8c6b7f8bfbadfc"
+    },
+    {
+      "path": "assets/images/enemies/corpse-sprite-data-lich-1d5043c8fa.webp",
+      "mime": "image/webp",
+      "bytes": 3554,
+      "sha256": "aca37657f0000fb9451f3317b8409a2983cb24fad6942d425bd788f54d35cea0"
+    },
+    {
+      "path": "assets/images/enemies/corpse-sprite-data-matriarch-29b109018c.webp",
+      "mime": "image/webp",
+      "bytes": 4924,
+      "sha256": "d1c77ff7b11efb20e16cfedd55a3e46e0982a0e236631c1e7e9f8a281ae2be3b"
+    },
+    {
+      "path": "assets/images/enemies/corpse-sprite-data-minotaur-845fc0a82b.webp",
+      "mime": "image/webp",
+      "bytes": 5026,
+      "sha256": "17037fbeba74264e584e9f3e60c0c24a71a41df7920848d01bc2fc025f3d481d"
+    },
+    {
+      "path": "assets/images/enemies/corpse-sprite-data-plague-668130165f.webp",
+      "mime": "image/webp",
+      "bytes": 4574,
+      "sha256": "3871d7099fd8df6dea10b5e7b14fcbbc58fd2ca483af2157b3f52dce1ef72431"
+    },
+    {
+      "path": "assets/images/enemies/corpse-sprite-data-plague-ogre-6cf23a6e38.webp",
+      "mime": "image/webp",
+      "bytes": 3532,
+      "sha256": "2b6e1576596ea660906bf8cc36a71fa62870eed34b4b4124cd968738cf6d52f6"
+    },
+    {
+      "path": "assets/images/enemies/corpse-sprite-data-runner-3c0e40764e.webp",
+      "mime": "image/webp",
+      "bytes": 2050,
+      "sha256": "b37e8650a4f1fe92bbadb127674490e3080af3789b633e4bfcddc1cf5258550d"
+    },
+    {
+      "path": "assets/images/enemies/corpse-sprite-data-seraph-a0f1e00293.webp",
+      "mime": "image/webp",
+      "bytes": 4532,
+      "sha256": "cd65bf2ca822be2340244c19303c05e1e257f974eb831be0b7f9acddc6dc0a4c"
+    },
+    {
+      "path": "assets/images/enemies/corpse-sprite-data-shooter-7e7ca9b056.webp",
+      "mime": "image/webp",
+      "bytes": 2252,
+      "sha256": "c4b2f4b62fae7506f5ef65c3759b52955c4489661486c2c7492c72e2f1eed3d0"
+    },
+    {
+      "path": "assets/images/enemies/corpse-sprite-data-skeleton-crossbow-d3c4927c8c.webp",
+      "mime": "image/webp",
+      "bytes": 2724,
+      "sha256": "413cba4a19a0dbe8910ee2ca28836849dc9aab1d9160cfe09d4224da1588efc7"
+    },
+    {
+      "path": "assets/images/enemies/corpse-sprite-data-skeleton-warrior-987d7db6fe.webp",
+      "mime": "image/webp",
+      "bytes": 3178,
+      "sha256": "1a70f7b92405a41250b8a5555dd31cf750312aa776e8e587f524a4b4a920fd2a"
+    },
+    {
+      "path": "assets/images/enemies/corpse-sprite-data-tank-9ff76e896d.webp",
+      "mime": "image/webp",
+      "bytes": 2456,
+      "sha256": "1d3b506249e5111beb8826da852afcc74cf4bde60ab278d7938a40fa527afa1b"
+    },
+    {
+      "path": "assets/images/enemies/corpse-sprite-data-toxic-runner-26f1ddab4c.webp",
+      "mime": "image/webp",
+      "bytes": 3316,
+      "sha256": "700bf5347c0a2524f037715f13b30515656397c83adaf04efdcf6c98fc8ade6f"
+    },
+    {
+      "path": "assets/images/enemies/corpse-sprite-data-tyrant-17570b72b3.webp",
+      "mime": "image/webp",
+      "bytes": 5096,
+      "sha256": "177bca91688929190c3e43bc11893d77a4fa8d3ee73ae5a862ef6070bff6cec4"
+    },
+    {
+      "path": "assets/images/enemies/corpse-sprite-data-vampire-5abf4d1e76.webp",
+      "mime": "image/webp",
+      "bytes": 4606,
+      "sha256": "bafc54a0c7629eab8a4808180927e1e3518e31b7f4dfd883ad381dd22c8752cf"
+    },
+    {
+      "path": "assets/images/enemies/corpse-sprite-data-voidwrath-f3b9c17f35.webp",
+      "mime": "image/webp",
+      "bytes": 5338,
+      "sha256": "bc53921f67d8cd6616d289b8428af87cd168738c06b3eed37de6bdc089c4040e"
+    },
+    {
+      "path": "assets/images/enemies/demon-queen-blob-data-375306a484.webp",
+      "mime": "image/webp",
+      "bytes": 1432,
+      "sha256": "b7c19ce1458ee6f34f46abd6627dbaf28d9602df4d9c7e4cd3a09944480803fa"
+    },
+    {
+      "path": "assets/images/enemies/elite-attack-sprite-data-abyssal-executioner-9d557200ac.webp",
+      "mime": "image/webp",
+      "bytes": 4956,
+      "sha256": "738f78840b37032209e419c34408459e903f3a6a5c3616fa46b77153a41493a5"
+    },
+    {
+      "path": "assets/images/enemies/elite-attack-sprite-data-beholder-slave-693b2618d7.webp",
+      "mime": "image/webp",
+      "bytes": 8662,
+      "sha256": "a7922854f20fdbecdbaddf17f4ca5e780aece1c963e2d869b413fa278f770bc7"
+    },
+    {
+      "path": "assets/images/enemies/elite-attack-sprite-data-blight-grunt-88b1a6f08f.webp",
+      "mime": "image/webp",
+      "bytes": 5326,
+      "sha256": "1bf52a7b05b633a163898af928d9930022423d340c3813fae894365841fed847"
+    },
+    {
+      "path": "assets/images/enemies/elite-attack-sprite-data-bone-gargoyle-d5b5d53209.webp",
+      "mime": "image/webp",
+      "bytes": 4230,
+      "sha256": "fe12e2983fe9fbce910dd80e59f1a2cbfc36529a6e53c113d7b0e2683988b641"
+    },
+    {
+      "path": "assets/images/enemies/elite-attack-sprite-data-cursed-rogue-043bc0e345.webp",
+      "mime": "image/webp",
+      "bytes": 4410,
+      "sha256": "865c9f5fc2ed15ef3c899b0754e75878c3c58b1d8eca72c56c6a466d1e3be37f"
+    },
+    {
+      "path": "assets/images/enemies/elite-attack-sprite-data-fallen-pyromancer-aa97192c46.webp",
+      "mime": "image/webp",
+      "bytes": 4570,
+      "sha256": "ecd4cd2613c71570dddedee2292686409c5685b659a85ebe8fae722a12bc6618"
+    },
+    {
+      "path": "assets/images/enemies/elite-attack-sprite-data-forgotten-guard-6e88a0b84e.webp",
+      "mime": "image/webp",
+      "bytes": 6354,
+      "sha256": "2d8138c1608384a665511be8a43a248dce7aaf2a891aff664a1a0b75db8b1e49"
+    },
+    {
+      "path": "assets/images/enemies/elite-attack-sprite-data-frost-wolf-f92cc9ba02.webp",
+      "mime": "image/webp",
+      "bytes": 8040,
+      "sha256": "0f4184a6f4cfe4b6a6a308010f10f2a678f6c8e5c2cdaf945902717da59ae5a2"
+    },
+    {
+      "path": "assets/images/enemies/elite-attack-sprite-data-plague-ogre-292d2a20d9.webp",
+      "mime": "image/webp",
+      "bytes": 10598,
+      "sha256": "8785c64f1ecda80093ecbdc82b16254860e4ece54ad87b3b79e686f0f177e4d7"
+    },
+    {
+      "path": "assets/images/enemies/elite-attack-sprite-data-skeleton-crossbow-a98877ef12.webp",
+      "mime": "image/webp",
+      "bytes": 8044,
+      "sha256": "4475d65e75fdda544175caf5b2a1bd778524501c85f131b4e3466c886701d84c"
+    },
+    {
+      "path": "assets/images/enemies/elite-attack-sprite-data-skeleton-warrior-cde6b5e49a.webp",
+      "mime": "image/webp",
+      "bytes": 5228,
+      "sha256": "c87f6e803a2627775172e98064b6306aad209cc347c5646021e7498997df3991"
+    },
+    {
+      "path": "assets/images/enemies/elite-attack-sprite-data-toxic-runner-ce61852f56.webp",
+      "mime": "image/webp",
+      "bytes": 5368,
+      "sha256": "0aa09ccab082f489245307a6fb04bdf0f8ad046c8ca0b52b054ecaadfe363692"
+    },
+    {
+      "path": "assets/images/enemies/elite-sprite-data-abyssal-executioner-10c3fd54de.webp",
+      "mime": "image/webp",
+      "bytes": 2650,
+      "sha256": "2d8c613b8fcd031fc7a3696cc773ae5b7c8c2202ca8163ae01de47d8a4d444e3"
+    },
+    {
+      "path": "assets/images/enemies/elite-sprite-data-beholder-slave-f967870a4d.webp",
+      "mime": "image/webp",
+      "bytes": 2120,
+      "sha256": "6a4ca3092a8dd9fcf8f4240058edb14578b729ef04505b03d24d2dc177c8576c"
+    },
+    {
+      "path": "assets/images/enemies/elite-sprite-data-blight-grunt-26b2f2cc14.webp",
+      "mime": "image/webp",
+      "bytes": 2458,
+      "sha256": "f7420a397e4292cc9cc593aaa124c3a16aaf28ef0eee1d352157e10fb168a881"
+    },
+    {
+      "path": "assets/images/enemies/elite-sprite-data-bone-gargoyle-2b91050111.webp",
+      "mime": "image/webp",
+      "bytes": 2258,
+      "sha256": "b33350662ce6a35c4c6413e5d6eb1c49d0e52867ea8b65cdae68fa7d342f6d37"
+    },
+    {
+      "path": "assets/images/enemies/elite-sprite-data-cursed-rogue-0af0c48fd8.webp",
+      "mime": "image/webp",
+      "bytes": 2526,
+      "sha256": "4f4479b648c0c3f452815863abeb962052eef36f764a028eb934cb8b484ba685"
+    },
+    {
+      "path": "assets/images/enemies/elite-sprite-data-fallen-pyromancer-4929c88e1e.webp",
+      "mime": "image/webp",
+      "bytes": 1776,
+      "sha256": "87683db13d57de14e042ba4d36be1f9cfdf0ba3d30755745c37db90fadd35c8f"
+    },
+    {
+      "path": "assets/images/enemies/elite-sprite-data-forgotten-guard-d3a9d85225.webp",
+      "mime": "image/webp",
+      "bytes": 2322,
+      "sha256": "5631a02f865ad3e83136e04587590c7be49acd6c3c53f7f01e0d466bb78d6fef"
+    },
+    {
+      "path": "assets/images/enemies/elite-sprite-data-frost-wolf-e477c0af29.webp",
+      "mime": "image/webp",
+      "bytes": 2346,
+      "sha256": "d066bb5f95cbe5caae71f782c4512f2d04dfe30bf02fcfcfec1230d928877599"
+    },
+    {
+      "path": "assets/images/enemies/elite-sprite-data-plague-ogre-7a3662acd6.webp",
+      "mime": "image/webp",
+      "bytes": 2814,
+      "sha256": "c7989538eea77903dd2ef3b972452d9bbc85581c37b4c0e8f2a31b7377e2bdef"
+    },
+    {
+      "path": "assets/images/enemies/elite-sprite-data-skeleton-crossbow-9be5075016.webp",
+      "mime": "image/webp",
+      "bytes": 2248,
+      "sha256": "e91d5f922da0bfd5a07f0cf065f7b67fe7f75d8606def345b4409b17c9ec4d2e"
+    },
+    {
+      "path": "assets/images/enemies/elite-sprite-data-skeleton-warrior-0059ea2706.webp",
+      "mime": "image/webp",
+      "bytes": 2196,
+      "sha256": "1f008ec5da9dbef34f45455d8c90d6687a63f480a67fdd6d710fbf79ed303af4"
+    },
+    {
+      "path": "assets/images/enemies/elite-sprite-data-toxic-runner-0e1e97b3d1.webp",
+      "mime": "image/webp",
+      "bytes": 2608,
+      "sha256": "e1309cd8d92cdf91817579b769ecd7561e686ba4c1951a8147fefa743cc929a0"
+    },
+    {
+      "path": "assets/images/enemies/enemy-attack-sprite-data-blob-197eeeaa25.webp",
+      "mime": "image/webp",
+      "bytes": 9006,
+      "sha256": "741de9579c2d45b6b675db048b69c5d2e298c042fec88511612c2f24cba7beba"
+    },
+    {
+      "path": "assets/images/enemies/enemy-attack-sprite-data-runner-a2e2916514.webp",
+      "mime": "image/webp",
+      "bytes": 3530,
+      "sha256": "476fbf1580b70145dc07a91090a98768c84144c88526e1ae15fc771df7c4635a"
+    },
+    {
+      "path": "assets/images/enemies/enemy-attack-sprite-data-shooter-0cc9f73be9.webp",
+      "mime": "image/webp",
+      "bytes": 5106,
+      "sha256": "2da6032fce15c36edb42f29bd3d94994d74f8cf4ac9b58b28eea6fa178016229"
+    },
+    {
+      "path": "assets/images/enemies/enemy-attack-sprite-data-tank-6b1ec2d99d.webp",
+      "mime": "image/webp",
+      "bytes": 6398,
+      "sha256": "b3cce6d02ce10afd8f5812583df19b98ef4c13833250c590653e9e4c42cbb831"
+    },
+    {
+      "path": "assets/images/enemies/enemy-sprite-data-blob-9ef4c5433d.webp",
+      "mime": "image/webp",
+      "bytes": 1934,
+      "sha256": "2721ce744d67dea5b6da85bd770a8624c9fd7cc99bbdc37a189c58d60afe9830"
+    },
+    {
+      "path": "assets/images/enemies/enemy-sprite-data-runner-ecc8756c9e.webp",
+      "mime": "image/webp",
+      "bytes": 1444,
+      "sha256": "6730155440fa9131975c42b2ec2c375d9e5497b2950a3d8285e969494cbe4b24"
+    },
+    {
+      "path": "assets/images/enemies/enemy-sprite-data-shooter-50e42e6def.webp",
+      "mime": "image/webp",
+      "bytes": 1386,
+      "sha256": "f307661c347426082afe118788701e3f1baa820513d9657f23aaee2fbe41cfda"
+    },
+    {
+      "path": "assets/images/enemies/enemy-sprite-data-tank-4eb69a8bf8.webp",
+      "mime": "image/webp",
+      "bytes": 2734,
+      "sha256": "61bfc3e6dd843ee178772c00c9e7269648b54c89bfce9c9630a9420b0f9ed3b1"
+    },
+    {
+      "path": "assets/images/enemies/enemy-status-icon-data-23cdfceeab.webp",
+      "mime": "image/webp",
+      "bytes": 618,
+      "sha256": "81c024d9370afd7e54093f475095c4ce05508d7a1cadb9bb78fb7f04523179f5"
+    },
+    {
+      "path": "assets/images/enemies/minion-sprite-data-bombardier-db446640a2.webp",
+      "mime": "image/webp",
+      "bytes": 698,
+      "sha256": "16fa86b3f1008bf69ddc9bd32f4c5866a97fd89b1ce857210c0779f42a63a146"
+    },
+    {
+      "path": "assets/images/enemies/minion-sprite-data-golem-b-7346f5316f.webp",
+      "mime": "image/webp",
+      "bytes": 944,
+      "sha256": "55f04cbfb482b26aa39639290a7eb9fb81ae5bb5638f8efe314f4acdeb34a8c0"
+    },
+    {
+      "path": "assets/images/enemies/minion-sprite-data-golem-n-47a86badb4.webp",
+      "mime": "image/webp",
+      "bytes": 366,
+      "sha256": "6b8dca23d9a7e6b95eaf1ecf2a33cda8f45727d2890de8f3cde36962e996be89"
+    },
+    {
+      "path": "assets/images/enemies/minion-sprite-data-hunter-37bcaa7c88.webp",
+      "mime": "image/webp",
+      "bytes": 658,
+      "sha256": "f0a53c34ab9e917f21dc98f934a2c4dd8fa6bb8be415d1356952ee4ad72fbe77"
+    },
+    {
+      "path": "assets/images/enemies/minion-sprite-data-skeleton-a48ef1a292.webp",
+      "mime": "image/webp",
+      "bytes": 674,
+      "sha256": "4c782a23a4a9a5540a8bd72422d3ce4dddf5d075e11d72370b6ee664923006b1"
+    },
+    {
+      "path": "assets/images/enemies/rare-item-floor-sprite-data-runner-824d0e988e.webp",
+      "mime": "image/webp",
+      "bytes": 200,
+      "sha256": "2867a23e6a898cbf0c2a435417718f104cbc7c471db60838fe1cb28498c63231"
+    },
+    {
+      "path": "assets/images/enemies/rare-item-sprite-data-runner-22c0d076d9.webp",
+      "mime": "image/webp",
+      "bytes": 3450,
+      "sha256": "511da2f91c8475bc13de6bba15fa4e2206835ec1f50b8b70cad34d141b874243"
+    },
+    {
+      "path": "assets/images/enemies/shooter-projectile-data-d2bf23a800.webp",
+      "mime": "image/webp",
+      "bytes": 230,
+      "sha256": "fedf1c78bec567e80ff1d0713126467cd7459f1b946e060c3ef270fa9edc4fba"
+    },
+    {
+      "path": "assets/images/environment/blood-sprite-data-crit-spray-b95f19f710.webp",
+      "mime": "image/webp",
+      "bytes": 196,
+      "sha256": "41695b4d20db4e41cd5880a8c7b94724eb2b124083a7088263da594f2bba055a"
+    },
+    {
+      "path": "assets/images/environment/blood-sprite-data-decals-247252284a.webp",
+      "mime": "image/webp",
+      "bytes": 1014,
+      "sha256": "fcfb9674cf7184fd3003cac5fc1f4cc7ba0ea4306924957b9c79b61f7a660e0a"
+    },
+    {
+      "path": "assets/images/environment/blood-sprite-data-mist-db6dd0d580.webp",
+      "mime": "image/webp",
+      "bytes": 324,
+      "sha256": "5aca98067cc3ab749aff3b6bded591036bf9e5f79071f23dc8f84bbb69b99d25"
+    },
+    {
+      "path": "assets/images/environment/blood-sprite-data-splash-37bc7d8003.webp",
+      "mime": "image/webp",
+      "bytes": 402,
+      "sha256": "35dc76abbfff40acf7a129255ae90fe5c29657f765615422d366018772028579"
+    },
+    {
+      "path": "assets/images/environment/book-floor-sprite-data-bleed-79fc37621d.webp",
+      "mime": "image/webp",
+      "bytes": 218,
+      "sha256": "57af6f230ba8d87657d023ad2757117239c2a0c12e8caa1d6f32b8b080e84669"
+    },
+    {
+      "path": "assets/images/environment/book-floor-sprite-data-cold-29164a4c1f.webp",
+      "mime": "image/webp",
+      "bytes": 190,
+      "sha256": "9bfb2e8f07b4f7eb60b795a7e64c9438da963eb8c2d2689cfdd8df459bc58072"
+    },
+    {
+      "path": "assets/images/environment/book-floor-sprite-data-fire-4bf8b17905.webp",
+      "mime": "image/webp",
+      "bytes": 200,
+      "sha256": "c45f2e40f8dd12d48fbeefbe36be73f3f71686e92369335821d15f92a3de511e"
+    },
+    {
+      "path": "assets/images/environment/book-floor-sprite-data-monster-cf54f859ce.webp",
+      "mime": "image/webp",
+      "bytes": 210,
+      "sha256": "95bb7a194b4a2848ae634fdccf4fa0380bd614a17507e7ce994a48e0585d2dce"
+    },
+    {
+      "path": "assets/images/environment/book-floor-sprite-data-poison-97a3a5a96f.webp",
+      "mime": "image/webp",
+      "bytes": 210,
+      "sha256": "909b0283124c7d46e30b4e7982157db15a1601a638a36146d29ebd801bcca44f"
+    },
+    {
+      "path": "assets/images/environment/book-floor-sprite-data-shock-c4552865d8.webp",
+      "mime": "image/webp",
+      "bytes": 208,
+      "sha256": "90dcee4da27d7840ba8e5e87fbbec4a1cceea34c20269814adc680bf82372f34"
+    },
+    {
+      "path": "assets/images/environment/book-floor-sprite-data-xp-1bb3a66377.webp",
+      "mime": "image/webp",
+      "bytes": 216,
+      "sha256": "b52d358505a39047d69f534e7d096b6886c68024fb2ab990910b48357bcc84f2"
+    },
+    {
+      "path": "assets/images/environment/floor-portal-appear-sprite-data-16fcc30b9f.png",
+      "mime": "image/png",
+      "bytes": 59292,
+      "sha256": "891c4ce6adfbad500a955aafce68ebdae860f441ede2525bf923fc428d419f34"
+    },
+    {
+      "path": "assets/images/environment/floor-portal-sprite-data-1d1add02f0.png",
+      "mime": "image/png",
+      "bytes": 25811,
+      "sha256": "767dab2377ca70fe5996bbea7a62ace89da76d70ed087e471d99a7bea40e67c1"
+    },
+    {
+      "path": "assets/images/environment/ground-pool-sprite-data-boiling-blood-ddc7c67a3a.webp",
+      "mime": "image/webp",
+      "bytes": 1370,
+      "sha256": "367e2b181d7df3f8a1695ababef8c0389905291b4c22def14cc1a2925c1a72a8"
+    },
+    {
+      "path": "assets/images/environment/ground-pool-sprite-data-frost-trail-a03a1403b5.webp",
+      "mime": "image/webp",
+      "bytes": 1458,
+      "sha256": "16ac248749e051fdbda63a10141997b85efc63fff50aab32b8c3ae34dbb221d3"
+    },
+    {
+      "path": "assets/images/environment/ground-pool-sprite-data-lava-trail-e24ec68199.webp",
+      "mime": "image/webp",
+      "bytes": 1056,
+      "sha256": "a1f6a56d441af2549cd551fdeaf4f1b3ae98b120d6538e1dad4e4559958250ea"
+    },
+    {
+      "path": "assets/images/environment/ground-pool-sprite-data-ogre-acid-96d119ad46.webp",
+      "mime": "image/webp",
+      "bytes": 1280,
+      "sha256": "1652a2b287225f8a1b20ec111e3080968935729f52f2ffa1e64c5643470e8ba9"
+    },
+    {
+      "path": "assets/images/environment/ground-pool-sprite-data-tar-4e42bbb86b.webp",
+      "mime": "image/webp",
+      "bytes": 1320,
+      "sha256": "f1c55c64dedd020ade033626d14af924763e608ca74e7768b9fadd31174990c4"
+    },
+    {
+      "path": "assets/images/environment/ground-pool-sprite-data-tyrant-fire-f24ee60504.webp",
+      "mime": "image/webp",
+      "bytes": 1104,
+      "sha256": "973c6b06ac01e7cdcea5ae36c280d82b8ead6309109a2aff3ef5482f61440e9b"
+    },
+    {
+      "path": "assets/images/environment/ground-pool-sprite-data-venom-acid-0970d01669.webp",
+      "mime": "image/webp",
+      "bytes": 1360,
+      "sha256": "bfa29c34fbfa45de183bbf24d7b3edad0ee9ab4d00e3a97863d117886365fa63"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-archivist-cbe003cae4.webp",
+      "mime": "image/webp",
+      "bytes": 220,
+      "sha256": "6817fbc68dd245bf67021c31c13008695322f6e95ce7810581fc5c110a23b0f5"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-arrow-5d2dde348e.webp",
+      "mime": "image/webp",
+      "bytes": 172,
+      "sha256": "1e4b95cf12625bcb8364b113233ae3ad34684b638f8a5326487dba7b28ecf2f6"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-ash-7cd1e87820.webp",
+      "mime": "image/webp",
+      "bytes": 196,
+      "sha256": "0de2a6b30e243a8b9e21fbc59b20caab890050ccd210cbb2f4ff2a39af07da2b"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-between-worlds-boots-827b49b08b.webp",
+      "mime": "image/webp",
+      "bytes": 224,
+      "sha256": "dd1f28fb8d601d7011bd500f00a052bf2fc03d427b243fa057981978aa0f8efa"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-bmask-305930115f.webp",
+      "mime": "image/webp",
+      "bytes": 208,
+      "sha256": "a9d9a644e7b67566021ae970643405270a3b77c70d680a5ffab35f967d7c5a79"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-bone-e66939fd5d.webp",
+      "mime": "image/webp",
+      "bytes": 214,
+      "sha256": "d98d0cf7417634a06eac8c53f246e4a91d4fe4d14e5ba67fdde1be343d044d8c"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-bone-spurs-d277b0b5c1.webp",
+      "mime": "image/webp",
+      "bytes": 208,
+      "sha256": "f1d8a4555d6de1d5e7b1bda11a1953012278fe662c91be6e36d74c43550a1de1"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-breath-2fb1508131.webp",
+      "mime": "image/webp",
+      "bytes": 198,
+      "sha256": "86b026e3a57933176b43be96b41785d0993bab47531cc28902871d97d5969772"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-brute-f8a3d9ab9a.webp",
+      "mime": "image/webp",
+      "bytes": 222,
+      "sha256": "c472ffe3d2c2a349d442b977d3c1dc4f8185dba2826e15aa35b179c126d108fa"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-calm-ee63962374.webp",
+      "mime": "image/webp",
+      "bytes": 206,
+      "sha256": "815ea7cf877cb7a6d31b40ff5c4277aaf03a562bd4cc54e7677ffc68804dcde1"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-candle-096326687c.webp",
+      "mime": "image/webp",
+      "bytes": 160,
+      "sha256": "36f5f156104f7adb8f8d4545f34c9a9457d7e2a3d03be3502db87f8b97dcf91b"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-chalice-ede3cf9f79.webp",
+      "mime": "image/webp",
+      "bytes": 182,
+      "sha256": "097dfae6d82dd54a618d4c0817670fd6a0366f38de90de46507a31601b9760f2"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-claws-9ffd8d4958.webp",
+      "mime": "image/webp",
+      "bytes": 216,
+      "sha256": "38f0ef0aa353875702d39f77a1e9cf644e6e525b66dd231fa959bce4d36fa372"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-clock-3e97795587.webp",
+      "mime": "image/webp",
+      "bytes": 214,
+      "sha256": "94abc40022311db00e20cc976f001b37623ceb346b7ea0a58cb972181fe202e0"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-close-harvest-ring-f6897a3b57.webp",
+      "mime": "image/webp",
+      "bytes": 230,
+      "sha256": "7bee5cd0d4c1fe08952768bcd0e0b592b9bef07db429108f0b2c922f1cb49f84"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-comet-eye-9bbafda504.webp",
+      "mime": "image/webp",
+      "bytes": 224,
+      "sha256": "1c67ff1b3c6d2cc0bed2de94ca7685793b360c71a042f8b9026029970fbb120e"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-conductor-ring-cfcdc4c975.webp",
+      "mime": "image/webp",
+      "bytes": 214,
+      "sha256": "9464cc0dc54b1c13600f2d80c7c4c170672dd28e6976b2a99669ddbdf69db943"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-confinement-ring-ddc3f9acd6.webp",
+      "mime": "image/webp",
+      "bytes": 224,
+      "sha256": "aade85e5910908c541deffc601820e292d3da49df25fca699b5a757ba30f32da"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-cooling-ash-ring-3d433ec3dc.webp",
+      "mime": "image/webp",
+      "bytes": 212,
+      "sha256": "5098f56b5ed108156e58d53b46b1f38f6003f6bebd363c64c4fa63d4d7af39f2"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-copper-chronometer-3fa4e96063.webp",
+      "mime": "image/webp",
+      "bytes": 202,
+      "sha256": "0ca47145125fad9556168f31e8672b1ce6fdb15e676e3443f6fcda6711bbc32f"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-critaim-fda0faf61c.webp",
+      "mime": "image/webp",
+      "bytes": 192,
+      "sha256": "e90635421683313f43261378202088668bd3237591ea1064ff4f6846d2ed734e"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-critchain-64e7847096.webp",
+      "mime": "image/webp",
+      "bytes": 192,
+      "sha256": "5235171e72a3cdd1331fb3e2c0c18a676e6997994130636be9e971fdad661562"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-critmass-036346aeef.webp",
+      "mime": "image/webp",
+      "bytes": 210,
+      "sha256": "9560fe2e74d121340f9ff009ebfc701ab578d10cdc9016dc7e9af5f1a1cfbc5b"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-crown-7c190609ab.webp",
+      "mime": "image/webp",
+      "bytes": 216,
+      "sha256": "e3d31225f1db963054760a3d4cfacac594210f16cfa7fc0f4832330ac49f4dd0"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-dead-god-clock-d2bf2d634f.webp",
+      "mime": "image/webp",
+      "bytes": 208,
+      "sha256": "abe74d8f363f927f565d87cc8f0eee45bd89d2750c90b87e4cdc07a319719d0f"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-doll-d797661935.webp",
+      "mime": "image/webp",
+      "bytes": 208,
+      "sha256": "445c0d08493675415913f19c814d5fdec61befa424797ba6d7e4a8951ad0b94e"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-draft-gloves-3f677ea06e.webp",
+      "mime": "image/webp",
+      "bytes": 218,
+      "sha256": "8c095472d8652c36774de5bfc95d8057b7113f1d745ae26cdc9e09e11144574d"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-duel-6f558b218c.webp",
+      "mime": "image/webp",
+      "bytes": 232,
+      "sha256": "8ef2ddf680ba2dcf2e7ce64cec81abeafc3d5cf75bb0ef99a17ab1b95d363da1"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-eclipse-brushes-3560fac949.webp",
+      "mime": "image/webp",
+      "bytes": 214,
+      "sha256": "46b16a5f32bed26b7e96c377813d5fbfb4652986d78e4e0547383038aa10f28c"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-empty-throne-seal-6d8415c04b.webp",
+      "mime": "image/webp",
+      "bytes": 210,
+      "sha256": "67e69e992b6320a229ac9b7815321e6d852396a0e04f3f088504513e57d69c23"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-exec-4e7ccc63d2.webp",
+      "mime": "image/webp",
+      "bytes": 216,
+      "sha256": "6163b0854061c9c7cc851d273233fc51dee7a9fdf911d00da0d19dad6edeb412"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-fang-ec019dea74.webp",
+      "mime": "image/webp",
+      "bytes": 174,
+      "sha256": "3691042af0031984ab1b58b0ce237c3425f6c656fffe1b8c253588fb0e638b72"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-first-trace-ring-17ae77bea7.webp",
+      "mime": "image/webp",
+      "bytes": 230,
+      "sha256": "8134aeb9a48c8fbe28529613f3cd95f4501aeabfb2a59f61801cdf2b919009a2"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-frost-fe40186496.webp",
+      "mime": "image/webp",
+      "bytes": 226,
+      "sha256": "8cac4d1c4d29fa1c351756de39e1b579be0305d9780a0f7fa6940ae46726d8b7"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-fullplate-aee1952cbd.webp",
+      "mime": "image/webp",
+      "bytes": 200,
+      "sha256": "e8c7fe1ce8c28d8f6d4158b3b80544c700b611eeb68dafb90e12eb408d86b0cd"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-glass-bell-2730e431cc.webp",
+      "mime": "image/webp",
+      "bytes": 214,
+      "sha256": "8b40bff68a067ac6adbfc1262547325742cf7cf31dd948bc44da928fa233d507"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-goldbag-f00d6abd6f.webp",
+      "mime": "image/webp",
+      "bytes": 214,
+      "sha256": "ddc5e3f3706b6c1ea8df968705f79494a39b3f2ea936417b65aca7eacd78766e"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-golem-f3b782bc5a.webp",
+      "mime": "image/webp",
+      "bytes": 210,
+      "sha256": "3df8653e64c15931ab470174698fb9c0ab51baa4a1929ecd52ab38494a2191a9"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-gravity-8fc27e06a6.webp",
+      "mime": "image/webp",
+      "bytes": 198,
+      "sha256": "47d66511b01934e8942f857c16b25dca847bd40a1da6c157bbc5474099cf5487"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-headsman-e1fcd81f1b.webp",
+      "mime": "image/webp",
+      "bytes": 194,
+      "sha256": "b9024a7d51202f6be8389034de9ae090871ec8a7b8df89e39fb230621a4e8690"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-heart-second-6a7e75e4a5.webp",
+      "mime": "image/webp",
+      "bytes": 206,
+      "sha256": "6c3d847f3c83ca13f9af74a3230e841020980518b7f265fc0b0fa8ea9e5c3cad"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-hobnailed-soles-9e3a0fcd3a.webp",
+      "mime": "image/webp",
+      "bytes": 250,
+      "sha256": "29b93073919d8973fce08889acd82ca605996bac167c5f8c799f477e0bec5c27"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-ice-9f205768ed.webp",
+      "mime": "image/webp",
+      "bytes": 192,
+      "sha256": "56db9b97ff2bec955f32607a535daeb6db4a4a52e31a8878467bdab7db6bc227"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-inverted-crown-9bb4c81fe9.webp",
+      "mime": "image/webp",
+      "bytes": 206,
+      "sha256": "cca4e905099ae76b791255896cf38981fd71b2992b8e6e15797c174793982f93"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-knotted-charm-d79c1907d6.webp",
+      "mime": "image/webp",
+      "bytes": 204,
+      "sha256": "6f2c15cdff92df819fedb58c0ce89a615ef3d661ac6ec271247896ce91c0bdd9"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-lastplate-961c7d5743.webp",
+      "mime": "image/webp",
+      "bytes": 240,
+      "sha256": "6e81d8d0bda4bcb6f980ad58adf2c15c272f06a990be79c692b21820407d3ffd"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-lava-5d9f3414bd.webp",
+      "mime": "image/webp",
+      "bytes": 224,
+      "sha256": "899587487ebb59cef7e1dae9095d3978c2fc1f119adee7c96037ec8fd96d1352"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-ledger-debts-b50bff2489.webp",
+      "mime": "image/webp",
+      "bytes": 218,
+      "sha256": "099b21d106e24f3fe325f96577083a7636fc1f748761a2012e148e1eecac4fcb"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-looter-283c0f2c53.webp",
+      "mime": "image/webp",
+      "bytes": 208,
+      "sha256": "230f6f1dcd2eb05dbea8dfccd34df076a6ac5e6f49b605260807c7303aeda2d5"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-marathon-7e81167c77.webp",
+      "mime": "image/webp",
+      "bytes": 216,
+      "sha256": "c42cbded92c5587d03fa95f30d79fff812c36caec56667f613f0c984cb63d458"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-march-dead-afecf01e58.webp",
+      "mime": "image/webp",
+      "bytes": 236,
+      "sha256": "92e6b83c9ae4165bedec058d8a684df7de7bba5888d70f9f8713673d0adb9093"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-marching-greaves-2fb554d19f.webp",
+      "mime": "image/webp",
+      "bytes": 202,
+      "sha256": "869f474f18144073a02041ee87ebb338f417c946f147f7419d64eb26c7eeaa1c"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-mirror-17dea7d5ed.webp",
+      "mime": "image/webp",
+      "bytes": 214,
+      "sha256": "5def4f4e94368b2d98a95ce82a22770ba0f31cfc5bb985af5475b1aef121faf2"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-momentum-ec4cbd1bc6.webp",
+      "mime": "image/webp",
+      "bytes": 206,
+      "sha256": "e479941554a48bf002e70d438d1073f75b5655f1cda8d99757b6bd431a69c35a"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-moth-fang-a9bbd3f528.webp",
+      "mime": "image/webp",
+      "bytes": 212,
+      "sha256": "d14a1ac267285ca46f335679877dfaa7cb41ba98cd2919b89a0bffec6a263f7f"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-overload-2464bc1ee3.webp",
+      "mime": "image/webp",
+      "bytes": 186,
+      "sha256": "ca5054bb6fe3dde284229559ab04b73ee84849b26805c5ea5f51e36e4b325b52"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-panic-79a7996ae6.webp",
+      "mime": "image/webp",
+      "bytes": 208,
+      "sha256": "5ff5a5fce95f9c7f01af04008c471fab746aa8124468aeed84f245734993c273"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-plague-6809c0d51d.webp",
+      "mime": "image/webp",
+      "bytes": 188,
+      "sha256": "f8ccb79aa84a62875789e8fe4ee6caefca125579118a48739ba11cb16ed1e34d"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-predator-637bcc6d2a.webp",
+      "mime": "image/webp",
+      "bytes": 220,
+      "sha256": "5f1d54eed8f51fdd6bd5db4482538c4bdd2e92a197a4ac67a1fbf74dafe48d6b"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-pulse-14d6f05ee7.webp",
+      "mime": "image/webp",
+      "bytes": 190,
+      "sha256": "a1b91b90624b11ce59d747410568e27c3ded6dc085f4401993b078bbd1031496"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-reaction-ring-d959efbca9.webp",
+      "mime": "image/webp",
+      "bytes": 220,
+      "sha256": "331832d83fd09cf53351c8a0470537fa5fbe5571a95d5a0d2428ff959d985ad7"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-reaper-d121a1be8b.webp",
+      "mime": "image/webp",
+      "bytes": 230,
+      "sha256": "fb8dcaaf08027cffe8bad700a2aa230344cee52e0df86d9a5c7f060da30e7f80"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-ricochet-871adde55d.webp",
+      "mime": "image/webp",
+      "bytes": 224,
+      "sha256": "64e50b8846a028b23d2bc13fd824ee196c60b4fe0af8a51909a600e69a4624e3"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-riposte-9e4f08d580.webp",
+      "mime": "image/webp",
+      "bytes": 212,
+      "sha256": "e082752e2fd5b6376b1437a9212ac032ed02feacb8031399cb54260d6ce1eafa"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-satin-gloves-2de0fdc597.webp",
+      "mime": "image/webp",
+      "bytes": 202,
+      "sha256": "cfcfd9a88c216e90df8ef7a3cbcd74da796a9fce81cec3f34433955057f263eb"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-seal-hunt-3e645a4e2d.webp",
+      "mime": "image/webp",
+      "bytes": 224,
+      "sha256": "f9bd726e95aff4e741ce8b223a9c7baf6486438fca40cf66df008f970bde5160"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-seal-pack-777a86984b.webp",
+      "mime": "image/webp",
+      "bytes": 208,
+      "sha256": "45d38243d64eba9e64f894ef82f8672789704cef5178bf16096430ea87aded47"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-second-wind-ring-a92c449c55.webp",
+      "mime": "image/webp",
+      "bytes": 220,
+      "sha256": "02e0f64ca3d84e68c5cecdcdff3e2084491aad0a4d2d205b0a1d9327daf4f4cd"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-shard-7b3fcd0131.webp",
+      "mime": "image/webp",
+      "bytes": 178,
+      "sha256": "decf5759fdd0eb17500c5b1e71884c18dce44530e8a26e3c6eeb03f9e20a813d"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-short-circuit-boots-e29f5ffc6a.webp",
+      "mime": "image/webp",
+      "bytes": 226,
+      "sha256": "73e1cdc810577411a8fc430a3b8c07ebc5c7202561233b86efd0fdf2aa0908d1"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-shove-fe298b8b79.webp",
+      "mime": "image/webp",
+      "bytes": 220,
+      "sha256": "6f9f65a59189946225d64e86692becf60446986d7679c68d96afc7be18e639c9"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-siege-c9907e584c.webp",
+      "mime": "image/webp",
+      "bytes": 218,
+      "sha256": "aeb0891d2d687fec5f34442ee61698043c22672e8f20995b5dde26e426ca99ed"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-smith-thumbstall-4c7844e9c7.webp",
+      "mime": "image/webp",
+      "bytes": 194,
+      "sha256": "ed142706610d48806c346b36ed4deb80f35f2ed233f5212cf67f709ac94af8e1"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-sparkstep-boots-cd042a5fc0.webp",
+      "mime": "image/webp",
+      "bytes": 240,
+      "sha256": "171d3f7131d5fe97b09626fad367654d286f64e4facac7686f0f24e3cb3c5fa1"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-sprint-d4f5a1dd83.webp",
+      "mime": "image/webp",
+      "bytes": 216,
+      "sha256": "b4eb7983ba8143d6624a4520c61f74e3cf549bea31e49710a1bc49bf52afb2ba"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-steel-c60559c0d8.webp",
+      "mime": "image/webp",
+      "bytes": 220,
+      "sha256": "fec23526c1d59c0d328f2a89ba846ba71149fc8771f51ddb78e1c26016898bcf"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-step-beyond-edf6ee817d.webp",
+      "mime": "image/webp",
+      "bytes": 222,
+      "sha256": "37a87e4434865476a8e91953cb2d1d7f963d1c9d7800625e57a7e7c65e691404"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-storm-9badf65dbd.webp",
+      "mime": "image/webp",
+      "bytes": 206,
+      "sha256": "50a82048692d787476f132d0581736643a85ab421d0fb67ce11ea44e44dd3ace"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-surgeons-hand-43562f6b91.webp",
+      "mime": "image/webp",
+      "bytes": 204,
+      "sha256": "dfa077981992369fa9265298461d812f73750fe31f0ad9d8b772ae71013eeee9"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-survive-b814c18dc6.webp",
+      "mime": "image/webp",
+      "bytes": 210,
+      "sha256": "4c283717f95d9f99409a57063444c5f464e5c422bd2801c090bcafd2fd21fd09"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-swift-13be4b5ab9.webp",
+      "mime": "image/webp",
+      "bytes": 226,
+      "sha256": "9459950b498a041032489e9f644dd127436fdf0c8b161f91ec5b018e21a10d2e"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-tally-gloves-4a5688cde6.webp",
+      "mime": "image/webp",
+      "bytes": 238,
+      "sha256": "b8d19adf44c3ba431986f0ce6e23689b1b4d81bb31e419919be7efc5c9819932"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-thunder-db632ab1dd.webp",
+      "mime": "image/webp",
+      "bytes": 228,
+      "sha256": "bae17ca01ef59df755b2bb9105cba7f9daabf2473ac9c52b25a2a784627e11e8"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-titans-hands-6f3eb06edb.webp",
+      "mime": "image/webp",
+      "bytes": 226,
+      "sha256": "14bdfc8112bfa79a35150b63bf3302f2b8e3ef0255d664771d4506dbfe0c899c"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-trailfinders-7545856a30.webp",
+      "mime": "image/webp",
+      "bytes": 198,
+      "sha256": "6e61c0e3855b7ba56322327a0c1893fac246d1a2092d6ca04c041ec513f9d74d"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-trinity-73f55d97db.webp",
+      "mime": "image/webp",
+      "bytes": 190,
+      "sha256": "ab3379fb5257cc9df77455309c24d812646584ffa60fa397bb92f840c31bd19a"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-unhealed-wound-ring-a2e56166c8.webp",
+      "mime": "image/webp",
+      "bytes": 200,
+      "sha256": "8c598db5d804be31780c2e8bbd28fc81b7d3340b957867bea37bf296ff11f3bb"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-vacuum-a8655505f0.webp",
+      "mime": "image/webp",
+      "bytes": 202,
+      "sha256": "8665d9a39df9cc67dbd259fab96a3f332af2aa04491e77ac7c4c02dfa643a539"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-warskel-ef08648567.webp",
+      "mime": "image/webp",
+      "bytes": 220,
+      "sha256": "9a964ba9145fa8cc3c2dc1f7d855422cacb5ba86e9ad01200579340842037147"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-xpbag-154d056ae2.webp",
+      "mime": "image/webp",
+      "bytes": 212,
+      "sha256": "d9528518ec0e63ec97d4338f1b37fd7918995ca69a8b6dac6ee104ef43aee30b"
+    },
+    {
+      "path": "assets/images/environment/rare-item-floor-sprite-data-zero-distance-ring-b717d12b27.webp",
+      "mime": "image/webp",
+      "bytes": 224,
+      "sha256": "d68c4ff4ae3218d7879bdb554e013f1b3e157dcf7f926cc8981a52a3042797be"
+    },
+    {
+      "path": "assets/images/environment/skill-card-frame-data-blood-f70ca917fd.webp",
+      "mime": "image/webp",
+      "bytes": 11348,
+      "sha256": "1ce0e78a7392d324371a06d4041674dfbe542c5b0e465a06b0f46d14f6c0bcbb"
+    },
+    {
+      "path": "assets/images/environment/void-ground-rift-data-e5c76fdeb1.webp",
+      "mime": "image/webp",
+      "bytes": 4272,
+      "sha256": "0a62ce23939118660bbfeb98c7d457592d1bc428c1098d3301043a5a42811cdd"
+    },
+    {
+      "path": "assets/images/heroes/class-frame-data-archer-55411c642f.webp",
+      "mime": "image/webp",
+      "bytes": 11444,
+      "sha256": "71f9e0b7bbdc860eb58b23490befe9bc394b8763c96e04303e1af24ec57bebab"
+    },
+    {
+      "path": "assets/images/heroes/class-frame-data-mage-c8d695f2be.webp",
+      "mime": "image/webp",
+      "bytes": 11418,
+      "sha256": "78d03eaa9c77c22a89e04ba012eba6c3f5a69003a410fb39b90a81e56524b2ad"
+    },
+    {
+      "path": "assets/images/heroes/class-frame-data-necromancer-a67204b69f.webp",
+      "mime": "image/webp",
+      "bytes": 11346,
+      "sha256": "3f27d641013c64fe8124b6fa7316579be314d49aba7b4f06cd86c52b5063a899"
+    },
+    {
+      "path": "assets/images/heroes/class-frame-data-warrior-fd57ce24c1.webp",
+      "mime": "image/webp",
+      "bytes": 13082,
+      "sha256": "ceae6c6f577c4a85b10861b8dbf92f93105895e6f37b73ab264c96677390ca56"
+    },
+    {
+      "path": "assets/images/heroes/hero-sprite-data-archer-6f0053f7ae.webp",
+      "mime": "image/webp",
+      "bytes": 1022,
+      "sha256": "9a3659273e2f4eaada2c6cebbe6c0349b8d802c960332b29f267f236fdcbd084"
+    },
+    {
+      "path": "assets/images/heroes/hero-sprite-data-mage-898570c069.webp",
+      "mime": "image/webp",
+      "bytes": 1002,
+      "sha256": "597625da42dd18649fd29ab91eda140f19fa58ed7183f32159d7c6335a249e2a"
+    },
+    {
+      "path": "assets/images/heroes/hero-sprite-data-necromancer-ccc76a67ef.webp",
+      "mime": "image/webp",
+      "bytes": 994,
+      "sha256": "cd99826c1c71e39803cd7706f98de7d53590bfa55d525d1ddb41d3f7a89965fb"
+    },
+    {
+      "path": "assets/images/heroes/hero-sprite-data-warrior-5da2e1a767.webp",
+      "mime": "image/webp",
+      "bytes": 1062,
+      "sha256": "17e85edf0674aa394a05df05c09e94d1c5fc4702bee678c2025996260d913c9f"
+    },
+    {
+      "path": "assets/images/heroes/image-002-4138fa98c5.webp",
+      "mime": "image/webp",
+      "bytes": 34462,
+      "sha256": "f0b5877484829bf75ffa44f140c55bfdd905e1396aad58760a103ef1bfa386aa"
+    },
+    {
+      "path": "assets/images/heroes/image-003-047de2f027.webp",
+      "mime": "image/webp",
+      "bytes": 22774,
+      "sha256": "201ccf59054b738a264c2e4d20419a583ebfaf5ea97f1724416ad15233649b73"
+    },
+    {
+      "path": "assets/images/heroes/image-004-8c734e43cb.webp",
+      "mime": "image/webp",
+      "bytes": 37568,
+      "sha256": "d3106fe68e76780f05a06961755ba311f28765ab4d85641bb5e460971bf0869a"
+    },
+    {
+      "path": "assets/images/heroes/image-005-14e378edf7.webp",
+      "mime": "image/webp",
+      "bytes": 26892,
+      "sha256": "745cb780cef26f4b41b9c3650341405eece63ac9238ffd346df3ae04b4959950"
+    },
+    {
+      "path": "assets/images/heroes/image-006-4a4595906c.webp",
+      "mime": "image/webp",
+      "bytes": 47714,
+      "sha256": "abdacec98896e97481a16e4114bb7f592f14d891f120a99056b54a00b0e56066"
+    },
+    {
+      "path": "assets/images/heroes/image-007-977646d688.webp",
+      "mime": "image/webp",
+      "bytes": 55360,
+      "sha256": "38b3bf2f63fc367bd156a31821d20fc4aab2bc330a57f2c1a0f5c9c6df46e7dc"
+    },
+    {
+      "path": "assets/images/heroes/image-008-13f6b64a76.webp",
+      "mime": "image/webp",
+      "bytes": 71914,
+      "sha256": "ff1627a48d49c2ef3eea16b977fd4481fa86ed0d5e32a6dc321e185830fcf76b"
+    },
+    {
+      "path": "assets/images/heroes/image-009-41dbaa17b2.webp",
+      "mime": "image/webp",
+      "bytes": 43518,
+      "sha256": "59a56030fae863a36013d34fbc2e9a44018325a363c957864468cecfbc28db71"
+    },
+    {
+      "path": "assets/images/heroes/image-1a8e3fc27f.webp",
+      "mime": "image/webp",
+      "bytes": 40038,
+      "sha256": "c7d745dbd5aa6da37b4666a90188794118878c35c0217c37a6ed01063ee31b14"
+    },
+    {
+      "path": "assets/images/heroes/mage-ability-sprite-data-ashen-seraph-ade57d70ea.webp",
+      "mime": "image/webp",
+      "bytes": 10170,
+      "sha256": "9279f5b8a05ea508e1d61ee8e8e72b830cd7840c7f780dfc606a6dc1cd284290"
+    },
+    {
+      "path": "assets/images/heroes/mage-ability-sprite-data-bone-astrolabe-4e2a2e9db4.webp",
+      "mime": "image/webp",
+      "bytes": 8382,
+      "sha256": "12bdbd73d39d64d694387c55f597bdc9bd758affcc98e53c8ed0fa0f21bd8583"
+    },
+    {
+      "path": "assets/images/heroes/mage-ability-sprite-data-bottomless-mnema-9c9d3bd683.webp",
+      "mime": "image/webp",
+      "bytes": 7362,
+      "sha256": "4074ad70f3d3a5dc4a72dd6e3f96b10b2dd067fe8bea14f1dd502f9d3f5d7f08"
+    },
+    {
+      "path": "assets/images/heroes/mage-ability-sprite-data-copper-oracle-07b46d3826.webp",
+      "mime": "image/webp",
+      "bytes": 8322,
+      "sha256": "628489b1cd26dbc6cb6ed181552b1d626c4fba0bc5ff3175c09ccc96734b695d"
+    },
+    {
+      "path": "assets/images/heroes/mage-ability-sprite-data-crimson-seamstress-35f851a039.webp",
+      "mime": "image/webp",
+      "bytes": 10046,
+      "sha256": "8094d9ecd2fb6461f49b190c2cdb7366487c7b4a50edbdb0cd78ea05a3d625cc"
+    },
+    {
+      "path": "assets/images/heroes/mage-ability-sprite-data-elemental-ae0b8e0ae5.webp",
+      "mime": "image/webp",
+      "bytes": 4268,
+      "sha256": "258f1dce9231e09f8f11c146789124c08d16f38eeff117ffa2c52fdc7315971e"
+    },
+    {
+      "path": "assets/images/heroes/mage-ability-sprite-data-empress-iron-roses-da626f8307.webp",
+      "mime": "image/webp",
+      "bytes": 7564,
+      "sha256": "dbbd624b22936218a1a21d87bf0b57f9eba1ff0c5d3d6e9e3d396bedd2ddb092"
+    },
+    {
+      "path": "assets/images/heroes/mage-ability-sprite-data-funeral-bell-colossus-a4e7b031b7.webp",
+      "mime": "image/webp",
+      "bytes": 8816,
+      "sha256": "e6a367e27126bd664716677e02e19f056046e37292da0a8b84624e8edcc5f5de"
+    },
+    {
+      "path": "assets/images/heroes/mage-ability-sprite-data-glass-titan-47bb8cc92a.webp",
+      "mime": "image/webp",
+      "bytes": 11034,
+      "sha256": "49d148566a3f136e33105367d9e5ea2338e0bba98fd0e3670f36f2165be5e995"
+    },
+    {
+      "path": "assets/images/heroes/mage-ability-sprite-data-heart-7f23c7702b.webp",
+      "mime": "image/webp",
+      "bytes": 1522,
+      "sha256": "a4300bea402493151cf538f58bcd30de04ea98a967630d0d8f3b1af2edd768ef"
+    },
+    {
+      "path": "assets/images/heroes/mage-ability-sprite-data-heart-collector-25441ffa79.webp",
+      "mime": "image/webp",
+      "bytes": 6934,
+      "sha256": "57af112f84e0d7a5d7ea0627993cfe5fbf5d6d7574b9b93609b873cdef49bdcd"
+    },
+    {
+      "path": "assets/images/heroes/mage-ability-sprite-data-ice-psalmist-1f390b463c.webp",
+      "mime": "image/webp",
+      "bytes": 12938,
+      "sha256": "3a024bccb2673473bc3787031b67216a9f40f73aa2738b5f0e43d23903acdd8b"
+    },
+    {
+      "path": "assets/images/heroes/mage-ability-sprite-data-ink-leviathan-5e76c40150.webp",
+      "mime": "image/webp",
+      "bytes": 8016,
+      "sha256": "051a8292873285266cd93daaece365c0aadc0c5cd07ba6bf6d884a99c484f9ad"
+    },
+    {
+      "path": "assets/images/heroes/mage-ability-sprite-data-judge-of-chains-c8e1df7c2b.webp",
+      "mime": "image/webp",
+      "bytes": 9408,
+      "sha256": "9f55aad3b39e3550ebec965390f03d0121f1a4240c662125e9878f1949eb1ba1"
+    },
+    {
+      "path": "assets/images/heroes/mage-ability-sprite-data-keeper-last-candle-55fa2a5021.webp",
+      "mime": "image/webp",
+      "bytes": 9734,
+      "sha256": "66069ff055e77c175853f46e54f2a7f468cbee0d6b62b4eab248fc4f28357942"
+    },
+    {
+      "path": "assets/images/heroes/mage-ability-sprite-data-lunar-butcher-8898d5fe16.webp",
+      "mime": "image/webp",
+      "bytes": 8016,
+      "sha256": "5e0c73400a5ef3ed8cc77ce0edd312fe352faaabcee8c3da78f10628b7ddb854"
+    },
+    {
+      "path": "assets/images/heroes/mage-ability-sprite-data-mini-2fef06468d.webp",
+      "mime": "image/webp",
+      "bytes": 1688,
+      "sha256": "1490ce3eed1d2e32693a5029c3a35afc470925be4b855e7ea154bf74736cce34"
+    },
+    {
+      "path": "assets/images/heroes/mage-ability-sprite-data-mother-empty-masks-d3e70aed9c.webp",
+      "mime": "image/webp",
+      "bytes": 9012,
+      "sha256": "8dcee6beb886a7d51af814742d3be15eddbff138c28803b9acca47876fd01b84"
+    },
+    {
+      "path": "assets/images/heroes/mage-ability-sprite-data-normal-6959fac6f7.webp",
+      "mime": "image/webp",
+      "bytes": 3142,
+      "sha256": "ee1fe5ac0fb9b526894f58f9f72c9e71003fc88a28516c774ed205c650b7c901"
+    },
+    {
+      "path": "assets/images/heroes/mage-ability-sprite-data-plague-archimandrite-f1ea9648d6.webp",
+      "mime": "image/webp",
+      "bytes": 10264,
+      "sha256": "d29d2c69d168310cad6ba07167c2f0aa93fe13a4972ed165f25e38586dfe168b"
+    },
+    {
+      "path": "assets/images/heroes/mage-ability-sprite-data-prince-hungry-ravens-e311c118f5.webp",
+      "mime": "image/webp",
+      "bytes": 7072,
+      "sha256": "f7e31ed29f160c1f57bd4c38b891240afc8f6a84a3aff88e5655cfa84e85085f"
+    },
+    {
+      "path": "assets/images/heroes/mage-ability-sprite-data-remote-ccfb40604c.webp",
+      "mime": "image/webp",
+      "bytes": 2090,
+      "sha256": "5cfd6ee7d7a41af2d0f96b412f9a32dc660b01d8ed319c0830a8273a4a955279"
+    },
+    {
+      "path": "assets/images/heroes/mage-ability-sprite-data-residual-764b28b7ac.webp",
+      "mime": "image/webp",
+      "bytes": 1808,
+      "sha256": "dca79df13a84b1d6a22cc9c14dab4776e74388de15469bf737a5c53959da22da"
+    },
+    {
+      "path": "assets/images/heroes/mage-ability-sprite-data-rust-king-868760fe46.webp",
+      "mime": "image/webp",
+      "bytes": 8426,
+      "sha256": "d0911145637594ca502007a757260ce5e99f2fdbe651dcc0e6ab47b7969dc28d"
+    },
+    {
+      "path": "assets/images/heroes/mage-ability-sprite-data-sand-gravedigger-510e78ba80.webp",
+      "mime": "image/webp",
+      "bytes": 10194,
+      "sha256": "0e975da0e3bea201338924aa419dabee6367e48f75b20d55b6802cbfad200401"
+    },
+    {
+      "path": "assets/images/heroes/mage-ability-sprite-data-star-devourer-d58a459e28.webp",
+      "mime": "image/webp",
+      "bytes": 9298,
+      "sha256": "e59c20133c62d289616b6e3b03c4f8db465115b4e373ece03f205f671b4fb831"
+    },
+    {
+      "path": "assets/images/heroes/player-projectile-data-archer-projectile-04d16066dd.webp",
+      "mime": "image/webp",
+      "bytes": 114,
+      "sha256": "e91a482f327afe3729737d4bf663c1b1c719a8482a47a5b5ae788bfc3801f4ea"
+    },
+    {
+      "path": "assets/images/heroes/player-projectile-data-mage-projectile-b1c3e8a9a0.webp",
+      "mime": "image/webp",
+      "bytes": 252,
+      "sha256": "07e4a6973581a9576837e19218985ff9e0ef7a4eb878f41255e445f2d3fdb5a0"
+    },
+    {
+      "path": "assets/images/heroes/subclass-frame-data-animator-9b930574d3.webp",
+      "mime": "image/webp",
+      "bytes": 12902,
+      "sha256": "462b1afd8d7b5741b64fc31c2182cdea966e5fba36bcfd9d070846962889d58c"
+    },
+    {
+      "path": "assets/images/heroes/subclass-frame-data-berserker-679d7d0158.webp",
+      "mime": "image/webp",
+      "bytes": 10918,
+      "sha256": "208dc0c6edc6ca5e86845eda755e631fbc2a88ca372117c096fac1275d866b33"
+    },
+    {
+      "path": "assets/images/heroes/subclass-frame-data-dancer-fe8802855e.webp",
+      "mime": "image/webp",
+      "bytes": 13108,
+      "sha256": "97f827c9a2567210a782e41f9b8f08738f04e84b01bf06a0f7af3d93dd488a19"
+    },
+    {
+      "path": "assets/images/heroes/subclass-frame-data-destroyer-598563639c.webp",
+      "mime": "image/webp",
+      "bytes": 12876,
+      "sha256": "ad3345d52c3adb1035e1262261d9d899780bf8dafa38cc76abfb4ee309017f70"
+    },
+    {
+      "path": "assets/images/heroes/subclass-frame-data-elementalist-8aef740136.webp",
+      "mime": "image/webp",
+      "bytes": 8986,
+      "sha256": "15bb334e537b5a94418e939afbedaf8617a4e10cea8ba7e8914c79a06aec6724"
+    },
+    {
+      "path": "assets/images/heroes/subclass-frame-data-graverobber-272ee29e09.webp",
+      "mime": "image/webp",
+      "bytes": 11054,
+      "sha256": "619dc3a4c1bd80106fcaf2f16089d6b3758e6fb48df0e4a1c9db3b56f0916f4d"
+    },
+    {
+      "path": "assets/images/heroes/subclass-frame-data-guardian-ce2f1ab36c.webp",
+      "mime": "image/webp",
+      "bytes": 11584,
+      "sha256": "4c7448c4ae51edf0dbb0a28e60af8e6488fe5f930b59f5f13852d466035092f2"
+    },
+    {
+      "path": "assets/images/heroes/subclass-frame-data-hunter-4a0fe34185.webp",
+      "mime": "image/webp",
+      "bytes": 11720,
+      "sha256": "c37522dfbe2074236f95ba712bd633689d40ec8442a2d1af4ed80a756d6519c2"
+    },
+    {
+      "path": "assets/images/heroes/subclass-frame-data-multiplier-11dc4f7d49.webp",
+      "mime": "image/webp",
+      "bytes": 9632,
+      "sha256": "f01030c8f6f4be9b753dd8d521a050c9b9a2f89f83d62929fabf12c320edf053"
+    },
+    {
+      "path": "assets/images/heroes/subclass-frame-data-swordmaster-d48f9b54c4.webp",
+      "mime": "image/webp",
+      "bytes": 9950,
+      "sha256": "396bdcf830556949cd6dbdfa499dd6a65fb6fe5bde1577b2b6c510bf48f29953"
+    },
+    {
+      "path": "assets/images/heroes/subclass-frame-data-thief-6547110e25.webp",
+      "mime": "image/webp",
+      "bytes": 9400,
+      "sha256": "bbd4f57a9336221c6c294021f468a25611aaa51e56d7d2037a4512c044ae8017"
+    },
+    {
+      "path": "assets/images/heroes/subclass-frame-data-venomancer-9c8a74d30d.webp",
+      "mime": "image/webp",
+      "bytes": 13492,
+      "sha256": "f86ec805dfd4cdff508a043afa2b0a74d04a777ca8ee34555b31724f8b48f23d"
+    },
+    {
+      "path": "assets/images/heroes/subclass-hero-sprite-data-animator-0906919621.webp",
+      "mime": "image/webp",
+      "bytes": 3336,
+      "sha256": "3a3d5a00ad6c99b3e5a00dab092b0f8b2c8ad526ddaf7be831680c476b6cf7ce"
+    },
+    {
+      "path": "assets/images/heroes/subclass-hero-sprite-data-berserker-1c1cd2de51.webp",
+      "mime": "image/webp",
+      "bytes": 3632,
+      "sha256": "1abca6e55df9affbf65a290ad41deba48acc0b2caf09f0f8872e7899c571fa64"
+    },
+    {
+      "path": "assets/images/heroes/subclass-hero-sprite-data-dancer-882892f769.webp",
+      "mime": "image/webp",
+      "bytes": 3430,
+      "sha256": "cc012305a0bd93186b77a48e963dad7ab9f5b7293a83cabf74d384671dffbb7d"
+    },
+    {
+      "path": "assets/images/heroes/subclass-hero-sprite-data-destroyer-1664df76fa.webp",
+      "mime": "image/webp",
+      "bytes": 3762,
+      "sha256": "61b806294cba0f3152e7068b80013796e2f204580ec40bf1d835dab2dfacbdc5"
+    },
+    {
+      "path": "assets/images/heroes/subclass-hero-sprite-data-elementalist-137b3e2d09.webp",
+      "mime": "image/webp",
+      "bytes": 3288,
+      "sha256": "2f847935e6f2d99f4396f182c75d3296f2491f10173f063d2178536e9511ddd4"
+    },
+    {
+      "path": "assets/images/heroes/subclass-hero-sprite-data-graverobber-fb10f31c89.webp",
+      "mime": "image/webp",
+      "bytes": 3372,
+      "sha256": "f1aa7af30d3bab84d235a9db872177a638866bfe4202b573525db0b8ebb525c7"
+    },
+    {
+      "path": "assets/images/heroes/subclass-hero-sprite-data-guardian-9b4cb6e450.webp",
+      "mime": "image/webp",
+      "bytes": 3382,
+      "sha256": "1e66478e239e5f6136e69a0a3a5d19cb51285231c760721b5cc12f84cd311f9e"
+    },
+    {
+      "path": "assets/images/heroes/subclass-hero-sprite-data-hunter-43fb1f51d5.webp",
+      "mime": "image/webp",
+      "bytes": 3866,
+      "sha256": "95645e3cfffecc719e2bd126e3ca0609b99b43e5084100f66463708ee0794dac"
+    },
+    {
+      "path": "assets/images/heroes/subclass-hero-sprite-data-multiplier-d114a66f7f.webp",
+      "mime": "image/webp",
+      "bytes": 3562,
+      "sha256": "20d028422425374e624276de9e0c77422ab85b5caa3553293380cfef242218cf"
+    },
+    {
+      "path": "assets/images/heroes/subclass-hero-sprite-data-swordmaster-186d8b025a.webp",
+      "mime": "image/webp",
+      "bytes": 3716,
+      "sha256": "681c9e5c66bb1aa5bf8cad258a363137558075a09b1a6e7b79821cd130948683"
+    },
+    {
+      "path": "assets/images/heroes/subclass-hero-sprite-data-thief-d1d36d18ef.webp",
+      "mime": "image/webp",
+      "bytes": 3368,
+      "sha256": "4d19e165f2436a40393bed5b1ddf212857a72c11d596881cf830ef4c3bd76b97"
+    },
+    {
+      "path": "assets/images/heroes/subclass-hero-sprite-data-venomancer-e9466dc75f.webp",
+      "mime": "image/webp",
+      "bytes": 3488,
+      "sha256": "51503db4669145bf63ebee004faabd7f1287e1502c6088d60e2fe424b0b005b5"
+    },
+    {
+      "path": "assets/images/items/coin-strip-93484ab798.webp",
+      "mime": "image/webp",
+      "bytes": 222,
+      "sha256": "ec457dc1275f5a7c80d8c6b445ce5987d8636dd069d8ae8a0fb8d18aaabea293"
+    },
+    {
+      "path": "assets/images/items/loot-sprite-data-bleed-0c183425d5.webp",
+      "mime": "image/webp",
+      "bytes": 4826,
+      "sha256": "c79dd6a4ba0efc97eaa0369bec47b6b88655f57a42a14394f55e636a43011917"
+    },
+    {
+      "path": "assets/images/items/loot-sprite-data-cold-af5062d82e.webp",
+      "mime": "image/webp",
+      "bytes": 4736,
+      "sha256": "c701bc9b31c27b8a777cf6ffa9fa8e94e83c06986901afd91c74543497c8e59a"
+    },
+    {
+      "path": "assets/images/items/loot-sprite-data-fire-20b1be7318.webp",
+      "mime": "image/webp",
+      "bytes": 4498,
+      "sha256": "2d9cf646ebd001359d72ab80668fe2a3d4da1d83d58d55b824a30c397aaf67e2"
+    },
+    {
+      "path": "assets/images/items/loot-sprite-data-monster-27ac7f4bde.webp",
+      "mime": "image/webp",
+      "bytes": 4650,
+      "sha256": "19abf9fbe37767cbb7df56e336ba957f20e475384b26994175d6d3165c084bd0"
+    },
+    {
+      "path": "assets/images/items/loot-sprite-data-pickup-gold-b26e84c3f1.webp",
+      "mime": "image/webp",
+      "bytes": 384,
+      "sha256": "1ebfb62d103a1c0d5e08c9d2ed5cd085138f12b1715cbd5ce1eacddd4231e9f6"
+    },
+    {
+      "path": "assets/images/items/loot-sprite-data-pickup-xp-2b4b0e8ffc.webp",
+      "mime": "image/webp",
+      "bytes": 368,
+      "sha256": "4d9891454cb9a95accd4294377ad00c247f1c5ff6ce413a142de9332bc6d3dc8"
+    },
+    {
+      "path": "assets/images/items/loot-sprite-data-poison-40f2eecc2d.webp",
+      "mime": "image/webp",
+      "bytes": 4310,
+      "sha256": "2f64491d109b539e8b9a8a21a2677ae487c5b32e4da4fd614be1e6378639b73e"
+    },
+    {
+      "path": "assets/images/items/loot-sprite-data-shock-ba645b325a.webp",
+      "mime": "image/webp",
+      "bytes": 4072,
+      "sha256": "252c7797a32f6bee10a7c55bcc8f3c0b74cc735bacc07abdd90cbe1bbd5295fa"
+    },
+    {
+      "path": "assets/images/items/loot-sprite-data-xp-ec2db4e9b5.webp",
+      "mime": "image/webp",
+      "bytes": 4204,
+      "sha256": "c9bbe64f2cd2bd91be0b1e73ff91860366354f9bb07efb6e91db6c5a9839b45c"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-archivist-08073ac1ff.webp",
+      "mime": "image/webp",
+      "bytes": 5178,
+      "sha256": "2a68712ed5ef481bd1c207e6cec90503e12ba3d9f06b13c5ff6479c86a1a0fe8"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-arrow-b80bfe9c2d.webp",
+      "mime": "image/webp",
+      "bytes": 2418,
+      "sha256": "f7cbf19101f5c934015559a372f985dab3d6ed485bfa6d4de6b391765f1447e1"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-ash-26b5ddcf3a.webp",
+      "mime": "image/webp",
+      "bytes": 4076,
+      "sha256": "04b5c116d8a73302d80c27ab23a8dfac8d50675a702b40d0f2ebc9af00ce9223"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-between-worlds-boots-0bc6bdc277.webp",
+      "mime": "image/webp",
+      "bytes": 4222,
+      "sha256": "078396ebd77124f10de9f00e6ac0fc1a63f01e721ae6d344cecc867678a9ec2b"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-bmask-7203f2a23f.webp",
+      "mime": "image/webp",
+      "bytes": 4038,
+      "sha256": "9fc8f252990ec0d7fc399842f3af8724e6796a817803e8d51401ad4cf2ec4b8e"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-bone-632784d8a4.webp",
+      "mime": "image/webp",
+      "bytes": 3702,
+      "sha256": "eb6fd3d14696a060aa392c6a42e06672406367a55be25a96b211279ee58c9d38"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-bone-spurs-a85109dbed.webp",
+      "mime": "image/webp",
+      "bytes": 3990,
+      "sha256": "3b7ec2e6e3e7490157ed511c930808d55c16e7bea5725a863f37e6ce27c99d76"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-breath-59d18e2a52.webp",
+      "mime": "image/webp",
+      "bytes": 4058,
+      "sha256": "b9e58eaad30072608214faa169c5e0aa67c59f630822f1185d3a679023e183d4"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-brute-92fe33deba.webp",
+      "mime": "image/webp",
+      "bytes": 5196,
+      "sha256": "74c4fbfdde1bce8175f483d69cebca05cfb18761506d6558fb821ac473a20265"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-calm-218236799d.webp",
+      "mime": "image/webp",
+      "bytes": 3496,
+      "sha256": "4b81868e638f6a4bac0c14639b5c59bc250b892208efbc9428266cb76edc46b3"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-candle-57b45f5c14.webp",
+      "mime": "image/webp",
+      "bytes": 2570,
+      "sha256": "3e4dfb7da3612dec963bcaf236a69f753305bb2593418d466779b7b2e0357aa7"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-chalice-3307898edf.webp",
+      "mime": "image/webp",
+      "bytes": 2862,
+      "sha256": "38d80fe6f2eff9b5c6f9908e3822aca35d3032beec5ee7324df3e1146dda8fd2"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-claws-4ef3643434.webp",
+      "mime": "image/webp",
+      "bytes": 4182,
+      "sha256": "92f2a27521eb3c98b55d05035614bd9c43e714f16f18a72d48119dd81e302312"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-clock-965290b45f.webp",
+      "mime": "image/webp",
+      "bytes": 4644,
+      "sha256": "60464477c4ecddc23b18b82eec255e7159562310074f44a57e3b58c8339998e7"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-close-harvest-ring-564d288e31.webp",
+      "mime": "image/webp",
+      "bytes": 3758,
+      "sha256": "500e07f592caaeaf0331edc2be353ec98c0ecece3a09fdb6a752e4cb75d42fe5"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-comet-eye-0c041bd5e5.webp",
+      "mime": "image/webp",
+      "bytes": 3764,
+      "sha256": "9d4f387ff687401bccc9eeb3e8899a43cffb6a86c4ecb7b550c14b65839bb3bd"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-conductor-ring-c68a9dd6bb.webp",
+      "mime": "image/webp",
+      "bytes": 4062,
+      "sha256": "188b876c318ff4b268faa6efb4097ed956f063624929486ef5a93ed9815402d2"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-confinement-ring-aad7900ae6.webp",
+      "mime": "image/webp",
+      "bytes": 3452,
+      "sha256": "386b1733a4ffeb9cc80981fe798dee842617d2d23c9a24ea6fe478180d8aad98"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-cooling-ash-ring-d26f90c13a.webp",
+      "mime": "image/webp",
+      "bytes": 3814,
+      "sha256": "5db55a7e8efae13e196f353fc163d2911b58bf5bf72be0d5b112df6aaae1a0a3"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-copper-chronometer-cb38e57a53.webp",
+      "mime": "image/webp",
+      "bytes": 4446,
+      "sha256": "5ca119af71ce5dd69743c954659a0582e4efb49fb68e7ec0d21362dacd4aba5a"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-critaim-6670f16dff.webp",
+      "mime": "image/webp",
+      "bytes": 3284,
+      "sha256": "e1359f092ad5c66638069e54700b8103b46229a0f9fedc88a62986740f40feaa"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-critchain-b3e98a2408.webp",
+      "mime": "image/webp",
+      "bytes": 3172,
+      "sha256": "857ffd93cb0a095778ab8605da05d3b18fa522d68118b644c04ac49d81d688b6"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-critmass-dc591e08e5.webp",
+      "mime": "image/webp",
+      "bytes": 4040,
+      "sha256": "b912c5972b61abdda8a309087c7a82fdf6dc919c7399c38666b789e95ac69583"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-crown-e25328edbd.webp",
+      "mime": "image/webp",
+      "bytes": 5024,
+      "sha256": "62b04d1540a07df219a02ae11a39e3cd80974de4bfd4ee2269bef0b5cd965214"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-dead-god-clock-c37b9dc993.webp",
+      "mime": "image/webp",
+      "bytes": 4096,
+      "sha256": "faefc3df622365da9f9ab5cf11d1e521da5a6cf4d0c407b7eafcc0d5d2fe0d87"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-doll-eec687601a.webp",
+      "mime": "image/webp",
+      "bytes": 3774,
+      "sha256": "894de8f0ad55be12c891806f08c3701aa60856959c55a95fbcc62abbfe401271"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-draft-gloves-95315ae683.webp",
+      "mime": "image/webp",
+      "bytes": 4668,
+      "sha256": "ec231ad6915da6a83ad3dbe4bcaaaea4d344d211c95a66eb8dce55882d5898d5"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-duel-df35fd51da.webp",
+      "mime": "image/webp",
+      "bytes": 4380,
+      "sha256": "a898953e4aae92896e644a3282b7d7d167cef58478831e0d4592af06f63f08c3"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-eclipse-brushes-003c3d4418.webp",
+      "mime": "image/webp",
+      "bytes": 4006,
+      "sha256": "e6ee4a6d9c51c65af35255c1a34667630fbd10e51cfb937d44d1e00a265aa87a"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-empty-throne-seal-fc822499ff.webp",
+      "mime": "image/webp",
+      "bytes": 4300,
+      "sha256": "24f2f77161081839534695af7910a33f60a58523a792b06b059ec5b48980142b"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-exec-33b5e38ef5.webp",
+      "mime": "image/webp",
+      "bytes": 3562,
+      "sha256": "16d983fb7aa6e050718ee907f592768a6994af777404cb39f507c5b2ff30b442"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-fang-4c0ed71def.webp",
+      "mime": "image/webp",
+      "bytes": 2618,
+      "sha256": "e3325d41b29b4acea6c0820c8510a35a38141a6b901311756ad18864fbe1109d"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-first-trace-ring-35a38789d1.webp",
+      "mime": "image/webp",
+      "bytes": 3642,
+      "sha256": "d20ab716edebbc615b45b309a524109ba6cf2aeb80e5498e257159335b106add"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-frost-0155215d45.webp",
+      "mime": "image/webp",
+      "bytes": 4598,
+      "sha256": "e913a1ffc771fc321742ea698819045ad6a0d9ccc641ddaa10acd541d4b25b24"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-fullplate-bf02ac8026.webp",
+      "mime": "image/webp",
+      "bytes": 4956,
+      "sha256": "75362631aae78c5cd2ec0837e3f1320325b72d19e1e3b5f80d3c9446a58fb7ec"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-glass-bell-38270a88e1.webp",
+      "mime": "image/webp",
+      "bytes": 4008,
+      "sha256": "bba5a5144e7724d84f1977f29e614b72d8c3ce381a497aa3cc0b29e6659db379"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-goldbag-a2385f3b11.webp",
+      "mime": "image/webp",
+      "bytes": 5066,
+      "sha256": "6c4e3f9423edd979271f9adbcfc749b71e772106909d15b109ffa29741928cb1"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-golem-c53bc0d0f4.webp",
+      "mime": "image/webp",
+      "bytes": 4354,
+      "sha256": "21b58e91e45792443a6246a2fb4054b5ea837ed5227d1fbf9d855ed625de6124"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-gravity-5574ffc255.webp",
+      "mime": "image/webp",
+      "bytes": 3772,
+      "sha256": "cbb09813503632a4e4972ea13eb04e5371ae328ca6fe9d2c08658e53caa00648"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-headsman-14c6731cb1.webp",
+      "mime": "image/webp",
+      "bytes": 3706,
+      "sha256": "50e93c31fc7909d7cc13947c01e212120b27c31d9597102ef4212601e027dfec"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-heart-second-e2f57c0fd8.webp",
+      "mime": "image/webp",
+      "bytes": 4272,
+      "sha256": "8104a403082e0c211950343a61d0a363db70402996a1af5a729ba1357f6b42c4"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-hobnailed-soles-adda3feb95.webp",
+      "mime": "image/webp",
+      "bytes": 5230,
+      "sha256": "04ef080976d48f63f939bd31a6fe9c91e7abbca4fa412b1f33b815e047e2c79f"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-ice-2b047ea100.webp",
+      "mime": "image/webp",
+      "bytes": 3096,
+      "sha256": "6f3b3ab385c5d1b0593a39b354927a19c2a5448c7bdd98dce6c5f9201901b301"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-inverted-crown-d1d49204fe.webp",
+      "mime": "image/webp",
+      "bytes": 3918,
+      "sha256": "54873c2327418d736f218a86966ae55e2da9ea6c9257e851b48bc82fb516e258"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-knotted-charm-6961f70841.webp",
+      "mime": "image/webp",
+      "bytes": 3504,
+      "sha256": "bd0a2bfdeeffb83ea01b94d30a3ee82be29e8791c51765eb8fa4526621b998cd"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-lastplate-efa84232c3.webp",
+      "mime": "image/webp",
+      "bytes": 5108,
+      "sha256": "068c63f0dccade5deb716f75bcf58298ce8e39e29281a5228417d907ea43b555"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-lava-4bbb255ca6.webp",
+      "mime": "image/webp",
+      "bytes": 4596,
+      "sha256": "8803f3983cd615c5dd9844707c4901b7d6eb019c72cbdc134c65dd6f8d07cc6e"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-ledger-debts-dc520d5d38.webp",
+      "mime": "image/webp",
+      "bytes": 4904,
+      "sha256": "71cd6ef00e0dab9ea6abc367a485101c4ebffe2368655c3463a22313608fb086"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-looter-1872dc8b74.webp",
+      "mime": "image/webp",
+      "bytes": 3840,
+      "sha256": "8725cff6d6b53f344628966b941930698bc5a253b6ae2d3fbdfa25a1d9e2b8be"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-marathon-f046f42fa4.webp",
+      "mime": "image/webp",
+      "bytes": 4556,
+      "sha256": "5c55192622a0f4c11f9283623420dfda2d6b618d271f7f2f082e70726dc7e2c1"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-march-dead-f834ed7a8d.webp",
+      "mime": "image/webp",
+      "bytes": 4442,
+      "sha256": "45ca43f8f185163e19026321cd6e372251f858bd5738fb0f74780427985737b6"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-marching-greaves-bd06e0beda.webp",
+      "mime": "image/webp",
+      "bytes": 4610,
+      "sha256": "b76a77ada493f0e37df4637d7a737747d7cc1a8598cf71f9bf998bfa63a9074a"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-mirror-d67bbc5e26.webp",
+      "mime": "image/webp",
+      "bytes": 3994,
+      "sha256": "e028cf4d27cdef4369da5f670474a0c5de7b3390e899333766466f4e494666f1"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-momentum-8ef9c1d66c.webp",
+      "mime": "image/webp",
+      "bytes": 4328,
+      "sha256": "609cf55cd480ee2562bb8376758a3dfeb536e19d3a1a62dd72734de1c005a5b2"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-moth-fang-79388a5b12.webp",
+      "mime": "image/webp",
+      "bytes": 4102,
+      "sha256": "494d410b3dc492e4cce5bbf250df7f0e6460a27bd3416b4bfc799d2599be4713"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-overload-1e57b2e6b2.webp",
+      "mime": "image/webp",
+      "bytes": 2850,
+      "sha256": "75292fad9189389be03a56b092a0b79f5b573c562959d8b4c5fcc99b47aba4d5"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-panic-d60d677cc9.webp",
+      "mime": "image/webp",
+      "bytes": 3784,
+      "sha256": "0abf6616d511c2e098cc60c87f269c1fa463b1162d18d0ae2027091d269abf30"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-plague-e254adc329.webp",
+      "mime": "image/webp",
+      "bytes": 2936,
+      "sha256": "c78b992cd43eed058ba2b6d55357e08f0aee14fdba1091c498b9bc3571ae8926"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-predator-2a970a2823.webp",
+      "mime": "image/webp",
+      "bytes": 3878,
+      "sha256": "ce1452b39b7a911261e9be09abd5931ff4e663901cc592437387c06e6add94c1"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-pulse-53e1fd984a.webp",
+      "mime": "image/webp",
+      "bytes": 3290,
+      "sha256": "7e8b6df29d757623036369a67eabdb87d2da018954cdf062aca772cf5c42a3df"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-reaction-ring-86e7aceb13.webp",
+      "mime": "image/webp",
+      "bytes": 3526,
+      "sha256": "0cdac16d73a1ccfe6bfdaa5249d3b94c45a2ea91e8a61f2d6bff2161d1925b6b"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-reaper-9f9b9e9cf7.webp",
+      "mime": "image/webp",
+      "bytes": 4148,
+      "sha256": "cceedefd62344962d3066ac700af76155fc9c04948d36ff41735c181924aee75"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-ricochet-5709726297.webp",
+      "mime": "image/webp",
+      "bytes": 4480,
+      "sha256": "2ad1a302bd8503b4d76f378d0e8d74bb841a89646f2d05601e0018b27cda204e"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-riposte-3e049321f0.webp",
+      "mime": "image/webp",
+      "bytes": 3918,
+      "sha256": "ff39a8c2aba0c10fd5295ac9727ce6a7bae4aced681226b751743d52bbaba5f9"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-satin-gloves-2acd889456.webp",
+      "mime": "image/webp",
+      "bytes": 4142,
+      "sha256": "4bc4311e17485b7dcebbb0de569b05817f754576f11192afb4fc6e968cc3b34d"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-seal-hunt-8d9943645d.webp",
+      "mime": "image/webp",
+      "bytes": 4508,
+      "sha256": "6b94a40471704ed2f24d62ec7b4a1d7067ad04569bf90453ef6b414613d2da8d"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-seal-pack-6e9bff969c.webp",
+      "mime": "image/webp",
+      "bytes": 5002,
+      "sha256": "1e5a027623d476f9055bf4fb5d266637261a79cc5a11507b7ddecb22fe9691bd"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-second-wind-ring-d93b3008c1.webp",
+      "mime": "image/webp",
+      "bytes": 3458,
+      "sha256": "b008b7915adbaeed71925b8a2448ba427d5d546175e788ef55c6f4fb6398e357"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-shard-8eeb56e1ca.webp",
+      "mime": "image/webp",
+      "bytes": 2802,
+      "sha256": "b2c3a6bf4f08be2b6f3d35da4aeb144762dfd605eadc9cb2c6c0169e30b8bde8"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-short-circuit-boots-df092bf9e5.webp",
+      "mime": "image/webp",
+      "bytes": 4116,
+      "sha256": "8611335b1e3c8af4e9ec66c7c152133216cfdb9a8d796fd0647c76c55261a879"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-shove-c43bdf57e9.webp",
+      "mime": "image/webp",
+      "bytes": 4182,
+      "sha256": "ce0e928c8f2a91f469b1e1eefbabd2891704c97bf7004075da31d329db4e2e3e"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-siege-32b6097de3.webp",
+      "mime": "image/webp",
+      "bytes": 4750,
+      "sha256": "be8a4dbb7e0efff08d43110f67d2c7aac5f4aeec389fc3c8097bd11cb9f30392"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-smith-thumbstall-67082c07c3.webp",
+      "mime": "image/webp",
+      "bytes": 3416,
+      "sha256": "bd2e5bb25d5f505b0abc638342ec95862ac35b551f839f446703c4801e95d58b"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-sparkstep-boots-8f30465b74.webp",
+      "mime": "image/webp",
+      "bytes": 4160,
+      "sha256": "82457d5902eca7e0f81b7f712254525adc2953f6468a1084d6f50a7e9a9e0209"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-sprint-0423d30313.webp",
+      "mime": "image/webp",
+      "bytes": 3868,
+      "sha256": "f46897b3d37ee114baa645511bfee81c1beed05e5c0e2b5f06c1f22f2f298dcd"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-steel-dcfae85683.webp",
+      "mime": "image/webp",
+      "bytes": 4124,
+      "sha256": "88af3997917f8ad89613580b7b4abc76f90bd1c54448e78844762a638fc2c7b8"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-step-beyond-b172b01b15.webp",
+      "mime": "image/webp",
+      "bytes": 3762,
+      "sha256": "4d1064b3f4dbde4eeb14a18141940edf1d1aea9466809f43e2e05b638bd81dc9"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-storm-a6edc829d2.webp",
+      "mime": "image/webp",
+      "bytes": 3538,
+      "sha256": "56a3b3e08b321fb58ff08934c6927cce033977665eee23c8b8a56d49689480aa"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-surgeons-hand-4b949f95e2.webp",
+      "mime": "image/webp",
+      "bytes": 3520,
+      "sha256": "9253b1a97107c0c2eb74f9c20719ca67f44b0bbaaef9d3d310800f3dfce67e87"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-survive-dea276899a.webp",
+      "mime": "image/webp",
+      "bytes": 3800,
+      "sha256": "d759a3fbc43fad17ea980a9cf9b0a96d7faece8bd3089856fe8357fe5e7de6ff"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-swift-9fd6a55504.webp",
+      "mime": "image/webp",
+      "bytes": 3828,
+      "sha256": "263d9e9f246b7a765fa832f13d3ad93858e4dd60acb330ec48c91107da7db8be"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-tally-gloves-ed017630fe.webp",
+      "mime": "image/webp",
+      "bytes": 5544,
+      "sha256": "e88990f71e173c579078d1b9b43202625987c5699b6a55049c53836003191f44"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-thunder-316895ea3e.webp",
+      "mime": "image/webp",
+      "bytes": 4552,
+      "sha256": "598f8db1087ece0c0deddbfd9e611ea4eee55cb94dd8b51a8d465390e9d75ce5"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-titans-hands-9e5eaf8128.webp",
+      "mime": "image/webp",
+      "bytes": 5110,
+      "sha256": "6fe7bafdc3b363c0715bdaf61cf01e74438bbab38addb6e9260d2a494908c10a"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-trailfinders-3f96723146.webp",
+      "mime": "image/webp",
+      "bytes": 4254,
+      "sha256": "c3dd86ab68e52dedc0974c97beddc1151366f66c44c2e54b671fd3e8f1613315"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-trinity-9b623149b6.webp",
+      "mime": "image/webp",
+      "bytes": 3630,
+      "sha256": "95e30667a06f54cab6d1d281abe5167a05bdf4980fe1592984e48fb7e97a16c0"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-unhealed-wound-ring-c4d2ac3189.webp",
+      "mime": "image/webp",
+      "bytes": 3600,
+      "sha256": "6536de8c76fbe3b14958c92042c75a7ac1bcc0f171235f59288816815962d39a"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-vacuum-5b16437172.webp",
+      "mime": "image/webp",
+      "bytes": 3526,
+      "sha256": "841acd7b9da8d829d1d7ea097c0b4e4cd4a02adee7cd7454f93e1ec9c11abb41"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-warskel-d60bae7984.webp",
+      "mime": "image/webp",
+      "bytes": 4014,
+      "sha256": "983c6e95ba6bd13b8a9874051c70933ad5033c238fde4f9a30f677129a52801d"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-xpbag-57171ead19.webp",
+      "mime": "image/webp",
+      "bytes": 4412,
+      "sha256": "ae59d1859983d332b7c5c92e92baa6d8ba364ca4c816772b72f6112177612c44"
+    },
+    {
+      "path": "assets/images/items/rare-item-sprite-data-zero-distance-ring-fcb01788d3.webp",
+      "mime": "image/webp",
+      "bytes": 4212,
+      "sha256": "201ad578ea89ceb4f966a24454ad236cc2ed709f2b5758835d3a4ac8b3be8324"
+    },
+    {
+      "path": "assets/images/items/shop-icon-atlas-data-73f2b95278.webp",
+      "mime": "image/webp",
+      "bytes": 20520,
+      "sha256": "7ff12d8ccce1aa2070c6eeef1fa31b5e5fbe7f10a8ee5508b1c8261ec8c82476"
+    },
+    {
+      "path": "assets/images/items/totem-sprite-data-002-02134819ad.webp",
+      "mime": "image/webp",
+      "bytes": 3540,
+      "sha256": "2b0b675a272a5a65855f10efcfb4807a69983c72bdcbfdf8fc0134c944dc8fa2"
+    },
+    {
+      "path": "assets/images/items/totem-sprite-data-003-fc99bcd4d1.webp",
+      "mime": "image/webp",
+      "bytes": 4274,
+      "sha256": "25a5af093dd09640bb998a9253629130755fe37ef3a9b486aa112942a2b1a018"
+    },
+    {
+      "path": "assets/images/items/totem-sprite-data-004-e00fd0d863.webp",
+      "mime": "image/webp",
+      "bytes": 4350,
+      "sha256": "8c371096f7773089c3c97f6e13b7cd1e52e2f56f064d05e7481d075836c86f0b"
+    },
+    {
+      "path": "assets/images/items/totem-sprite-data-005-f5b81c1561.webp",
+      "mime": "image/webp",
+      "bytes": 1910,
+      "sha256": "e43752f2e7181c737d384cd788226d1b4f01944d6a8e3fc151350054796e5ded"
+    },
+    {
+      "path": "assets/images/items/totem-sprite-data-006-8223f5dce1.webp",
+      "mime": "image/webp",
+      "bytes": 3040,
+      "sha256": "4359d3016eff9f7f50100c6efbc6f55122a2306dbc1131cd842fe9b2930a0a5d"
+    },
+    {
+      "path": "assets/images/items/totem-sprite-data-007-bbd61b3957.webp",
+      "mime": "image/webp",
+      "bytes": 4250,
+      "sha256": "7c61413008d49974a140bde5ea1cff5f705d5eead4913553883ce61e95cb6e1c"
+    },
+    {
+      "path": "assets/images/items/totem-sprite-data-008-b977546c6e.webp",
+      "mime": "image/webp",
+      "bytes": 3170,
+      "sha256": "18c81476084caf6581b540508a7f275ffc3a435550b3d724d5f13517be8554c0"
+    },
+    {
+      "path": "assets/images/items/totem-sprite-data-009-4d04d542cc.webp",
+      "mime": "image/webp",
+      "bytes": 2624,
+      "sha256": "46b4b79ef117c0f86da56ac97d7679c08ebb87e83cacb95bc98be3babfc1a793"
+    },
+    {
+      "path": "assets/images/items/totem-sprite-data-010-c216384077.webp",
+      "mime": "image/webp",
+      "bytes": 3728,
+      "sha256": "47aa008d3de011e2493634bafabb8f29a53756bf96f4a26c97290c193bd5dd71"
+    },
+    {
+      "path": "assets/images/items/totem-sprite-data-011-c1f53ac6d1.webp",
+      "mime": "image/webp",
+      "bytes": 4236,
+      "sha256": "293ca4b134113654990d0329b7781d1263fd78b5943298e362989fc4b95bd84d"
+    },
+    {
+      "path": "assets/images/items/totem-sprite-data-012-69d6265774.webp",
+      "mime": "image/webp",
+      "bytes": 3486,
+      "sha256": "1a4b517a05de7e9b605334b04b415632dd17c5f300b8cc37acb4807eb26eb177"
+    },
+    {
+      "path": "assets/images/items/totem-sprite-data-013-d3be6da8e0.webp",
+      "mime": "image/webp",
+      "bytes": 2146,
+      "sha256": "50fc3f7fac29486e46458faa0754180bb91b2487e6e5c1cc249f2fd0cd9c10b6"
+    },
+    {
+      "path": "assets/images/items/totem-sprite-data-014-5205e1fd36.webp",
+      "mime": "image/webp",
+      "bytes": 3450,
+      "sha256": "f1ae99c39a9e46e9054e5e19af61abd7d33eb3a50dee3aa7fa79d40cb76e27df"
+    },
+    {
+      "path": "assets/images/items/totem-sprite-data-015-7c1b0b5c3c.webp",
+      "mime": "image/webp",
+      "bytes": 3728,
+      "sha256": "8fb8c0e0179e9606da2c81eac933e41a6bc2592f9ab855f392198f63b667d789"
+    },
+    {
+      "path": "assets/images/items/totem-sprite-data-016-dc24112ad3.webp",
+      "mime": "image/webp",
+      "bytes": 3262,
+      "sha256": "f59cdea0966c6a33c53ab59e5ce413a5800b93b0de7259c0fa1ecdd16b5f87ca"
+    },
+    {
+      "path": "assets/images/items/totem-sprite-data-017-9b69445c12.webp",
+      "mime": "image/webp",
+      "bytes": 2400,
+      "sha256": "68874d48cf4c864e50cfd5153a74d7c8d36df6636e711e3962dbf3aa81981f17"
+    },
+    {
+      "path": "assets/images/items/totem-sprite-data-018-a5708531e5.webp",
+      "mime": "image/webp",
+      "bytes": 2830,
+      "sha256": "15f682d153dbfd66486ea449ab362b2c0b447f91db8f9d301aa4d34fd899d987"
+    },
+    {
+      "path": "assets/images/items/totem-sprite-data-019-63250953cb.webp",
+      "mime": "image/webp",
+      "bytes": 4120,
+      "sha256": "2cf92311ef530a8797574fee061bd4a0abdab6510781ea3a52aaf095369228d0"
+    },
+    {
+      "path": "assets/images/items/totem-sprite-data-020-7a8b3bdbab.webp",
+      "mime": "image/webp",
+      "bytes": 4066,
+      "sha256": "f6fc32d70c7ff9467eab03fe3038afc27009e8cb5874b4a45532b3f30d197ea6"
+    },
+    {
+      "path": "assets/images/items/totem-sprite-data-b376075c5b.webp",
+      "mime": "image/webp",
+      "bytes": 2098,
+      "sha256": "e8b4bea068ebdc0f5b89e9961f7f899a2cae40c9ecd97eca87154924530a4e71"
+    },
+    {
+      "path": "assets/images/ui/constellation-sprite-data-elite-7fad4530ab.webp",
+      "mime": "image/webp",
+      "bytes": 1822,
+      "sha256": "92b68a79e9e1a95e3e8322e2f1797ff44dbc32e097bd1392a9acbf4e32323572"
+    },
+    {
+      "path": "assets/images/ui/constellation-star-strip-bc07bd99ce.webp",
+      "mime": "image/webp",
+      "bytes": 768,
+      "sha256": "96384f299573d11ac2327710976df74e9db5063c39c9e4cc1a4950795ea90b87"
+    },
+    {
+      "path": "assets/images/ui/grim-grind-logo-strip-940a477add.webp",
+      "mime": "image/webp",
+      "bytes": 94006,
+      "sha256": "b79680fb072b8e5da35b1f2b8d65ce64be7d886de31a0be9f805a9f69054c351"
+    },
+    {
+      "path": "assets/images/ui/grim-grind-torch-strip-74f7a52a4b.webp",
+      "mime": "image/webp",
+      "bytes": 5068,
+      "sha256": "dec7f028583c94f482f345089163286147b325ba331d3a94b1675eb13169c15b"
+    },
+    {
+      "path": "assets/images/ui/skill-card-frame-data-common-7b600d99db.webp",
+      "mime": "image/webp",
+      "bytes": 11334,
+      "sha256": "778f46aa4b2606868625315a1ac2c5614a7dcb045543c291f9a60690a9c04476"
+    },
+    {
+      "path": "assets/images/ui/skill-card-frame-data-epic-89fb999079.webp",
+      "mime": "image/webp",
+      "bytes": 11112,
+      "sha256": "8f09d5d4a6462b5296a91df7331b75948a02ed0b522cebab7b5e87096f66f55a"
+    },
+    {
+      "path": "assets/images/ui/skill-card-frame-data-key-f1e23c0a10.webp",
+      "mime": "image/webp",
+      "bytes": 11364,
+      "sha256": "ad79c878a24fcf265254356ccde181d572b57c0d0eeb49e5bdd53d9720c24de0"
+    },
+    {
+      "path": "assets/images/ui/skill-card-frame-data-rare-805bb78d11.webp",
+      "mime": "image/webp",
+      "bytes": 11326,
+      "sha256": "6e55e0654af913d08458f8972feab29940bb1b9a1b3933c53c29eda26ffb804b"
+    },
+    {
+      "path": "assets/images/ui/style-constellations-bc5061d354.webp",
+      "mime": "image/webp",
+      "bytes": 53110,
+      "sha256": "16430e2fa4221af9bc0c9cf1f3242e0beff5a479715ad83be1f5d0775a48f133"
+    },
+    {
+      "path": "assets/images/ui/style-overlay-menu-1eaee352cf.webp",
+      "mime": "image/webp",
+      "bytes": 14556,
+      "sha256": "571683ab685f6abbb3356031c5dcfbd4ec22d8753cb8ae8d3ab6a7dbe65d3c92"
+    }
+  ]
+}
