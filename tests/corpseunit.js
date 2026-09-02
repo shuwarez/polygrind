@@ -52,6 +52,13 @@ e=c.spawnEnemy('blob'); c.killEnemy(e,G.enemies.indexOf(e));
 ok('боевой ресурс трупов по-прежнему создаётся только Некроманту',bowResource===0 && G.corpses.length===1 && bowVisual===1 && G.visualCorpses.length===1);
 ok('визуальный труп не имеет life и не исчезает через 14 секунд',!('life' in G.visualCorpses[0]) && G.corpses[0].life===14);
 
+c.newGame('bow','keys'); G=c.__api.G;
+for (let i=0;i<260;i++) c.leaveVisualCorpse({x:i,y:0,typeKey:'blob'});
+const corpseHead=G.visualCorpseHead,oldest=G.visualCorpses[corpseHead];
+const newest=G.visualCorpses[(corpseHead+G.visualCorpses.length-1)%G.visualCorpses.length];
+ok('декоративный слой хранит только 192 последних трупа кольцевым буфером',
+  G.visualCorpses.length===192 && oldest.x===68 && newest.x===259);
+
 ok('normal-труп выбирается по typeKey',c.__api.corpseSpriteKey({typeKey:'runner'})==='runner');
 ok('elite-труп выбирается по eliteVariant раньше typeKey',c.__api.corpseSpriteKey({typeKey:'runner',eliteVariant:'frostWolf'})==='frostWolf');
 ok('boss-труп выбирается по bossId раньше остальных ключей',c.__api.corpseSpriteKey({typeKey:'tank',eliteVariant:'plagueOgre',bossId:'lich'})==='lich');

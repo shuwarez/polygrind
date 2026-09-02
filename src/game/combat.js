@@ -501,12 +501,11 @@ function applyDamage(e, amount, crit, silent, minionShare=0, skipConstellation=f
   G.stats.maxHit = Math.max(G.stats.maxHit, dealt);
   e.hp -= amount;
   if (dealt>0) maybeStampHealthBloodPuddle(e,hpBefore,e.hp);
-  if (dealt>0) emitBloodHit(e,dealt,{
-    source:opt&&opt.bloodSource,
-    crit:!!crit,
-    killed:hpBefore>0 && amount>=hpBefore,
-    dot:!!silent || !!(opt&&opt.bloodKind==='dot'),
-  });
+  // Горячий DoT-путь вызывается для каждой цели каждый кадр. Передача метаданных
+  // объектом создавала краткоживущий объект даже тогда, когда 0,18-секундный
+  // лимит крови сразу отклонял эффект, провоцируя частые minor GC.
+  if (dealt>0) emitBloodHitValues(e,dealt,opt&&opt.bloodSource,!!crit,
+    hpBefore>0 && amount>=hpBefore,!!silent || !!(opt&&opt.bloodKind==='dot'));
   if (dealt > 0 && !silent){ e.hit = 0.12; playHitSound(e); }
   e.noDmgT = 0;                   // регенераторы считают время с последнего попадания
   if (dealt>0 && hpBefore>0 && amount>=hpBefore){

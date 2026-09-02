@@ -1549,6 +1549,7 @@ function buildFloor(){
   // меню и смерть эту функцию не вызывают и потому не стирают следы боя.
   clearBloodFloor();
   G.visualCorpses.length = 0;                     // декоративные тела принадлежат только текущему этажу
+  G.visualCorpseHead = 0;
   const f = G.floor, plan = bossFloorPlan(f);
   G.bossFloorPlan = plan;
   diagEvent('floor_build',{floor:f,bossFloor:!!plan.isBoss,devZone:!!G.devZone});

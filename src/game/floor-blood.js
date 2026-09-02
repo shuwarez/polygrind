@@ -2,8 +2,10 @@
    Быстрые брызги живут отдельным ограниченным массивом, а следы оседают на
    одном offscreen-холсте 3000×3000. Поэтому стоимость постоянной грязи не
    растёт вместе с числом ранений и убийств на длинном этаже. */
-const BLOOD_CFG=Object.freeze({enabled:true,density:2,maxFx:600,dotCooldown:0.18,
+const BLOOD_CFG=Object.freeze({enabled:true,density:2,maxFx:600,maxDrawFx:320,dotCooldown:0.18,
   decalAlpha:0.78,maxStamps:1800,splashFps:18});
+const BLOOD_FX_POOL_CAP=BLOOD_CFG.maxFx;
+const VISUAL_CORPSE_CAP=192;
 const BLOOD_SPRITE_META=Object.freeze({
   splash:{frame:64,frames:4},mist:{frame:64,frames:4},critSpray:{frame:32,frames:4},
 });
@@ -44,16 +46,29 @@ function corpsePuddleVariant(){
 }
 function leaveVisualCorpse(e){
   if (!G || !e) return null;
-  const c={x:e.x,y:e.y,typeKey:e.typeKey||'',eliteVariant:e.eliteVariant||'',
-    bossId:e.bossId||''};
-  G.visualCorpses.push(c);
+  if (!Array.isArray(G.visualCorpses)) G.visualCorpses=[];
+  const corpses=G.visualCorpses;
+  let c;
+  if (corpses.length<VISUAL_CORPSE_CAP){
+    if (!corpses.length) G.visualCorpseHead=0;
+    c={}; corpses.push(c);
+  } else {
+    const head=(G.visualCorpseHead||0)%VISUAL_CORPSE_CAP;
+    c=corpses[head]||{}; corpses[head]=c;
+    G.visualCorpseHead=(head+1)%VISUAL_CORPSE_CAP;
+  }
+  c.x=e.x;c.y=e.y;c.typeKey=e.typeKey||'';c.eliteVariant=e.eliteVariant||'';
+  c.bossId=e.bossId||'';
   return c;
 }
 function drawVisualCorpses(left,top,right,bottom){
   if (!G || !Array.isArray(G.visualCorpses)) return 0;
+  const corpses=G.visualCorpses,len=corpses.length;
+  const start=len===VISUAL_CORPSE_CAP?(G.visualCorpseHead||0)%len:0;
   let drawn=0;
   ctx.imageSmoothingEnabled=false;
-  for (const c of G.visualCorpses){
+  for (let offset=0;offset<len;offset++){
+    const c=corpses[(start+offset)%len];
     // После offline-уменьшения самый широкий corpse — 72 px.
     if (c.x+40<left || c.x-40>right || c.y+34<top || c.y-34>bottom) continue;
     const key=corpseSpriteKey(c),image=key && CORPSE_SPRITES[key];
@@ -93,7 +108,11 @@ function clearBloodFloor(){
   if (!G) return;
   const g=initBloodFloor();
   if (g) g.clearRect(0,0,ARENA*2,ARENA*2);
-  if (!Array.isArray(G.bloodFx)) G.bloodFx=[]; else G.bloodFx.length=0;
+  if (!Array.isArray(G.bloodFx)) G.bloodFx=[];
+  else {
+    for (const fx of G.bloodFx) recycleBloodFx(fx);
+    G.bloodFx.length=0;
+  }
   G.bloodStampN=0;
 }
 function bloodFilter(material){
@@ -101,10 +120,12 @@ function bloodFilter(material){
 }
 function stampBloodDecal(x,y,size=44,material='blood',alpha=BLOOD_CFG.decalAlpha,tile=-1,angle=null){
   if (!G || !BLOOD_CFG.enabled || x<-ARENA || x>ARENA || y<-ARENA || y>ARENA) return false;
-  const g=initBloodFloor(),stampN=G.bloodStampN||0;
-  G.bloodStampN=stampN+1;
+  const stampN=G.bloodStampN||0;
+  if (stampN>=BLOOD_CFG.maxStamps) return false;
+  const g=initBloodFloor();
   if (!g) return false;
-  const fade=stampN<BLOOD_CFG.maxStamps?1:Math.max(0.22,BLOOD_CFG.maxStamps/(stampN+1));
+  G.bloodStampN=stampN+1;
+  const fade=1;
   const image=BLOOD_SPRITES.decals,cell=tile<0?rndi(0,7):tile%8;
   g.save(); g.translate(Math.round(x+ARENA),Math.round(y+ARENA));
   g.rotate(angle===null?rnd(0,Math.PI*2):angle);
@@ -120,10 +141,12 @@ function stampBloodDecal(x,y,size=44,material='blood',alpha=BLOOD_CFG.decalAlpha
 const BLOOD_PUDDLE_SIZE=72;
 function stampBloodPuddle(x,y,size=BLOOD_PUDDLE_SIZE,material='blood',variant=0,angle=null){
   if (!G || !BLOOD_CFG.enabled || x<-ARENA || x>ARENA || y<-ARENA || y>ARENA) return false;
-  const g=initBloodFloor(),stampN=G.bloodStampN||0;
-  G.bloodStampN=stampN+1;
+  const stampN=G.bloodStampN||0;
+  if (stampN>=BLOOD_CFG.maxStamps) return false;
+  const g=initBloodFloor();
   if (!g) return false;
-  const fade=stampN<BLOOD_CFG.maxStamps?1:Math.max(0.22,BLOOD_CFG.maxStamps/(stampN+1));
+  G.bloodStampN=stampN+1;
+  const fade=1;
   const cell=((variant%6)+6)%6;
   g.save(); g.translate(Math.round(x+ARENA),Math.round(y+ARENA));
   g.rotate(angle===null?corpseRandom()*Math.PI*2:angle);
@@ -149,11 +172,25 @@ function maybeStampHealthBloodPuddle(e,hpBefore,hpAfter){
   stampBloodPuddle(e.x,e.y,size,bloodMaterialForEnemy(e),variant);
   return size;
 }
+function takeBloodFx(type){
+  if (!G) return {t:type};
+  if (!Array.isArray(G.bloodFxPool)) G.bloodFxPool=[];
+  const fx=G.bloodFxPool.length?G.bloodFxPool.pop():{};
+  fx.t=type; return fx;
+}
+function recycleBloodFx(fx){
+  if (!G || !fx) return;
+  if (!Array.isArray(G.bloodFxPool)) G.bloodFxPool=[];
+  if (G.bloodFxPool.length<BLOOD_FX_POOL_CAP) G.bloodFxPool.push(fx);
+}
 function pushBloodFx(fx){
   if (!G || !BLOOD_CFG.enabled) return false;
   if (!Array.isArray(G.bloodFx)) G.bloodFx=[];
   if (G.bloodFx.length>=BLOOD_CFG.maxFx){
-    stampBloodDecal(fx.x,fx.y,Math.max(10,fx.size||18),fx.material,0.48);
+    // Переполнение — это уже невидимая декорация. Раньше каждый отклонённый
+    // объект штамповался на 3000×3000 canvas: плотный DoT создавал тысячи
+    // drawImage в секунду и провоцировал фризы вместо экономии.
+    recycleBloodFx(fx);
     return false;
   }
   G.bloodFx.push(fx); return true;
@@ -161,30 +198,36 @@ function pushBloodFx(fx){
 function spawnBloodSplash(x,y,angle,strength,material='blood',mist=false){
   const size=(mist?42:50)+Math.sqrt(strength/0.18)*34;
   const max=mist?rnd(0.32,0.55):rnd(0.18,0.34);
-  return pushBloodFx({t:mist?'mist':'splash',x,y,a:angle,size,life:max,max,material});
+  const fx=takeBloodFx(mist?'mist':'splash');
+  fx.x=x;fx.y=y;fx.a=angle;fx.size=size;fx.life=max;fx.max=max;fx.material=material;
+  return pushBloodFx(fx);
 }
 function spawnCriticalBloodSpray(x,y,angle,strength,material='blood'){
   /* Один компактный лист заменяет отдельные мелкие частицы. Плотность задаётся
      числом слоёв в emitBloodHit(), а каждый слой остаётся одним drawImage. */
   const size=clamp(34+Math.sqrt(strength/0.18)*16,36,56),max=rnd(0.18,0.27);
-  return pushBloodFx({t:'critSpray',x,y,a:angle,size,life:max,max,material});
+  const fx=takeBloodFx('critSpray');
+  fx.x=x;fx.y=y;fx.a=angle;fx.size=size;fx.life=max;fx.max=max;fx.material=material;
+  return pushBloodFx(fx);
 }
 function spawnBloodDrops(x,y,angle,count,strength,material='blood'){
   let made=0;
   for (let i=0;i<count;i++){
     const a=angle+rnd(-0.7,0.7),speed=rnd(65,185)*(0.65+Math.sqrt(strength/0.18));
     const max=rnd(0.26,0.55);
-    if (pushBloodFx({t:'drop',x,y,z:rnd(4,15),vx:Math.cos(a)*speed,vy:Math.sin(a)*speed,
-      vz:rnd(45,115),size:rnd(3,7),life:max,max,material})) made++;
+    const fx=takeBloodFx('drop');
+    fx.x=x;fx.y=y;fx.z=rnd(4,15);fx.vx=Math.cos(a)*speed;fx.vy=Math.sin(a)*speed;
+    fx.vz=rnd(45,115);fx.size=rnd(3,7);fx.life=max;fx.max=max;fx.material=material;
+    if (pushBloodFx(fx)) made++;
   }
   return made;
 }
-function emitBloodHit(e,dealt,meta={}){
+function emitBloodHitValues(e,dealt,source,crit=false,killed=false,dot=false,superCrit=false){
   if (!BLOOD_CFG.enabled || !G || !e || !(dealt>0) || !(e.maxHp>0)) return 0;
-  const isDot=!!meta.dot;
+  const isDot=!!dot;
   if (isDot && G.time-(e.bloodDotFxT===undefined?-Infinity:e.bloodDotFxT)<BLOOD_CFG.dotCooldown) return 0;
   if (isDot) e.bloodDotFxT=G.time;
-  const source=meta.source || G.player || e;
+  source=source || G.player || e;
   let dx=e.x-(Number.isFinite(source.x)?source.x:e.x),dy=e.y-(Number.isFinite(source.y)?source.y:e.y);
   if (Math.abs(dx)+Math.abs(dy)<0.001){
     const fallback=Number.isFinite(e.spriteFace)?(e.spriteFace>0?Math.PI:0):rnd(0,Math.PI*2);
@@ -192,33 +235,39 @@ function emitBloodHit(e,dealt,meta={}){
   }
   const angle=Math.atan2(dy,dx),material=bloodMaterialForEnemy(e);
   let strength=clamp(dealt/e.maxHp,0.002,0.18);
-  if (meta.crit) strength*=1.35;
-  if (meta.superCrit) strength*=1.9;
-  if (meta.killed) strength*=1.65;
+  if (crit) strength*=1.35;
+  if (superCrit) strength*=1.9;
+  if (killed) strength*=1.65;
   const density=BLOOD_CFG.density;
-  const drops=(meta.killed?rndi(6,12):meta.crit?rndi(5,9):rndi(2,5))*density;
+  const drops=(killed?rndi(6,12):crit?rndi(5,9):rndi(2,5))*density;
   let made=0;
   for (let layer=0;layer<density;layer++){
     const layerAngle=angle+(layer-(density-1)*0.5)*0.16;
     made+=spawnBloodSplash(e.x,e.y,layerAngle,strength,material,false)?1:0;
-    if (meta.crit || meta.killed) made+=spawnBloodSplash(e.x,e.y,layerAngle,strength,material,true)?1:0;
-    if (meta.crit) made+=spawnCriticalBloodSpray(e.x,e.y,layerAngle,strength,material)?1:0;
+    if (crit || killed) made+=spawnBloodSplash(e.x,e.y,layerAngle,strength,material,true)?1:0;
+    if (crit) made+=spawnCriticalBloodSpray(e.x,e.y,layerAngle,strength,material)?1:0;
   }
   made+=spawnBloodDrops(e.x,e.y,angle,drops,strength,material);
-  if (meta.killed) stampBloodDecal(e.x,e.y,clamp(52+e.r*1.5,60,128),material,0.88,-1,angle);
+  if (killed) stampBloodDecal(e.x,e.y,clamp(52+e.r*1.5,60,128),material,0.88,-1,angle);
   return made;
+}
+function emitBloodHit(e,dealt,meta={}){
+  return emitBloodHitValues(e,dealt,meta.source,!!meta.crit,!!meta.killed,!!meta.dot,!!meta.superCrit);
 }
 function updateBloodFx(dt){
   if (!G || !Array.isArray(G.bloodFx)) return;
-  for (let i=G.bloodFx.length-1;i>=0;i--){
-    const f=G.bloodFx[i]; f.life-=dt;
+  const fx=G.bloodFx; let write=0;
+  for (let read=0;read<fx.length;read++){
+    const f=fx[read]; f.life-=dt;
+    let alive=f.life>0;
     if (f.t==='drop'){
       f.x+=f.vx*dt; f.y+=f.vy*dt; f.z+=f.vz*dt; f.vz-=420*dt;
       f.vx*=Math.max(0,1-dt*2.4); f.vy*=Math.max(0,1-dt*2.4);
-      if (f.z<=0){ stampBloodDecal(f.x,f.y,Math.max(10,f.size*3),f.material,0.46); G.bloodFx.splice(i,1); continue; }
+      if (f.z<=0){ stampBloodDecal(f.x,f.y,Math.max(10,f.size*3),f.material,0.46); alive=false; }
     }
-    if (f.life<=0) G.bloodFx.splice(i,1);
+    if (alive) fx[write++]=f; else recycleBloodFx(f);
   }
+  fx.length=write;
 }
 function drawBloodGround(left,top,right,bottom){
   if (!G || !G.bloodGroundCanvas || right<=left || bottom<=top) return false;
@@ -229,7 +278,11 @@ function drawBloodGround(left,top,right,bottom){
 }
 function drawBloodFx(view=null){
   if (!G || !Array.isArray(G.bloodFx)) return;
-  for (const f of G.bloodFx){
+  // При перегрузе первыми скрываются старые, почти погасшие брызги. Свежий
+  // hit-feedback остаётся, а число дорогих save/filter/drawImage ограничено.
+  const start=Math.max(0,G.bloodFx.length-BLOOD_CFG.maxDrawFx);
+  for (let i=start;i<G.bloodFx.length;i++){
+    const f=G.bloodFx[i];
     const fy=f.t==='drop'?f.y-(f.z||0):f.y;
     const radius=f.t==='drop'?(f.size||0)+3:(f.size||0)*Math.SQRT1_2+4;
     if (view && !renderCircleVisible(f.x,fy,radius,view)) continue;

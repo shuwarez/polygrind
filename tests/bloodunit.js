@@ -19,10 +19,15 @@ for (const [key,[w,h]] of Object.entries(expected)){
 
 const c=loadGame('./index.html'); c.newGame('bow','keys');
 const G=c.__api.G,e=c.spawnEnemy('blob');
-ok('новая партия создаёт пустое состояние крови',Array.isArray(G.bloodFx) && G.bloodFx.length===0 && G.bloodStampN===0);
-ok('все двенадцать функций системы доступны',[
+const canvasNoop=()=>{};
+G.bloodGroundCanvas={width:3000,height:3000};
+G.bloodGroundCtx=new Proxy({}, {get:(o,k)=>k in o?o[k]:canvasNoop,set:(o,k,v)=>{o[k]=v;return true;}});
+ok('новая партия создаёт пустое состояние крови',Array.isArray(G.bloodFx) && G.bloodFx.length===0 &&
+  Array.isArray(G.bloodFxPool) && G.bloodFxPool.length===0 && G.bloodStampN===0);
+ok('все тринадцать функций системы доступны',[
   'initBloodFloor','clearBloodFloor','emitBloodHit','spawnBloodSplash','spawnCriticalBloodSpray','spawnBloodDrops',
-  'stampBloodDecal','stampBloodPuddle','maybeStampHealthBloodPuddle','updateBloodFx','drawBloodGround','drawBloodFx'
+  'stampBloodDecal','stampBloodPuddle','maybeStampHealthBloodPuddle','updateBloodFx','drawBloodGround','drawBloodFx',
+  'emitBloodHitValues'
 ].every(key=>typeof c[key]==='function'));
 
 const hp0=e.hp,fx0=G.bloodFx.length;
@@ -81,15 +86,34 @@ const lich=c.spawnEnemy('boss','lich');
 ok('скелеты и нежить получают не человеческую палитру',c.bloodMaterialForEnemy(skeleton)==='bone' && c.bloodMaterialForEnemy(lich)==='ichor');
 
 G.bloodFx=Array.from({length:600},()=>({t:'drop',x:0,y:0,z:2,vx:0,vy:0,vz:0,size:3,life:1,max:1,material:'blood'}));
+G.bloodFxPool=[];
 const capStamp=G.bloodStampN;
 c.emitBloodHit(e,1,{});
-ok('лимит временных частиц жёстко равен 600',G.bloodFx.length===600 && G.bloodStampN>capStamp,
-  `fx=${G.bloodFx.length}`);
+ok('переполнение 600 временных частиц отбрасывается без дорогих декалей',
+  G.bloodFx.length===600 && G.bloodStampN===capStamp && G.bloodFxPool.length>0,
+  `fx=${G.bloodFx.length} stamps=${G.bloodStampN-capStamp}`);
 
-G.bloodFx=[{t:'drop',x:20,y:20,z:0,vx:0,vy:0,vz:-1,size:4,life:1,max:1,material:'blood'}];
+G.bloodStampN=1800;
+ok('постоянный слой имеет жёсткий предел 1800 штампов',
+  c.stampBloodDecal(0,0)===false && c.stampBloodPuddle(0,0)===false && G.bloodStampN===1800);
+G.bloodStampN=0;
+
+const landedDrop={t:'drop',x:20,y:20,z:0,vx:0,vy:0,vz:-1,size:4,life:1,max:1,material:'blood'};
+G.bloodFx=[landedDrop]; G.bloodFxPool=[];
 const landStamp=G.bloodStampN;
 c.updateBloodFx(1/60);
-ok('приземлившаяся капля переносится в постоянный слой',G.bloodFx.length===0 && G.bloodStampN===landStamp+1);
+ok('приземлившаяся капля переносится в постоянный слой и пул',G.bloodFx.length===0 &&
+  G.bloodStampN===landStamp+1 && G.bloodFxPool.includes(landedDrop));
+c.spawnBloodSplash(0,0,0,0.01);
+ok('новая брызга переиспользует объект из пула',G.bloodFx.length===1 && G.bloodFx[0]===landedDrop);
+
+const deadA={t:'splash',x:0,y:0,life:0.01,max:1};
+const survivor={t:'splash',x:0,y:0,life:1,max:1};
+const deadB={t:'mist',x:0,y:0,life:0.01,max:1};
+G.bloodFx=[deadA,survivor,deadB]; G.bloodFxPool=[];
+c.updateBloodFx(0.1);
+ok('истёкшие эффекты удаляются линейным уплотнением без splice',G.bloodFx.length===1 &&
+  G.bloodFx[0]===survivor && G.bloodFxPool.includes(deadA) && G.bloodFxPool.includes(deadB));
 
 G.bloodFx=[{t:'splash',x:0,y:0,a:0,size:20,life:1,max:1,material:'blood'}]; G.bloodStampN=77;
 c.updateBloodFx(0.1);
@@ -104,4 +128,9 @@ ok('изображения крови не создаются внутри ка�
 ok('критический разлёт рисуется одним кадром компактного листа',
   /critSpray:\{frame:32,frames:4\}/.test(html) &&
   /drawImage\(image,frame\*spriteMeta\.frame/.test(html));
-ok('кровь вызывается после вычисления реального dealt',/const dealt = Math\.max\(0, Math\.min\(amount, e\.hp\)\);[\s\S]{0,300}emitBloodHit\(e,dealt/.test(html));
+ok('один кадр рисует не более 320 свежих эффектов крови',
+  /maxDrawFx:320/.test(html) && /length-BLOOD_CFG\.maxDrawFx/.test(html));
+const damageSource=c.applyDamage.toString();
+ok('кровь вызывается после реального dealt без объекта метаданных в горячем пути',
+  damageSource.indexOf('emitBloodHitValues(e,dealt')>damageSource.indexOf('const dealt =') &&
+  !damageSource.includes('emitBloodHit(e,dealt,{'));

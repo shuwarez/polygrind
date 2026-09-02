@@ -380,7 +380,7 @@ function newGame(weaponKey, control, subclassKey, devZone=false){
             moveT:0, predT:0, critChain:0, riposte:false, swiftT:0, spdKill:0, sprintT:0, lowHp:false, moving:false, faceX:1, faceY:0, spriteFace:1, heroWalkT:0,
             stillT:0, killT:0, cheatCd:0, cheatSpeedT:0, healCd:0, fastHealT:5, onCritHealReadyAt:0,
             hitFlash:0, hpFlash:0, hpLag:1, hpLagFrom:1, hpLagTimer:0},
-    enemies:[], shots:[], delayedShots:[], attackEchoes:[], stepBeyondEchoes:[], eshots:[], orbs:[], fx:[], fxPool:[], transientFxCounts:{num:0,status:0}, bloodFx:[], bloodGroundCanvas:null, bloodGroundCtx:null, bloodStampN:0, arcaneTraces:[], arcaneMines:[], repeatDetonations:[], groundbreakerCracks:[], sparkSigils:[],
+    enemies:[], shots:[], delayedShots:[], attackEchoes:[], stepBeyondEchoes:[], eshots:[], orbs:[], fx:[], fxPool:[], transientFxCounts:{num:0,status:0}, bloodFx:[], bloodFxPool:[], bloodGroundCanvas:null, bloodGroundCtx:null, bloodStampN:0, arcaneTraces:[], arcaneMines:[], repeatDetonations:[], groundbreakerCracks:[], sparkSigils:[],
     parts:[], partPool:[],                    // пиксельные частицы и их переиспользуемые объекты
     frameScratch:{
       chillSources:[],chillGrid:null,infernoGrid:null,postMoveGrid:null,postMoveReady:false,
@@ -389,7 +389,7 @@ function newGame(weaponKey, control, subclassKey, devZone=false){
       packMods:{spd:1,dmg:1,aspd:1},
     },
     minions:[], corpses:[], raiseT:0,        // свита, временный ресурс Некроманта и таймер подъёма
-    visualCorpses:[], corpseRng:(Date.now()^0x6d2b79f5)>>>0, // постоянные трупы всех классов и отдельный cosmetic RNG
+    visualCorpses:[], visualCorpseHead:0, corpseRng:(Date.now()^0x6d2b79f5)>>>0, // постоянные трупы всех классов и отдельный cosmetic RNG
     spawnQueue:0, spawnT:0, portal:null,
     pools:[], banner:false,                  // лужи смолы и флаг знаменосца
     trails:[],                               // огненный и ледяной след от ботинок
