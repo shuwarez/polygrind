@@ -63,6 +63,41 @@ console.log('Надёжный удар');
 { const o=build(), crit=o.c.__api.MODS.find(x=>x.id==='crit.chance_flat');
   ok('плоский шанс крита переведён в синий тир без смены диапазона',
     crit.rar===1 && crit.kind==='flat' && crit.stat==='critCh' && crit.r[0]===4 && crit.r[1]===8); }
+{ const o=build(), heal=o.c.__api.MODS.find(x=>x.id==='life.on_kill');
+  ok('здоровье за убийство даёт только целые +1, +2 или +3 HP',
+    heal.kind==='flat' && heal.stat==='onKill' && heal.r[0]===1 && heal.r[1]===3 && heal.int===true &&
+    o.c.rollModValue(heal,()=>0)===1 && o.c.rollModValue(heal,()=>0.34)===2 &&
+    o.c.rollModValue(heal,()=>0.999999)===3); }
+{ const o=build(), heal=o.c.__api.MODS.find(x=>x.id==='life.on_hit');
+  ok('здоровье за попадание даёт только целые +1, +2 или +3 HP',
+    heal.r[0]===1 && heal.r[1]===3 && heal.int===true &&
+    o.c.rollModValue(heal,()=>0)===1 && o.c.rollModValue(heal,()=>0.34)===2 &&
+    o.c.rollModValue(heal,()=>0.999999)===3); }
+{ const o=build(), heal=o.c.__api.MODS.find(x=>x.id==='life.on_crit');
+  ok('здоровье за крит даёт только целые +3, +4, +5 или +6 HP',
+    heal.r[0]===3 && heal.r[1]===6 && heal.int===true &&
+    o.c.rollModValue(heal,()=>0)===3 && o.c.rollModValue(heal,()=>0.26)===4 &&
+    o.c.rollModValue(heal,()=>0.51)===5 && o.c.rollModValue(heal,()=>0.999999)===6); }
+{ const c=loadGame('./index.html',{random:()=>0}); c.newGame('bow','keys');
+  const G=c.__api.G,D=c.__api.D,p=G.player,e=c.spawnEnemy();
+  G.bag.add('onCrit','flat',6); c.recalc(); G.enemies=[e]; e.maxHp=e.hp=1e9;e.armor=0;e.ward=null;e.bulwark=0;
+  D.baseMin=D.baseMax=1;D.elem={fire:0,cold:0,lit:0,poi:0};D.incAll=0;D.moreAll=1;D.critCh=100;D.superCh=D.dblHit=0;
+  p.hp=50;G.time=0;c.damage(e,{noDouble:true});const first=p.hp;
+  c.damage(e,{noDouble:true});G.time=0.999;c.damage(e,{noDouble:true});const blocked=p.hp;
+  G.time=1;c.damage(e,{noDouble:true});
+  ok('лечение за крит срабатывает не чаще одного раза в секунду',
+    first===56 && blocked===56 && p.hp===62,first+' → '+blocked+' → '+p.hp+' HP'); }
+{ const o=build(), m=o.c.__api.MODS.find(x=>x.id==='dmg.pct_enemy_hp');
+  o.G.bag.add('pctHp','flat',20);o.c.recalc();
+  const e=o.c.spawnEnemy();e.maxHp=1000;e.hp=400;e.armor=0;e.ward=null;e.bulwark=0;
+  o.D.baseMin=o.D.baseMax=0;o.D.elem={fire:0,cold:0,lit:0,poi:0};o.D.incAll=0;o.D.moreAll=1;o.D.critCh=o.D.superCh=o.D.dblHit=0;
+  const hp=e.hp;o.c.damage(e,{noDouble:true,noProcs:true});
+  ok('% от текущего HP ограничен 10% и карта уходит из пула',
+    o.D.pctHp===10 && m.hide() && near(hp-e.hp,40),
+    '400 текущего HP × 10% = '+(hp-e.hp).toFixed(0)); }
+{ const o=build(), m=o.c.__api.MODS.find(x=>x.id==='crit.chance_inc');
+  ok('обычный процентный шанс крита бросает только 10–20%',
+    m.r[0]===10 && m.r[1]===20 && near(o.c.rollModValue(m,()=>0),10) && near(o.c.rollModValue(m,()=>1),20)); }
 
 console.log('Шанс отбрасывания');
 { const o=knockback();
@@ -78,7 +113,7 @@ console.log('Пробитие насквозь');
 { const o=build(), m=o.c.__api.MODS.find(x=>x.id==='shape.pierce');
   ok('карточка даёт только целые +1 или +2 цели с потолком 4',
     m.kind==='flat' && m.stat==='pierce' && m.r[0]===1 && m.r[1]===2 && m.int===true && m.cap===4 &&
-    o.c.rollModValue(m,()=>0)===1 && o.c.rollModValue(m,()=>0.999999)===2); }
+    m.noMin===true && o.c.rollModValue(m,()=>0)===1 && o.c.rollModValue(m,()=>0.999999)===2); }
 { const o=build(), m=o.c.__api.MODS.find(x=>x.id==='shape.pierce'), bonus=o.c.__api.MODS.find(x=>x.id==='shape.pierce_bonus');
   o.G.bag.add('pierce','flat',3); o.c.recalc();
   ok('последняя карточка при трёх целях обрезается до +1',
@@ -91,6 +126,17 @@ console.log('Пробитие насквозь');
 { const o=build(); o.G.bag.add('pierce','flat',20); o.c.recalc();
   ok('старый дробный или завышенный бонус механически ограничен четырьмя целями',
     o.D.pierceBase===4 && o.D.pierce===4); }
+{ const pierced=build(), chained=build(), ricocheted=build();
+  pierced.G.bag.add('pierce','flat',1); pierced.c.recalc();
+  chained.G.bag.add('chain','flat',1); chained.c.recalc();
+  ricocheted.G.bag.add('ricochet','flat',1); ricocheted.c.recalc();
+  const card=(o,id)=>o.c.__api.MODS.find(x=>x.id===id), excludes=(o,ids)=>
+    ids.every(id=>card(o,id).hide()) && Array.from({length:40},()=>o.c.rollCards()).every(cards=>cards.every(x=>!ids.includes(x.id)));
+  ok('пробитие, отскоки и Осколочный рикошет взаимно закрывают две другие ветки',
+    excludes(pierced,['shape.chain','shape.ricochet']) &&
+    excludes(chained,['shape.pierce','shape.ricochet']) &&
+    excludes(ricocheted,['shape.pierce','shape.chain']) &&
+    !card(pierced,'shape.pierce').hide() && !card(chained,'shape.chain').hide() && !card(ricocheted,'shape.ricochet').hide()); }
 { const before=knockback(74), ready=knockback(75);
   ok('Головокружение открывается на новом достижимом потолке',!before.dizzy.show() && ready.dizzy.show()); }
 

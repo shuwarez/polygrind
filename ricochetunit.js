@@ -1,4 +1,5 @@
 /* Осколочный рикошет: редкость, потолок, выбор целей и запрет рекурсии. */
+const fs = require('fs');
 const {loadGame} = require('./sim');
 const ok = (nm, cond, det) => console.log((cond?'  \u2713 ':'  \u2717 ') + nm.padEnd(62) + (det||''));
 
@@ -21,7 +22,17 @@ function source(hitSet=[]){
 
 { const {c}=mk(), m=c.__api.MODS.find(x=>x.id==='shape.ricochet');
   ok('карточка синяя и всегда добавляет один осколок',
-    m.rar===1 && m.r[0]===1 && m.r[1]===1 && m.noMin===true); }
+    m.rar===1 && m.r[0]===1 && m.r[1]===1 && m.noMin===true && m.wep.join(',')==='proj'); }
+
+{ const {c}=mk(); c.setLanguage('ru');
+  const ids=['shape.pierce','shape.chain','shape.ricochet'];
+  const tips=ids.map(id=>{const m=c.__api.MODS.find(x=>x.id===id);return c.detailedSkillTip(m,{m,val:'свойство'});});
+  const html=fs.readFileSync('./index.html','utf8');
+  ok('три подробные подсказки показывают крупное жёлтое предупреждение',
+    tips.every(t=>t.includes('class="tt-exclusive"')&&t.includes('навсегда закрывает две другие ветки')) &&
+    html.includes('#skilltip .tt-exclusive{') && html.includes('color:#ffd84a') &&
+    html.includes('font-size:15px') && html.includes('font-weight:900'));
+}
 
 { const {c,G,D}=mk(9), m=c.__api.MODS.find(x=>x.id==='shape.ricochet');
   ok('механический потолок — 3, после него карта уходит из пула',

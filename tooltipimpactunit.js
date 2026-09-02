@@ -67,9 +67,9 @@ const row = (data,key) => data.rows.find(x=>x.key===key);
 
 { const c=loadGame('./index.html'); c.newGame('bow','keys'); c.setLanguage('ru');
   c.__api.G.bag.add('critCh','flat',5); c.recalc();
-  const x=card(c,'crit.chance_inc',40), html=c.cardInlineExample(x.m,x);
+  const x=card(c,'crit.chance_inc',20), html=c.cardInlineExample(x.m,x);
   ok('процентный крит прямо на карточке показывает текущий шанс, бонус и итог',
-    html.includes('10% крита +40% = 14% крита') && html.includes('ПРИМЕР'));
+    html.includes('10% крита +20% = 12% крита') && html.includes('ПРИМЕР'));
   ok('встроенный пример выводится только на процентной карточке крита',
     c.cardInlineExample(card(c,'crit.chance_flat',6).m,card(c,'crit.chance_flat',6))===''); }
 
@@ -102,7 +102,7 @@ const row = (data,key) => data.rows.find(x=>x.key===key);
 
 { const c=loadGame('./index.html'); c.newGame('bow','keys');
   const x=card(c,'dmg.pct_enemy_hp',2), r=row(c.cardImpactData(x.m,x),'enemyHpBonus');
-  ok('% от HP врага переводится в урон на примере 1000 max HP', r && r.before===0 && r.after===20,
+  ok('% от HP врага переводится в урон на примере 1000 текущего HP', r && r.before===0 && r.after===20,
     r.before+' → '+r.after); }
 
 { const c=loadGame('./index.html'); c.newGame('blade','keys');

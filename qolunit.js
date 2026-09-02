@@ -66,7 +66,7 @@ const ok = (nm, cond, det) => console.log((cond ? '  ✓ ' : '  ✗ ') + nm.padE
   const orb={x:p.x+500,y:p.y,v:1}; G.orbs=[orb];
   G.bag.add('magnet','flag',1); c.recalc();
   const before=orb.x; c.update(0.1); const moved=before-orb.x;
-  ok('старый флаг magnet больше не ускоряет притягивание', Math.abs(moved-7.5)<0.01,
+  ok('старый флаг magnet не меняет новую скорость притягивания', Math.abs(moved-42.5)<0.01,
     moved.toFixed(1)+' единицы за 0,1 сек'); }
 
 { const c = loadGame('./index.html');
@@ -75,7 +75,19 @@ const ok = (nm, cond, det) => console.log((cond ? '  ✓ ' : '  ✗ ') + nm.padE
   const D = c.__api.D;
   ok('удалённый быстрый сбор больше не увеличивает радиус', D.lootPickup === D.pickup,
      D.pickup + ' → ' + D.lootPickup);
-  ok('удалённый быстрый сбор больше не ускоряет притягивание', D.lootPull === 340, '340 → ' + D.lootPull); }
+  ok('удалённый быстрый сбор не меняет новую скорость притягивания', D.lootPull === 425,
+     '425 → ' + D.lootPull); }
+
+{ const c = loadGame('./index.html'); c.newGame('bow', 'keys');
+  const G = c.__api.G, D = c.__api.D, p = G.player, runnerSpeed = c.__api.ETYPES.runner.spd;
+  G.enemies.length = 0; G.spawnQueue = 1; G.spawnT = 999;
+  const xp = {x:p.x+500,y:p.y,v:1}, gold = {x:p.x+500,y:p.y,v:1,gold:true};
+  G.orbs = [xp, gold];
+  const xpX = xp.x, goldX = gold.x; c.update(0.1);
+  const xpMoved = xpX-xp.x, goldMoved = goldX-gold.x;
+  ok('опыт и золото летят в 2,5 раза быстрее Бегуна',
+     D.lootPull === runnerSpeed*2.5 && Math.abs(xpMoved-42.5)<0.01 && Math.abs(goldMoved-42.5)<0.01,
+     runnerSpeed + ' → ' + D.lootPull + ' · за 0,1с: XP ' + xpMoved.toFixed(1) + ', золото ' + goldMoved.toFixed(1)); }
 
 { const c = loadGame('./index.html'); c.newGame('bow', 'keys');
   const G = c.__api.G, D = c.__api.D, p = G.player, DT = 1/60;
@@ -99,14 +111,14 @@ const ok = (nm, cond, det) => console.log((cond ? '  ✓ ' : '  ✗ ') + nm.padE
      'до: ' + early + ' · после: ' + p.dashN); }
 
 { const c = loadGame('./index.html');
-  c.__api.STORE.data.shop = {dodge:40, sgold:100};
+  c.__api.STORE.data.shop = {dodge:25, sgold:100};
   c.newGame('bow','keys','thief');
   let G = c.__api.G; G.lvl = 25; c.recalc();
   const thiefDodge = c.__api.D.dodge, thiefMove = c.__api.D.mspd;
-  ok('ВОР: уклонение только из магазина, скорость сохранена', thiefDodge === 40 &&
+  ok('ВОР: уклонение только из магазина, скорость сохранена', thiefDodge === 25 &&
      Math.abs(thiefMove/235 - 1.25) < 0.001, 'уворот ' + thiefDodge + '% · бег ×' + (thiefMove/235).toFixed(2));
-  ok('ВОР: +2% ко всему золоту за уровень', Math.abs(c.__api.D.goldGainMult - 1.50) < 0.001,
-     'уровень 25 · множитель ×' + c.__api.D.goldGainMult.toFixed(2));
+  ok('ВОР: +2% за уровень входит в общий процент золота', Math.abs(c.__api.D.goldFind - 2.50) < 0.001 &&
+     c.__api.D.goldGainMult===1, 'магазин +100% · ВОР +50% · итог ×' + c.__api.D.goldFind.toFixed(2));
   const thiefDesc = c.__api.SUBCLASSES.bow.find(s=>s.id==='thief').desc;
   ok('ВОР: краткое описание соответствует механике',
      thiefDesc === '+2% ко всему получаемому золоту за уровень и +1% к скорости передвижения за уровень.');
@@ -118,14 +130,14 @@ const ok = (nm, cond, det) => console.log((cond ? '  ✓ ' : '  ✗ ') + nm.padE
     c.killEnemy(e, G.enemies.indexOf(e));
   } finally { Math.random = oldRandom; }
   const dropped = G.orbs.filter(o => o.gold).reduce((s,o) => s+o.v, 0);
-  const expectedDrop = Math.round((5+G.floor*0.3) * c.__api.D.goldFind * c.__api.D.goldGainMult * 1.025);
-  ok('ВОР: множитель стоит поверх золота с врагов', dropped === expectedDrop,
+  const expectedDrop = Math.round((5+G.floor*0.3) * c.__api.D.goldFind * 1.025);
+  ok('ВОР: общий процент применяется к золоту с врагов', dropped === expectedDrop,
      dropped + ' золота · ожидалось ' + expectedDrop);
   G.orbs.length = 0; G.enemies.length = 0; G.spawnQueue = 0; G.gold = 0;
   const floor = G.floor, p = G.player;
   G.portal = {x:p.x,y:p.y,r:28,t:2}; c.update(0.01);
-  const expectedFloor = Math.round((12+floor*6) * c.__api.D.goldFind * c.__api.D.goldGainMult);
-  ok('ВОР: множитель усиливает награду за этаж', G.gold === expectedFloor,
+  const expectedFloor = Math.round((12+floor*6) * c.__api.D.goldFind);
+  ok('ВОР: общий процент усиливает награду за этаж', G.gold === expectedFloor,
      G.gold + ' золота · ожидалось ' + expectedFloor); }
 
 { const c = loadGame('./index.html'); c.newGame('bow', 'keys');

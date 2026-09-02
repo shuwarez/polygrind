@@ -27,6 +27,14 @@ function subclassStats(id,lvl){
 }
 
 {
+  const c=loadGame('./index.html');c.newGame('bow','keys');
+  const cooldown=c.currentAttackCooldown(),oldAttacksPerSecond=1/0.34,newAttacksPerSecond=1/cooldown;
+  ok('базовая скорость атаки Лучника снижена ровно на 20%',
+    Math.abs(cooldown-0.425)<1e-9&&Math.abs(newAttacksPerSecond/oldAttacksPerSecond-0.8)<1e-9,
+    oldAttacksPerSecond.toFixed(2)+' → '+newAttacksPerSecond.toFixed(2)+' атак/сек');
+}
+
+{
   const h4=subclassStats('hunter',4),h5=subclassStats('hunter',5),h25=subclassStats('hunter',25);
   ok('Охотник получает +1% скорости атаки за полные 5 уровней',
     Math.abs(h4.aspd-1)<1e-9&&Math.abs(h5.aspd-1.01)<1e-9&&Math.abs(h25.aspd-1.05)<1e-9,

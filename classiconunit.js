@@ -33,6 +33,10 @@ ok('дополнительный снаряд с noMin помечен тольк
   keys('shape.proj_count').join(',') === 'bow', keys('shape.proj_count').join(','));
 ok('обычные отскоки полностью исключены из пула Некроманта',
   keys('shape.chain').join(',') === 'bow', keys('shape.chain').join(','));
+ok('пробитие, Сверхпробитие и Осколочный рикошет доступны только Лучнику',
+  keys('shape.pierce').join(',') === 'bow' && keys('shape.pierce_bonus').join(',') === 'bow' &&
+  keys('shape.ricochet').join(',') === 'bow',
+  keys('shape.pierce').join(',') + ' / ' + keys('shape.pierce_bonus').join(',') + ' / ' + keys('shape.ricochet').join(','));
 ok('ЭКО-ОТСКОКИ также не возвращают ветку Некроманту',
   keys('shape.chain_retention').join(',') === 'bow', keys('shape.chain_retention').join(','));
 ok('скорость снарядов доступна Лучнику и Магу, но не Некроманту',

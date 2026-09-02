@@ -420,3 +420,27 @@ function orbitHit({subclass=null,lvl=1,inc=0,more=1,element=0,crit=0,double=0,ig
     both.D.armor===0&&both.D.thorns===50&&Math.abs(both.D.mspd-base.D.mspd*0.7)<1e-9&&
     Math.abs(both.D.aspd-base.D.aspd*0.8)<1e-9&&both.D.warriorMeleeMore===1.4&&Math.abs(both.D.arc/base.D.arc-1.5)<1e-9);
 }
+
+{
+  const c=loadGame('./index.html');c.__api.STORE.data.shop={armor:30};c.newGame('blade','keys');
+  const G=c.__api.G,D=c.__api.D,p=G.player,o={c,G,D,p};
+  G.enemies.length=0;G.spawnQueue=0;G.packs.length=0;
+  G.bag.add('armor','flat',40);G.bag.add('steelCrowd','flat',10);G.bag.add('kUnburd','flag',1);
+  G.amu.golem=true;c.recalc();
+  const steel=c.__api.MODS.find(x=>x.id==='warrior.steel_crowd');
+  for(let i=0;i<6;i++)foe(o,20+i*5,0);
+  G.amu.golem=false;p.hp=D.life;const hp=p.hp;c.hurt(60,false,false,'ВРАГ · снаряд','norm');
+  ok('Налегке обнуляет всю обычную и динамическую броню и убирает Стальную толпу',
+    G.bag.flat('armor')===70&&D.unburdened&&D.armor===0&&D.steelCrowd===0&&steel.hide()&&
+    Math.abs((hp-p.hp)-60)<1e-9&&Array.from({length:80},()=>c.rollCards()).flat().every(x=>x.id!=='warrior.steel_crowd'),
+    'собрано '+G.bag.flat('armor')+' брони · действует '+D.armor+' · урон '+(hp-p.hp).toFixed(0));
+}
+
+{
+  const c=loadGame('./index.html');c.newGame('blade','keys');c.setLanguage('ru');
+  const m=c.__api.MODS.find(x=>x.id==='key.no_defense_speed'),tip=c.detailedSkillTip(m,{m,val:'свойство'});
+  const html=fs.readFileSync('./index.html','utf8');
+  ok('подробная подсказка Налегке крупно и жёлтым предупреждает о цене',
+    tip.includes('class="tt-exclusive"')&&tip.includes('магазина, талантов, навыков и предметов')&&
+    tip.includes('Стальная толпа')&&html.includes('#skilltip .tt-exclusive{')&&html.includes('color:#ffd84a'));
+}

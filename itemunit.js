@@ -80,6 +80,9 @@ console.log('КОЛЬЦА');
   e.hp = 150;  const low  = c.conditionalInc(e);
   ok('кольцо добивания: +50% ниже 20%', Math.abs(low-full-50)<0.01); }
 { const {c,G,D,p} = mk(['duel']);
+  // Фиксируем базовый удар и крит: кольцо проверяет свой ×1,75, а не качество
+  // случайной выборки между минимальным/максимальным уроном Лучника.
+  D.baseMin=D.baseMax=100; D.elem={fire:0,cold:0,lit:0,poi:0}; D.critCh=D.superCh=D.dblHit=0;
   const e = foe(c, p.x+80, p.y, 1e9);
   const one = (n) => { let s = 0; for (let i=0;i<n;i++){ const h = e.hp; c.damage(e,{}); s += h-e.hp; } return s/n; };
   const solo = one(400);

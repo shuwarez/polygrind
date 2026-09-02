@@ -27,6 +27,19 @@ function shot(extra={}){
     hitSet:[],orb:false,chain:0,pierce:0,pierced:0},extra);
 }
 
+function piercedDamage(superPierce=false){
+  const o=setup();
+  if(superPierce){
+    o.G.bag.add('pierceBonus','flag',1);o.c.recalc();
+    o.D.baseMin=o.D.baseMax=100;o.D.elem={fire:0,cold:0,lit:0,poi:0};
+    o.D.incAll=0;o.D.moreAll=1;o.D.critCh=o.D.superCh=o.D.dblHit=0;
+  }
+  const enemies=[foe(o,0,0),foe(o,0,0),foe(o,0,0)], hp=enemies.map(e=>e.hp);
+  o.G.shots.push(shot({pierce:2}));
+  for(let i=0;i<3;i++)o.c.update(0);
+  return enemies.map((e,i)=>hp[i]-e.hp);
+}
+
 {
   const o=setup();
   const enemies=Array.from({length:500},(_,i)=>({x:(i%25)*110-1320,y:Math.floor(i/25)*110-1045,r:20}));
@@ -71,6 +84,18 @@ function shot(extra={}){
     first.hp<hp1&&second.hp===hp2&&o.G.shots.includes(s)&&s.pierce===0&&s.pierced===1);
   o.c.update(0);
   ok('на следующем кадре пробитие переходит к следующей цели',second.hp<hp2&&!o.G.shots.includes(s));
+}
+
+{
+  const dealt=piercedDamage(false);
+  ok('обычное пробитие теряет 20% исходного урона за каждую цель',
+    dealt.every((v,i)=>Math.abs(v-(100-i*20))<1e-9),dealt.map(v=>v.toFixed(0)).join(' → '));
+}
+
+{
+  const dealt=piercedDamage(true);
+  ok('Сверхпробитие сохраняет усиление +20% за каждую цель',
+    dealt.every((v,i)=>Math.abs(v-(100+i*20))<1e-9),dealt.map(v=>v.toFixed(0)).join(' → '));
 }
 
 {

@@ -253,6 +253,7 @@ button:disabled{opacity:.35;cursor:default}
 #skilltip .tt-impact-row:first-of-type{border-top:0}.tt-impact-row span{color:#b9c7d6;font-size:12.5px}
 #skilltip .tt-impact-row b{color:#f3f7fb;white-space:nowrap}.tt-impact-row em{grid-column:2;color:#74df9b;font-size:11px;font-style:normal;text-align:right}
 #skilltip .tt-impact-row.loss em{color:#ff8f82}.tt-impact-note{color:#7f91a5;font-size:10.8px;line-height:1.35;margin-top:6px}
+#skilltip .tt-exclusive{margin:7px 0 9px;padding:7px 8px;border:1px solid #987518;background:#2a220d;color:#ffd84a;font-size:15px;font-weight:900;line-height:1.35;letter-spacing:.7px;text-transform:uppercase}
 .floor-find-list{display:grid;gap:8px;width:min(680px,92vw);max-height:46vh;overflow-y:auto;padding-right:4px}
 .floor-find-row{display:grid;grid-template-columns:48px minmax(0,1fr);gap:11px;align-items:center;padding:10px 12px;
   background:#11161c;border:1px solid #2a3440;border-left:3px solid var(--fc,#6fa8ff);text-align:left;cursor:help;outline:none;transition:.12s}
@@ -1178,11 +1179,11 @@ const EN_WORLD = [
   ["УКРАДЕННАЯ ТЕНЬ","STOLEN SHADOW"], ["ЦВЕТЕНИЕ ШИПОВ","BLOOM OF THORNS"],
 
   /* Магазин */
-  ["БЫСТРОЕ ЛЕЧЕНИЕ", "QUICK HEALING"], ["+1 HP/сек за уровень, пока здоровье ниже 50% максимума. Потолок 50 уровней.", "+1 HP/sec per level while health is below 50% of maximum. Capped at 50 levels."],
+  ["БЫСТРОЕ ЛЕЧЕНИЕ", "QUICK HEALING"], ["+1 HP раз в 5 секунд за уровень, пока здоровье ниже 50% максимума. Потолок 50 уровней.", "+1 HP every 5 seconds per level while health is below 50% of maximum. Capped at 50 levels."],
   ["Быстрое лечение", "Quick Healing"], ["до 50% HP", "up to 50% HP"],
   ["БРОНЯ", "ARMOR"], ["+1 к броне за уровень, потолок 30.", "+1 Armor per level, capped at 30."],
   ["ПАНЦИРЬ ОТ РОЯ", "SWARM SHELL"], ["Вычитает 1 урона из каждого попадания за уровень, максимум 100. Самая дешёвая защитная ветка магазина.", "Subtracts 1 damage from every hit per level, up to 100. The store's cheapest defensive branch."],
-  ["УВОРОТ", "EVASION"], ["+1% шанса уворота за уровень, потолок 70%.", "+1% Evasion Chance per level, capped at 70%."],
+  ["УВОРОТ", "EVASION"], ["+1% шанса уворота за уровень, потолок магазинного бонуса 25%.", "+1% Evasion Chance per level, with the shop bonus capped at 25%."],
   ["ЗАРЯДЫ РЫВКА", "DASH CHARGES"], ["Дополнительный заряд рывка. Базовый один, максимум три; каждый заряд восстанавливается 5 секунд.", "Adds a Dash charge. You start with one and can have up to three; each charge takes 5 seconds to recover."],
   ["ВОССТАНОВЛЕНИЕ РЫВКА", "DASH RECOVERY"], ["+5% к скорости восстановления заряда за уровень, максимум +50%. На максимуме базовые 5 секунд сокращаются до 3,33 секунды.", "+5% Dash charge recovery speed per level, up to +50%. At maximum, the base 5 seconds are reduced to 3.33 seconds."],
   ["ДЛИННЫЙ РЫВОК", "LONG DASH"], ["+5% к дистанции рывка за уровень, максимум +25%. Длительность неуязвимости не меняется.", "+5% Dash distance per level, up to +25%. Invulnerability duration is unchanged."],
@@ -1235,7 +1236,7 @@ const EN_WORLD = [
   ["Голем крови", "Blood Golem"], ["Костяной голем", "Bone Golem"],
 ];
 const EN_UI_PAIRS = [
-  ["P — пауза", "P — Pause"], ["HP/сек", "HP/sec"], ["с удара", "per hit"],
+  ["P — пауза", "P — Pause"], ["HP/5 сек", "HP/5 sec"], ["с удара", "per hit"],
   ["ОРУЖИЕ", "WEAPON"], ["Реген/сек", "Regen/sec"], ["Средний удар", "Average Hit"],
   ["/сек", "/sec"], ["(до ", "(up to "],
   /* Бой, HUD и всплывающие сообщения */
@@ -1414,9 +1415,11 @@ const EN_TEXT = Object.freeze(Object.fromEntries([
 
   /* Карточки: здоровье, урон, крит, скорость */
   ["Здоровье за убийство", "Health on Kill"],
+  ["За выбор даёт только целые +1, +2 или +3 HP за убийство.", "Each pick grants only a whole +1, +2, or +3 HP per kill."],
   ["Здоровье за попадание", "Health on Hit"],
-  ["сильно с быстрыми атаками", "especially strong with fast attacks"],
+  ["За выбор даёт только целые +1, +2 или +3 HP за попадание.", "Each pick grants only a whole +1, +2, or +3 HP per hit."],
   ["Здоровье за крит", "Health on Critical Hit"],
+  ["За выбор даёт только целые +3, +4, +5 или +6 HP за крит. Срабатывает не чаще раза в секунду.", "Each pick grants only a whole +3, +4, +5, or +6 HP per critical hit. Triggers at most once per second."],
   ["УЖАСАЮЩИЙ ВАМПИР", "DREAD VAMPIRE"],
   ["0.5% фактически нанесённого урона восстанавливается за 3 сек, не быстрее 8% максимального HP в секунду. При полном HP восстановление копится красным щитом до 15% максимального HP. Всё остальное лечение отключается", "0.5% of actual damage dealt is recovered over 3 sec, capped at 8% of Maximum HP per second. At full HP, recovery builds a red shield up to 15% of Maximum HP. All other healing is disabled"],
   ["МГНОВЕННЫЙ ВАМПИРИЗМ", "INSTANT LIFE STEAL"],
@@ -1435,7 +1438,7 @@ const EN_TEXT = Object.freeze(Object.fromEntries([
   ["выпадает только Воину", "available only to the Warrior"],
   ["ТЕРНОВЫЙ КРУГ", "THORN RING"],
   ["Урон в размере % от HP врага", "Damage Equal to % of Enemy HP"],
-  ["работает против жирных боссов", "effective against high-health bosses"],
+  ["работает от текущего HP врага; суммарный потолок 10%", "based on the enemy's current HP; total cap 10%"],
   ["ДОБИВАНИЕ", "EXECUTE"],
   ["любое прямое попадание мгновенно убивает обычного монстра с 10% HP или меньше · одна фиолетовая карточка", "any direct hit instantly kills a normal monster at 10% HP or less · one purple card"],
   ["<b>Когда срабатывает:</b> после любого прямого попадания героя или свиты по обычному монстру.<br><b>Условие:</b> после урона у цели осталось 10% максимального HP или меньше; ровно 10% уже подходит.<br><b>Эффект:</b> оставшееся здоровье мгновенно снимается независимо от силы самого удара.<br><b>Пример:</b> у обычного монстра 1000 максимального HP. Слабый удар оставил ему 100 HP — «ДОБИВАНИЕ» немедленно убивает его.<br><b>Не действует:</b> на элиту и боссов. Карточка уникальная и повторно не выпадает.", "<b>Trigger:</b> after any direct hit by the hero or a minion against a normal monster.<br><b>Condition:</b> the target has 10% of maximum HP or less after the damage; exactly 10% qualifies.<br><b>Effect:</b> all remaining health is removed instantly, regardless of how weak the triggering hit was.<br><b>Example:</b> a normal monster has 1,000 maximum HP. A weak hit leaves it at 100 HP, and EXECUTE kills it immediately.<br><b>Does not affect:</b> elites or bosses. This card is unique and cannot appear again."],
@@ -1453,7 +1456,7 @@ const EN_TEXT = Object.freeze(Object.fromEntries([
   /* Карточки: геометрия и стихии */
   ["Доп. снаряды", "Additional Projectiles"], ["один из сильнейших модификаторов", "one of the strongest modifiers"],
   ["Пробитие насквозь (N целей)", "Pierce (N Targets)"],
-  ["+1 или +2 цели; максимум 4. На потолке открывает СВЕРХПРОБИТИЕ.", "+1 or +2 targets; maximum 4. At the cap, unlocks SUPER PIERCE."],
+  ["+1 или +2 цели; максимум 4. Без СВЕРХПРОБИТИЯ каждый следующий враг получает на 20% меньше урона. На потолке открывает СВЕРХПРОБИТИЕ.", "+1 or +2 targets; maximum 4. Without SUPER PIERCE, each subsequent enemy takes 20% less damage. At the cap, unlocks SUPER PIERCE."],
   ["Отскоки на другие цели", "Chains to Other Targets"],
   ["Самонаведение", "Homing"], ["Скорость снарядов", "Projectile Speed"],
   ["Сверхдавление", "Overpressure"],
@@ -1578,7 +1581,7 @@ const EN_TEXT = Object.freeze(Object.fromEntries([
   ["Шквал", "Flurry"], ["вдвое быстрее, но вдвое слабее", "attacks are twice as fast but deal half damage"],
   ["Акробатика", "Acrobatics"], ["уклонение удвоено, +15% скорости", "Evasion is doubled and Movement Speed is increased by 15%"],
   ["Чумная смерть", "Plague Death"], ["каждый труп гарантированно даёт чумный взрыв, но радиус чумы уменьшается на 35%", "every corpse always causes a plague explosion, but plague radius is reduced by 35%"],
-  ["Налегке", "Unburdened"], ["броня обнуляется, но +35% скорости и +25% скорости атаки", "Armor is set to zero, but you gain +35% Movement Speed and +25% Attack Speed"],
+  ["Налегке", "Unburdened"], ["вся броня из магазина, талантов, навыков и предметов обнуляется; Стальная толпа больше не выпадает; +35% скорости и +25% скорости атаки", "All Armor from the shop, talents, skills, and items is set to zero; Steel Crowd no longer appears; gain +35% Movement Speed and +25% Attack Speed"],
 
   /* Классы, подклассы, книги, тотемы */
   ["ВОИН", "WARRIOR"], ["Ближний бой. Каждый третий взмах выпускает круговую волну и отбрасывает врагов.", "Close combat. Every third swing releases a circular wave that knocks enemies back."],
@@ -1734,6 +1737,10 @@ function bindLanguageSwitch(){
    подсказку сразу после добавления nm/nt/tip в билингвальный реестр. */
 function englishSkillTip(m, card){
   const shown = card && card.val ? card.val : (m.kind === 'flag' ? 'property' : 'value');
+  const exclusive = ['shape.pierce','shape.chain','shape.ricochet'].includes(m.id)
+    ? '<div class="tt-exclusive">Choosing one of Pierce, Chains, or Shard Ricochet permanently removes the other two branches from this run.</div>' : '';
+  const unburdened = m.id === 'key.no_defense_speed'
+    ? '<div class="tt-exclusive">Warning: all Armor from the shop, talents, skills, and items becomes zero. Steel Crowd can no longer appear.</div>' : '';
   const specific = m.tip || m.nt;
   const effect = specific ? '<b>Effect:</b> ' + tr(specific) + '<br>' : '';
   const formula = {
@@ -1747,7 +1754,7 @@ function englishSkillTip(m, card){
     (m.hide ? '<br><b>Limit:</b> the card leaves the pool when its mechanical cap is reached.' : '');
   const minions = m.req === 'min' ? '<br><b>Class:</b> available only to a minion-based class.' :
     (m.noMin ? '<br><b>Minions:</b> does not affect minions.' : '');
-  return effect + '<b>This card:</b> ' + shown + '<br>' + formula + limits + minions;
+  return unburdened + exclusive + effect + '<b>This card:</b> ' + shown + '<br>' + formula + limits + minions;
 }
 
 function localizationMissing(){
@@ -3871,9 +3878,12 @@ const skeletonDisplayCap=()=>SKELETON_BASE_LIMIT+SKELETON_CARD_RANKS+skeletonAni
 
 const MODS = [
 // --- Здоровье ---
-{id:'life.on_kill',    cat:'Здоровье', nm:'Здоровье за убийство',       kind:'flat', stat:'onKill',     r:[2,6]},
-{id:'life.on_hit',     cat:'Здоровье', nm:'Здоровье за попадание',      kind:'flat', stat:'onHit',      r:[0.4,1.2], rar:1, nt:'сильно с быстрыми атаками'},
-{id:'life.on_crit',    cat:'Здоровье', nm:'Здоровье за крит',           kind:'flat', stat:'onCrit',     r:[2,5], rar:1},
+{id:'life.on_kill',    cat:'Здоровье', nm:'Здоровье за убийство',       kind:'flat', stat:'onKill',     r:[1,3], int:true,
+ nt:'За выбор даёт только целые +1, +2 или +3 HP за убийство.'},
+{id:'life.on_hit',     cat:'Здоровье', nm:'Здоровье за попадание',      kind:'flat', stat:'onHit',      r:[1,3], int:true, rar:1,
+ nt:'За выбор даёт только целые +1, +2 или +3 HP за попадание.'},
+{id:'life.on_crit',    cat:'Здоровье', nm:'Здоровье за крит',           kind:'flat', stat:'onCrit',     r:[3,6], int:true, rar:1,
+ nt:'За выбор даёт только целые +3, +4, +5 или +6 HP за крит. Срабатывает не чаще раза в секунду.'},
 {id:'key.dread_vampire',cat:'Кейстоун',nm:'УЖАСАЮЩИЙ ВАМПИР',           kind:'flag', stat:'kDread',     r:[1,1], rar:3, noMin:true, nt:'0.5% фактически нанесённого урона восстанавливается за 3 сек, не быстрее 8% максимального HP в секунду. При полном HP восстановление копится красным щитом до 15% максимального HP. Всё остальное лечение отключается'},
 {id:'life.leech_instant',cat:'Здоровье',nm:'МГНОВЕННЫЙ ВАМПИРИЗМ',      kind:'flag', stat:'leechInstant',r:[1,1], rar:2, w:45, unlock:true,
  nt:'обычное вытягивание перестаёт течь во времени и лечит целиком в момент удара; трёхсекундный поток Ужасающего вампира не меняется', show:()=>D.leechBase>=25},
@@ -3938,7 +3948,7 @@ const MODS = [
 {id:'warrior.deadly_radius',cat:'Геометрия',nm:'СМЕРТЕЛЬНЫЙ РАДИУС',    kind:'flag', stat:'deadlyRadius',r:[1,1], rar:2, w:45, unlock:true, wep:['melee'], noMin:true,
  nt:'Увеличивает радиус круговой волны на 80%.', show:()=>D.longBlade>=60},
 {id:'warrior.steel_crowd',cat:'Защита',nm:'Стальная толпа',             kind:'flat', stat:'steelCrowd',r:[2,3], int:true, cap:10, wep:['melee'], noMin:true,
- nt:'+2–3 брони за каждого врага в радиусе 300. Учитывается максимум 6 врагов. Значения карточек складываются до 10 брони за врага.', hide:()=>D.steelCrowd>=10},
+ nt:'+2–3 брони за каждого врага в радиусе 300. Учитывается максимум 6 врагов. Значения карточек складываются до 10 брони за врага.', hide:()=>D.unburdened||D.steelCrowd>=10},
 {id:'warrior.hold_line',cat:'Защита',nm:'ГЛУХАЯ ОБОРОНА',               kind:'flag', stat:'holdLine', r:[1,1], rar:2, w:45, unlock:true, wep:['melee'], noMin:true,
  nt:'Весь входящий урон дополнительно уменьшается на 2% за каждого врага в радиусе 300, максимум на 10%.', show:()=>D.steelCrowd>=10},
 {id:'warrior.counter_tempo',cat:'Скорость',nm:'Ответный темп',          kind:'inc',  stat:'counterTempo',r:[10,10], int:true, cap:50, wep:['melee'], noMin:true,
@@ -3956,7 +3966,8 @@ const MODS = [
 {id:'warrior.groundbreaker',cat:'Урон',nm:'Землелом',                   kind:'flag', stat:'groundbreaker',r:[1,1],rar:2,wep:['melee'],noMin:true,
  nt:'Каждая третья круговая волна оставляет трещину на 2 секунды, наносящую 12% удара каждые 0,5 секунды.',
  tip:'<b>Класс:</b> выпадает только Воину; фиолетовая одноразовая карта.<br><b>Период:</b> каждая третья круговая волна, то есть каждый девятый обычный взмах, оставляет трещину в месте героя.<br><b>Трещина:</b> повторяет радиус породившей волны, живёт 2 секунды и наносит четыре тика — через 0,5, 1,0, 1,5 и 2,0 секунды.<br><b>Урон:</b> каждый тик наносит всем врагам в трещине 12% обычного удара круговой волны; защита каждой цели применяется отдельно. Тики непрямые, не двигают счётчики прямых ударов и не создают двойное попадание.<br><b>Индикатор:</b> слева снизу показывает число волн до Землелома, а перед готовой волной — «Землелом — ВОЛНА!». Карточка уникальная.'},
-{id:'dmg.pct_enemy_hp',cat:'Урон', nm:'Урон в размере % от HP врага',   kind:'flat', stat:'pctHp',      r:[1,2.5], rar:2, nt:'работает против жирных боссов'},
+{id:'dmg.pct_enemy_hp',cat:'Урон', nm:'Урон в размере % от HP врага',   kind:'flat', stat:'pctHp',      r:[1,2.5], cap:10, rar:2,
+ nt:'работает от текущего HP врага; суммарный потолок 10%', hide:()=>D.pctHp>=10},
 {id:'dmg.execute',     cat:'Урон', nm:'ДОБИВАНИЕ',                      kind:'flag', stat:'execute',    r:[1,1], rar:2,
  nt:'любое прямое попадание мгновенно убивает обычного монстра с 10% HP или меньше · одна фиолетовая карточка',
  tip:'<b>Когда срабатывает:</b> после любого прямого попадания героя или свиты по обычному монстру.<br><b>Условие:</b> после урона у цели осталось 10% максимального HP или меньше; ровно 10% уже подходит.<br><b>Эффект:</b> оставшееся здоровье мгновенно снимается независимо от силы самого удара.<br><b>Пример:</b> у обычного монстра 1000 максимального HP. Слабый удар оставил ему 100 HP — «ДОБИВАНИЕ» немедленно убивает его.<br><b>Не действует:</b> на элиту и боссов. Карточка уникальная и повторно не выпадает.'},
@@ -3970,7 +3981,7 @@ const MODS = [
 
 // --- Критические удары ---
 {id:'crit.chance_flat',cat:'Криты', nm:'+N% к шансу крита',             kind:'flat', stat:'critCh',     r:[4,8], rar:1, hide:()=>D.critCh>=100},
-{id:'crit.chance_inc', cat:'Криты', nm:'+% к шансу крита',              kind:'inc',  stat:'critCh',     r:[25,45], hide:()=>D.critCh>=100},
+{id:'crit.chance_inc', cat:'Криты', nm:'+% к шансу крита',              kind:'inc',  stat:'critCh',     r:[10,20], hide:()=>D.critCh>=100},
 {id:'crit.multi',      cat:'Криты', nm:'Множитель критического урона',  kind:'flat', stat:'critMul',    r:[2,7], rar:1},
 {id:'crit.super_chance',cat:'Криты',nm:'СВЕРХКРИТ',                     kind:'chance',stat:'superCh',   r:[15,25], rar:2, w:45, unlock:true,
  nt:'крит внутри крита: урон ×2 и кровотечение на 3% от удара в секунду — стакается без предела',
@@ -3991,9 +4002,10 @@ const MODS = [
 
 // --- Геометрия атак ---
 {id:'shape.proj_count',cat:'Геометрия', nm:'Доп. снаряды',              kind:'flat', stat:'projN',      r:[1,1], rar:1, nt:'один из сильнейших модификаторов', wep:['proj'], noMin:true, hide:()=>D.oneArrowTechnique},
-{id:'shape.pierce',    cat:'Геометрия', nm:'Пробитие насквозь (N целей)',kind:'flat', stat:'pierce',    r:[1,2], int:true, cap:4, wep:['proj'],
- nt:'+1 или +2 цели; максимум 4. На потолке открывает СВЕРХПРОБИТИЕ.', hide:()=>D.pierceBase>=4},
-{id:'shape.chain',     cat:'Геометрия', nm:'Отскоки на другие цели',    kind:'flat', stat:'chain',      r:[1,2], rar:1, wep:['proj'], noMin:true},
+{id:'shape.pierce',    cat:'Геометрия', nm:'Пробитие насквозь (N целей)',kind:'flat', stat:'pierce',    r:[1,2], int:true, cap:4, wep:['proj'], noMin:true,
+ nt:'+1 или +2 цели; максимум 4. Без СВЕРХПРОБИТИЯ каждый следующий враг получает на 20% меньше урона. На потолке открывает СВЕРХПРОБИТИЕ.', hide:()=>D.pierceBase>=4||D.chainBase>0||D.ricochet>0},
+{id:'shape.chain',     cat:'Геометрия', nm:'Отскоки на другие цели',    kind:'flat', stat:'chain',      r:[1,2], rar:1, wep:['proj'], noMin:true,
+ hide:()=>D.pierceBase>0||D.ricochet>0},
 {id:'shape.homing',    cat:'Геометрия', nm:'Самонаведение',             kind:'inc',  stat:'homing',     r:[35,70], cap:100, rar:1, wep:['orb'],
  hide:()=>D.homing>=1},
 {id:'shape.proj_speed',cat:'Геометрия', nm:'Скорость снарядов',         kind:'inc',  stat:'projSpd',    r:[15,30], wep:['proj','orb'], noMin:true},
@@ -4020,17 +4032,17 @@ const MODS = [
 {id:'shape.shotgun',   cat:'Геометрия', nm:'ДРОБОВИК',                  kind:'flag', stat:'shotgun',    r:[1,1], rar:2, w:45, unlock:true,
  nt:'снаряды летят тугим пучком — весь залп ложится в одну цель', show:()=>D.projN>=5, wep:['proj','orb'], noMin:true},
 {id:'shape.chain_retention',cat:'Геометрия', nm:'ЭКО-ОТСКОКИ',          kind:'flag', stat:'chainKeep',  r:[1,1], rar:2, w:45, unlock:true,
- nt:'отскоки перестают терять 25% урона на каждом прыжке', show:()=>D.chain>=4&&!D.oneArrowTechnique, wep:['proj'], noMin:true},
+ nt:'отскоки перестают терять 25% урона на каждом прыжке', show:()=>D.chainBase>=4&&!D.oneArrowTechnique&&D.pierceBase===0&&D.ricochet===0, wep:['proj'], noMin:true},
 {id:'shape.pierce_bonus',cat:'Геометрия', nm:'СВЕРХПРОБИТИЕ',           kind:'flag', stat:'pierceBonus',r:[1,1], rar:2, w:45, unlock:true,
- nt:'+20% урона за каждую уже пробитую цель', show:()=>D.pierceBase>=4, wep:['proj']},
+ nt:'+20% урона за каждую уже пробитую цель', show:()=>D.pierceBase>=4&&D.chainBase===0&&D.ricochet===0, wep:['proj'], noMin:true},
 {id:'conv.aoe_to_damage',cat:'Геометрия', nm:'РАДИУС В УРОН',           kind:'flag', stat:'aoeToDmg',   r:[1,1], rar:2, w:45, unlock:true,
  nt:'каждый процент радиуса области даёт 0.6% урона', show:()=>D.aoeR>=2},
 {id:'shape.orbit',      cat:'Геометрия', nm:'Круговой орб',              kind:'flat', stat:'orbit',      r:[1,1], rar:1, wep:['melee'],
  nt:'только для Воина · кружок вращается вокруг вас на базовом радиусе 88,8 и бьёт всё, чего коснётся, на 25% от автоатаки — со всеми модификаторами и шансами. До 10 штук',
  hide:()=>D.orbitN>=10},
-{id:'shape.ricochet',  cat:'Геометрия', nm:'Осколочный рикошет',        kind:'flat', stat:'ricochet',   r:[1,1], rar:1, wep:['proj','orb'], noMin:true,
+{id:'shape.ricochet',  cat:'Геометрия', nm:'Осколочный рикошет',        kind:'flat', stat:'ricochet',   r:[1,1], rar:1, wep:['proj'], noMin:true,
  nt:'при первом попадании снаряд выпускает осколок в ближайшего незадетого врага · осколок наносит 45% урона · максимум 3',
- hide:()=>D.ricochet>=RICOCHET_SHARD_CAP},
+ hide:()=>D.ricochet>=RICOCHET_SHARD_CAP||D.pierceBase>0||D.chainBase>0},
 
 // --- Стихии (урон по типам) ---
 {id:'dt.fire.flat',    cat:'Огонь',  nm:'+N к урону: Огонь',            kind:'flat', stat:'dFire',      r:[4,9], rar:1, show:()=>D.igniteCh>0},
@@ -4189,7 +4201,8 @@ const MODS = [
 {id:'key.fast_weak',   cat:'Кейстоун', nm:'Шквал',                      kind:'flag', stat:'kFlurry', r:[1,1], rar:3, nt:'вдвое быстрее, но вдвое слабее'},
 {id:'key.acrobatics',cat:'Кейстоун',nm:'Акробатика',                    kind:'flag', stat:'kAcro',   r:[1,1], rar:3, nt:'уклонение удвоено, +15% скорости'},
 {id:'key.explode_but_hurt',cat:'Кейстоун',nm:'Чумная смерть',           kind:'flag', stat:'kVolat',  r:[1,1], rar:3, nt:'каждый труп гарантированно даёт чумный взрыв, но радиус чумы уменьшается на 35%'},
-{id:'key.no_defense_speed',cat:'Кейстоун',nm:'Налегке',                 kind:'flag', stat:'kUnburd', r:[1,1], rar:3, nt:'броня обнуляется, но +35% скорости и +25% скорости атаки'},
+{id:'key.no_defense_speed',cat:'Кейстоун',nm:'Налегке',                 kind:'flag', stat:'kUnburd', r:[1,1], rar:3,
+ nt:'вся броня из магазина, талантов, навыков и предметов обнуляется; Стальная толпа больше не выпадает; +35% скорости и +25% скорости атаки'},
 {id:'key.time_debt',cat:'Кейстоун',nm:'Долг времени',                   kind:'flag', stat:'kTimeDebt', r:[1,1], rar:3,
  nt:'Каждый прямой атакующий удар по монстру даёт +6% скорости атаки на 5 секунд, до +60%; таймер обновляется новым ударом. При достижении как минимум +40% начинается Остывание на 5 секунд: бонус больше не обновляется, а все заряды рывка обнуляются и восстанавливаются заново.',
  tip:'<b>Доступность:</b> кейстоун для всех четырёх классов; карточка одноразовая.<br><b>Накопление:</b> каждый фактически прошедший прямой атакующий удар героя или свиты даёт +6% скорости атаки на 5 секунд и обновляет таймер. Периодический и другой непрямой урон не считается. Формальный потолок — +60%.<br><b>Порог:</b> при достижении не менее +40% начинается «Остывание» на 5 секунд. Из-за шага 6% оно обычно запускается на +42%.<br><b>Остывание:</b> текущий бонус продолжает действовать, но новые удары не добавляют стаки и не обновляют время. Все заряды рывка сразу становятся равны нулю, первый заряд начинает полный обычный откат; дополнительные заряды затем восстанавливаются последовательно.<br><b>Сброс:</b> через 5 секунд бонус и Остывание заканчиваются, после чего накопление начинается заново. Все состояния постоянно показаны индикатором слева снизу.'},
@@ -4206,7 +4219,8 @@ const MODS = [
 const WEAPONS = {
   blade:{ id:'wpn.sword', nm:'ВОИН',  type:'melee', dmg:[4,10], cd:0.42, reach:92,  arc:1.5,
           desc:'Ближний бой. Каждый третий взмах выпускает круговую волну и отбрасывает врагов.' },
-  bow:  { id:'wpn.bow',   nm:'ЛУЧНИК',  type:'proj',  dmg:[1,6], cd:0.34, speed:620, life:0.95,
+  // 0,425 сек вместо 0,34: базовое число атак в секунду снижено ровно на 20%.
+  bow:  { id:'wpn.bow',   nm:'ЛУЧНИК',  type:'proj',  dmg:[1,6], cd:0.425, speed:620, life:0.95,
           desc:'Быстрый дальний бой. Особенно силён с дополнительными стрелами, пробитием и отскоками.' },
   wand: { id:'wpn.wand',  nm:'МАГ',     type:'orb',   dmg:[2,8], cd:0.72, speed:330, life:1.6, aoe:74,
           desc:'Магические сферы взрываются по площади и несут силу стихий.' },
@@ -4704,17 +4718,25 @@ function migrateRemovedShopUpgrades(data){
   }
   return refund;
 }
-/* Старые уровни скорости выше нового потолка не должны ни действовать, ни
-   исчезать без компенсации. Возврат считается по прежней кривой 1000 × 1.11^n,
-   по которой эти уровни действительно покупались. После первого прохода ранг
-   становится 10, поэтому миграция идемпотентна. */
+/* Старые уровни товаров выше новых потолков не должны ни действовать, ни
+   исчезать без компенсации. Возврат считается по прежним кривым, по которым
+   эти уровни действительно покупались. После первого прохода ранг обрезается,
+   поэтому миграция идемпотентна. */
 function migrateCappedShopUpgrades(data){
   const shop = data.shop && typeof data.shop === 'object' ? data.shop : (data.shop = {});
-  const old = {base:1000,grow:1.11}, raw = Math.max(0, Math.floor(Number(shop.mspd) || 0));
-  if (raw <= 10) return 0;
   let refund=0;
-  for (let i=10; i<Math.min(raw,50); i++) refund+=shopCost(old,i);
-  shop.mspd=10;
+  const oldSpeed = {base:1000,grow:1.11}, rawSpeed = Math.max(0, Math.floor(Number(shop.mspd) || 0));
+  if (rawSpeed > 10){
+    for (let i=10; i<Math.min(rawSpeed,50); i++) refund+=shopCost(oldSpeed,i);
+    shop.mspd=10;
+  }
+  // Уворот сжат с 70 до 25 рангов. Лишние ранги старого сохранения полностью
+  // возвращаются по прежней кривой, чтобы смена потолка не сжигала вложенное золото.
+  const oldDodge = {base:4200,grow:1.08}, rawDodge = Math.max(0, Math.floor(Number(shop.dodge) || 0));
+  if (rawDodge > 25){
+    for (let i=25; i<Math.min(rawDodge,70); i++) refund+=shopCost(oldDodge,i);
+    shop.dodge=25;
+  }
   if (refund){
     data.gold=Math.max(0,Number(data.gold)||0)+refund;
     data.spent=Math.max(0,(Number(data.spent)||0)-refund);
@@ -4776,11 +4798,13 @@ const constellationMultiplier = e => 1 + constellationRank(
    в начале, а потолок ветки — тысячи партий. Растить цену медленнее нельзя:
    иначе ветка закрывается за неделю и золото снова некуда девать.  */
 const SHOP = [
-  {id:'regen',  cat:'defense', nm:'БЫСТРОЕ ЛЕЧЕНИЕ', max:50, base:3300, grow:1.06, fmt:l => '+' + l + ' HP/сек',
-   nt:'+1 HP/сек за уровень, пока здоровье ниже 50% максимума. Потолок 50 уровней.'},
+  {id:'regen',  cat:'defense', nm:'БЫСТРОЕ ЛЕЧЕНИЕ', max:50, base:3300, grow:1.06, fmt:l => '+' + l + ' HP/5 сек',
+   nt:'+1 HP раз в 5 секунд за уровень, пока здоровье ниже 50% максимума. Потолок 50 уровней.'},
   {id:'armor',  cat:'defense', nm:'БРОНЯ', max:30, base:3600, grow:1.04, fmt:l => '+' + l, nt:'+1 к броне за уровень, потолок 30.'},
   {id:'drFlat', cat:'defense', nm:'ПАНЦИРЬ ОТ РОЯ', max:100, base:250, grow:1.03, fmt:l => '+' + l + ' с удара', nt:'Вычитает 1 урона из каждого попадания за уровень, максимум 100. Самая дешёвая защитная ветка магазина.'},
-  {id:'dodge',  cat:'defense', nm:'УВОРОТ', max:70, base:4200, grow:1.08, unit:'%', nt:'+1% шанса уворота за уровень, потолок 70%.'},
+  // Новые 25 рангов суммарно стоят ровно столько же, сколько прежние 70:
+  // 11 424 500 золота с учётом округления shopCost().
+  {id:'dodge',  cat:'defense', nm:'УВОРОТ', max:25, base:4126, grow:1.3102994289, unit:'%', nt:'+1% шанса уворота за уровень, потолок магазинного бонуса 25%.'},
   {id:'dashRecharge',cat:'defense',nm:'ВОССТАНОВЛЕНИЕ РЫВКА',max:10,base:3000,grow:1.12,
    nt:'+5% к скорости восстановления заряда за уровень, максимум +50%. На максимуме базовые 5 секунд сокращаются до 3,33 секунды.',
    fmt:l => '+' + (l*5) + '%'},
@@ -5257,7 +5281,7 @@ function newGame(weaponKey, control, subclassKey, devZone=false){
             elitePyroBurnT:0, elitePyroBurnTick:0, eliteAbyssBurnT:0, eliteAbyssBurnTick:0,
             eliteGuardSlowT:0, eliteGuardSlowStacks:0,
             moveT:0, predT:0, critChain:0, riposte:false, swiftT:0, spdKill:0, sprintT:0, lowHp:false, moving:false, faceX:1, faceY:0, spriteFace:1, heroWalkT:0,
-            stillT:0, killT:0, cheatCd:0, cheatSpeedT:0, healCd:0,
+            stillT:0, killT:0, cheatCd:0, cheatSpeedT:0, healCd:0, fastHealT:5, onCritHealReadyAt:0,
             hitFlash:0, hpFlash:0, hpLag:1, hpLagFrom:1, hpLagTimer:0},
     enemies:[], shots:[], delayedShots:[], attackEchoes:[], stepBeyondEchoes:[], eshots:[], orbs:[], fx:[], fxPool:[], transientFxCounts:{num:0,status:0}, bloodFx:[], bloodGroundCanvas:null, bloodGroundCtx:null, bloodStampN:0, arcaneTraces:[], arcaneMines:[], repeatDetonations:[], groundbreakerCracks:[], sparkSigils:[],
     parts:[], partPool:[],                    // пиксельные частицы и их переиспользуемые объекты
@@ -5307,6 +5331,7 @@ function recalc(){
   const unsheathedBlade = w.type === 'melee' && b.has('kUnsheathedBlade');
   const oneArrowTechnique = w.id === 'wpn.bow' && b.has('kOneArrow');
   D.timeDebt=timeDebt; D.livingFortress=livingFortress; D.unsheathedBlade=unsheathedBlade;
+  D.unburdened=unburd;
   D.oneArrowTechnique=oneArrowTechnique;
   const sub = G.subclass;
   const thief = sub === 'thief', hunter = sub === 'hunter', dancer = sub === 'dancer';
@@ -5347,7 +5372,9 @@ function recalc(){
   D.thorns = D.thornsRaw * (livingFortress ? 2 : 1);
   D.thornCircle = w.type === 'melee' && b.has('thornCircle');
   D.ironFury = w.type === 'melee' && b.has('ironFury');
-  D.steelCrowd = w.type === 'melee' ? clamp(b.flat('steelCrowd'), 0, 10) : 0;
+  // «Налегке» запрещает и динамическую броню: Стальная толпа не должна
+  // обходить обнуление, применяясь отдельно уже в hurt().
+  D.steelCrowd = w.type === 'melee' && !unburd ? clamp(b.flat('steelCrowd'), 0, 10) : 0;
   D.holdLine = w.type === 'melee' && b.has('holdLine');
   // Клык вампира прибавляется ПОСЛЕ потолка: иначе амулет не делал бы ничего
   // тому, кто уже упёрся в 25%, а это ровно тот билд, который его и ищет
@@ -5361,6 +5388,7 @@ function recalc(){
   if (G.player) G.player.dreadShield = D.dread ? Math.min(G.player.dreadShield||0, D.life*0.15) : 0;
   D.leechInstant= b.has('leechInstant');
   D.onKill = b.flat('onKill'); D.onHit = b.flat('onHit'); D.onCrit = b.flat('onCrit');
+  D.pctHp = clamp(b.flat('pctHp'),0,10);
 
   // --- Урон: база оружия + стихии, всё по формуле каталога ---
   D.incAll = (b.s.dmg ? b.s.dmg.inc : 0) + (w.type==='melee'? b.sum('dmgMelee') : 0)
@@ -5465,7 +5493,8 @@ function recalc(){
   D.multiplierMiniDelay = 0.10;
   D.pierceBase = clamp(Math.round(b.flat('pierce')), 0, 4);
   D.pierce  = D.pierceBase + (oneArrowTechnique ? 3 : 0);
-  D.chain   = Math.round(b.flat('chain')) + (amu('ricochet') ? 1 : 0);
+  D.chainBase = Math.round(b.flat('chain'));
+  D.chain   = D.chainBase + (amu('ricochet') ? 1 : 0);
   D.ricochet= clamp(Math.round(b.flat('ricochet')), 0, RICOCHET_SHARD_CAP);
   D.featherSpeed = w.id === 'wpn.bow' ? b.sum('featherSpeed') : 0;
   D.featherHoming = w.id === 'wpn.bow' ? G.picks.filter(x=>x.id==='archer.fletching').reduce((sum,x)=>{
@@ -5539,12 +5568,13 @@ function recalc(){
   D.pickup  = 70 * (amu('looter') ? 5 : 1);
   D.lootVacuum = 1;
   D.lootPickup = D.pickup * D.lootVacuum;
-  D.lootPull   = 340 * D.lootVacuum;
+  // Бегун движется со скоростью 170: опыт и золото притягиваются в 2,5 раза быстрее.
+  D.lootPull   = 425 * D.lootVacuum;
   D.xpGain  = 1 + b.sum('xpGain')/100;
-  D.goldFind= 1 + b.sum('goldFind')/100;
-  // ВОР перемножает уже готовую награду, поэтому усиливает магазин, карточки,
-  // книги, предметы и созвездия, а не растворяется с ними в одном общем проценте.
-  D.goldGainMult = thief ? 1 + G.lvl*0.02 : 1;
+  // ВОР добавляет свои +2% за уровень в общий процент золота вместе с магазином,
+  // карточками и книгами. Отдельного перемножения поверх готовой награды нет.
+  D.goldFind= 1 + (b.sum('goldFind') + (thief ? G.lvl*2 : 0))/100;
+  D.goldGainMult = 1; // совместимость со старыми диагностическими сценариями
   // Книга крови: N% от автоатаки в секунду. avgHit уже содержит все проценты,
   // поэтому отдельно домножать не нужно — иначе получится двойной скейл.
   D.bookBleedDps = 0;                                  // считается ниже, после avgHit
@@ -7694,13 +7724,17 @@ function damage(e, src){
       addBleed(e, total*0.03*D.ailEff, src.minion ? 1 : 0);      // 3% от удара в секунду, стакается
       burst(e.x, e.y, 8, '#e0405a', 200, 3, 0.5);
     }
-    if (D.onCrit) heal(D.onCrit);
+    if (D.onCrit && G.time >= (p.onCritHealReadyAt||0)){
+      heal(D.onCrit);
+      p.onCritHealReadyAt=G.time+1;
+    }
     // КРИТИЧЕСКАЯ МАССА
     if (amu('critmass')) nova(e.x, e.y, 55*D.aoeR, total*0.5, '#ff9a2f', {minionShare:src.minion?1:0});
     if (amu('critchain')) p.critChain = Math.min(3, (p.critChain||0) + 1);
   } else if (!noProcs && amu('critchain')) p.critChain = 0;   // цепь рвётся на первом же некрите
-  // Урон в размере % от максимального HP цели — против «жирных»
-  if (b.flat('pctHp')) total += e.maxHp * b.flat('pctHp')/100;
+  // Процентная добавка берётся от текущего HP перед этим попаданием. Общий
+  // ранг уже ограничен 10% в recalc(), включая старые переполненные сохранения.
+  if (D.pctHp) total += e.hp * D.pctHp/100;
   // Одинаковые +% входящего урона от стихийных статусов складываются, после чего
   // общая damage-taken корзина применяется один раз. Сильные уникальные условия
   // ниже (Палач, Контрудар, Дуэль) остаются самостоятельными множителями.
@@ -8237,7 +8271,7 @@ function killEnemy(e, i){
      Срезать один коэффициент было мало: он же кормит и ранние этажи, где
      игрок как раз и умирает. Поднятая база держит первые десять этажей почти
      на прежнем уровне (4 438 против 3 900), а глубина падает вдвое. */
-  const gv = (5 + G.floor*0.3) * (e.kind === 'boss' ? 22 : e.kind === 'elite' ? 4.5 : 1) * D.goldFind * D.goldGainMult * constMul
+  const gv = (5 + G.floor*0.3) * (e.kind === 'boss' ? 22 : e.kind === 'elite' ? 4.5 : 1) * D.goldFind * constMul
            * (amu('goldbag') && e.kind !== 'norm' ? 1.5 : 1);   // МЕШОК ЗОЛОТА: только крупные
   const coins = e.kind === 'boss' ? 6 : e.kind === 'elite' ? 2 : 1;
   if (!e.noLoot) for (let ci = 0; ci < coins; ci++)
@@ -9517,7 +9551,7 @@ function hurt(v, ignoreDefense, selfBlast, cause, sourceKind, sourceEnemy){
       return;
     }
     const closeEnemies=nearbyWarriorEnemyCount();
-    const crowdArmor=D.unsheathedBlade ? 0 : D.steelCrowd*Math.min(6,closeEnemies)*(D.livingFortress?1.30:1);
+    const crowdArmor=D.unburdened||D.unsheathedBlade ? 0 : D.steelCrowd*Math.min(6,closeEnemies)*(D.livingFortress?1.30:1);
     const armor=D.armor+crowdArmor;
     v *= 1 - armor/(armor + 90);
     v = Math.max(1, v - D.drFlat);
@@ -10264,11 +10298,17 @@ function update(dt){
   if (heroMoved > 0.01) p.heroWalkT = ((p.heroWalkT||0) + heroMoved/18) % 8;
 
   /* --- Восстановление --- */
-  // Магазинное «Быстрое лечение» вытягивает героя из опасной зоны, но не
-  // восстанавливает его выше половины здоровья. Последний тик обрезается точно
+  // Магазинное «Быстрое лечение» срабатывает дискретно раз в пять секунд и не
+  // восстанавливает героя выше половины здоровья. Последний тик обрезается точно
   // по границе, поэтому высокая прокачка не может перескочить потолок.
   const fastHealLimit = D.life * 0.5;
-  if (D.regen && p.hp < fastHealLimit) heal(Math.min(D.regen * dt, fastHealLimit - p.hp));
+  if (D.regen){
+    p.fastHealT -= dt;
+    while (p.fastHealT <= 0){
+      if (p.hp < fastHealLimit) heal(Math.min(D.regen, fastHealLimit - p.hp));
+      p.fastHealT += 5;
+    }
+  } else p.fastHealT = 5;
   if (D.guardianHeal > 0){
     p.guardianHealT -= dt;
     while (p.guardianHealT <= 0){ heal(D.guardianHeal); p.guardianHealT += 5; }
@@ -10701,7 +10741,10 @@ function update(dt){
         const rangedInc=(s.playerArrow && s.age>=ACCELERATED_ARROW_TIME?D.acceleratedArrow:0)
                       +(s.playerArrow && s.age>=0.40 && D.swiftArrows?20:0)
                       +(firstArrow?D.cleanTrajectory:0);
-        const hitMul=s.mul * (D.pierceBonus ? 1 + 0.2*s.pierced : 1);
+        // Обычное пробитие теряет 20% исходной мощности за каждую уже
+        // пройденную цель. СВЕРХПРОБИТИЕ разворачивает тот же шаг в усиление.
+        const pierceMul=Math.max(0,1+(D.pierceBonus?0.2:-0.2)*s.pierced);
+        const hitMul=s.mul*pierceMul;
         if (!shotDamageSnapshot) shotDamageSnapshot=s.minion
           ? minionDamageSnapshot(s.minion) : damageConditionSnapshot(p);
         if (s.bombardier){
@@ -10819,10 +10862,10 @@ function update(dt){
   for (let i = G.orbs.length-1; i >= 0; i--){
     const o = G.orbs[i], d = dist(o,p);
     const a = Math.atan2(p.y-o.y, p.x-o.x);
-    // Внутри радиуса подбора сфера летит к игроку, снаружи — медленно дрейфует,
-    // иначе опыт от дальних убийств (особенно свитой) просто оставался бы лежать.
+    // Опыт и золото летят к игроку с полной скоростью на всём пути. Для книг,
+    // амулетов и тотемов сохраняется прежний радиусный разгон и медленный дрейф.
     const loot = o.gold || o.v !== undefined;
-    const pull = loot && d < D.lootPickup ? D.lootPull : d < D.pickup ? 340 : 75;
+    const pull = loot ? D.lootPull : d < D.pickup ? 340 : 75;
     o.x += Math.cos(a)*pull*dt; o.y += Math.sin(a)*pull*dt;
     if (d < p.r + ((o.book || o.amu || o.totem) ? 14 : 6)){
       if (o.amu) takeAmulet(o.amu);
@@ -10912,7 +10955,7 @@ function update(dt){
   if (G.portal){
     G.portal.t += dt;
     if (dist(G.portal, p) < G.portal.r + p.r && floorPortalReady(G.portal)){
-      G.gold += Math.round((12 + G.floor*6) * D.goldFind * D.goldGainMult); // премия за зачистку
+      G.gold += Math.round((12 + G.floor*6) * D.goldFind); // премия за зачистку
       G.floor++;
       // Трупы принадлежат комнате, где погибли враги: новый этаж всегда
       // начинается с чистого поля и без частично накопленного подъёма.
@@ -12919,7 +12962,6 @@ function skillImpactSnapshot(m){
   const hit = attackAvgHit(), aps = 1/Math.max(0.0001,D.atkCd);
   const minionHit = avgHit() * (D.minDmgMul||0) * MINION_DAMAGE_MULT;
   const minionCount = Math.max(1, G.minions ? G.minions.length : 0);
-  const stored = G.bag.s[m.stat];
   return {
     hit, aps, dps:hit*aps,
     projN:D.projN, volley:hit*D.projN, volleyDps:hit*aps*D.projN,
@@ -12934,7 +12976,7 @@ function skillImpactSnapshot(m){
     knock:D.knock, stun:D.stun, superCh:D.superCh,
     xpGain:(D.xpGain-1)*100, goldFind:(D.goldFind-1)*100,
     minCount:D.minMax, minAspd:D.minAspd, minSpd:D.minSpd,
-    pctHp:(stored && m.stat==='pctHp') ? stored.flat : G.bag.flat('pctHp'),
+    pctHp:D.pctHp,
   };
 }
 
@@ -13015,7 +13057,7 @@ function cardImpactData(m, card){
     impactRow(rows,'doubleDps','Средний DPS с учётом второго удара','Average DPS including the second hit',ad,zd,impactText(' урона/с',' damage/sec'));
   }
   if (m.stat==='pctHp')
-    impactRow(rows,'enemyHpBonus','Добавка за удар по врагу с 1000 max HP','Bonus per hit vs an enemy with 1,000 max HP',a.pctHp*10,z.pctHp*10,impactText(' урона',' damage'));
+    impactRow(rows,'enemyHpBonus','Добавка за удар по врагу с 1000 текущего HP','Bonus per hit vs an enemy with 1,000 current HP',a.pctHp*10,z.pctHp*10,impactText(' урона',' damage'));
   if (m.stat==='orbit'){
     impactRow(rows,'orbits','Круговых орбов','Orbiting orbs',a.orbitN,z.orbitN);
     impactRow(rows,'orbitTouch','Суммарный урон касания всех орбов','Combined touch damage from all orbs',a.orbitTouch,z.orbitTouch,impactText(' урона',' damage'));
@@ -13023,7 +13065,7 @@ function cardImpactData(m, card){
 
   const stats={
     life:['life','Максимальное здоровье','Maximum Health',' HP',false],
-    regen:['regen','Быстрое лечение','Quick Healing',impactText(' HP/с',' HP/sec'),false],
+    regen:['regen','Быстрое лечение','Quick Healing',impactText(' HP/5 сек',' HP/5 sec'),false],
     armor:['armor','Броня','Armor','',false], dodge:['dodge','Шанс уклонения','Evasion Chance','%',true],
     leech:['leech','Вампиризм','Life Steal','%',true], critCh:['critCh','Шанс крита','Critical Hit Chance','%',true],
     critMul:['critMul','Урон критического удара','Critical Hit Damage','%',true],
@@ -13100,8 +13142,9 @@ const KIND_HINT = {
    сюда либо поле tip прямо в MODS. */
 const SKILL_TIPS = {
   'life.on_kill':'<b>Когда срабатывает:</b> сразу после смерти любого врага от вашего урона или урона свиты.<br><b>Эффект:</b> восстанавливает указанное число HP. Лечение не может поднять здоровье выше максимума.<br><b>Важно:</b> не срабатывает, если взят кейстоун «УЖАСАЮЩИЙ ВАМПИР» — он отключает все обычные источники лечения.',
-  'life.on_hit':'<b>Когда срабатывает:</b> при каждом вашем успешном попадании по врагу.<br><b>Эффект:</b> восстанавливает указанное число HP за каждую задетую цель. Быстрые атаки, пробитие и несколько снарядов дают больше срабатываний.<br><b>Важно:</b> не лечит от промаха и не превышает максимум HP.',
-  'life.on_crit':'<b>Когда срабатывает:</b> только когда ваше попадание становится критическим.<br><b>Эффект:</b> восстанавливает указанное число HP за крит. Чем выше шанс крита и скорость атаки, тем чаще работает.<br><b>Важно:</b> не является вампиризмом: лечение не зависит от величины нанесённого урона.',
+  'life.on_hit':'<b>Когда срабатывает:</b> при каждом вашем успешном попадании по врагу.<br><b>Эффект:</b> каждая карточка даёт только целые +1, +2 или +3 HP за каждую задетую цель. Быстрые атаки, пробитие и несколько снарядов дают больше срабатываний.<br><b>Важно:</b> не лечит от промаха и не превышает максимум HP.',
+  'life.on_crit':'<b>Когда срабатывает:</b> только когда ваше попадание становится критическим.<br><b>Эффект:</b> каждая карточка даёт только целые +3, +4, +5 или +6 HP.<br><b>Ограничение:</b> лечение за крит может сработать не чаще одного раза в секунду, даже если за это время прошло несколько критов.<br><b>Важно:</b> не является вампиризмом: лечение не зависит от величины нанесённого урона.',
+  'key.no_defense_speed':'<div class="tt-exclusive">Внимание: вся броня из магазина, талантов, навыков и предметов станет равна нулю. «Стальная толпа» больше не будет выпадать.</div><b>Цена:</b> вся числовая броня обнуляется, включая уже собранную; динамическая броня «Стальной толпы» также отключается.<br><b>Сохраняется:</b> «Панцирь от роя» является отдельным плоским вычитанием урона, а не бронёй.<br><b>Взамен:</b> +35% скорости передвижения и +25% скорости атаки.',
   'key.dread_vampire':'<b>Цена кейстоуна:</b> всё обычное лечение и вампиризм отключаются.<br><b>Взамен:</b> 0,5% фактически нанесённого урона восстанавливается равномерно примерно за 3 секунды.<br><b>Мягкий потолок:</b> не больше 8% максимального HP в секунду; лишнее восстановление остаётся в очереди и приходит позже.<br><b>Щит:</b> при полном здоровье восстановление копится красным щитом до 15% максимального HP. Щит принимает урон раньше здоровья.<br><b>Пример:</b> 10 000 урона создают поток на 50 HP.',
   'life.leech_instant':'<b>Требование:</b> появляется после накопления 25% базового вампиризма.<br><b>Эффект:</b> обычный вампиризм от удара приходит сразу, а не растягивается во времени.<br><b>Не влияет:</b> на трёхсекундный поток «УЖАСАЮЩЕГО ВАМПИРА» и не обходит его потолок 8% максимального HP в секунду.',
   'def.normal_reduction':'<b>Что защищает:</b> контакт, снаряды, таран и опасные лужи, созданные <b>обычными</b> врагами.<br><b>Формула:</b> каждый выбор даёт −4…−8%; значения складываются, но итог ограничен −25%.<br><b>Не действует:</b> на элиту, боссов, собственные взрывы и урон от иных источников.',
@@ -13113,11 +13156,11 @@ const SKILL_TIPS = {
   'archer.split_arrow':'<b>Класс:</b> выпадает только Лучнику; синяя одноразовая карта.<br><b>Когда срабатывает:</b> после первого попадания каждой исходной стрелы.<br><b>Эффект:</b> из точки удара под углами ±30° вылетают две боковые стрелы, каждая наносит 22% урона обычной атаки.<br><b>Ограничения:</b> боковые стрелы не пробивают, не отскакивают, не создают новые боковые стрелы и не запускают Осколочный рикошет.',
   'archer.return_shot':'<b>Класс:</b> выпадает только Лучнику; синяя одноразовая карта.<br><b>Период:</b> каждая 13-я исходная стрела после завершения обычного полёта разворачивается и летит к герою.<br><b>Эффект:</b> обратный пролёт проходит сквозь задетых врагов и наносит каждому 30% урона обычной атаки.<br><b>Стихии:</b> каждый обратный удар независимо бросает текущие шансы поджога, охлаждения, отравления и шока.<br><b>Ограничение:</b> обратная стрела не повторяет пробития, отскоки, деление и Осколочный рикошет.',
   'archer.hunter_mark':'<b>Класс:</b> выпадает только Лучнику; синяя одноразовая карта.<br><b>Период:</b> первая цель каждой 6-й исходной стрелы получает метку на 4 секунды; метящий удар уже пользуется бонусом.<br><b>Эффект:</b> Лучник наносит отмеченной цели +15% урона, а текущие шансы поджога, охлаждения, отравления и шока удваиваются.<br><b>Предел:</b> одновременно две цели. Новая третья метка заменяет ту, у которой раньше закончится время.<br><b>Индикация:</b> небольшой красный прицел поверх цели.',
-  'dmg.pct_enemy_hp':'<b>Когда срабатывает:</b> при вашем попадании по врагу.<br><b>Эффект:</b> добавляет урон, равный указанному проценту от здоровья цели.<br><b>Практически:</b> особенно силён против врагов и боссов с большим запасом HP; по раненой цели добавка становится меньше.',
+  'dmg.pct_enemy_hp':'<b>Когда срабатывает:</b> при вашем попадании по врагу.<br><b>Эффект:</b> добавляет урон, равный указанному проценту от текущего HP цели перед этим попаданием.<br><b>Предел:</b> все карточки складываются максимум до 10%, после чего навык уходит из пула.<br><b>Практически:</b> особенно силён против врагов и боссов с большим запасом HP; по раненой цели добавка становится меньше.',
   'dmg.range_narrow':'<b>Что меняет:</b> подтягивает минимальный урон к максимальному на указанный процент, не уменьшая верхнюю границу.<br><b>Пример:</b> диапазон 6–10 при +50% становится 8–10, поэтому средний урон растёт с 8 до 9.<br><b>Предел:</b> одна карточка даёт 5–15%; суммарный бонус не превышает 50%, после чего карточка уходит из пула.',
   'dmg.lucky':'<b>Когда срабатывает:</b> при каждом вашем ударе.<br><b>Эффект:</b> игра дважды бросает случайный урон в диапазоне оружия и выбирает больший результат.<br><b>Важно:</b> не создаёт второй удар и не удваивает урон; это выбор лучшего из двух бросков.',
   'crit.chance_flat':'<b>Что меняет:</b> прибавляет указанное число процентных пунктов к шансу критического удара.<br><b>Пример:</b> 20% крита + 8% с карточки = 28% крита.<br><b>Предел:</b> шанс не может стать выше 100%.',
-  'crit.chance_inc':'<b>Что меняет:</b> усиливает уже имеющийся шанс крита на указанный процент.<br><b>Пример:</b> при 20% базового шанса +50% даст 30%, а не 70%.<br><b>Предел:</b> итоговый шанс не превышает 100%.',
+  'crit.chance_inc':'<b>Что меняет:</b> усиливает уже имеющийся шанс крита на случайные 10–20%.<br><b>Пример:</b> при 20% базового шанса +20% даст 24%, а не 40%.<br><b>Предел:</b> итоговый шанс не превышает 100%.',
   'crit.multi':'<b>Когда срабатывает:</b> только на критическом попадании.<br><b>Эффект:</b> добавляет указанное число процентов к множителю критического урона.<br><b>Пример:</b> крит ×2,0 с бонусом +5 становится ×2,05: обычный удар на 100 нанесёт критом 205.',
   'crit.super_chance':'<b>Требование:</b> открывается при 100% обычного крита.<br><b>Когда срабатывает:</b> после критического удара бросается отдельный шанс сверхкрита.<br><b>Эффект:</b> сверхкрит удваивает уже критический урон и накладывает кровотечение на 3% силы удара в секунду; кровотечения складываются без предела.',
   'crit.on_crit_shockwave':'<b>Когда срабатывает:</b> каждый раз, когда ваш удар критует.<br><b>База волны:</b> 20% урона, который крит фактически снял с основной цели после её защиты; лишний урон сверх оставшегося HP не учитывается.<br><b>Цели:</b> только другие враги в радиусе 90; первоначальная цель исключается.<br><b>Защита соседей:</b> каждый отдельно применяет свою броню, панцирь, защиту пачки и особую защиту босса.<br><b>Важно:</b> волна сама не критует и не создаёт следующую критическую волну; радиус растёт от бонусов к области действия.',
@@ -13126,8 +13169,8 @@ const SKILL_TIPS = {
   'mov.speed':'<b>Что меняет:</b> увеличивает скорость движения героя во все стороны.<br><b>Пример:</b> +10% означает, что одинаковая дистанция проходится примерно за 90% прежнего времени.<br><b>Не влияет:</b> на скорость снарядов, атаки, рывок и скорость свиты.',
   'mov.speed_on_kill':'<b>Когда срабатывает:</b> сразу после каждого убийства.<br><b>Эффект:</b> герой получает +25% скорости передвижения на 0,8 секунды.<br><b>Обновление:</b> новое убийство сразу обновляет время действия.',
   'shape.proj_count':'<b>Что меняет:</b> каждая атака Лучника выпускает ещё один снаряд.<br><b>Эффект:</b> дополнительный снаряд наносит полный урон и может отдельно критовать, пробивать и накладывать эффекты.<br><b>Важно:</b> карточка доступна только Лучнику; Маг получает дополнительные основные снаряды только от общего классового роста.',
-  'shape.pierce':'<b>Что меняет:</b> снаряд не исчезает после первой цели и может пройти ещё через указанное число врагов.<br><b>Диапазон:</b> каждая карточка даёт целые +1 или +2 цели.<br><b>Предел:</b> базовое пробитие не превышает 4 целей; если осталось одно место, последняя карточка обрезается до +1. После достижения 4 эта карточка уходит из пула и открывается «СВЕРХПРОБИТИЕ».<br><b>Важно:</b> один и тот же враг не получает повторный урон от того же пролёта; специальные прибавки предметов и навыков считаются отдельно.',
-  'shape.chain':'<b>Когда срабатывает:</b> после попадания снаряда по врагу.<br><b>Эффект:</b> снаряд прыгает к указанному числу других ближайших целей.<br><b>Важно:</b> без «ЭКО-ОТСКОКОВ» каждый следующий прыжок теряет 25% урона.',
+  'shape.pierce':'<div class="tt-exclusive">Выбор пробития, отскоков или Осколочного рикошета навсегда закрывает две другие ветки в этом забеге.</div><b>Класс:</b> выпадает только Лучнику.<br><b>Что меняет:</b> снаряд не исчезает после первой цели и может пройти ещё через указанное число врагов.<br><b>Диапазон:</b> каждая карточка даёт целые +1 или +2 цели.<br><b>Затухание:</b> без «СВЕРХПРОБИТИЯ» первая цель получает 100% урона, вторая 80%, третья 60%, четвёртая 40%, пятая 20%.<br><b>Предел:</b> базовое пробитие не превышает 4 целей; если осталось одно место, последняя карточка обрезается до +1. После достижения 4 эта карточка уходит из пула и открывается «СВЕРХПРОБИТИЕ».<br><b>Важно:</b> один и тот же враг не получает повторный урон от того же пролёта; специальные прибавки предметов и навыков считаются отдельно.',
+  'shape.chain':'<div class="tt-exclusive">Выбор пробития, отскоков или Осколочного рикошета навсегда закрывает две другие ветки в этом забеге.</div><b>Класс:</b> выпадает только Лучнику.<br><b>Когда срабатывает:</b> после попадания снаряда по врагу.<br><b>Эффект:</b> снаряд прыгает к указанному числу других ближайших целей.<br><b>Важно:</b> без «ЭКО-ОТСКОКОВ» каждый следующий прыжок теряет 25% урона.',
   'shape.homing':'<b>Что меняет:</b> силу поворота летящего снаряда к ближайшему врагу.<br><b>Диапазон:</b> каждая карточка даёт 35–70%.<br><b>Предел:</b> суммарная сила не превышает 100%; последний выбор обрезается ровно до остатка, после чего карточка уходит из пула.<br><b>Не добавляет:</b> урон, скорость полёта или дальность.',
   'shape.proj_speed':'<b>Что меняет:</b> скорость полёта стрел и магических сфер.<br><b>Практически:</b> цель достигается быстрее, а движущемуся врагу сложнее уйти с траектории.<br><b>Не влияет:</b> на частоту выстрелов и скорость движения героя.',
   'shape.aoe_radius':'<b>Что меняет:</b> радиус взрывов, волн, луж и других эффектов по площади.<br><b>Пример:</b> +25% превращает радиус 100 в 125, а площадь покрытия становится заметно больше.<br><b>Не увеличивает:</b> размер обычной стрелы и дальность её полёта.',
@@ -13141,7 +13184,7 @@ const SKILL_TIPS = {
   'shape.pierce_bonus':'<b>Требование:</b> не менее 4 пробитий.<br><b>Эффект:</b> снаряд получает +20% урона за каждую уже пробитую им цель.<br><b>Пример:</b> после трёх врагов следующий получит +60% урона от этого эффекта.',
   'conv.aoe_to_damage':'<b>Требование:</b> появляется после развития радиуса области.<br><b>Формула:</b> каждый 1% радиуса области добавляет 0,6% общего урона.<br><b>Пример:</b> +50% радиуса превращается в +30% урона.',
   'shape.orbit':'<b>Класс:</b> выпадает только Воину.<br><b>Что создаёт:</b> один вращающийся орб вокруг героя.<br><b>Радиус:</b> базовый радиус вращения — 88,8; он масштабируется радиусом области.<br><b>Эффект:</b> при касании врага орб наносит 25% силы автоатаки; применяются все её модификаторы и шансы срабатывания.<br><b>Предел:</b> максимум 10 орбов; каждый новый — отдельный источник попаданий.',
-  'shape.ricochet':'<b>Когда срабатывает:</b> при первом попадании основной стрелы или сферы.<br><b>Эффект:</b> выпускает указанное число осколков в ближайших ещё не задетых врагов в радиусе 450. Каждый осколок наносит 45% урона исходного попадания и может накладывать его эффекты.<br><b>Предел:</b> максимум 3 осколка. Они не пробивают цели, не переходят в обычный отскок и не создают новые осколки. Свита этот эффект не получает.',
+  'shape.ricochet':'<div class="tt-exclusive">Выбор пробития, отскоков или Осколочного рикошета навсегда закрывает две другие ветки в этом забеге.</div><b>Класс:</b> выпадает только Лучнику.<br><b>Когда срабатывает:</b> при первом попадании основной стрелы.<br><b>Эффект:</b> выпускает указанное число осколков в ближайших ещё не задетых врагов в радиусе 450. Каждый осколок наносит 45% урона исходного попадания и может накладывать его эффекты.<br><b>Предел:</b> максимум 3 осколка. Они не пробивают цели, не переходят в обычный отскок и не создают новые осколки.',
   'death.cheat':'<b>Когда срабатывает:</b> смертельный удар при готовой перезарядке.<br><b>Эффект:</b> гарантированно оставляет 1 HP, даёт полную неуязвимость и +50% скорости передвижения ровно на 1 секунду.<br><b>Перезарядка:</b> 60 секунд; пока она идёт, следующий смертельный удар убивает как обычно.<br><b>Редкость:</b> оранжевая уникальная карточка, выбирается только один раз.',
 };
 
@@ -13295,8 +13338,8 @@ const LEVEL_SKILL_LINKS = Object.freeze([
   {source:'shape.explode_on_kill', target:'shape.explode_mega', at:25, current:()=>D.explode, unit:'%'},
   {source:'shape.double_hit', target:'shape.deadly_hit', at:25, current:()=>D.dblHit, unit:'%'},
   {source:'shape.proj_count', target:'shape.shotgun', at:5, current:()=>D.projN},
-  {source:'shape.chain', target:'shape.chain_retention', at:4, current:()=>D.chain, available:()=>!D.oneArrowTechnique},
-  {source:'shape.pierce', target:'shape.pierce_bonus', at:4, current:()=>D.pierceBase},
+  {source:'shape.chain', target:'shape.chain_retention', at:4, current:()=>D.chainBase, available:()=>!D.oneArrowTechnique&&D.pierceBase===0&&D.ricochet===0},
+  {source:'shape.pierce', target:'shape.pierce_bonus', at:4, current:()=>D.pierceBase, available:()=>D.chainBase===0&&D.ricochet===0},
   {source:'shape.aoe_radius', target:'conv.aoe_to_damage', at:100, current:()=>Math.max(0,(D.aoeR-1)*100), unit:'%'},
   {source:'ail.ignite.chance', target:'ail.ignite.spread', at:25, current:()=>D.igniteCh, unit:'%'},
   {source:'ail.chill.chance', target:'ail.freeze.chance', at:25, current:()=>D.chillCh, unit:'%'},
@@ -13572,15 +13615,14 @@ function renderSheet(){
     : '') +
     '<h3>ОСНОВНОЕ</h3>' +
       r('Здоровье', Math.round(D.life)) +
-      r('Быстрое лечение', D.regen.toFixed(1) + ' HP/сек · до 50% HP') +
+      r('Быстрое лечение', D.regen.toFixed(1) + ' HP/5 сек · до 50% HP') +
       r('Урон за удар', Math.round(D.baseMin) + '–' + Math.round(D.baseMax)) +
       r('Средний удар', Math.round(attackAvgHit())) +
       r('Скорость атаки', (1/currentAttackCooldown()).toFixed(2) + '/сек') +
       r('Шанс крита', D.critCh.toFixed(1) + '%') +
       r('Множитель крита', Math.round(D.critMul) + '%') +
       r('Скорость бега', Math.round(D.mspd)) +
-      r('Получаемое золото', '×' + (D.goldFind*D.goldGainMult).toFixed(2) +
-        (D.goldGainMult > 1 ? ' · ВОР ×' + D.goldGainMult.toFixed(2) : '')) +
+      r('Получаемое золото', '×' + D.goldFind.toFixed(2)) +
     '<h3>СТИХИИ</h3>' +
       r('Огонь', D.elem.fire.toFixed(1)) + r('Холод', D.elem.cold.toFixed(1)) +
       r('Молния', D.elem.lit.toFixed(1)) + r('Яд', D.elem.poi.toFixed(1)) +
@@ -14106,10 +14148,10 @@ const SHOP_ICON_POS = Object.freeze({
 });
 const SHOP_CATEGORY_ICONS = Object.freeze({attack:'dmg',health:'hpPct',defense:'armor',farm:'sgold',qol:'itemDrop'});
 const SHOP_SHORT_NT = Object.freeze({
-  regen:['+1 HP/сек ниже 50% здоровья за ранг. Максимум: +50 HP/сек.','+1 HP/sec below 50% health per rank. Maximum: +50 HP/sec.'],
+  regen:['+1 HP раз в 5 секунд ниже 50% здоровья за ранг. Максимум: +50 HP/5 сек.','+1 HP every 5 sec below 50% health per rank. Maximum: +50 HP/5 sec.'],
   armor:['+1 к броне за ранг. Максимум: +30.','+1 Armor per rank. Maximum: +30.'],
   drFlat:['Каждый ранг вычитает 1 урон из каждого попадания. Максимум: 100.','Each rank subtracts 1 damage from every hit. Maximum: 100.'],
-  dodge:['+1% шанса уворота за ранг. Максимум: 70%.','+1% Dodge Chance per rank. Maximum: 70%.'],
+  dodge:['+1% шанса уворота за ранг. Максимум из магазина: 25%.','+1% Dodge Chance per rank. Shop maximum: 25%.'],
   dashRecharge:['+5% восстановления рывка за ранг. Максимум: +50%.','+5% Dash recharge per rank. Maximum: +50%.'],
   dashLength:['+5% дистанции рывка за ранг. Максимум: +25%.','+5% Dash distance per rank. Maximum: +25%.'],
   dashN:['+1 заряд рывка за ранг. Всего можно получить 3 заряда.','+1 Dash charge per rank, up to 3 total charges.'],

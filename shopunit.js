@@ -30,8 +30,8 @@ for (const rank of [1, 5]){
      base.__api.D.minAspd.toFixed(2) + ' → ' + boosted.__api.D.minAspd.toFixed(2)); }
 
 { const r = c.__api.SHOP.find(x => x.id === 'regen');
-  ok('быстрое лечение: 50 уровней по 1 HP/сек', !!r && r.nm === 'БЫСТРОЕ ЛЕЧЕНИЕ' &&
-     r.max === 50 && r.fmt(r.max) === '+50 HP/сек' && /ниже 50%/.test(r.nt),
+  ok('быстрое лечение: 50 уровней по 1 HP/5 сек', !!r && r.nm === 'БЫСТРОЕ ЛЕЧЕНИЕ' &&
+     r.max === 50 && r.fmt(r.max) === '+50 HP/5 сек' && /раз в 5 секунд/.test(r.nt),
      r ? r.fmt(r.max) : 'товар не найден');
   ok('быстрое лечение: прежняя средняя цена', !!r && r.base === 3300 && c.shopCost(r,0) === 3300,
      r ? c.shopCost(r,0).toLocaleString('ru-RU') + ' золота' : 'товар не найден');
@@ -43,10 +43,10 @@ for (const rank of [1, 5]){
 { const fast=loadGame('./index.html'); fast.__api.STORE.data.shop.regen=10;
   fast.newGame('bow','keys'); const G=fast.__api.G,D=fast.__api.D,p=G.player;
   G.enemies.length=0; G.spawnQueue=0; G.packs.length=0; G.pending=0;
-  p.hp=D.life*0.35; const before=p.hp; fast.update(1);
-  ok('быстрое лечение ниже половины даёт 1 HP/сек за уровень',
-     Math.abs(p.hp-before-10)<1e-9, before.toFixed(1)+' → '+p.hp.toFixed(1));
-  p.hp=D.life*0.5-2; fast.update(1); const atHalf=p.hp; fast.update(1);
+  p.hp=D.life*0.35; const before=p.hp; fast.update(4.99); const early=p.hp; fast.update(0.01);
+  ok('быстрое лечение даёт один тик раз в пять секунд',
+     early===before && Math.abs(p.hp-before-10)<1e-9, before.toFixed(1)+' → '+p.hp.toFixed(1));
+  p.hp=D.life*0.5-2; fast.update(5); const atHalf=p.hp; fast.update(5);
   ok('быстрое лечение останавливается ровно на 50% здоровья',
      Math.abs(atHalf-D.life*0.5)<1e-9 && p.hp===atHalf,
      p.hp.toFixed(1)+' / '+D.life.toFixed(1)+' HP'); }
@@ -65,16 +65,18 @@ for (const rank of [1, 5]){
   ok('пакетная покупка останавливается на десятом уровне', last.cnt===1 && last.sum===c.shopCost(speed,9),
      'доступно уровней: '+last.cnt); }
 
-{ const legacySpeed=loadGame('./index.html'), old={base:1000,grow:1.11};
-  const expected=Array.from({length:7},(_,i)=>legacySpeed.shopCost(old,i+10)).reduce((a,b)=>a+b,0);
+{ const legacySpeed=loadGame('./index.html'), old={base:1000,grow:1.11}, oldDodge={base:4200,grow:1.08};
+  const speedRefund=Array.from({length:7},(_,i)=>legacySpeed.shopCost(old,i+10)).reduce((a,b)=>a+b,0);
+  const dodgeRefund=Array.from({length:45},(_,i)=>legacySpeed.shopCost(oldDodge,i+25)).reduce((a,b)=>a+b,0);
+  const expected=speedRefund+dodgeRefund;
   legacySpeed.__api.STORE.data.gold=100; legacySpeed.__api.STORE.data.spent=expected+50;
-  legacySpeed.__api.STORE.data.shop={mspd:17}; legacySpeed.__api.STORE.save();
+  legacySpeed.__api.STORE.data.shop={mspd:17,dodge:70}; legacySpeed.__api.STORE.save();
   const gold=legacySpeed.__api.STORE.data.gold;
   legacySpeed.__api.STORE.save();
-  ok('лишние старые уровни возвращаются по прежним ценам один раз',
-     legacySpeed.__api.STORE.data.shop.mspd===10 && gold===100+expected &&
+  ok('лишние старые уровни скорости и уворота возвращаются один раз',
+     legacySpeed.__api.STORE.data.shop.mspd===10 && legacySpeed.__api.STORE.data.shop.dodge===25 && gold===100+expected &&
      legacySpeed.__api.STORE.data.gold===gold && legacySpeed.__api.STORE.data.spent===50,
-     '+17% → +10% · возврат '+expected.toLocaleString('ru-RU')); }
+     'бег +17% → +10% · уворот +70% → +25% · возврат '+expected.toLocaleString('ru-RU')); }
 
 { const recharge=c.__api.SHOP.find(x=>x.id==='dashRecharge'), length=c.__api.SHOP.find(x=>x.id==='dashLength');
   ok('восстановление рывка: 10 уровней по 5%', !!recharge && recharge.cat==='defense' &&
@@ -116,7 +118,7 @@ for (const rank of [1, 5]){
 { const legacy = loadGame('./index.html');
   legacy.__api.STORE.data.shop.regen = 100; legacy.newGame('bow','keys');
   ok('старое сохранение быстрого лечения не превышает потолок', legacy.__api.D.regen === 50,
-     legacy.__api.D.regen.toFixed(0) + ' HP/сек'); }
+     legacy.__api.D.regen.toFixed(0) + ' HP/5 сек'); }
 
 { const legacyArmor = loadGame('./index.html');
   legacyArmor.__api.STORE.data.shop.armor = 200; legacyArmor.newGame('bow','keys');
@@ -221,9 +223,11 @@ for (const rank of [1, 5]){
     dmg ? dmg.base.toLocaleString('ru-RU')+' золота' : 'товар не найден');
   ok('скорость атаки подорожала втрое', !!aspd && aspd.base===7500 && c.shopCost(aspd,0)===7500,
     aspd ? aspd.base.toLocaleString('ru-RU')+' золота' : 'товар не найден');
-  const dodge=shop.find(x=>x.id==='dodge');
-  ok('уворот подорожал ровно на 20%', !!dodge && dodge.base===4200 && c.shopCost(dodge,0)===4200,
-    dodge ? dodge.base.toLocaleString('ru-RU')+' золота' : 'товар не найден');
+  const dodge=shop.find(x=>x.id==='dodge'), oldDodge={base:4200,grow:1.08,max:70};
+  c.__api.STORE.data.shop.dodge=0;
+  ok('25 уровней уворота стоят как прежние 70', !!dodge && dodge.max===25 &&
+    c.shopBatch(dodge,25).sum===Array.from({length:70},(_,i)=>c.shopCost(oldDodge,i)).reduce((a,b)=>a+b,0),
+    dodge ? c.shopBatch(dodge,25).sum.toLocaleString('ru-RU')+' золота' : 'товар не найден');
   const shell=shop.find(x=>x.id==='drFlat');
   ok('«Панцирь от роя»: потолок 100', !!shell && shell.max===100,
     shell ? 'потолок '+shell.max : 'товар не найден');

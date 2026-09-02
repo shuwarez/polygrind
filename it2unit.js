@@ -86,10 +86,13 @@ console.log('РИТМ БОЯ');
 
 console.log('РЕАКЦИЯ И ДОБИВАНИЕ');
 { const o = mk('riposte'); const e = foe(o,40,0);
+  // Контрудар проверяем на фиксированном ударе: случайный разброс оружия не
+  // должен определять, пройдёт ли тест собственного множителя предмета.
+  o.D.baseMin=o.D.baseMax=100; o.D.elem={fire:0,cold:0,lit:0,poi:0}; o.D.critCh=o.D.superCh=o.D.dblHit=0;
   const base = avgHit(o, e, 800);
   o.p.inv = 0; o.c.hurt(10);
   const h = e.hp; o.c.damage(e, {}); const hit = h - e.hp;
-  ok('контрудар: следующий удар x2.5', hit > base*1.8,
+  ok('контрудар: следующий удар x2.5', Math.abs(hit/base-2.5)<1e-9,
      Math.round(base) + ' \u2192 ' + Math.round(hit)); }
 { const o = mk('headsman'); const e = foe(o,40,0, 1000);
   const full = avgHit(o, e, 800, ()=>{ e.hp = 900; });
